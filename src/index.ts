@@ -39,9 +39,9 @@ const cachingStrategy = new LocalDevServerCachingStrategy();
 // to compile the output for the user.
 // const compiler = new LocalDevServerCompiler(customerSourceCode);
 const compiler = new LocalDevServerCompiler(
-    dependencyManager,
-    cachingStrategy,
-    loader,
+    dependencyManager
+    // cachingStrategy,
+    // loader,
 );
 
 let lastCompileResult: LocalDevServerCompileResult = null;
@@ -65,7 +65,7 @@ fs.watch(customerSourceCode, {}, async (event, filename) => {
 
         // Generate Compat mode?
         // Useful to test what the IE output would be like.
-        compat: false,
+        compat: false
 
         // What else would we want to pass?
     };
@@ -76,7 +76,7 @@ fs.watch(customerSourceCode, {}, async (event, filename) => {
     lastCompileResult = await compiler.compile(
         configuration.getNamespace(),
         configuration.getEntryPointComponent(),
-        compilationOptions,
+        compilationOptions
     );
 
     console.log('last compile result:');

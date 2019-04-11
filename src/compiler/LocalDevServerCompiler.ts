@@ -1,34 +1,25 @@
-import compile, {
-    PlaygroundCompilerLoadingStrategy,
-    LWCCompiler,
-} from 'playground-compiler-rollup/dist/compile';
 import LocalDevServerContainer from '../containers/LocalDevServerContainer';
 import LocalDevServerCompileResult from './LocalDevServerCompileResult';
 import LocalDevServerDependencyManager from '../dependencies/LocalDevServerDependencyManager';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import LocalDevServerCachingStrategy from '../caching/LocalDevServerCachingStrategy';
-import {
-    FlatVFS,
-    FILE_TYPES,
-    ROOT_FILE_ID,
-} from 'playground-common/dist/files';
-import { CommonCache } from 'playground-common/dist/cache';
+
 import { compile as lwcCompiler } from '@lwc/compiler';
 
 class LocalDevServerCompiler {
     private dependencyManager: LocalDevServerDependencyManager;
     private configurationManager: LocalDevServerConfiguration;
-    private cachingStrategy: CommonCache;
-    private loaderStrategy: PlaygroundCompilerLoadingStrategy;
+    //private cachingStrategy: CommonCache;
+    //private loaderStrategy: PlaygroundCompilerLoadingStrategy;
 
     constructor(
-        dependencyManager: LocalDevServerDependencyManager,
-        cachingStrategy: CommonCache,
-        loaderStrategy: PlaygroundCompilerLoadingStrategy,
+        dependencyManager: LocalDevServerDependencyManager
+        //cachingStrategy: CommonCache,
+        // loaderStrategy: PlaygroundCompilerLoadingStrategy,
     ) {
         this.dependencyManager = dependencyManager;
-        this.cachingStrategy = cachingStrategy;
-        this.loaderStrategy = loaderStrategy;
+        //this.cachingStrategy = cachingStrategy;
+        //this.loaderStrategy = loaderStrategy;
     }
 
     /**
@@ -37,7 +28,7 @@ class LocalDevServerCompiler {
     public async compile(
         customNamespace: string,
         mainModule: string,
-        { minify, compat }: { minify?: boolean; compat?: boolean },
+        { minify, compat }: { minify?: boolean; compat?: boolean }
     ): Promise<LocalDevServerCompileResult> {
         console.log(`compiling ${customNamespace}-${mainModule}`);
 
@@ -50,16 +41,16 @@ class LocalDevServerCompiler {
         // For us, we'll only have one dependency for each of these installed.
         // At some point we need to resolve this.
         const lwcVersion = this.dependencyManager.getDependencyVersion(
-            'lwc-framework',
+            'lwc-framework'
         );
 
         // The componentsVersion property is used for caching.
         // We can get both this and componentsPath at the same time from the dependency manager.
         const componentsVersion = this.dependencyManager.getDependencyVersion(
-            'lwc-components-lightning',
+            'lwc-components-lightning'
         );
         const componentsPath = this.dependencyManager.getDependencyPath(
-            'lwc-components-lightning',
+            'lwc-components-lightning'
         );
         const sldsVersion = this.dependencyManager.getDependencyVersion('slds');
 
@@ -69,30 +60,7 @@ class LocalDevServerCompiler {
         // The compiler is using vfs to deal with these, so need to abstract
         // the concept enough we can use vfs or real files.
 
-        const files: FlatVFS = {
-            [ROOT_FILE_ID]: {
-                type: FILE_TYPES.DIRECTORY,
-                name: 'root',
-                childIds: ['3'],
-            },
-            3: {
-                type: FILE_TYPES.DIRECTORY,
-                name: 'paginator',
-                childIds: ['1', '2'],
-            },
-            1: {
-                type: FILE_TYPES.FILE,
-                name: 'paginator.html',
-                content: '<template></template>',
-                childIds: [],
-            },
-            2: {
-                type: FILE_TYPES.FILE,
-                name: 'paginator.js',
-                content: `import { LightningElement, api } from 'lwc'; export default class Paginator extends LightningElement {}`,
-                childIds: [],
-            },
-        };
+        //const files: {};
 
         let compiledResult: LocalDevServerCompileResult;
 
@@ -106,39 +74,13 @@ class LocalDevServerCompiler {
             //
             // This method should not do the following
             // - Write contents to the filesystem.
-            const compilePass = await compile({
-                // For customers, will always be 'c', but internal will want to customize it.
-                namespace: customNamespace,
-
-                // Name of your component to put in the default container.
-                mainModule,
-
-                // Reference to the LWC Compiler function.
-                compiler,
-
-                // Dependencies
-                componentsPath,
-                lwcVersion,
-                componentsVersion,
-                sldsVersion,
-
-                // Source Code
-                files,
-
-                // Options
-                minify,
-                compat,
-
-                // Dependency Apis
-                playgroundCacheAPI: async () => this.cachingStrategy,
-                loaderAPI: this.loaderStrategy,
-            });
+            const compilePass = null;
 
             // Need to configure that it passed, and that there were no errors.
             // Feels like we should also return the compiled app.js text.
             compiledResult = new LocalDevServerCompileResult(
                 compilePass.code,
-                compilePass.map,
+                compilePass.map
             );
         } catch (ex) {
             // TODO: I don't like this method signature.
@@ -146,19 +88,19 @@ class LocalDevServerCompiler {
         }
 
         console.log(
-            `compiling ${customNamespace}-${mainModule} finished. success = ${!compiledResult.hasError}`,
+            `compiling ${customNamespace}-${mainModule} finished. success = ${!compiledResult.hasError}`
         );
 
         return compiledResult;
     }
 
-    private getSourceCodeAsFiles(): FlatVFS {
+    private getSourceCodeAsFiles() {
         return {};
     }
 
-    private getLwcCompilerFromDependencies(): LWCCompiler {
+    private getLwcCompilerFromDependencies() {
         // TODO: load from actual dependencies instead of hardcode
-        return { compile: lwcCompiler };
+        return {};
     }
 }
 

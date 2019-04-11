@@ -1,6 +1,4 @@
-import { CommonCache } from 'playground-common/dist/cache';
-
-class LocalDevServerCachingStrategy implements CommonCache {
+class LocalDevServerCachingStrategy {
     public async get(key: string) {
         return null;
     }

@@ -1,5 +1,4 @@
-import { PlaygroundCompilerLoadingStrategy } from 'playground-compiler-rollup';
-class LocalDevServerLoader implements PlaygroundCompilerLoadingStrategy {
+class LocalDevServerLoader {
     async load(id: string) {
         return '';
     }
