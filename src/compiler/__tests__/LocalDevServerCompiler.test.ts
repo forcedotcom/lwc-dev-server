@@ -19,11 +19,11 @@
 describe('Local Dev Server Compiler!', () => {
     describe('Graceful errors', () => {
         it.todo(
-            'Missing Dependencies cause errors that tell user to run install.',
+            'Missing Dependencies cause errors that tell user to run install.'
         );
         it.todo('Compiling code that is not valid produces clear error');
         it.todo(
-            'Specifying an entry point that does not exist gives clear error',
+            'Specifying an entry point that does not exist gives clear error'
         );
     });
     describe('Compilation Successfull', () => {
@@ -33,7 +33,7 @@ describe('Local Dev Server Compiler!', () => {
         it.todo('Specifying minifyEnabled enables minification');
         it.todo('specifying compatEnabled enables compat mode');
         it.todo(
-            'Specifying alternate namespace produces code relating to that namespace',
+            'Specifying alternate namespace produces code relating to that namespace'
         );
         it.todo('Lots of tests');
     });
