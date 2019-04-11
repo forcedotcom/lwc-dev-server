@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+      "target": "es2017",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "declarationMap": true,
+      "lib": [
+          "es2017"
+      ],
+      "outDir": "./dist",
+
+      "strictNullChecks": false,
+      "noImplicitAny": false,
+      "noUnusedParameters": false,
+      "noUnusedLocals": false,
+
+      "pretty": true,
+      "declaration": true,
+      "esModuleInterop": true,
+  },
+
+  "include": [
+      "src/**/*.ts",
+  ],
+
+  "exclude": [
+      "node_modules",
+  ]
+}
