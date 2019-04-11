@@ -6,7 +6,8 @@
 
 'use strict';
 
-import localDevServer from './dist/LocalDevServer.js';
+//import localDevServer from './dist/LocalDevServer.js';
+const LocalDevServer = require('../dist/LocalDevServer.js');
 
 // The Current directory you ran this command in.
 const currentDirectory = process.cwd();
@@ -14,9 +15,16 @@ const currentDirectory = process.cwd();
 // We're about to do something.
 console.log(`Running local dev tools on directory: ${currentDirectory}`);
 
-// Run the Compiler
+const localDevServer = new LocalDevServer.default();
+
+// Run Local Dev Server
 localDevServer.install();
+
+// Do we need build?
+// Start seems sufficient.
 localDevServer.build();
+
+// Start the server?
 localDevServer.start();
 
 // Yay! We did it.
