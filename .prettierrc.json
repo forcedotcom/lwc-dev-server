@@ -3,8 +3,7 @@
   "tabWidth": 4,
   "singleQuote": true,
   "trailingComma": "none",
-  "printWidth": 80,
-  "parser": "babylon"
+  "printWidth": 80
 }
 
 

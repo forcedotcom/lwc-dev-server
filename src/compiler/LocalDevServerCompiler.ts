@@ -1,4 +1,3 @@
-
 import LocalDevServerContainer from '../containers/LocalDevServerContainer';
 import LocalDevServerCompileResult from './LocalDevServerCompileResult';
 import LocalDevServerDependencyManager from '../dependencies/LocalDevServerDependencyManager';
@@ -14,7 +13,7 @@ class LocalDevServerCompiler {
     //private loaderStrategy: PlaygroundCompilerLoadingStrategy;
 
     constructor(
-        dependencyManager: LocalDevServerDependencyManager,
+        dependencyManager: LocalDevServerDependencyManager
         //cachingStrategy: CommonCache,
         // loaderStrategy: PlaygroundCompilerLoadingStrategy,
     ) {
@@ -29,7 +28,7 @@ class LocalDevServerCompiler {
     public async compile(
         customNamespace: string,
         mainModule: string,
-        { minify, compat }: { minify?: boolean; compat?: boolean },
+        { minify, compat }: { minify?: boolean; compat?: boolean }
     ): Promise<LocalDevServerCompileResult> {
         console.log(`compiling ${customNamespace}-${mainModule}`);
 
@@ -42,16 +41,16 @@ class LocalDevServerCompiler {
         // For us, we'll only have one dependency for each of these installed.
         // At some point we need to resolve this.
         const lwcVersion = this.dependencyManager.getDependencyVersion(
-            'lwc-framework',
+            'lwc-framework'
         );
 
         // The componentsVersion property is used for caching.
         // We can get both this and componentsPath at the same time from the dependency manager.
         const componentsVersion = this.dependencyManager.getDependencyVersion(
-            'lwc-components-lightning',
+            'lwc-components-lightning'
         );
         const componentsPath = this.dependencyManager.getDependencyPath(
-            'lwc-components-lightning',
+            'lwc-components-lightning'
         );
         const sldsVersion = this.dependencyManager.getDependencyVersion('slds');
 
@@ -81,7 +80,7 @@ class LocalDevServerCompiler {
             // Feels like we should also return the compiled app.js text.
             compiledResult = new LocalDevServerCompileResult(
                 compilePass.code,
-                compilePass.map,
+                compilePass.map
             );
         } catch (ex) {
             // TODO: I don't like this method signature.
@@ -89,7 +88,7 @@ class LocalDevServerCompiler {
         }
 
         console.log(
-            `compiling ${customNamespace}-${mainModule} finished. success = ${!compiledResult.hasError}`,
+            `compiling ${customNamespace}-${mainModule} finished. success = ${!compiledResult.hasError}`
         );
 
         return compiledResult;
@@ -101,7 +100,7 @@ class LocalDevServerCompiler {
 
     private getLwcCompilerFromDependencies() {
         // TODO: load from actual dependencies instead of hardcode
-        return { };
+        return {};
     }
 }
 
