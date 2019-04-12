@@ -76,7 +76,7 @@ export default class LocalDevServer {
                         return resourceService.get(descriptor);
                     }
                 })
-                .then((staticResource /*: StaticResource*/) => {
+                .then((staticResource: any /*: StaticResource*/) => {
                     console.log(`Done. Received ${staticResource}`);
                     // log(`Done compiling templates in ${Math.floor(performance.now() - t0)} ms`.bold.blue);
                 })

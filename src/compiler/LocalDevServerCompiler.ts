@@ -8,7 +8,7 @@ import { compile as lwcCompiler } from '@lwc/compiler';
 
 class LocalDevServerCompiler {
     private dependencyManager: LocalDevServerDependencyManager;
-    private configurationManager: LocalDevServerConfiguration;
+    // private configurationManager: LocalDevServerConfiguration;
     //private cachingStrategy: CommonCache;
     //private loaderStrategy: PlaygroundCompilerLoadingStrategy;
 
@@ -74,7 +74,10 @@ class LocalDevServerCompiler {
             //
             // This method should not do the following
             // - Write contents to the filesystem.
-            const compilePass = null;
+            const compilePass = {
+                code: '',
+                map: ''
+            };
 
             // Need to configure that it passed, and that there were no errors.
             // Feels like we should also return the compiled app.js text.
@@ -84,7 +87,7 @@ class LocalDevServerCompiler {
             );
         } catch (ex) {
             // TODO: I don't like this method signature.
-            compiledResult = new LocalDevServerCompileResult(null, null, [ex]);
+            compiledResult = new LocalDevServerCompileResult('', null, [ex]);
         }
 
         console.log(

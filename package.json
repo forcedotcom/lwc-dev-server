@@ -6,15 +6,25 @@
   "author": "nkruk@salesforce.com",
   "license": "MIT",
   "bin": {
-    "localdevtools": "./bin/localdevtools.js"
+    "local-dev": "./bin/run"
   },
+  "oclif": {
+    "commands": "./dist/cli/commands",
+    "bin": "local-dev",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "files": [
+    "*"
+  ],
   "scripts": {
     "clean": "yarn rimraf dist",
-    "build": "tsc -p .",
+    "build": "tsc",
     "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
     "lint": "yarn eslint src --ext js,ts",
     "lint:ci": "yarn lint --output-file ./reports/eslint.log --no-color",
-    "start": "node dist/index.js",
+    "start:todo": "node ./bin/run server test-projects/ebikes-lwc",
     "debug": "node --inspect-brk dist/index.js",
     "test": "yarn jest src --passWithNoTests --runInBand",
     "test:debug": "node --inspect node_modules/.bin/jest src --runInBand",
@@ -25,10 +35,13 @@
   },
   "devDependencies": {
     "@lwc/engine": "0.37.0",
+    "@oclif/dev-cli": "^1",
+    "@oclif/test": "^1",
+    "@oclif/tslint": "^3",
     "@salesforce-ux/design-system": "^2.6.1",
     "@talon/compiler": "0.0.8",
-    "@talon/framework": "0.0.9",
     "@talon/force-modules": "^0.0.5",
+    "@talon/framework": "0.0.9",
     "@types/jest": "^24.0.11",
     "@types/node": "^11.13.4",
     "@typescript-eslint/eslint-plugin": "^1.6.0",
@@ -51,6 +64,9 @@
   },
   "dependencies": {
     "@lwc/compiler": "^0.34.7",
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/plugin-help": "^2",
     "express-http-proxy": "^1.5.1",
     "gulp": "^4.0.0",
     "memory-cache": "^0.2.0",

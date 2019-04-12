@@ -13,7 +13,7 @@ class LocalDevServerContainer {
     /**
      * Wrapper for the specified container to use when previewing.
      */
-    public writeToResponse(response) {
+    public writeToResponse(response: any) {
         console.log(response);
     }
 }

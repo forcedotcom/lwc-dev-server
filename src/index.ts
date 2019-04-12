@@ -44,7 +44,7 @@ const compiler = new LocalDevServerCompiler(
     // loader,
 );
 
-let lastCompileResult: LocalDevServerCompileResult = null;
+let lastCompileResult: LocalDevServerCompileResult;
 
 // Start watching for changes to the source code
 // So that we can tell the Local Dev Server to compile the changes and
