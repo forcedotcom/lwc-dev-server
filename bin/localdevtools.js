@@ -25,10 +25,7 @@ localDevServer.install();
 localDevServer.build();
 
 // Start the server?
-localDevServer.start();
+localDevServer.start(currentDirectory);
 
 // Yay! We did it.
 console.log('Done running local dev tools.');
-
-// All is good.
-process.exitCode = 0;
