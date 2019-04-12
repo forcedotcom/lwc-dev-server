@@ -1,3 +1,9 @@
 [
-    
+    {
+        "name": "home",
+        "path": "/",
+        "isRoot": true,
+        "view": "home",
+        "label": "Home"
+    }
 ]

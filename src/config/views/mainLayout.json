@@ -1,0 +1,8 @@
+{
+    "name": "mainLayout",
+    "label": "main",
+    "component": {
+        "name": "todo/app",
+        "regions": []
+    }
+}

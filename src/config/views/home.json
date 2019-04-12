@@ -1,0 +1,9 @@
+{
+    "name": "home",
+    "label": "Home",
+    "themeLayoutType": "main",
+    "component": {
+        "name": "todo/app",
+        "regions": []
+    }
+}

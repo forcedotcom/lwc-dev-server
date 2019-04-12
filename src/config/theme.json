@@ -1,10 +1,9 @@
 {
     "name": "duck",
     "label": "Duck Burrito",
-    "branding": "branding.json",
     "themeLayouts": {
-        "hero": {
-            "view": "heroLayout"
+        "main": {
+            "view": "mainLayout"
         }
     }
 }
