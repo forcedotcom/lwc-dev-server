@@ -42,16 +42,16 @@ export default class LocalDevServer {
 
     public build() {}
 
-    public async start(directory: string) {
+    public async start(entryPoint: string, directory: string) {
         // Okay in this directory lets do the following things.
 
         // Find where all the source code is.
         // This should have /lwc on the end, but I think the talon compiler expects the directory name to be the namespace passed
         // to the descriptor.
-        const lwc_directory = path.join(directory, 'force-app/main/default');
+        const lwc_directory = directory;
 
         // Pass that to the Talon compiler.
-        await this.run('component://lwc/app@en', lwc_directory);
+        await this.run(`component://${entryPoint}@en`, lwc_directory);
 
         // Start the talon site.
     }
@@ -59,34 +59,38 @@ export default class LocalDevServer {
     private async run(descriptor: string, templateDir: string) {
         // const t0 = performance.now();
         let exitCode = 0;
+        debugger;
+        const config = {
+            templateDir,
+            talonConfigJson: {},
+            srcDir: `${templateDir}/src`,
+            viewsDir: null,
+            indexHtml: path.join(__dirname, 'config', 'index.html'),
+            routesJson: path.join(__dirname, 'config', 'routes.json'),
+            labelsJson: path.join(__dirname, 'config', 'labels.json'),
+            themeJson: path.join(__dirname, 'config', 'theme.json'),
+            outputDir: `${templateDir}/dist`,
+            locale: `en_US`,
+            basePath: ``,
+            isPreview: true
+        };
 
-        // start context
-        return (
-            startContext({
-                templateDir
-            })
-                // Not sure what this does
-                .then(validate)
+        // valdiates metdata, we definately don't need this
+        // await validate();
 
-                // Request compilation of the passed module.
-                // Need typing on StaticResource
-                .then(() => {
-                    // generate a single resource
-                    if (descriptor) {
-                        return resourceService.get(descriptor);
-                    }
-                })
-                .then((staticResource: any /*: StaticResource*/) => {
-                    console.log(`Done. Received ${staticResource}`);
-                    // log(`Done compiling templates in ${Math.floor(performance.now() - t0)} ms`.bold.blue);
-                })
-                .catch((err: Error) => {
-                    console.error(err.stack || err.message || err);
-                })
-                .then(() => {
-                    // We obviously should keep this open till we kill the process
-                    endContext();
-                })
-        );
+        // we really need a descriptor
+        if (descriptor) {
+            try {
+                await startContext(config);
+                const staticResource = await resourceService.get(descriptor);
+                console.log(`Done. Received`);
+                console.dir(staticResource);
+            } catch (err) {
+                console.error(err.stack || err.message || err);
+            } finally {
+                // We obviously should keep this open till we kill the process
+                endContext();
+            }
+        }
     }
 }

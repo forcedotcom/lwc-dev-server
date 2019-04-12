@@ -21,14 +21,21 @@ export default class Server extends Command {
         // force: flags.boolean({char: 'f'}),
     };
 
-    static args = [{ name: 'directory', default: process.cwd() }];
+    static args = [
+        { name: 'directory', default: process.cwd() },
+        { name: 'main' }
+    ];
 
     async run() {
         const { args, flags } = this.parse(Server);
-        this.startServer(args.directory);
+        if (!args.main) {
+            this.log('Error: main must be specified');
+            process.exit(1);
+        }
+        this.startServer(args.main, args.directory);
     }
 
-    startServer(directory: string) {
+    startServer(main: string, directory: string) {
         //import localDevServer from './dist/LocalDevServer.js';
 
         // We're about to do something.
@@ -44,7 +51,7 @@ export default class Server extends Command {
         localDevServer.build();
 
         // Start the server?
-        localDevServer.start(directory);
+        localDevServer.start(main, directory);
 
         // Yay! We did it.
         console.log('Done running local dev tools.');
