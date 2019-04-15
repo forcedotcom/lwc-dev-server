@@ -2,7 +2,7 @@
   "name": "local-dev-server",
   "version": "1.0.0",
   "description": "Local dev server",
-  "main": "index.js",
+  "main": "LocalDevServer.ts",
   "author": "nkruk@salesforce.com",
   "license": "MIT",
   "bin": {
