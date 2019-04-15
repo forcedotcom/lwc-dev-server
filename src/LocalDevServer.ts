@@ -1,5 +1,8 @@
 import path from 'path';
 import colors from 'colors';
+import cpx from 'cpx';
+import mkdirp from 'mkdirp';
+
 //import performance from 'perf_hooks';
 import {
     startContext,
@@ -12,7 +15,23 @@ import validate from '@talon/compiler/src/metadata/metadata-validation';
 import { run } from '@talon/compiler/src/server/server';
 
 export default class LocalDevServer {
-    public install() {}
+    public install(directory: string) {
+        const assetsDir = path.join(directory, 'dist', 'public', 'assets');
+
+        mkdirp.sync(assetsDir);
+
+        // Copy Slds
+        // Whats the right thing to do here though?
+        this.copyStaticAsset(
+            'node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
+            assetsDir
+        );
+        this.copyStaticAsset(
+            'node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
+            assetsDir
+        );
+        this.copyStaticAsset('src/assets/favicon.ico', assetsDir);
+    }
 
     public build() {}
 
@@ -39,7 +58,7 @@ export default class LocalDevServer {
             outputDir: `${directory}/dist`,
             locale: `en_US`,
             basePath: ``,
-            isPreview: true
+            isPreview: false
         };
         const descriptor = `component://${entryPoint}@en`;
 
@@ -78,5 +97,15 @@ export default class LocalDevServer {
                 endContext();
             }
         }
+    }
+
+    private copyStaticAsset(src: string, dest: string) {
+        cpx.copy(src, dest, (e: Error) => {
+            if (e === undefined || e === null) {
+                console.log(`Done copying ${src} to ${dest}`);
+            } else {
+                console.error(`Error copying ${src} to ${dest}: ${e}`);
+            }
+        });
     }
 }
