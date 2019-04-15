@@ -30,6 +30,9 @@ export default class LocalDevServer {
             'node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
             assetsDir
         );
+
+        // Favicon
+        // Prevents an exception in raptor code when requesting a file that doesn't exist.
         this.copyStaticAsset('src/assets/favicon.ico', assetsDir);
     }
 
