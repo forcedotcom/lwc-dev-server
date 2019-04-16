@@ -48,7 +48,9 @@
     "@types/shelljs": "^0.8.4",
     "lwc-components-lightning": "1.1.6-alpha",
     "rimraf": "^2.6.3",
-    "shelljs": "^0.8.3"
+    "shelljs": "^0.8.3",
+    "jest": "^24.7.1",
+    "jest-runner-eslint": "^0.7.3"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-0",
