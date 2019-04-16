@@ -5,5 +5,12 @@
         "isRoot": true,
         "view": "home",
         "label": "Home"
+    },
+    {
+        "name": "preview",
+        "path": "/lwc/preview",
+        "isRoot": false,
+        "view": "preview",
+        "label": "LWC Preview"
     }
 ]

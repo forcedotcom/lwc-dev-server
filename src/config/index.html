@@ -3,12 +3,14 @@
 
 <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/assets/favicon.ico" />
+
     {{ talonInit context }}
     <!-- Your custom scripts here -->
     {{ talonViews context }}
+
     <script type="text/javascript" nonce="{{ sourceNonce }}">console.log("This script should NOT be blocked by CSP");</script>
     <link rel="stylesheet" href="{{ basePath }}/assets/styles/salesforce-lightning-design-system.min.css?{{ versionKey }}" />
-    <link rel="stylesheet" href="{{ basePath }}/assets/styles/styles.css?{{ versionKey }}" />
 </head>
 
 <body id="main">
