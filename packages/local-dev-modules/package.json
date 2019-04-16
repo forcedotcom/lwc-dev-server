@@ -1,0 +1,15 @@
+{
+  "name": "local-dev-modules",
+  "version": "1.0.0",
+  "description": "LWC Modules for Local Dev",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+  },
+  "lwc": {
+    "mapNamespaceFromPath": true,
+    "modules": [
+      "src/modules"
+    ]
+  }
+}

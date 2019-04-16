@@ -3,7 +3,7 @@
     "label": "Home",
     "themeLayoutType": "main",
     "component": {
-        "name": "todo/app",
+        "name": "localdevserver/app",
         "regions": []
     }
 }
