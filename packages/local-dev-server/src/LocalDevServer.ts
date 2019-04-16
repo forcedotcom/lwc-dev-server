@@ -140,5 +140,8 @@ export default class LocalDevServer {
         //     process.exitCode = 1;
         //     process.exit();
         // }
+        //         var sys=require("sys"), fs=require("fs");
+        // var content=fs.readFileSync("a.json", "utf8");
+        // sys.puts(JSON.parse(content));
     }
 }
