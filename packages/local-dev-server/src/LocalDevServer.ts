@@ -14,7 +14,7 @@ import metadataService from '@talon/compiler/src/metadata/metadata-service';
 import resourceService from '@talon/compiler/src/resources/resource-service';
 import validate from '@talon/compiler/src/metadata/metadata-validation';
 import { run } from '@talon/compiler/src/server/server';
-import Project from './cli/common/Project';
+import Project from './common/Project';
 import { fstat } from 'fs';
 
 export default class LocalDevServer {
