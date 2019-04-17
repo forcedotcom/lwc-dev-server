@@ -31,11 +31,11 @@ export default class LocalDevServer {
         // Copy Slds
         // Whats the right thing to do here though?
         this.copy(
-            'node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
+            '../../node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
             assetsDir
         );
         this.copy(
-            'node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
+            '../../node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
             assetsDir
         );
 
@@ -75,6 +75,7 @@ export default class LocalDevServer {
             isPreview: false
         };
         const descriptor = `component://${entryPoint}@en`;
+        console.log('Running Universal Container with config:');
         console.dir(config);
         // Pass that to the Talon compiler.
 
@@ -114,7 +115,7 @@ export default class LocalDevServer {
     }
 
     private copy(src: string, dest: string) {
-        cpx.copy(src, dest, (e: Error) => {
+        cpx.copy(path.join(__dirname, '..', src), dest, (e: Error) => {
             if (e === undefined || e === null) {
                 console.log(`Done copying ${src} to ${dest}`);
             } else {
