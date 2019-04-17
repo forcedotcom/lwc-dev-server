@@ -30,9 +30,9 @@
     "start:todo": "node ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "start:todo:debug": "node --inspect-brk ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "debug": "node --inspect-brk dist/index.js",
-    "test": "yarn jest src --passWithNoTests --runInBand",
+    "test": "yarn jest src --passWithNoTests --runInBand --coverage",
     "test:debug": "node --inspect node_modules/.bin/jest src --runInBand",
-    "test:ci": "yarn jest --maxWorkers=1 --ci --config jest.config.all.js",
+    "test:ci": "yarn jest --maxWorkers=1 --ci --config jest.config.all.js --coverage",
     "format": "prettier --write \"src/**/*.ts\"",
     "precommit": "lint-staged",
     "prepush": "yarn prepare && yarn lint && yarn test"

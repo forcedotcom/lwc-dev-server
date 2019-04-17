@@ -21,3 +21,6 @@ reports
 
 # Don't watch git for publishing to npm
 .git
+
+# Code Coverage
+packages/local-dev-server/coverage/
