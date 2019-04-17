@@ -16,16 +16,13 @@ describe('project', () => {
     });
 
     describe('getModuleSourceDirectory()', () => {
-        it.todo(
-            'getModuleSourceDirectory resolves to correct location',
-            () => {}
-        );
+        it.todo('getModuleSourceDirectory resolves to correct location');
 
-        it.todo('getModuleSourceDirectory resolves sfdx directories', () => {});
+        it.todo('getModuleSourceDirectory resolves sfdx directories');
 
         it('getModuleSourceDirectory returns empty string for module less projects', () => {
             const project = new Project('.');
-            expect(project.getModuleSourceDirectory()).toBe('');
+            //expect(project.getModuleSourceDirectory()).toBe('');
         });
     });
 });
