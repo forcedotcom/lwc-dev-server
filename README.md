@@ -6,7 +6,8 @@ To get Local Development for your tools follow the following steps.
 ```console
 npm add local-dev-server -D
 npm install
-npx local-dev-server
+# This of course will improve
+./node_modules/local-dev-server/packages/local-dev-server/bin/run [server|help]
 ```
 
 ## Configuration
@@ -16,7 +17,7 @@ The following configuration parameters are available.
 
 ```json
 {
-
+    "main": "..." # Name of the component to load in the default container
 }
 ```
 
