@@ -1,6 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import LocalDevServer from '../../LocalDevServer';
-import Project from '../common/Project';
+import Project from '../../common/Project';
+import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 
 export default class Server extends Command {
     static description = 'Starts the Lightning local devevelopment server';
@@ -30,11 +31,16 @@ export default class Server extends Command {
     public async run() {
         const { args, flags } = this.parse(Server);
         const project = new Project(args.directory);
-        const main = this.resolveMain(args.main);
+
+        // Use something to create this Config
+        const configuration = new LocalDevServerConfiguration();
+
+        const main = this.resolveMain(args.main, configuration);
 
         if (!project.isValid()) {
             console.error(
-                `Failed starting local dev server in directory: ${project.getDirectory()}. No project could be found in the current or parent directory.`
+                `Failed starting local dev server in directory: ${project.getDirectory()}. 
+                 No project could be found in the current or parent directory.`
             );
             process.exit();
         }
@@ -43,21 +49,22 @@ export default class Server extends Command {
             `Starting the local dev server in directory: ${project.getDirectory()} with component: ${main}`
         );
 
-        // if (!main) {
-        //     this.log('Error: main must be specified');
-        //     process.exit(1);
-        // }
-
         this.startServer(project, main);
     }
 
-    private resolveMain(main: String): string {
+    private resolveMain(
+        main: String,
+        configuration: LocalDevServerConfiguration
+    ): string {
         if (main !== null && main !== undefined) {
             return main.toString();
         }
 
-        // Try to get this from the config file.
-        return 'lwc/app';
+        if (configuration.getEntryPointComponent() !== null) {
+            return configuration.getEntryPointComponent();
+        }
+
+        return '';
     }
 
     private startServer(project: Project, main: string) {

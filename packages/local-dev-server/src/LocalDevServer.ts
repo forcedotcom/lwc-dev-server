@@ -14,7 +14,7 @@ import metadataService from '@talon/compiler/src/metadata/metadata-service';
 import resourceService from '@talon/compiler/src/resources/resource-service';
 import validate from '@talon/compiler/src/metadata/metadata-validation';
 import { run } from '@talon/compiler/src/server/server';
-import Project from './cli/common/Project';
+import Project from './common/Project';
 import { fstat } from 'fs';
 
 export default class LocalDevServer {
@@ -31,11 +31,11 @@ export default class LocalDevServer {
         // Copy Slds
         // Whats the right thing to do here though?
         this.copy(
-            'node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
+            '../../node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
             assetsDir
         );
         this.copy(
-            'node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
+            '../../node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
             assetsDir
         );
 
@@ -75,6 +75,7 @@ export default class LocalDevServer {
             isPreview: false
         };
         const descriptor = `component://${entryPoint}@en`;
+        console.log('Running Universal Container with config:');
         console.dir(config);
         // Pass that to the Talon compiler.
 
@@ -114,7 +115,7 @@ export default class LocalDevServer {
     }
 
     private copy(src: string, dest: string) {
-        cpx.copy(src, dest, (e: Error) => {
+        cpx.copy(path.join(__dirname, '..', src), dest, (e: Error) => {
             if (e === undefined || e === null) {
                 console.log(`Done copying ${src} to ${dest}`);
             } else {
@@ -140,5 +141,8 @@ export default class LocalDevServer {
         //     process.exitCode = 1;
         //     process.exit();
         // }
+        //         var sys=require("sys"), fs=require("fs");
+        // var content=fs.readFileSync("a.json", "utf8");
+        // sys.puts(JSON.parse(content));
     }
 }

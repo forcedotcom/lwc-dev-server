@@ -12,7 +12,8 @@
     "lint": "lerna run lint --stream --parallel",
     "precommit": "lerna run precommit --stream",
     "prepush": "lerna prepush --stream",
-    "start:todo": "lerna run --stream --scope local-dev-server start:todo"
+    "start:todo": "lerna run --stream --scope local-dev-server start:todo",
+    "watch": "lerna run --stream --scope local-dev-server watch"
   },
   "devDependencies": {
     "colors": "^1.3.2",
