@@ -3,7 +3,7 @@
     "label": "LWC Preview",
     "themeLayoutType": "main",
     "component": {
-        "name": "todo/app",
+        "name": "localdevserver/preview",
         "regions": []
     }
 }

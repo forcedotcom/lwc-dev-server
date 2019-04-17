@@ -75,12 +75,12 @@ export default class LocalDevServer {
             isPreview: false
         };
         const descriptor = `component://${entryPoint}@en`;
-
+        console.dir(config);
         // Pass that to the Talon compiler.
 
         // Uhhh.... this is apparently totally optional, server will compile if necessary automatically
 
-        //await this.compile(config, descriptor);
+        // await this.compile(config, descriptor);
 
         const options = {
             ...config,
