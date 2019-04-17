@@ -78,7 +78,7 @@ export default class Project {
         }
 
         // If Not, we should assume src for now.
-        // Get from config file too
+        // Get from config file too.
         return `${projectDirectory}/src`;
     }
 }
