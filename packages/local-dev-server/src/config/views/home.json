@@ -3,7 +3,7 @@
     "label": "Home",
     "themeLayoutType": "main",
     "component": {
-        "name": "localdevserver/app",
+        "name": "localdevserver/home",
         "regions": []
     }
 }

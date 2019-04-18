@@ -1,7 +1,21 @@
 {
-    "name": "mainLayout",
-    "label": "main",
-    "component": {
-        "name": "localdevserver/app"
-    }
+  "name": "mainLayout",
+  "label": "Default Layout",
+  "component": {
+      "name": "localdevserver/layout",
+      "regions": [
+          {
+              "name": "header",
+              "label": "Header",
+              "components": [
+              ]
+          },
+          {
+              "name": "footer",
+              "label": "Footer",
+              "components": [
+              ]
+          }
+      ]
+  }
 }

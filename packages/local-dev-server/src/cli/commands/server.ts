@@ -68,7 +68,6 @@ export default class Server extends Command {
         const localDevServer = new LocalDevServer();
 
         // Run Local Dev Server
-        localDevServer.install(project);
 
         // Do we need build?
         // Start seems sufficient.
