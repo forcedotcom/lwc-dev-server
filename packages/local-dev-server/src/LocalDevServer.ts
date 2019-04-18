@@ -59,7 +59,7 @@ export default class LocalDevServer {
             // Start the talon site.
             await run(
                 config,
-                3333,
+                project.getConfiguration().getHostPort(),
                 '' /*apiEndpoint*/,
                 true /*recordApiCalls*/
             );

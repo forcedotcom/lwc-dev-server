@@ -25,6 +25,11 @@ export default class LocalDevServerConfiguration {
     /**
      * Get the specified container type.
      * Currently only supports 'component'
+     *
+     * To specify in json file, use
+     * {
+     *  "containerType": "..."
+     * }
      */
     public getContainerType(): string {
         return this.configFromJson.containerType || 'component';
@@ -32,6 +37,11 @@ export default class LocalDevServerConfiguration {
 
     /**
      * What is the default component to view in the preview container.
+     *
+     * To specify in json file, use
+     * {
+     *  "main": "..."
+     * }
      */
     public getEntryPointComponent(): string {
         // Returns this.entryPoint first as it gets configured on the cli
@@ -41,16 +51,48 @@ export default class LocalDevServerConfiguration {
 
     /**
      * Namespace for the components on the filesystem.
+     *
+     * To specify in json file, use
+     * {
+     *  "namespace": "..."
+     * }
      */
     public getNamespace(): string {
         return this.configFromJson.namespace || 'c';
     }
 
     /**
-     *
+     * To specify in json file, use
+     * {
+     *  "moduleSourceDirectory": "..."
+     * }
      */
     public getModuleSourceDirectory(): string {
         return this.configFromJson.moduleSourceDirectory || '';
+    }
+
+    /**
+     * The address port for your local server. Defaults to 3333
+     * To specify in json file, use
+     * {
+     *  "port": 3334
+     * }
+     */
+    public getHostPort(): number {
+        const defaultPort = 3333;
+        let port = this.configFromJson.port;
+        if (port === undefined || port === null) {
+            return defaultPort;
+        }
+
+        port = port * 1;
+
+        // If there is no port, default to http://localhost/ which is port 80 by default.
+        if (port === 0) {
+            port = 80;
+        }
+
+        return port || defaultPort;
     }
 
     /**
