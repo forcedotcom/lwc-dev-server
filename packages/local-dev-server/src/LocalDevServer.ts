@@ -17,13 +17,11 @@ export default class LocalDevServer {
     public build() {}
 
     public async start(project: Project, entryPoint: string) {
-        console.log('LocalDevServer __dirname: ' + __dirname);
         // Okay in this directory lets do the following things.
 
         // Find where all the source code is.
         // This should have /lwc on the end, but I think the talon compiler expects the directory name to be the namespace passed
         // to the descriptor.
-
         const directory = project.getDirectory();
 
         const config = {
@@ -57,17 +55,11 @@ export default class LocalDevServer {
 
         await this.copyAssets(config.outputDir);
 
-        // Pass that to the Talon compiler.
-
-        // Uhhh.... this is apparently totally optional, server will compile if necessary automatically
-
-        // await this.compile(config, descriptor);
-
         try {
             // Start the talon site.
             await run(
                 config,
-                3333,
+                project.getConfiguration().getHostPort(),
                 '' /*apiEndpoint*/,
                 true /*recordApiCalls*/
             );

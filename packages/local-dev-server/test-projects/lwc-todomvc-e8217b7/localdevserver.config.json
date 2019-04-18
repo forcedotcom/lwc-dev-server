@@ -1,0 +1,5 @@
+{
+  "namespace": "todo",
+  "main": "app",
+  "moduleSourceDirectory": "src/"
+}
