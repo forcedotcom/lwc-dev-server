@@ -1,26 +1,48 @@
-class LocalDevServerConfiguration {
-    private entryPoint: string = 'app';
+import fs from 'fs';
 
-    constructor(configFilePath: string) {}
+export default class LocalDevServerConfiguration {
+    private entryPoint: string = '';
+    private readonly configFromJson: any;
+
+    constructor(configFilePath: string) {
+        const jsonFileContents = fs.readFileSync(configFilePath, 'utf-8');
+
+        if (jsonFileContents !== null && jsonFileContents !== '') {
+            this.configFromJson = JSON.parse(jsonFileContents);
+        } else {
+            this.configFromJson = {};
+        }
+    }
 
     /**
      * Get the specified container type.
      * Currently only supports 'component'
      */
     public getContainerType(): string {
-        return 'component';
+        return this.configFromJson.containerType || 'component';
     }
 
+    /**
+     * What is the default component to view in the preview container.
+     */
     public getEntryPointComponent(): string {
-        return this.entryPoint;
+        // Returns this.entryPoint first as it gets configured on the cli
+        // so if they specify that, it should override the json file.
+        return this.entryPoint || this.configFromJson.main;
     }
 
+    /**
+     * Namespace for the components on the filesystem.
+     */
     public getNamespace(): string {
-        return 'c';
+        return this.configFromJson.namespace || 'c';
     }
 
+    /**
+     *
+     */
     public getModuleSourceDirectory(): string {
-        return 'src/';
+        return this.configFromJson.moduleSourceDirectory || '';
     }
 
     /**
@@ -31,11 +53,9 @@ class LocalDevServerConfiguration {
      *
      * @param config Map of properties that were specified on the command line key=VALUE
      */
-    public configureFromCliArguments(config: object) {
+    public configureFromCliArguments(config: any) {
         if (config.hasOwnProperty('main')) {
-            //this.entryPoint = config.main;
+            this.entryPoint = config.main;
         }
     }
 }
-
-export default LocalDevServerConfiguration;

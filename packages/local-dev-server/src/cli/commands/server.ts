@@ -61,9 +61,14 @@ export default class Server extends Command {
         //import localDevServer from './dist/LocalDevServer.js';
 
         // We're about to do something.
-        console.log(
-            `Running local dev tools on directory: ${project.getDirectory()}`
-        );
+        console.log(`Running local dev server with the config values`);
+        console.dir({
+            directory: project.getDirectory(),
+            moduleSourceDirectory: project.getModuleSourceDirectory(),
+            main: main,
+            namespace: project.getConfiguration().getNamespace(),
+            containerType: project.getConfiguration().getContainerType()
+        });
 
         const localDevServer = new LocalDevServer();
 
