@@ -88,8 +88,19 @@ export default class LocalDevServer {
 
             indexHtml: path.join(__dirname, 'config', 'index.html')
         };
-        // Start the talon site.
-        await run(options, 3333, '' /*apiEndpoint*/, true /*recordApiCalls*/);
+
+        try {
+            // Start the talon site.
+            await run(
+                options,
+                3333,
+                '' /*apiEndpoint*/,
+                true /*recordApiCalls*/
+            );
+        } catch (e) {
+            console.error(e);
+            process.exit(0);
+        }
     }
 
     private async compile(config: any, descriptor: string) {
@@ -122,27 +133,5 @@ export default class LocalDevServer {
                 console.error(`Error copying ${src} to ${dest}: ${e}`);
             }
         });
-    }
-
-    private processViews(
-        viewsDirectory: string,
-        outputDir: string,
-        entryPoint: string
-    ) {
-        // For each of the views, open them up and update the component in them.
-        // try {
-        //     const files = fs.readdirSync(viewsDirectory, {});
-        //     files.forEach((value: string, _index: number, array: string[]) => {
-        //         //const content = fs.readFileSync(file);
-        //         const json = require(value);
-        //     });
-        // } catch(err) {
-        //     console.error(`Error reading views files: ${err}`);
-        //     process.exitCode = 1;
-        //     process.exit();
-        // }
-        //         var sys=require("sys"), fs=require("fs");
-        // var content=fs.readFileSync("a.json", "utf8");
-        // sys.puts(JSON.parse(content));
     }
 }

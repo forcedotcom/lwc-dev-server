@@ -32,14 +32,19 @@ export default class Server extends Command {
         const { args, flags } = this.parse(Server);
         const project = new Project(args.directory);
 
-        // Use something to create this Config
-        const configuration = new LocalDevServerConfiguration();
+        // Gets the default configuration and then
+        // applies the values from the configuration json file.
+        const configuration = project.getConfiguration();
 
-        const main = this.resolveMain(args.main, configuration);
+        // Takes the configured values from the JSON file and applies
+        // the values from the CLI run
+        configuration.configureFromCliArguments(args);
+
+        const main = configuration.getEntryPointComponent();
 
         if (!project.isValid()) {
             console.error(
-                `Failed starting local dev server in directory: ${project.getDirectory()}. 
+                `Failed starting local dev server in directory: ${project.getDirectory()}.
                  No project could be found in the current or parent directory.`
             );
             process.exit();
@@ -50,21 +55,6 @@ export default class Server extends Command {
         );
 
         this.startServer(project, main);
-    }
-
-    private resolveMain(
-        main: String,
-        configuration: LocalDevServerConfiguration
-    ): string {
-        if (main !== null && main !== undefined) {
-            return main.toString();
-        }
-
-        if (configuration.getEntryPointComponent() !== null) {
-            return configuration.getEntryPointComponent();
-        }
-
-        return '';
     }
 
     private startServer(project: Project, main: string) {
