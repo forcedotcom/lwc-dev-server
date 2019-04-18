@@ -5,7 +5,15 @@ export default class LocalDevServerConfiguration {
     private readonly configFromJson: any;
 
     constructor(configFilePath: string) {
-        const jsonFileContents = fs.readFileSync(configFilePath, 'utf-8');
+        let jsonFileContents = null;
+        try {
+            jsonFileContents = fs.readFileSync(configFilePath, 'utf-8');
+        } catch (e) {
+            console.error(
+                `Loading file ${configFilePath} failed with error: `,
+                e
+            );
+        }
 
         if (jsonFileContents !== null && jsonFileContents !== '') {
             this.configFromJson = JSON.parse(jsonFileContents);
