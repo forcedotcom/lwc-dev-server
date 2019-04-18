@@ -15,7 +15,7 @@ To configure the local-dev-server, supply a localdevserver.config.json file at t
 
 The following configuration parameters are available.
 
-```json
+```json5
 {
     // What namespace to use referencing your Lightning Web Components
     "namespace": "c",
@@ -46,13 +46,11 @@ yarn build
 As you are making changes, you'll probably want 
 
 ```console
+# Watch for changes to source files and recompile.
 yarn watch
-```
 
-and
-
-```console
-yarn test
+# Watch for changes to files and run tests
+yarn test:watch
 ```
 
 
