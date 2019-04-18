@@ -16,6 +16,7 @@ import validate from '@talon/compiler/src/metadata/metadata-validation';
 import { run } from '@talon/compiler/src/server/server';
 import Project from './common/Project';
 import { fstat } from 'fs';
+import rimraf from 'rimraf';
 
 export default class LocalDevServer {
     public install(project: Project) {
@@ -69,7 +70,7 @@ export default class LocalDevServer {
             routesJson: path.join(__dirname, 'config', 'routes.json'),
             labelsJson: path.join(__dirname, 'config', 'labels.json'),
             themeJson: path.join(__dirname, 'config', 'theme.json'),
-            outputDir: `${directory}/dist`,
+            outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,
             isPreview: false
@@ -77,6 +78,14 @@ export default class LocalDevServer {
         const descriptor = `component://${entryPoint}@en`;
         console.log('Running Universal Container with config:');
         console.dir(config);
+
+        // fixme: clear outputDir for now because of a caching issue
+        // with talon (maybe we need to force a recompile of the views?)
+        if (fs.existsSync(config.outputDir)) {
+            rimraf.sync(config.outputDir);
+            console.log('cleared output dir');
+        }
+
         // Pass that to the Talon compiler.
 
         // Uhhh.... this is apparently totally optional, server will compile if necessary automatically
