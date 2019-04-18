@@ -31,6 +31,7 @@
     "start:todo:debug": "node --inspect-brk ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "debug": "node --inspect-brk dist/index.js",
     "test": "yarn jest src --passWithNoTests --runInBand --coverage",
+    "test:watch": "yarn jest src --passWithNoTests --runInBand --coverage --watch",
     "test:debug": "node --inspect node_modules/.bin/jest src --runInBand",
     "test:ci": "yarn jest --maxWorkers=1 --ci --config jest.config.all.js --coverage",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -46,11 +47,12 @@
     "@talon/force-modules": "^0.0.5",
     "@talon/framework": "0.0.9",
     "@types/shelljs": "^0.8.4",
+    "graceful-fs": "^4.1.15",
+    "jest": "^24.7.1",
+    "jest-runner-eslint": "^0.7.3",
     "lwc-components-lightning": "1.1.6-alpha",
     "rimraf": "^2.6.3",
-    "shelljs": "^0.8.3",
-    "jest": "^24.7.1",
-    "jest-runner-eslint": "^0.7.3"
+    "shelljs": "^0.8.3"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-0",
@@ -62,12 +64,12 @@
     "cpx": "^1.5.0",
     "express-http-proxy": "^1.5.1",
     "gulp": "^4.0.0",
+    "local-dev-modules": "^1.0.0",
     "memory-cache": "^0.2.0",
     "morgan": "^1.9.1",
     "object-hash": "^1.3.1",
     "rollup": "^0.66.6",
     "rollup-plugin-compat": "^0.21.4",
-    "tslint": "^5.0.0",
-    "local-dev-modules": "^1.0.0"
+    "tslint": "^5.0.0"
   }
 }

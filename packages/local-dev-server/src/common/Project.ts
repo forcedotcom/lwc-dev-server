@@ -1,39 +1,66 @@
 import fs from 'fs';
 import path from 'path';
+import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
+import SfdxConfiguration from '../user/SfdxConfiguration';
 
 export default class Project {
-    private _isValid = false;
-    private readonly _isSfdx: boolean;
-    private readonly _directory: string;
-    private readonly _modulesSourceDirectory: string;
+    /**
+     * Would not be valid if you ran the command on a directory without a package.json file.
+     */
+    private isValidProject = false;
+    private readonly isSfdxProject: boolean;
+    private readonly rootDirectory: string;
+    private readonly _modulesSourceDirectory: string | null;
+    private readonly sfdxConfiguration: SfdxConfiguration;
+    private readonly configuration: LocalDevServerConfiguration;
 
     constructor(directory: string) {
         // Directory could be either the project, or a folder in a project.
         // Resolve to find the right folder.
-        this._directory = this.resolveProjectDirectory(directory);
-        this._isSfdx = fs.existsSync(
-            path.join(this._directory, 'sfdx-project.json')
+        this.rootDirectory = this.resolveProjectDirectory(directory);
+
+        // Base configuration for the project.
+        // Also merges the config at localdevserver.config.json as well
+        const configurationPath = path.join(
+            this.rootDirectory,
+            'localdevserver.config.json'
         );
+        this.configuration = new LocalDevServerConfiguration(configurationPath);
+
+        // Resolve the sfdx-project.json file at the root of the project.
+        // If there is no configuration file, assume we aren't in that project structure.
+        const sfdxConfigurationFileLocation = path.join(
+            this.rootDirectory,
+            'sfdx-project.json'
+        );
+        this.sfdxConfiguration = new SfdxConfiguration(
+            sfdxConfigurationFileLocation
+        );
+        this.isSfdxProject = this.sfdxConfiguration.hasConfigurationFile();
 
         // Must be after isSfdx setting
-        this._modulesSourceDirectory = this.resolveModulesSourceDirectory(
-            directory
-        );
+        this._modulesSourceDirectory = this.isValid()
+            ? this.resolveModulesSourceDirectory()
+            : null;
+    }
+
+    public getConfiguration(): LocalDevServerConfiguration {
+        return this.configuration;
     }
 
     public isValid() {
-        return this._isValid;
+        return this.isValidProject;
     }
 
     public isSfdx() {
-        return this._isSfdx;
+        return this.isSfdxProject;
     }
 
     public getDirectory(): string {
-        return this._directory;
+        return this.rootDirectory;
     }
 
-    public getModuleSourceDirectory(): string {
+    public getModuleSourceDirectory(): string | null {
         return this._modulesSourceDirectory;
     }
 
@@ -42,8 +69,8 @@ export default class Project {
     private resolveProjectDirectory(directory: string): string {
         let currentDirectory = directory;
 
-        if (currentDirectory === this._directory) {
-            return this._directory;
+        if (currentDirectory === this.rootDirectory) {
+            return this.rootDirectory;
         }
 
         if (currentDirectory === '.' || currentDirectory === '') {
@@ -52,7 +79,7 @@ export default class Project {
 
         if (!fs.existsSync(currentDirectory)) {
             console.error(`directory did not exist: ${currentDirectory}`);
-            this._isValid = false;
+            this.isValidProject = false;
             return currentDirectory;
         }
 
@@ -64,21 +91,30 @@ export default class Project {
             );
         }
 
-        this._isValid = true;
+        this.isValidProject = true;
         return currentDirectory;
     }
 
-    private resolveModulesSourceDirectory(directory: string): string {
-        const projectDirectory = this.resolveProjectDirectory(directory);
+    private resolveModulesSourceDirectory(): string {
+        // Try to get the value from the configuration file
+        const dirFromConfig = this.configuration.getModuleSourceDirectory();
+        if (dirFromConfig !== null || dirFromConfig !== '') {
+            return dirFromConfig;
+        }
 
         // If SFDX, we should know the path.
         if (this.isSfdx()) {
-            // force-app is configurable, need to read that from sfdx-project.json
-            return 'force-app/main/default/lwc';
+            // TODO: Support more than one package
+            const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
+            if (packageDirectories.length > 0) {
+                return `${packageDirectories[0]}/main/default/lwc`;
+            }
+
+            // What would we expect if no value is specified?
+            return '';
         }
 
         // If Not, we should assume src for now.
-        // Get from config file too.
-        return `${projectDirectory}/src`;
+        return `${this.rootDirectory}/src`;
     }
 }

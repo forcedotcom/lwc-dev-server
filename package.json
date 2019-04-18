@@ -9,6 +9,7 @@
     "clean": "lerna run clean --stream",
     "build": "lerna run build --stream",
     "test": "lerna run test --stream --no-bail -- --colors",
+    "test:watch": "lerna run --stream --scope local-dev-server test:watch ",
     "lint": "lerna run lint --stream --parallel",
     "precommit": "lerna run precommit --stream",
     "prepush": "lerna prepush --stream",
