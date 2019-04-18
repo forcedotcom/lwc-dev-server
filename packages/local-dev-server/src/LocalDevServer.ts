@@ -1,50 +1,19 @@
 import fs from 'fs';
 import path from 'path';
-import colors from 'colors';
 import cpx from 'cpx';
 import mkdirp from 'mkdirp';
-
-//import performance from 'perf_hooks';
 import {
     startContext,
-    endContext,
-    getContext
+    endContext
 } from '@talon/compiler/src/context/context-service';
 import metadataService from '@talon/compiler/src/metadata/metadata-service';
 import resourceService from '@talon/compiler/src/resources/resource-service';
 import validate from '@talon/compiler/src/metadata/metadata-validation';
 import { run } from '@talon/compiler/src/server/server';
 import Project from './common/Project';
-import { fstat } from 'fs';
 import rimraf from 'rimraf';
 
 export default class LocalDevServer {
-    public install(project: Project) {
-        const assetsDir = path.join(
-            project.getDirectory(),
-            'dist',
-            'public',
-            'assets'
-        );
-
-        mkdirp.sync(assetsDir);
-
-        // Copy Slds
-        // Whats the right thing to do here though?
-        this.copy(
-            '../../node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
-            assetsDir
-        );
-        this.copy(
-            '../../node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
-            assetsDir
-        );
-
-        // Favicon
-        // Prevents an exception in raptor code when requesting a file that doesn't exist.
-        this.copy('src/assets/favicon.ico', assetsDir);
-    }
-
     public build() {}
 
     public async start(project: Project, entryPoint: string) {
@@ -86,22 +55,18 @@ export default class LocalDevServer {
             console.log('cleared output dir');
         }
 
+        await this.copyAssets(config.outputDir);
+
         // Pass that to the Talon compiler.
 
         // Uhhh.... this is apparently totally optional, server will compile if necessary automatically
 
         // await this.compile(config, descriptor);
 
-        const options = {
-            ...config,
-
-            indexHtml: path.join(__dirname, 'config', 'index.html')
-        };
-
         try {
             // Start the talon site.
             await run(
-                options,
+                config,
                 3333,
                 '' /*apiEndpoint*/,
                 true /*recordApiCalls*/
@@ -110,6 +75,27 @@ export default class LocalDevServer {
             console.error(e);
             process.exit(0);
         }
+    }
+
+    public async copyAssets(dest: string) {
+        const assetsDir = path.join(dest, 'public', 'assets');
+
+        mkdirp.sync(assetsDir);
+
+        // Copy Slds
+        // Whats the right thing to do here though?
+        this.copy(
+            '../../node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
+            assetsDir
+        );
+        this.copy(
+            '../../node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
+            assetsDir
+        );
+
+        // Favicon
+        // Prevents an exception in raptor code when requesting a file that doesn't exist.
+        this.copy('src/assets/favicon.ico', assetsDir);
     }
 
     private async compile(config: any, descriptor: string) {
