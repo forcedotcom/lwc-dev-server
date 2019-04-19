@@ -4,21 +4,24 @@ export default class LocalDevServerConfiguration {
     private entryPoint: string = '';
     private readonly configFromJson: any;
 
-    constructor(configFilePath: string) {
-        let jsonFileContents = null;
-        try {
-            jsonFileContents = fs.readFileSync(configFilePath, 'utf-8');
-        } catch (e) {
-            console.error(
-                `Loading file ${configFilePath} failed with error: `,
-                e
-            );
-        }
-
-        if (jsonFileContents !== null && jsonFileContents !== '') {
-            this.configFromJson = JSON.parse(jsonFileContents);
-        } else {
-            this.configFromJson = {};
+    constructor(configFilePath?: string) {
+        if (configFilePath) {
+            let jsonFileContents = null;
+            if (fs.existsSync(configFilePath)) {
+                try {
+                    jsonFileContents = fs.readFileSync(configFilePath, 'utf-8');
+                } catch (e) {
+                    console.error(
+                        `Loading file ${configFilePath} failed with error: `,
+                        e
+                    );
+                }
+            }
+            if (jsonFileContents !== null && jsonFileContents !== '') {
+                this.configFromJson = JSON.parse(jsonFileContents);
+            } else {
+                this.configFromJson = {};
+            }
         }
     }
 

@@ -44,10 +44,10 @@
     "@oclif/tslint": "^3",
     "@salesforce-ux/design-system": "^2.6.1",
     "@types/shelljs": "^0.8.4",
-    "graceful-fs": "^4.1.15",
     "jest": "^24.7.1",
     "jest-runner-eslint": "^0.7.3",
     "lwc-components-lightning": "1.1.6-alpha",
+    "mock-fs": "^4.8.0",
     "rimraf": "^2.6.3",
     "shelljs": "^0.8.3"
   },

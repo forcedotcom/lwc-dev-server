@@ -52,7 +52,3 @@ yarn watch
 # Watch for changes to files and run tests
 yarn test:watch
 ```
-
-
-
-

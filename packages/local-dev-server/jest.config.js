@@ -8,5 +8,8 @@ module.exports = {
     collectCoverage: true,
     coverageReporters: ['json', 'html', 'text'],
     collectCoverageFrom: ['src/**/*.ts', 'src/**/*.js'],
-    coveragePathIgnorePatterns: ['<rootDir>/node_modules']
+    coveragePathIgnorePatterns: [
+        '<rootDir>/node_modules',
+        '<rootDir>/test-projects'
+    ]
 };
