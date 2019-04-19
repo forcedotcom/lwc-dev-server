@@ -10,7 +10,7 @@ export default class Project {
     private isValidProject = false;
     private readonly isSfdxProject: boolean;
     private readonly rootDirectory: string;
-    private readonly _modulesSourceDirectory: string | null;
+    private readonly modulesSourceDirectory: string | null;
     private readonly sfdxConfiguration: SfdxConfiguration;
     private readonly configuration: LocalDevServerConfiguration;
 
@@ -19,29 +19,38 @@ export default class Project {
         // Resolve to find the right folder.
         this.rootDirectory = this.resolveProjectDirectory(directory);
 
-        // Base configuration for the project.
-        // Also merges the config at localdevserver.config.json as well
-        const configurationPath = path.join(
-            this.rootDirectory,
-            'localdevserver.config.json'
-        );
-        this.configuration = new LocalDevServerConfiguration(configurationPath);
+        if (this.isValidProject) {
+            // Base configuration for the project.
+            // Also merges the config at localdevserver.config.json as well
+            const configurationPath = path.join(
+                this.rootDirectory,
+                'localdevserver.config.json'
+            );
+            this.configuration = new LocalDevServerConfiguration(
+                configurationPath
+            );
 
-        // Resolve the sfdx-project.json file at the root of the project.
-        // If there is no configuration file, assume we aren't in that project structure.
-        const sfdxConfigurationFileLocation = path.join(
-            this.rootDirectory,
-            'sfdx-project.json'
-        );
-        this.sfdxConfiguration = new SfdxConfiguration(
-            sfdxConfigurationFileLocation
-        );
-        this.isSfdxProject = this.sfdxConfiguration.hasConfigurationFile();
+            // Resolve the sfdx-project.json file at the root of the project.
+            // If there is no configuration file, assume we aren't in that project structure.
+            const sfdxConfigurationFileLocation = path.join(
+                this.rootDirectory,
+                'sfdx-project.json'
+            );
+            this.sfdxConfiguration = new SfdxConfiguration(
+                sfdxConfigurationFileLocation
+            );
+            this.isSfdxProject = this.sfdxConfiguration.hasConfigurationFile();
 
-        // Must be after isSfdx setting
-        this._modulesSourceDirectory = this.isValid()
-            ? this.resolveModulesSourceDirectory()
-            : null;
+            // Must be after isSfdx setting
+            this.modulesSourceDirectory = this.isValid()
+                ? this.resolveModulesSourceDirectory()
+                : null;
+        } else {
+            this.isSfdxProject = false;
+            this.modulesSourceDirectory = null;
+            this.sfdxConfiguration = new SfdxConfiguration();
+            this.configuration = new LocalDevServerConfiguration();
+        }
     }
 
     public getConfiguration(): LocalDevServerConfiguration {
@@ -61,13 +70,22 @@ export default class Project {
     }
 
     public getModuleSourceDirectory(): string | null {
-        return this._modulesSourceDirectory;
+        return this.modulesSourceDirectory;
     }
 
     // Look Up and down for package.json
     // Feels like a Project data structure here.
-    private resolveProjectDirectory(directory: string): string {
+    private resolveProjectDirectory(
+        directory: string,
+        previousDirectory?: string
+    ): string {
         let currentDirectory = directory;
+
+        // We've reached the top. Fail as invalid.
+        if (currentDirectory === previousDirectory) {
+            this.isValidProject = false;
+            return this.rootDirectory;
+        }
 
         if (currentDirectory === this.rootDirectory) {
             return this.rootDirectory;
@@ -78,7 +96,6 @@ export default class Project {
         }
 
         if (!fs.existsSync(currentDirectory)) {
-            console.error(`directory did not exist: ${currentDirectory}`);
             this.isValidProject = false;
             return currentDirectory;
         }
@@ -87,7 +104,8 @@ export default class Project {
         // What if we find nothing?
         if (!fs.existsSync(path.join(currentDirectory, 'package.json'))) {
             return this.resolveProjectDirectory(
-                path.join(currentDirectory, '..')
+                path.join(currentDirectory, '..'),
+                currentDirectory
             );
         }
 
