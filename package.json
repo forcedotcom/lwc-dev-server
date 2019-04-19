@@ -16,7 +16,8 @@
     "start:todo": "lerna run --stream --scope local-dev-server start:todo",
     "watch": "lerna run --stream --scope local-dev-server watch",
     "link-dev": "lerna exec yarn link",
-    "unlink-dev": "lerna exec yarn unlink --no-bail"
+    "unlink-dev": "lerna exec yarn unlink --no-bail",
+    "link-talon": "lerna exec yarn link @talon/common @talon/framework @talon/compiler --scope local-dev-server"
   },
   "devDependencies": {
     "colors": "^1.3.2",
