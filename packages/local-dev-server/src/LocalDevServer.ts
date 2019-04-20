@@ -55,6 +55,8 @@ export default class LocalDevServer {
 
         await this.copyAssets(config.outputDir);
 
+        await this.updatePreviewView(config.viewsDir, entryPoint);
+
         try {
             // Start the talon site.
             await run(
@@ -88,6 +90,15 @@ export default class LocalDevServer {
         // Favicon
         // Prevents an exception in raptor code when requesting a file that doesn't exist.
         this.copy('src/assets/favicon.ico', assetsDir);
+    }
+
+    private async updatePreviewView(dir: string, main: string) {
+        const previewPath = path.join(dir, 'preview.json');
+
+        const json = JSON.parse(fs.readFileSync(previewPath, 'utf-8'));
+        json.component.regions[0].components[0].name = main;
+
+        fs.writeFileSync(previewPath, JSON.stringify(json, null, 2));
     }
 
     private async compile(config: any, descriptor: string) {
