@@ -100,7 +100,7 @@ describe('project', () => {
     });
 
     describe('getModuleSourceDirectory()', () => {
-        test('when moduleSourceDirectory is specified in the json config file, it is returned from getModuleSourceDirectory on the project.', () => {
+        test('handles a relative moduleSourceDirectory specified in the json config', () => {
             mock({
                 'my-project': {
                     'package.json': '{}',
@@ -111,14 +111,43 @@ describe('project', () => {
 
             const project = new Project('my-project/');
 
-            expect(project.getModuleSourceDirectory()).toBe('modulesSrc/');
+            expect(project.getModuleSourceDirectory()).toBe(
+                'my-project/modulesSrc/'
+            );
+        });
+
+        test('handles an absolute moduleSourceDirectory specified in the json config', () => {
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json':
+                        '{"moduleSourceDirectory": "/foo/modulesSrc/"}'
+                }
+            });
+
+            const project = new Project('my-project/');
+
+            expect(project.getModuleSourceDirectory()).toBe('/foo/modulesSrc/');
+        });
+
+        test('uses a fallback when moduleSourceDirectory is not specified in the json config', () => {
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': '{}'
+                }
+            });
+
+            const project = new Project('my-project/');
+
+            expect(project.getModuleSourceDirectory()).toBe('my-project/src');
         });
 
         test.todo(
             'when project is an sfdx project, then we can infer the modules directory from the packagedModules property'
         );
 
-        test('when moduleSourceDirectory is not defined for a non sfdx project, the moduleSourceDirectory is specified as null', () => {
+        test('returns null when the project is invalid', () => {
             mock({
                 'my-project': {
                     'package.json': '{}',

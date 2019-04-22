@@ -136,6 +136,6 @@ export default class Project {
         }
 
         // If Not, we should assume src for now.
-        return `${this.rootDirectory}/src`;
+        return path.join(this.rootDirectory, 'src');
     }
 }
