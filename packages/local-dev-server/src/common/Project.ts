@@ -116,7 +116,7 @@ export default class Project {
     private resolveModulesSourceDirectory(): string {
         // Try to get the value from the configuration file
         const dirFromConfig = this.configuration.getModuleSourceDirectory();
-        if (dirFromConfig !== null || dirFromConfig !== '') {
+        if (dirFromConfig !== null && dirFromConfig !== '') {
             return dirFromConfig;
         }
 
