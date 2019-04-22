@@ -14,6 +14,7 @@
     "precommit": "lerna run precommit --stream",
     "prepush": "lerna prepush --stream",
     "start:todo": "lerna run --stream --scope local-dev-server start:todo",
+    "start:todo:debug": "lerna run --stream --scope local-dev-server start:todo:debug",
     "watch": "lerna run --stream --scope local-dev-server watch",
     "link-dev": "lerna exec yarn link",
     "unlink-dev": "lerna exec yarn unlink --no-bail",
