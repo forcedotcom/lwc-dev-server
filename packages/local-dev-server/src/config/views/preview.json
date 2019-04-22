@@ -4,6 +4,16 @@
     "themeLayoutType": "main",
     "component": {
         "name": "localdevserver/preview",
-        "regions": []
+        "regions": [
+          {
+              "name": "entryPoint",
+              "label": "entryPoint",
+              "components": [
+                {
+                  "name": ""
+                }
+              ]
+          }
+        ]
     }
 }

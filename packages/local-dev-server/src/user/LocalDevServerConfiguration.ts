@@ -49,7 +49,16 @@ export default class LocalDevServerConfiguration {
     public getEntryPointComponent(): string {
         // Returns this.entryPoint first as it gets configured on the cli
         // so if they specify that, it should override the json file.
-        return this.entryPoint || this.configFromJson.main;
+        const entryPoint = this.entryPoint || this.configFromJson.main;
+        if (!entryPoint) {
+            return '';
+        }
+
+        if (!entryPoint.includes('/')) {
+            return `${this.getNamespace()}/${entryPoint}`;
+        }
+
+        return entryPoint;
     }
 
     /**
