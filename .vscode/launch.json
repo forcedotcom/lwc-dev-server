@@ -1,0 +1,20 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug local-dev-server",
+        "program": "${workspaceFolder}/packages/local-dev-server/bin/run",
+        "args": [
+          "server",
+          "${workspaceFolder}/packages/local-dev-server/test-projects/lwc-todomvc-e8217b7",
+          "todo/app"
+        ],
+        "console": "integratedTerminal"
+      }
+    ]
+}
