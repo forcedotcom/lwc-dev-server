@@ -115,8 +115,11 @@ export default class Project {
 
     private resolveModulesSourceDirectory(): string {
         // Try to get the value from the configuration file
-        const dirFromConfig = this.configuration.getModuleSourceDirectory();
+        let dirFromConfig = this.configuration.getModuleSourceDirectory();
         if (dirFromConfig !== null && dirFromConfig !== '') {
+            if (!path.isAbsolute(dirFromConfig)) {
+                dirFromConfig = path.join(this.rootDirectory, dirFromConfig);
+            }
             return dirFromConfig;
         }
 
@@ -133,6 +136,6 @@ export default class Project {
         }
 
         // If Not, we should assume src for now.
-        return `${this.rootDirectory}/src`;
+        return path.join(this.rootDirectory, 'src');
     }
 }
