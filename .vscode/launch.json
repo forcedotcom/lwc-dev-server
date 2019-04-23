@@ -14,6 +14,7 @@
           "${workspaceFolder}/packages/local-dev-server/test-projects/lwc-todomvc-e8217b7",
           "todo/app"
         ],
+        "cwd": "${workspaceFolder}/packages/local-dev-server",
         "console": "integratedTerminal"
       }
     ]
