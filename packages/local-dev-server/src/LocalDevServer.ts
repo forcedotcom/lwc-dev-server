@@ -25,7 +25,7 @@ const routesJson = [
     },
     {
         name: 'preview',
-        path: '/lwc/preview',
+        path: "/lwc/preview/:cmp*",
         isRoot: false,
         view: 'preview',
         label: 'LWC Preview'
@@ -129,8 +129,6 @@ export default class LocalDevServer {
 
         await this.copyAssets(config.outputDir);
 
-        await this.updatePreviewView(config.viewsDir.preview, entryPoint);
-
         try {
             // Start the talon site.
             await run(
@@ -164,10 +162,6 @@ export default class LocalDevServer {
         // Favicon
         // Prevents an exception in raptor code when requesting a file that doesn't exist.
         this.copy('src/assets/favicon.ico', assetsDir);
-    }
-
-    private async updatePreviewView(viewJson: any, main: string) {
-        viewJson.component.regions[0].components[0].name = main;
     }
 
     private async compile(config: any, descriptor: string) {

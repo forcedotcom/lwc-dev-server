@@ -1,19 +1,11 @@
 {
-    "name": "preview",
-    "label": "LWC Preview",
-    "themeLayoutType": "main",
-    "component": {
-        "name": "localdevserver/preview",
-        "regions": [
-          {
-              "name": "entryPoint",
-              "label": "entryPoint",
-              "components": [
-                {
-                  "name": ""
-                }
-              ]
-          }
-        ]
-    }
+  "name": "preview",
+  "label": "LWC Preview",
+  "themeLayoutType": "main",
+  "component": {
+      "name": "localdevserver/preview",
+      "attributes": {
+        "cmp": "{!cmp}"
+      }
+  }
 }
