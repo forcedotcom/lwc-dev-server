@@ -53,8 +53,8 @@
   },
   "dependencies": {
     "@babel/core": "^7.0.0-0",
-    "@lwc/compiler": "^0.36.0",
-    "@lwc/engine": "^0.36.0",
+    "@lwc/compiler": "^0.37.2",
+    "@lwc/engine": "^0.37.2",
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",

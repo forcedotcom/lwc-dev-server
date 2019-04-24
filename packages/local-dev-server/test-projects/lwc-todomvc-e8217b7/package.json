@@ -24,10 +24,10 @@
     "url": "https://github.com/salesforce/lwc-todomvc"
   },
   "devDependencies": {
-    "@lwc/compiler": "0.34.0",
-    "@lwc/engine": "0.34.0",
-    "@lwc/jest-preset": "0.34.0",
-    "@lwc/rollup-plugin": "0.34.0",
+    "@lwc/compiler": "0.37.2",
+    "@lwc/engine": "0.37.2",
+    "@lwc/jest-preset": "0.37.2",
+    "@lwc/rollup-plugin": "0.37.2",
     "@salesforce/eslint-config-lwc": "~0.3.0",
     "babel-eslint": "^10.0.1",
     "concurrently": "~4.0.1",
