@@ -1,9 +1,0 @@
-{
-    "name": "duck",
-    "label": "Duck Burrito",
-    "themeLayouts": {
-        "main": {
-            "view": "mainLayout"
-        }
-    }
-}
