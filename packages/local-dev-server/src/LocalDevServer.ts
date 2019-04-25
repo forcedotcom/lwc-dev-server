@@ -13,6 +13,84 @@ import { run } from '@talon/compiler/src/server/server';
 import Project from './common/Project';
 import rimraf from 'rimraf';
 
+const talonConfigJson = {};
+
+const routesJson = [
+    {
+        name: 'home',
+        path: '/',
+        isRoot: true,
+        view: 'home',
+        label: 'Home'
+    },
+    {
+        name: 'preview',
+        path: '/lwc/preview',
+        isRoot: false,
+        view: 'preview',
+        label: 'LWC Preview'
+    }
+];
+const labelsJson = {};
+const themeJson = {
+    name: 'duck',
+    label: 'Duck Burrito',
+    themeLayouts: {
+        main: {
+            view: 'mainLayout'
+        }
+    }
+};
+const viewsDir = {
+    home: {
+        name: 'home',
+        label: 'Home',
+        themeLayoutType: 'main',
+        component: {
+            name: 'localdevserver/home',
+            regions: []
+        }
+    },
+    mainLayout: {
+        name: 'mainLayout',
+        label: 'Default Layout',
+        component: {
+            name: 'localdevserver/layout',
+            regions: [
+                {
+                    name: 'header',
+                    label: 'Header',
+                    components: []
+                },
+                {
+                    name: 'footer',
+                    label: 'Footer',
+                    components: []
+                }
+            ]
+        }
+    },
+    preview: {
+        name: 'preview',
+        label: 'LWC Preview',
+        themeLayoutType: 'main',
+        component: {
+            name: 'localdevserver/preview',
+            regions: [
+                {
+                    name: 'entryPoint',
+                    label: 'entryPoint',
+                    components: [
+                        {
+                            name: ''
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+};
+
 export default class LocalDevServer {
     public build() {}
 
@@ -26,17 +104,13 @@ export default class LocalDevServer {
 
         const config = {
             templateDir: directory,
-            talonConfigJson: path.join(
-                __dirname,
-                'config',
-                'talon.config.json'
-            ),
+            talonConfigJson,
             srcDir: project.getModuleSourceDirectory(),
-            viewsDir: path.join(__dirname, 'config', 'views'),
+            viewsDir,
             indexHtml: path.join(__dirname, 'config', 'index.html'),
-            routesJson: path.join(__dirname, 'config', 'routes.json'),
-            labelsJson: path.join(__dirname, 'config', 'labels.json'),
-            themeJson: path.join(__dirname, 'config', 'theme.json'),
+            routesJson,
+            labelsJson,
+            themeJson,
             outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,
@@ -55,7 +129,7 @@ export default class LocalDevServer {
 
         await this.copyAssets(config.outputDir);
 
-        await this.updatePreviewView(config.viewsDir, entryPoint);
+        await this.updatePreviewView(config.viewsDir.preview, entryPoint);
 
         try {
             // Start the talon site.
@@ -92,13 +166,8 @@ export default class LocalDevServer {
         this.copy('src/assets/favicon.ico', assetsDir);
     }
 
-    private async updatePreviewView(dir: string, main: string) {
-        const previewPath = path.join(dir, 'preview.json');
-
-        const json = JSON.parse(fs.readFileSync(previewPath, 'utf-8'));
-        json.component.regions[0].components[0].name = main;
-
-        fs.writeFileSync(previewPath, JSON.stringify(json, null, 2));
+    private async updatePreviewView(viewJson: any, main: string) {
+        viewJson.component.regions[0].components[0].name = main;
     }
 
     private async compile(config: any, descriptor: string) {
