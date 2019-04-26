@@ -1738,15 +1738,6 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@lwc/babel-plugin-component@0.37.0":
-  version "0.37.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/babel-plugin-component/-/babel-plugin-component-0.37.0.tgz#13f9d6dc695dfd0a010dbfb2c110272d8d608b71"
-  integrity sha512-LBHPGkMpVNqymwydar6FjBgRo1r91DRvKpzIgCdPyI9CKGvg3h9VAihfwJ/mz5+gmkEwKoswiD8TQc3aszWXHQ==
-  dependencies:
-    "@babel/helper-module-imports" "7.0.0"
-    "@babel/plugin-proposal-class-properties" "7.1.0"
-    "@lwc/errors" "0.37.0"
-
 "@lwc/babel-plugin-component@0.37.2":
   version "0.37.2"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/babel-plugin-component/-/babel-plugin-component-0.37.2.tgz#36645b1aef18157b2da590c937fccd9efe5a4c3a"
@@ -1756,24 +1747,7 @@
     "@babel/plugin-proposal-class-properties" "7.1.0"
     "@lwc/errors" "0.37.2"
 
-"@lwc/compiler@0.37.0":
-  version "0.37.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/compiler/-/compiler-0.37.0.tgz#63a755ed4fa7fb60545a6dfd52d081b01cfcd5e8"
-  integrity sha512-oHPBe5eDez/C16h9RSBxoZ+Qs6QW142Z3eoKrVZapipYiTGlIjr666+dPMu3mHcOZlsAFUMIGvZJIg+arqyBfA==
-  dependencies:
-    "@babel/core" "7.1.0"
-    "@babel/plugin-proposal-object-rest-spread" "7.0.0"
-    "@lwc/babel-plugin-component" "0.37.0"
-    "@lwc/errors" "0.37.0"
-    "@lwc/style-compiler" "0.37.0"
-    "@lwc/template-compiler" "0.37.0"
-    "@types/chokidar" "^1.7.5"
-    babel-preset-compat "0.21.3"
-    babel-preset-minify "0.5.0-alpha.5a128fd5"
-    rollup "0.66.2"
-    rollup-plugin-replace "^2.0.0"
-
-"@lwc/compiler@^0.37.2":
+"@lwc/compiler@0.37.2", "@lwc/compiler@^0.37.2":
   version "0.37.2"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/compiler/-/compiler-0.37.2.tgz#40d6722678985ae251e3fa7930cec9cf00f122f1"
   integrity sha512-A/c5zGixlCgJYvaROM3A0uwBfUtfbMEgCH/4Cu8RCSQNiqfLVKwpR6aUepcRvOvr/WcmRrG+/gNauEhNeuJwSA==
@@ -1797,41 +1771,26 @@
   dependencies:
     observable-membrane "0.26.1"
 
-"@lwc/errors@0.37.0":
-  version "0.37.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/errors/-/errors-0.37.0.tgz#a6bce0d56b956381e918a1dbdd691caf572af5e5"
-  integrity sha512-x9t+mQntF1CI4yVmmEBiZR1JyBOOAMbRnMguMpXMd2Ot0s58hS88CTEA2KpGQLaup/cyEMUS+05ruzCcFQpErA==
-
 "@lwc/errors@0.37.2":
   version "0.37.2"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/errors/-/errors-0.37.2.tgz#e46fd7792f67ef905f9f897fe05058a838325115"
   integrity sha512-RtPA0TJjhcyS3gz28KTy7MGYhYhrbU71DwHgowZGptDE/8BewAgOSBddC1s/eA7YPEaQTiymtWls57Ih/uZkOA==
 
-"@lwc/module-resolver@0.37.0":
-  version "0.37.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/module-resolver/-/module-resolver-0.37.0.tgz#3e5df32fe3968667d1b95e52e4376ae7a9a2d6f3"
-  integrity sha512-jkMPBbswXAEbWaduSQXa4i3zo+TiPPnWP0xaRpeF7gwaCr0em3LQAzzbwcdEdTozmYtEVhVZnN+Ek3umEFwbhw==
+"@lwc/module-resolver@0.37.2":
+  version "0.37.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/module-resolver/-/module-resolver-0.37.2.tgz#9771080d5d8c57691bdc7cf23418ef27d0cd1573"
+  integrity sha512-m4y0TuEzPARktYhESnBK7TVCSK5f6VcvrFfHNWRY7FVYl3SzX19J/X9k9cNm2nnN3BgJtruVzT5bob+S6VRf0Q==
   dependencies:
     glob "^7.1.2"
 
-"@lwc/rollup-plugin@0.37.0":
-  version "0.37.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/rollup-plugin/-/rollup-plugin-0.37.0.tgz#1caea782619038c307b1f2905e27a94ce33ab34b"
-  integrity sha512-OG20elmT1El6TKi7xSQnyV1uwd0pnhWcfxwMNhtGAyE1OjRIzNZyn7S5C51C2LIewNVr1g25FIEJPjwVLyqhMg==
+"@lwc/rollup-plugin@0.37.2":
+  version "0.37.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/rollup-plugin/-/rollup-plugin-0.37.2.tgz#9387c3e33c6cec36bacee2bb84ac6e6656894e16"
+  integrity sha512-65O7cvguV1rykEGMqqte4DOwlgNcYhLHAIZXxbYdxJCWyhU0wAGM+xbDtUxOZ2aDFfiZvmaiYxNt+c3bfhVUww==
   dependencies:
-    "@lwc/module-resolver" "0.37.0"
+    "@lwc/module-resolver" "0.37.2"
     glob "^7.1.2"
     rollup-pluginutils "^2.0.1"
-
-"@lwc/style-compiler@0.37.0":
-  version "0.37.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/style-compiler/-/style-compiler-0.37.0.tgz#f836d29fc28a6eacc048cd52f9d285f67be1bf9c"
-  integrity sha512-PPDHq5lI+hiX5IJv7VNYR3Ut7Mpvo+Lpyf9YiR5Yo+QTBDakTHxAsiw3DZu7LXYiwsDEcdIFBHxXUjPTh7ht6Q==
-  dependencies:
-    cssnano "~3.10.0"
-    postcss "~7.0.5"
-    postcss-selector-parser "6.0.2"
-    postcss-value-parser "3.3.1"
 
 "@lwc/style-compiler@0.37.2":
   version "0.37.2"
@@ -1842,22 +1801,6 @@
     postcss "~7.0.5"
     postcss-selector-parser "6.0.2"
     postcss-value-parser "3.3.1"
-
-"@lwc/template-compiler@0.37.0":
-  version "0.37.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/template-compiler/-/template-compiler-0.37.0.tgz#c3eb4856dc97af9f4677a490442d8052d85eedd2"
-  integrity sha512-SL0p51odJA5fJa9E+jVoYb8TzQ/5bDkfAXhil7cRk2fgvveGGOfrX6y6opdqfxZRTzicEau+iJSxI/VZ7NVWRQ==
-  dependencies:
-    "@babel/generator" "~7.1.5"
-    "@babel/parser" "~7.1.5"
-    "@babel/template" "~7.1.2"
-    "@babel/traverse" "~7.1.5"
-    "@babel/types" "~7.1.5"
-    "@lwc/errors" "0.37.0"
-    "@lwc/style-compiler" "0.37.0"
-    camelcase "~5.0.0"
-    he "^1.1.1"
-    parse5-with-errors "^4.0.1"
 
 "@lwc/template-compiler@0.37.2":
   version "0.37.2"
@@ -2040,7 +1983,7 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@talon/common@0.11.0":
+"@talon/common@0.11.2":
   version "0.11.2"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/common/-/common-0.11.2.tgz#4486031987f0339bb39e8698993bb26d26dd7520"
   integrity sha512-RjMSl7Qmq3fbMubm2W3fc+mWd02uMq8c8NDp4zlFeEJxpzEkNcSGzRXJvejXRFLP9iQcw2HvO+1LSnvE+rIOoQ==
@@ -2048,30 +1991,23 @@
     "@babel/plugin-transform-regenerator" "^7.0.0"
     "@babel/preset-env" "^7.3.1"
 
-"@talon/common@0.4.0":
-  version "0.4.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/common/-/common-0.4.0.tgz#2e5f5fda83161cf7e5827c347cba2e63a4eac093"
-  integrity sha512-3UZ+jY2pzcI2f9zN0SiFbEWF5r708QlaJWfmAAxLp5jPBWvOZGH4siyqItI2+v9nrpqlT1Z3R4hLU+JPR+bjYw==
-  dependencies:
-    "@babel/plugin-transform-regenerator" "^7.0.0"
-    "@babel/preset-env" "^7.3.1"
-
-"@talon/compiler@0.11.0":
-  version "0.11.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/compiler/-/compiler-0.11.0.tgz#85673310ca04dacde40a379a6ae0418c93f8002a"
-  integrity sha512-XKb34q008MKaSNDS6R/Wy9U+erXSSPir45qpLw9OoD3xEbGZkCDAstAMz/Svil1j/DZVi0b3i1FGlUlq0tmc0A==
+"@talon/compiler@0.11.2":
+  version "0.11.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/compiler/-/compiler-0.11.2.tgz#056dbe698ca8f719b74d44d4cd8766325780c245"
+  integrity sha512-lPB59WI+WVf/+9t4Az/IARjIVsj9sCuQrpqolBiAPmFc8zdAK9mldZlv9oAxS5sPiDLDs9hWBzsy3Fm9iwGLqA==
   dependencies:
     "@babel/core" "^7.2.2"
-    "@lwc/compiler" "0.37.0"
-    "@lwc/rollup-plugin" "0.37.0"
-    "@talon/common" "0.4.0"
-    "@talon/framework" "0.9.0"
+    "@lwc/compiler" "0.37.2"
+    "@lwc/rollup-plugin" "0.37.2"
+    "@talon/common" "0.11.2"
+    "@talon/framework" "0.11.2"
     "@talon/metadata-schema" "^0.0.8"
     chokidar "^2.0.3"
     colors "^1.3.2"
     compose-middleware "^5.0.1"
     compression "^1.7.3"
     express "^4.16.3"
+    fast-glob "^2.2.6"
     folder-hash "^2.1.1"
     handlebars "^4.0.11"
     hasha "^3.0.0"
@@ -2102,15 +2038,10 @@
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/force-modules/-/force-modules-0.0.5.tgz#78e4eaa610c6e06d489891f4f56abecba6e9d855"
   integrity sha1-eOTqphDG4G1ImJH09Wq+y6bp2FU=
 
-"@talon/framework@0.11.0":
+"@talon/framework@0.11.2":
   version "0.11.2"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/framework/-/framework-0.11.2.tgz#0962f52d9bf487241fa5588ba29430e17120f2e3"
   integrity sha512-owiVUm0ccRVV3y8gDcQRjEcYJwMOhZrvDOGrM2QfAHYYbkL/vLn0yeJFTh7XRk54I+wRFcBknWoFXh7DQhHvAA==
-
-"@talon/framework@0.9.0":
-  version "0.9.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/framework/-/framework-0.9.0.tgz#a466b4ac921ae5496da58b01fc706a675cdbe501"
-  integrity sha512-SixzOrvCxHbhexRuJrzjY/i2XZevzNpeQDt1H4098bDkBzX08YWqPanDuwtqwYGCsjKWhdCjSqVBNkpgO/xqYw==
 
 "@talon/metadata-schema@^0.0.8":
   version "0.0.8"
@@ -5132,7 +5063,7 @@ fast-extend@0.0.2:
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/fast-extend/-/fast-extend-0.0.2.tgz#f5ec42cf40b9460f521a6387dfb52deeed671dbd"
   integrity sha1-9exCz0C5Rg9SGmOH37Ut7u1nHb0=
 
-fast-glob@^2.0.2:
+fast-glob@^2.0.2, fast-glob@^2.2.6:
   version "2.2.6"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/fast-glob/-/fast-glob-2.2.6.tgz#a5d5b697ec8deda468d85a74035290a025a95295"
   integrity sha512-0BvMaZc1k9F+MeWWMe8pL6YltFzZYcJsYU7D4JyDA6PAczaXvxqQQ/z+mDF7/4Mw01DeUc+i3CTKajnkANkV4w==
