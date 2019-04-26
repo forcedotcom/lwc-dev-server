@@ -106,8 +106,8 @@ export default class LocalDevServer {
             outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,
-            watchPath:
-                '/Users/nkruk/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
+            //            watchPath:
+            //                '~/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
             isPreview: false
         };
         const descriptor = `component://${entryPoint}@en`;
