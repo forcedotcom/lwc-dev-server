@@ -25,7 +25,7 @@ const routesJson = [
     },
     {
         name: 'preview',
-        path: '/lwc/preview',
+        path: '/lwc/preview/:cmp*',
         isRoot: false,
         view: 'preview',
         label: 'LWC Preview'
@@ -76,17 +76,9 @@ const viewsDir = {
         themeLayoutType: 'main',
         component: {
             name: 'localdevserver/preview',
-            regions: [
-                {
-                    name: 'entryPoint',
-                    label: 'entryPoint',
-                    components: [
-                        {
-                            name: ''
-                        }
-                    ]
-                }
-            ]
+            attributes: {
+                cmp: '{!cmp}'
+            }
         }
     }
 };
@@ -114,6 +106,8 @@ export default class LocalDevServer {
             outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,
+            watchPath:
+                '/Users/nkruk/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
             isPreview: false
         };
         const descriptor = `component://${entryPoint}@en`;
@@ -128,8 +122,6 @@ export default class LocalDevServer {
         }
 
         await this.copyAssets(config.outputDir);
-
-        await this.updatePreviewView(config.viewsDir.preview, entryPoint);
 
         try {
             // Start the talon site.
@@ -164,32 +156,6 @@ export default class LocalDevServer {
         // Favicon
         // Prevents an exception in raptor code when requesting a file that doesn't exist.
         this.copy('src/assets/favicon.ico', assetsDir);
-    }
-
-    private async updatePreviewView(viewJson: any, main: string) {
-        viewJson.component.regions[0].components[0].name = main;
-    }
-
-    private async compile(config: any, descriptor: string) {
-        // const t0 = performance.now();
-
-        // valdiates metdata, we definately don't need this
-        // await validate();
-
-        // we really need a descriptor
-        if (descriptor) {
-            try {
-                await startContext(config);
-                const staticResource = await resourceService.get(descriptor);
-                console.log(`Done. Received`);
-                console.dir(staticResource);
-            } catch (err) {
-                console.error(err.stack || err.message || err);
-            } finally {
-                // We obviously should keep this open till we kill the process
-                endContext();
-            }
-        }
     }
 
     private copy(src: string, dest: string) {
