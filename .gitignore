@@ -24,4 +24,4 @@ reports
 .git
 
 # Code Coverage
-packages/local-dev-server/coverage/
+coverage

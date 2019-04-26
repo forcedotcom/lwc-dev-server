@@ -1,7 +1,4 @@
 {
-    "search.exclude": {
-        "!@talon": true
-    },
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
