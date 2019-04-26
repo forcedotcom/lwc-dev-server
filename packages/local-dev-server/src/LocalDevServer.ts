@@ -25,7 +25,7 @@ const routesJson = [
     },
     {
         name: 'preview',
-        path: "/lwc/preview/:cmp*",
+        path: '/lwc/preview/:cmp*',
         isRoot: false,
         view: 'preview',
         label: 'LWC Preview'
@@ -76,17 +76,9 @@ const viewsDir = {
         themeLayoutType: 'main',
         component: {
             name: 'localdevserver/preview',
-            regions: [
-                {
-                    name: 'entryPoint',
-                    label: 'entryPoint',
-                    components: [
-                        {
-                            name: ''
-                        }
-                    ]
-                }
-            ]
+            attributes: {
+                cmp: '{!cmp}'
+            }
         }
     }
 };
