@@ -1,0 +1,9 @@
+{
+    "name": "dependencies-218",
+    "lwc": {
+      "modules": [
+        { "force/lds": "force/lds.js" }
+      ]
+    }
+  }
+  
