@@ -25,3 +25,7 @@ reports
 
 # Code Coverage
 coverage
+
+# oclif
+tmp/
+oclif.manifest.json
