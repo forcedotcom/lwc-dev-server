@@ -3,7 +3,7 @@ import LocalDevServer from '../../LocalDevServer';
 import Project from '../../common/Project';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 
-export default class Server extends Command {
+class Server extends Command {
     static description = 'Starts the Lightning local devevelopment server';
 
     //   static examples = [
@@ -85,3 +85,5 @@ export default class Server extends Command {
         console.log('Done running local dev tools.');
     }
 }
+
+export = Server;
