@@ -1,9 +1,0 @@
-{
-    "name": "home",
-    "label": "Home",
-    "themeLayoutType": "main",
-    "component": {
-        "name": "localdevserver/home",
-        "regions": []
-    }
-}

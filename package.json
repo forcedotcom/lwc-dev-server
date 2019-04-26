@@ -19,7 +19,8 @@
     "link-dev": "lerna exec yarn link",
     "unlink-dev": "lerna exec yarn unlink --no-bail",
     "link-talon": "lerna exec yarn link @talon/common @talon/framework @talon/compiler --scope local-dev-server",
-    "unlink-talon": "lerna exec yarn unlink @talon/common @talon/framework @talon/compiler --scope local-dev-server"
+    "unlink-talon": "lerna exec yarn unlink @talon/common @talon/framework @talon/compiler --scope local-dev-server",
+    "postinstall": "lerna run build --stream"
   },
   "devDependencies": {
     "colors": "^1.3.2",
