@@ -2040,7 +2040,15 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@talon/common@0.11.0", "@talon/common@0.4.0":
+"@talon/common@0.11.0":
+  version "0.11.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/common/-/common-0.11.2.tgz#4486031987f0339bb39e8698993bb26d26dd7520"
+  integrity sha512-RjMSl7Qmq3fbMubm2W3fc+mWd02uMq8c8NDp4zlFeEJxpzEkNcSGzRXJvejXRFLP9iQcw2HvO+1LSnvE+rIOoQ==
+  dependencies:
+    "@babel/plugin-transform-regenerator" "^7.0.0"
+    "@babel/preset-env" "^7.3.1"
+
+"@talon/common@0.4.0":
   version "0.4.0"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/common/-/common-0.4.0.tgz#2e5f5fda83161cf7e5827c347cba2e63a4eac093"
   integrity sha512-3UZ+jY2pzcI2f9zN0SiFbEWF5r708QlaJWfmAAxLp5jPBWvOZGH4siyqItI2+v9nrpqlT1Z3R4hLU+JPR+bjYw==
@@ -2094,7 +2102,12 @@
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/force-modules/-/force-modules-0.0.5.tgz#78e4eaa610c6e06d489891f4f56abecba6e9d855"
   integrity sha1-eOTqphDG4G1ImJH09Wq+y6bp2FU=
 
-"@talon/framework@0.11.0", "@talon/framework@0.9.0":
+"@talon/framework@0.11.0":
+  version "0.11.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/framework/-/framework-0.11.2.tgz#0962f52d9bf487241fa5588ba29430e17120f2e3"
+  integrity sha512-owiVUm0ccRVV3y8gDcQRjEcYJwMOhZrvDOGrM2QfAHYYbkL/vLn0yeJFTh7XRk54I+wRFcBknWoFXh7DQhHvAA==
+
+"@talon/framework@0.9.0":
   version "0.9.0"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/framework/-/framework-0.9.0.tgz#a466b4ac921ae5496da58b01fc706a675cdbe501"
   integrity sha512-SixzOrvCxHbhexRuJrzjY/i2XZevzNpeQDt1H4098bDkBzX08YWqPanDuwtqwYGCsjKWhdCjSqVBNkpgO/xqYw==
