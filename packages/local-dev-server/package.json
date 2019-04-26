@@ -10,7 +10,6 @@
     "local-dev": "./bin/run"
   },
   "oclif": {
-    "commands": "./dist/cli/commands",
     "bin": "local-dev",
     "plugins": [
       "@oclif/plugin-help"
@@ -27,8 +26,8 @@
     "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
     "lint": "yarn eslint src --ext js,ts",
     "lint:ci": "yarn lint --output-file ./reports/eslint.log --no-color",
-    "start:todo": "NODE_PATH=.. node ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
-    "start:todo:debug": "NODE_PATH=.. node --inspect-brk ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
+    "start:todo": "NODE_PATH=.. node ./bin/run test-projects/lwc-todomvc-e8217b7 todo/app",
+    "start:todo:debug": "NODE_PATH=.. node --inspect-brk ./bin/run test-projects/lwc-todomvc-e8217b7 todo/app",
     "debug": "node --inspect-brk dist/index.js",
     "test": "yarn jest src --passWithNoTests --runInBand --coverage",
     "test:watch": "yarn jest src --passWithNoTests --runInBand --coverage --watch",
@@ -42,11 +41,9 @@
     "@oclif/dev-cli": "^1",
     "@oclif/test": "^1",
     "@oclif/tslint": "^3",
-    "@salesforce-ux/design-system": "^2.6.1",
     "@types/shelljs": "^0.8.4",
     "jest": "^24.7.1",
     "jest-runner-eslint": "^0.7.3",
-    "lwc-components-lightning": "1.1.6-alpha",
     "mock-fs": "^4.8.0",
     "rimraf": "^2.6.3",
     "shelljs": "^0.8.3"
@@ -58,13 +55,15 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@talon/compiler": "0.0.12",
+    "@salesforce-ux/design-system": "^2.6.1",
+    "@talon/compiler": "0.11.2",
     "@talon/force-modules": "^0.0.5",
-    "@talon/framework": "0.0.9",
+    "@talon/framework": "0.11.2",
     "cpx": "^1.5.0",
     "express-http-proxy": "^1.5.1",
     "gulp": "^4.0.0",
     "local-dev-modules": "^1.0.0",
+    "lwc-components-lightning": "1.1.6-alpha",
     "memory-cache": "^0.2.0",
     "morgan": "^1.9.1",
     "object-hash": "^1.3.1",
