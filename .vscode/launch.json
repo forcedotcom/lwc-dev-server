@@ -16,6 +16,33 @@
         ],
         "cwd": "${workspaceFolder}/packages/local-dev-server",
         "console": "integratedTerminal"
-      }
+      },
+      {
+        "type": "node",
+        "request": "attach",
+        "name": "Attach by Process ID",
+        "processId": "${command:PickProcess}"
+    },
+    {
+        "type": "node",
+        "name": "vscode-jest-tests",
+        "request": "launch",
+        "args": [
+            "--runInBand"
+        ],
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Launch Program",
+        "program": "${workspaceFolder}/LocalDevServer.ts",
+        "outFiles": [
+            "${workspaceFolder}/**/*.js"
+        ]
+    }
     ]
 }

@@ -145,11 +145,11 @@ export default class LocalDevServer {
         // Copy Slds
         // Whats the right thing to do here though?
         this.copy(
-            '../../node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
+            'node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
             assetsDir
         );
         this.copy(
-            '../../node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
+            'node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
             assetsDir
         );
 
