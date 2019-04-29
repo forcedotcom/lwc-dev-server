@@ -6,6 +6,7 @@
   "types": "dist/LocalDevServer.d.ts",
   "author": "Lightning Tooling",
   "license": "MIT",
+  "repository": "forcedotcom/local-dev-tools",
   "bin": {
     "lwc-dev-server": "./bin/run"
   },
@@ -30,7 +31,8 @@
     "!dist/__test__",
     "bin",
     "modules",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/messages"
   ],
   "lwc": {
     "mapNamespaceFromPath": true,
@@ -92,6 +94,9 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
     "@oclif/plugin-update": "^1.3.9",
+    "@salesforce/command": "^1.5.0",
+    "@salesforce/core": "^1.3.3",
+    "@salesforce/ts-types": "^1.1.3",
     "@salesforce-ux/design-system": "^2.6.1",
     "@talon/common": "file:./lib/talon-common-0.11.2.tgz",
     "@talon/compiler": "file:./lib/talon-compiler-0.11.3-alpha.tgz",

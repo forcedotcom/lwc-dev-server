@@ -43,6 +43,15 @@ yarn install
 yarn build
 ```
 
+### link talon
+
+```console
+cd ~/git/talon
+lerna exec yarn link
+cd ~/git/local-dev-server
+yarn link-talon
+```
+
 As you are making changes, you'll probably want 
 
 ```console
