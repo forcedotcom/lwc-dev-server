@@ -100,7 +100,6 @@ export default class LocalDevServer {
         const extraDependencies = path.resolve(
             path.join(__dirname, '..', 'vendors', `dependencies-${version}`)
         );
-        debugger;
         // our own lwc modules to host the local app
         const localDependencies = path.resolve(__dirname, '..', '..');
 
