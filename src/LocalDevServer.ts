@@ -93,6 +93,22 @@ export default class LocalDevServer {
         // This should have /lwc on the end, but I think the talon compiler expects the directory name to be the namespace passed
         // to the descriptor.
         const directory = project.getDirectory();
+        // the regular node_module paths
+        const nodePaths = require.resolve.paths('.') || [];
+        const version = 218;
+        // vendor deps that we override, like LGC, LDS, etc
+        const extraDependencies = path.resolve(
+            path.join(__dirname, '..', 'vendors', `dependencies-${version}`)
+        );
+        // our own lwc modules to host the local app
+        const localDependencies = path.resolve(__dirname, '..', '..');
+
+        // all the deps, filtered by existing
+        let modulePaths = [
+            extraDependencies,
+            localDependencies,
+            ...nodePaths
+        ].filter(fs.existsSync);
 
         const config = {
             templateDir: directory,
@@ -108,7 +124,8 @@ export default class LocalDevServer {
             basePath: ``,
             //            watchPath:
             //                '~/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
-            isPreview: false
+            isPreview: false,
+            modulePaths
         };
         const descriptor = `component://${entryPoint}@en`;
         console.log('Running Universal Container with config:');
