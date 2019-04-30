@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+
+// this (temporary) script checks for updates to nexus-hosted dependencies and
+// downloads them into tarballs. It updates package.json with references to the
+// new files and runs yarn install to update the lock file.
+
 const fs = require('fs');
 const path = require('path');
 const rimraf = require('rimraf');
