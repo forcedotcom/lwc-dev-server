@@ -34,6 +34,7 @@ jobs:
     steps:  
       - attach_workspace:
           at: .
+      - checkout
       - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
       - run: yarn oclif-dev publish
   "oclif-dev pack:deb and publish":
