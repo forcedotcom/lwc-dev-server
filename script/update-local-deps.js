@@ -17,8 +17,7 @@ const registry =
     'https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/';
 
 // clear previous versions
-const dir = 'lib';
-const dest = path.join(__dirname, '../', dir);
+const dest = path.join(__dirname, '../lib');
 if (fs.existsSync(dest)) {
     console.log(`clearing '${dest}' directory`);
     rimraf.sync(dest);
@@ -32,58 +31,41 @@ packages.forEach(pkg => {
     const out = shell.exec(
         `cd ${dest} && npm pack ${pkg} --registry ${registry}`
     ).stdout;
-    mapping[pkg] = `file:./${dir}/${out.trim()}`;
+    mapping[pkg] = `file:./lib/${out.trim()}`;
 });
-
 console.log('downloads complete');
 
 console.log('\ncurrent versions:');
 console.dir(mapping);
 
-const status = shell.exec(`git status ${dir}`, { silent: true }).stdout;
+const status = shell.exec(`git status lib`, { silent: true }).stdout;
 if (status.indexOf('nothing to commit') > -1) {
-    console.log('\nno changes');
+    console.log('\nno changes made to package.json');
 } else {
     console.log('\nupdating package.json');
     const packageFile = path.resolve(__dirname, '../package.json');
     const packageJson = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
 
-    Object.keys(mapping).forEach(key => {
-        if (packageJson.dependencies && packageJson.dependencies[key]) {
-            packageJson.dependencies[key] = mapping[key];
-        }
+    const sections = [
+        'dependencies',
+        'devDependencies',
+        'peerDependdencies',
+        'bundleDependencies',
+        'optionalDependencies',
+        'resolutions'
+    ];
 
-        if (packageJson.devDependencies && packageJson.devDependencies[key]) {
-            packageJson.devDependencies[key] = mapping[key];
-        }
-
-        if (packageJson.peerDependencies && packageJson.peerDependencies[key]) {
-            packageJson.peerDependencies[key] = mapping[key];
-        }
-
-        if (
-            packageJson.bundledDependencies &&
-            packageJson.bundledDependencies[key]
-        ) {
-            packageJson.bundledDependencies[key] = mapping[key];
-        }
-
-        if (
-            packageJson.optionalDependencies &&
-            packageJson.optionalDependencies[key]
-        ) {
-            packageJson.optionalDependencies[key] = mapping[key];
-        }
-
-        if (packageJson.resolutions && packageJson.resolutions[key]) {
-            packageJson.resolutions[key] = mapping[key];
-        }
+    Object.keys(mapping).forEach(depKey => {
+        sections.forEach(section => {
+            if (packageJson[section] && packageJson[section][depKey]) {
+                packageJson[section][depKey] = mapping[depKey];
+            }
+        });
     });
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJson, null, 2), 'utf8');
     console.log('package.json updated');
 
-    // update yarn lock
     console.log('\nupdating yarn lock file');
     shell.exec('yarn');
 }

@@ -12,7 +12,7 @@ const path = require('path');
 const fs = require('fs');
 
 // check that `yarn install` was already run
-if (!fs.existsSync(path.join(__dirname, 'node_modules'))) {
+if (!fs.existsSync(path.join(__dirname, '../node_modules'))) {
     console.error('run `yarn install && yarn build` first');
     process.exit(1);
 }
