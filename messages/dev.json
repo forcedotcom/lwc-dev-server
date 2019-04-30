@@ -2,6 +2,7 @@
   "commandDescription": "development locally of your Lightning Web Components without uploading to salesforce",
   "openFlagDescription": "name of component to open, automatically launches local dev server if not started",
   "stopFlagDescription": "stop the running local dev server",
+  "stopMessage":"Stopping dev server on port ",
   "portFlagDescription": "port to run local dev server on, defaults to 8080",
   "errorNoOrgApis": "No API levels found for the org '%s'."
 }

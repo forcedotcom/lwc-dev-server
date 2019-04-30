@@ -47,7 +47,7 @@ yarn build
 
 ```console
 cd ~/git/talon
-lerna exec yarn link
+yarn link-talon
 cd ~/git/local-dev-server
 yarn link-talon
 ```

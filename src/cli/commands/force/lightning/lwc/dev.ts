@@ -20,7 +20,6 @@ export default class Dev extends SfdxCommand {
     public static args = [{ open: 'file', name: 'local-dev' }];
 
     protected static flagsConfig = {
-        // flag with a value (-n, --name=VALUE)
         open: flags.string({
             char: 'o',
             description: messages.getMessage('openFlagDescription')
@@ -49,7 +48,7 @@ export default class Dev extends SfdxCommand {
         const port = this.flags.port || 8080;
         const stahp = this.flags.stop;
         if (stahp) {
-            this.ux.log(`TODO - kill the server running on port ${port}`);
+            this.ux.log(messages.getMessage('stopMessage') + port);
             return { stopped: port };
         }
 
