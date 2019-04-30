@@ -1,16 +1,17 @@
+---
 version: 2
 workflows:
   version: 2
   master:
     jobs:
       - "build"
-      - "oclif-dev pack and publish"
+      - "oclif-dev pack and publish":
         requires: build
-      - "oclif-dev pack:deb and publish"
+      - "oclif-dev pack:deb and publish":
         requires: build
-      - "oclif-dev pack:macos and publish"
+      - "oclif-dev pack:macos and publish":
         requires: build
-      - "oclif-dev pack:win and publish"
+      - "oclif-dev pack:win and publish":
         requires: build
   jobs:
     build:
@@ -31,7 +32,7 @@ workflows:
               - node_modules
         - persist_to_workspace:
             root: .
-            paths: 
+            paths:
               package.json
               oclif.manifest.json
               README.md
@@ -39,7 +40,7 @@ workflows:
               dist
               modules
     "oclif-dev pack and publish":
-      steps: 
+      steps:
         - yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
         - yarn oclif-dev publish
     "oclif-dev pack:deb and publish":
@@ -53,6 +54,6 @@ workflows:
         - yarn oclif-dev pack:macos
         - yarn oclif-dev publish:macos
     "oclif-dev pack:win and publish":
+      steps:
         - yarn oclif-dev pack:win
         - yarn oclif-dev publish:win
-      
