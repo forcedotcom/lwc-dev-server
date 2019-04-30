@@ -1354,9 +1354,9 @@
     "@babel/plugin-transform-regenerator" "^7.0.0"
     "@babel/preset-env" "^7.3.1"
 
-"@talon/compiler@file:./lib/talon-compiler-0.11.2-alpha.tgz":
-  version "0.11.2"
-  resolved "file:./lib/talon-compiler-0.11.2-alpha.tgz#a8ff7fac727a2bc1ab6cce013d2e0d0db76480b2"
+"@talon/compiler@file:./lib/talon-compiler-0.11.3-alpha.tgz":
+  version "0.11.3-alpha"
+  resolved "file:./lib/talon-compiler-0.11.3-alpha.tgz#947befa72ff55e8c7c14366d5b895962da4c17b7"
   dependencies:
     "@babel/core" "^7.2.2"
     "@lwc/compiler" "0.37.2"
