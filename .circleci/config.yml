@@ -21,6 +21,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
+            - .git
             - package.json
             - oclif.manifest.json
             - README.md
@@ -32,7 +33,6 @@ jobs:
     docker:
       - image: circleci/node:10.15.3
     steps:  
-      - checkout
       - attach_workspace:
           at: .
       - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
