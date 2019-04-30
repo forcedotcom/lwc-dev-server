@@ -28,10 +28,14 @@ jobs:
             dist
             modules
   "oclif-dev pack and publish":
+    docker:
+      - image: circleci/node:10.15.3
     steps:
       - yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
       - yarn oclif-dev publish
   "oclif-dev pack:deb and publish":
+    docker:
+      - image: circleci/node:10.15.3
     steps:
       - yarn oclif-dev pack:deb
       - yarn oclif-dev public:deb
@@ -42,6 +46,8 @@ jobs:
       - yarn oclif-dev pack:macos
       - yarn oclif-dev publish:macos
   "oclif-dev pack:win and publish":
+    docker:
+      - image: circleci/node:10.15.3
     steps:
       - yarn oclif-dev pack:win
       - yarn oclif-dev publish:win
