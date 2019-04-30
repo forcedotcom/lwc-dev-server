@@ -1,59 +1,66 @@
 ---
-version: 2
+version: 2.0
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10.15.3
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
+      - run: yarn test
+      - store_test_results:
+          path: reports
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            package.json
+            oclif.manifest.json
+            README.md
+            bin
+            dist
+            modules
+  "oclif-dev pack and publish":
+    steps:
+      - yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
+      - yarn oclif-dev publish
+  "oclif-dev pack:deb and publish":
+    steps:
+      - yarn oclif-dev pack:deb
+      - yarn oclif-dev public:deb
+  "oclif-dev pack:macos and publish":
+    macos:
+      xcode: "10.0.0"
+    steps:
+      - yarn oclif-dev pack:macos
+      - yarn oclif-dev publish:macos
+  "oclif-dev pack:win and publish":
+    steps:
+      - yarn oclif-dev pack:win
+      - yarn oclif-dev publish:win
+
 workflows:
   version: 2
   master:
     jobs:
       - "build"
       - "oclif-dev pack and publish":
-        requires: build
+          requires: 
+            - build
       - "oclif-dev pack:deb and publish":
-        requires: build
+          requires: 
+            - build
       - "oclif-dev pack:macos and publish":
-        requires: build
+          requires: 
+            - build
       - "oclif-dev pack:win and publish":
-        requires: build
-  jobs:
-    build:
-      docker:
-        - image: circleci/node:10.15.3
-      steps:
-        - checkout
-        - restore_cache:
-            key: dependency-cache-{{ checksum "yarn.lock" }}
-        - run: yarn install --frozen-lockfile
-        - run: yarn lint
-        - run: yarn test
-        - store_test_results:
-            path: reports
-        - save_cache:
-            key: dependency-cache-{{ checksum "yarn.lock" }}
-            paths:
-              - node_modules
-        - persist_to_workspace:
-            root: .
-            paths:
-              package.json
-              oclif.manifest.json
-              README.md
-              bin
-              dist
-              modules
-    "oclif-dev pack and publish":
-      steps:
-        - yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
-        - yarn oclif-dev publish
-    "oclif-dev pack:deb and publish":
-      steps:
-        - yarn oclif-dev pack:deb
-        - yarn oclif-dev public:deb
-    "oclif-dev pack:macos and publish":
-      macos:
-        xcode: "10.0.0"
-      steps:
-        - yarn oclif-dev pack:macos
-        - yarn oclif-dev publish:macos
-    "oclif-dev pack:win and publish":
-      steps:
-        - yarn oclif-dev pack:win
-        - yarn oclif-dev publish:win
+          requires: 
+            - build
+
