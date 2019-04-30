@@ -24,6 +24,7 @@ jobs:
             - .git
             - package.json
             - oclif.manifest.json
+            - yarn.lock
             - README.md
             - bin
             - dist
