@@ -88,9 +88,9 @@ workflows:
       - "pack:deb and publish":
           requires: 
             - build
-      - "pack:macos and publish":
-          requires: 
-            - build
+      # - "pack:macos and publish":
+      #     requires: 
+      #       - build
       - "pack:win and publish":
           requires: 
             - build
