@@ -4,7 +4,7 @@ import Project from '../../common/Project';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 
 export default class Server extends Command {
-    static description = 'Starts the Lightning local devevelopment server';
+    static description = 'start the Lightning Local Development server';
 
     //   static examples = [
     //     `$ example-multi-ts hello

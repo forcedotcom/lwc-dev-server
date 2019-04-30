@@ -10,21 +10,32 @@
     "local-dev": "./bin/run"
   },
   "oclif": {
+    "macos": {
+      "identifier": "com.salesforce.localdevserver"
+    },
     "commands": "./dist/cli/commands",
     "bin": "local-dev",
     "plugins": [
-      "@oclif/plugin-help"
-    ]
+      "@oclif/plugin-help",
+      "@oclif/plugin-update"
+    ],
+    "update": {
+      "s3": {
+        "bucket": "bucketeer-42b78764-a91c-4b23-a7ba-4c047290ae18"
+      }
+    }
   },
   "files": [
     "dist",
     "!dist/__test__",
-    "bin"
+    "bin",
+    "modules",
+    "/oclif.manifest.json"
   ],
   "lwc": {
     "mapNamespaceFromPath": true,
     "modules": [
-      "src/modules"
+      "modules"
     ]
   },
   "scripts": {
@@ -42,16 +53,16 @@
     "test:ci": "yarn jest --maxWorkers=1 --ci --config jest.config.all.js --coverage",
     "format": "prettier --write \"src/**/*.ts\"",
     "precommit": "lint-staged",
-    "postinstall": "yarn build",
     "prepush": "yarn prepare && yarn lint && yarn test",
     "link-talon": "yarn link @talon/common @talon/framework @talon/compiler",
-    "unlink-talon": "unlink @talon/common @talon/framework @talon/compiler"
+    "unlink-talon": "unlink @talon/common @talon/framework @talon/compiler",
+    "prepack": "oclif-dev manifest",
+    "postpack": "rm -f oclif.manifest.json"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
     "@oclif/test": "^1",
     "@oclif/tslint": "^3",
-    "@salesforce-ux/design-system": "^2.6.1",
     "@types/jest": "^24.0.11",
     "@types/shelljs": "^0.8.4",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
@@ -61,7 +72,6 @@
     "jest": "^24.7.1",
     "jest-runner-eslint": "^0.7.3",
     "lint-staged": "^8.1.5",
-    "lwc-components-lightning": "1.1.6-alpha",
     "mock-fs": "^4.8.0",
     "prettier": "^1.17.0",
     "rimraf": "^2.6.3",
@@ -78,10 +88,21 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@talon/common": "0.11.2",
-    "@talon/compiler": "0.11.2",
-    "@talon/force-modules": "^0.0.5",
-    "@talon/framework": "0.11.2",
-    "cpx": "^1.5.0"
+    "@oclif/plugin-update": "^1.3.9",
+    "@salesforce-ux/design-system": "^2.6.1",
+    "@talon/common": "file:./lib/talon-common-0.11.2.tgz",
+    "@talon/compiler": "file:./lib/talon-compiler-0.11.2.tgz",
+    "@talon/force-modules": "file:./lib/talon-force-modules-0.0.5.tgz",
+    "@talon/framework": "file:./lib/talon-framework-0.11.2.tgz",
+    "cpx": "^1.5.0",
+    "lwc-components-lightning": "file:./lib/lwc-components-lightning-1.0.19-alpha.tgz"
+  },
+  "resolutions": {
+    "@talon/common": "file:./lib/talon-common-0.11.2.tgz",
+    "@talon/framework": "file:./lib/talon-framework-0.11.2.tgz",
+    "@talon/metadata-schema": "file:./lib/talon-metadata-schema-0.0.9.tgz"
+  },
+  "engines": {
+    "node": "10.15.3"
   }
 }
