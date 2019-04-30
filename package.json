@@ -91,7 +91,7 @@
     "@oclif/plugin-update": "^1.3.9",
     "@salesforce-ux/design-system": "^2.6.1",
     "@talon/common": "file:./lib/talon-common-0.11.2.tgz",
-    "@talon/compiler": "file:./lib/talon-compiler-0.11.2.tgz",
+    "@talon/compiler": "file:./lib/talon-compiler-0.11.2-alpha.tgz",
     "@talon/force-modules": "file:./lib/talon-force-modules-0.0.5.tgz",
     "@talon/framework": "file:./lib/talon-framework-0.11.2.tgz",
     "cpx": "^1.5.0",
