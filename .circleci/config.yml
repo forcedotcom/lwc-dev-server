@@ -10,6 +10,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
       - run: yarn install --frozen-lockfile
+      - run: yarn build
       - run: yarn lint
       - run: yarn test
       - store_test_results:
@@ -31,7 +32,7 @@ jobs:
             - dist
             - modules
             - lib
-  "oclif-dev pack and publish":
+  "pack and publish":
     docker:
       - image: circleci/node:10.15.3
     steps:  
@@ -39,10 +40,10 @@ jobs:
           at: .
       - restore_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-      - run: sudo apt-get update && sudo apt-get install -y p7zip 
+      - run: sudo apt-get update && sudo apt-get install -y p7zip && sudo ln -s /usr/bin/p7zip /usr/bin/7z
       - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
       - run: yarn oclif-dev publish
-  "oclif-dev pack:deb and publish":
+  "pack:deb and publish":
     docker:
       - image: circleci/node:10.15.3
     steps:
@@ -50,9 +51,9 @@ jobs:
           at: .
       - restore_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-      - run: yarn oclif-dev pack:deb
-      - run: yarn oclif-dev public:deb
-  "oclif-dev pack:macos and publish":
+      - run: sudo yarn oclif-dev pack:deb
+      - run: yarn oclif-dev publish:deb
+  "pack:macos and publish":
     macos:
       xcode: "10.0.0"
     steps:
@@ -62,7 +63,7 @@ jobs:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
       - run: yarn oclif-dev pack:macos
       - run: yarn oclif-dev publish:macos
-  "oclif-dev pack:win and publish":
+  "pack:win and publish":
     docker:
       - image: circleci/node:10.15.3
     steps:
@@ -70,6 +71,7 @@ jobs:
           at: .
       - restore_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
+      - run: sudo apt-get update && sudo apt-get install -y makensis
       - run: yarn oclif-dev pack:win
       - run: yarn oclif-dev publish:win
 
@@ -78,16 +80,16 @@ workflows:
   master:
     jobs:
       - "build"
-      - "oclif-dev pack and publish":
+      - "pack and publish":
           requires: 
             - build
-      - "oclif-dev pack:deb and publish":
+      - "pack:deb and publish":
           requires: 
             - build
-      - "oclif-dev pack:macos and publish":
+      - "pack:macos and publish":
           requires: 
             - build
-      - "oclif-dev pack:win and publish":
+      - "pack:win and publish":
           requires: 
             - build
 
