@@ -18,6 +18,7 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+            - .cache/yarn
       - persist_to_workspace:
           root: .
           paths:
@@ -29,7 +30,6 @@ jobs:
             - bin
             - dist
             - modules
-            - node_modules
             - lib
   "oclif-dev pack and publish":
     docker:
