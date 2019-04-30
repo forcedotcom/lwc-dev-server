@@ -52,3 +52,13 @@ yarn watch
 # Watch for changes to files and run tests
 yarn test:watch
 ```
+
+### Updating Talon Dependnecies
+
+Certain dependencies from nexus such as @talon dependencies and lgc components are temporarily include from tarballs checked into the repo. This will be done until those packages are available on public npm. These tarball versions can be updated via script:
+
+```bash
+script/update-local-deps.js
+```
+
+This will download new jars and update the package.json file.
