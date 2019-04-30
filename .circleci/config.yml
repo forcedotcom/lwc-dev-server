@@ -27,6 +27,7 @@ jobs:
             - bin
             - dist
             - modules
+            - node_modules
   "oclif-dev pack and publish":
     docker:
       - image: circleci/node:10.15.3
