@@ -31,8 +31,8 @@ jobs:
   "oclif-dev pack and publish":
     docker:
       - image: circleci/node:10.15.3
-    steps:
-      - working_directory: ~/prj
+    working_directory: ~/prj
+    steps:  
       - attach_workspace:
           at: prj
       - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
