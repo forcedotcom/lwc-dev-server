@@ -52,7 +52,8 @@ jobs:
           at: .
       - restore_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-      - run: sudo -E cp -R /home/circleci/.cache /usr/local/share && yarn oclif-dev pack:deb
+      - run: sudo apt-get update && sudo apt-get install -y apt-utils
+      - run: sudo -E /bin/bash -c "cp -R /home/circleci/.cache /usr/local/share && yarn oclif-dev pack:deb"
       - run: yarn oclif-dev publish:deb
   "pack:macos and publish":
     macos:
