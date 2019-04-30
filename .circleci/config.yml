@@ -72,7 +72,7 @@ jobs:
           at: .
       - restore_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-      - run: sudo apt-get update && sudo apt-get install -y makensis
+      - run: sudo apt-get update && sudo apt-get install -y nsis
       - run: yarn oclif-dev pack:win
       - run: yarn oclif-dev publish:win
 
