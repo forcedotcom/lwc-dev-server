@@ -52,7 +52,7 @@ jobs:
           at: .
       - restore_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-      - run: sudo yarn oclif-dev pack:deb
+      - run: sudo -E yarn oclif-dev pack:deb
       - run: yarn oclif-dev publish:deb
   "pack:macos and publish":
     macos:
