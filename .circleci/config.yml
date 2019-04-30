@@ -19,14 +19,14 @@ jobs:
           paths:
             - node_modules
       - persist_to_workspace:
-          root: ~
+          root: .
           paths:
-            package.json
-            oclif.manifest.json
-            README.md
-            bin
-            dist
-            modules
+            - package.json
+            - oclif.manifest.json
+            - README.md
+            - bin
+            - dist
+            - modules
   "oclif-dev pack and publish":
     docker:
       - image: circleci/node:10.15.3
