@@ -37,24 +37,38 @@ jobs:
     steps:  
       - attach_workspace:
           at: .
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
       - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
       - run: yarn oclif-dev publish
   "oclif-dev pack:deb and publish":
     docker:
       - image: circleci/node:10.15.3
     steps:
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
       - run: yarn oclif-dev pack:deb
       - run: yarn oclif-dev public:deb
   "oclif-dev pack:macos and publish":
     macos:
       xcode: "10.0.0"
     steps:
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
       - run: yarn oclif-dev pack:macos
       - run: yarn oclif-dev publish:macos
   "oclif-dev pack:win and publish":
     docker:
       - image: circleci/node:10.15.3
     steps:
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
       - run: yarn oclif-dev pack:win
       - run: yarn oclif-dev publish:win
 
