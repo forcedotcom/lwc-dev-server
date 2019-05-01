@@ -2,6 +2,7 @@ import { Command, flags } from '@oclif/command';
 import LocalDevServer from '../../LocalDevServer';
 import Project from '../../common/Project';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
+import fs from 'fs';
 
 export default class Server extends Command {
     static description = 'start the Lightning Local Development server';
@@ -42,7 +43,7 @@ export default class Server extends Command {
 
         const main = configuration.getEntryPointComponent();
 
-        if (!project.isValid()) {
+        if (!project.isSfdx() && !fs.existsSync(project.getDirectory())) {
             console.error(
                 `Failed starting local dev server in directory: ${project.getDirectory()}.
                  No project could be found in the current or parent directory.`

@@ -1,6 +1,10 @@
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages, SfdxError } from '@salesforce/core';
 import { AnyJson, JsonArray, JsonMap } from '@salesforce/ts-types';
+import * as http from 'http';
+import Project from '../../../../../common/Project';
+import SfdxConfiguration from '../../../../../user/SfdxConfiguration';
+import LocalDevServer from '../../../../../LocalDevServer';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -57,6 +61,13 @@ export default class Dev extends SfdxCommand {
             return { org: this.org };
         }
 
+        if (!this.project) {
+            this.ux.log(
+                'project is undefined. this must be run from a sfdx worksapce'
+            );
+            return { project: this.project };
+        }
+
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
         const conn = this.org.getConnection();
 
@@ -99,7 +110,32 @@ export default class Dev extends SfdxCommand {
 
         // TODO check if it's already running on the port first
 
-        // TODO Start local dev server
+        // custom onProxyReq function to inject into Talon's proxy
+        // this will insert the Authorization header to have the requests be authenticated
+        const onProxyReq = function(writeBodyFunction: Function) {
+            return (
+                proxyReq: http.ClientRequest,
+                req: http.IncomingMessage,
+                res: http.ServerResponse
+            ) => {
+                req.headers = req.headers || {};
+                req.headers.Authorization = `Bearer ${conn.accessToken}`;
+                // req.headers.Cookie = `sid=${sid_cookie}`;
+                return writeBodyFunction(proxyReq, req, res);
+            };
+        };
+
+        const sfdxConfiguration = new SfdxConfiguration(this.project.getPath());
+        sfdxConfiguration.setConfigValue('api_version', api.version);
+        sfdxConfiguration.setConfigValue('endpoint', conn.instanceUrl);
+        sfdxConfiguration.setConfigValue('onProxyReq', onProxyReq);
+        sfdxConfiguration.setConfigValue('port', port);
+
+        // Start local dev server
+        new LocalDevServer().start(
+            new Project(sfdxConfiguration),
+            this.project.getPath()
+        );
 
         // TODO open browser page to component
 
