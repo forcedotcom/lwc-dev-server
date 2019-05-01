@@ -1,5 +1,5 @@
 {
-  "name": "local-dev-server",
+  "name": "lwc-dev-server",
   "version": "1.0.0",
   "description": "Local dev server",
   "main": "dist/LocalDevServer.js",
@@ -7,14 +7,14 @@
   "author": "Lightning Tooling",
   "license": "MIT",
   "bin": {
-    "local-dev": "./bin/run"
+    "lwc-dev-server": "./bin/run"
   },
   "oclif": {
     "macos": {
       "identifier": "com.salesforce.localdevserver"
     },
     "commands": "./dist/cli/commands",
-    "bin": "local-dev",
+    "bin": "lwc-dev-server",
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-update"
