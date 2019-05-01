@@ -9,5 +9,13 @@ module.exports = {
     collectCoverage: true,
     coverageReporters: ['json', 'html', 'text'],
     collectCoverageFrom: ['src/**/*.ts', 'src/**/*.js'],
-    coveragePathIgnorePatterns: ['/node_modules/', '/test-projects/']
+    coveragePathIgnorePatterns: ['/node_modules/', '/test-projects/'],
+    coverageDirectory: 'reports/coverage',
+    reporters: [
+        'default',
+        [
+            'jest-junit',
+            { outputDirectory: './reports/tests', suiteName: 'Jest tests' }
+        ]
+    ]
 };
