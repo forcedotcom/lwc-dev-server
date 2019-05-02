@@ -49,7 +49,7 @@ export default class Dev extends SfdxCommand {
 
     public async run(): Promise<AnyJson> {
         const componentName = this.flags.open;
-        const port = this.flags.port || 8080;
+        const port = this.flags.port || 3333;
         const stahp = this.flags.stop;
         if (stahp) {
             this.ux.log(messages.getMessage('stopMessage') + port);

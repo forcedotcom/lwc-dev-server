@@ -156,10 +156,9 @@ export default class LocalDevServer {
             // Start the talon site.
             await run(
                 config,
-                project.getSfdxConfiguration().get('port') ||
-                    project.getConfiguration().getHostPort() /* port */,
+                project.getConfiguration().getHostPort() /* port */,
                 project.getSfdxConfiguration().get('endpoint') /*apiEndpoint*/,
-                true /*recordApiCalls*/,
+                true /*recordApiCalls*/, // TODO configurable?
                 project.getSfdxConfiguration().get('onProxyReq') /*onProxyReq*/
             );
         } catch (e) {

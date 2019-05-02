@@ -22,6 +22,8 @@ export default class LocalDevServerConfiguration {
             } else {
                 this.configFromJson = {};
             }
+        } else {
+            this.configFromJson = {};
         }
     }
 
@@ -119,5 +121,13 @@ export default class LocalDevServerConfiguration {
         if (config.hasOwnProperty('main')) {
             this.entryPoint = config.main;
         }
+    }
+
+    public setPort(port: number) {
+        this.configFromJson.port = port;
+    }
+
+    public setNamespace(namespace: string) {
+        this.configFromJson.namespace = namespace;
     }
 }

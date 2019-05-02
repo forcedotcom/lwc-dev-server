@@ -63,6 +63,8 @@ export default class Project {
         this.sfdxConfiguration = sfdxConfiguration;
         this.rootDirectory = sfdxConfiguration.getPath();
         this.modulesSourceDirectory = this.getSfdxProjectLWCDirectory();
+        this.configuration.setPort(sfdxConfiguration.get('port'));
+        this.configuration.setNamespace(sfdxConfiguration.getNamespace());
     }
 
     public getConfiguration(): LocalDevServerConfiguration {
