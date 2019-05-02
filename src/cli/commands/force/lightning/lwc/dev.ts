@@ -17,8 +17,7 @@ export default class Dev extends SfdxCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
-        `$ sfdx force:lighting:lwc:dev --open myComponent`,
-        `$ sfdx force:lighting:lwc:dev --stop`
+        `$ sfdx force:lighting:lwc:dev --open myComponent`
     ];
 
     public static args = [{ open: 'file', name: 'lwc-dev' }];
@@ -31,10 +30,6 @@ export default class Dev extends SfdxCommand {
         port: flags.integer({
             char: 'p',
             description: messages.getMessage('portFlagDescription')
-        }),
-        stop: flags.boolean({
-            char: 's',
-            description: messages.getMessage('stopFlagDescription')
         })
     };
 
@@ -50,11 +45,6 @@ export default class Dev extends SfdxCommand {
     public async run(): Promise<AnyJson> {
         const componentName = this.flags.open;
         const port = this.flags.port || 3333;
-        const stahp = this.flags.stop;
-        if (stahp) {
-            this.ux.log(messages.getMessage('stopMessage') + port);
-            return { stopped: port };
-        }
 
         if (!this.org) {
             this.ux.log('org was undefined, an org is required.');
