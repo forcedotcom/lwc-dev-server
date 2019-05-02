@@ -103,7 +103,7 @@
     "@talon/force-modules": "file:./lib/talon-force-modules-0.0.5.tgz",
     "@talon/framework": "file:./lib/talon-framework-0.11.2.tgz",
     "cpx": "^1.5.0",
-    "lwc-components-lightning": "file:./lib/lwc-components-lightning-1.0.19-alpha.tgz"
+    "lwc-components-lightning": "file:./lib/lwc-components-lightning-1.2.1-alpha.tgz"
   },
   "resolutions": {
     "@talon/common": "file:./lib/talon-common-0.11.2.tgz",
