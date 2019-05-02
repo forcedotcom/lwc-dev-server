@@ -99,15 +99,7 @@ export default class LocalDevServer {
         // Salesforce internal version == Salesforce API Version * 2 + 128
         // 45 * 2 + 128 = 218
         const version =
-            parseInt(
-                project
-                    .getSfdxConfiguration()
-                    .get('api_version')
-                    .toString(),
-                10
-            ) *
-                2 +
-            128;
+            parseInt(project.getSfdxConfiguration().api_version, 10) * 2 + 128;
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
             path.join(__dirname, '..', 'vendors', `dependencies-${version}`)
@@ -156,10 +148,10 @@ export default class LocalDevServer {
             // Start the talon site.
             await run(
                 config,
-                project.getConfiguration().getHostPort() /* port */,
-                project.getSfdxConfiguration().get('endpoint') /*apiEndpoint*/,
-                true /*recordApiCalls*/, // TODO configurable?
-                project.getSfdxConfiguration().get('onProxyReq') /*onProxyReq*/
+                project.getConfiguration().port /* port */,
+                project.getSfdxConfiguration().endpoint /*apiEndpoint*/,
+                false /*recordApiCalls*/, // TODO configurable?
+                project.getSfdxConfiguration().onProxyReq /*onProxyReq*/
             );
         } catch (e) {
             console.error(e);

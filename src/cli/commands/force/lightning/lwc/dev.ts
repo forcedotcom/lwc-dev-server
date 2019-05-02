@@ -112,24 +112,21 @@ export default class Dev extends SfdxCommand {
 
         // custom onProxyReq function to inject into Talon's proxy
         // this will insert the Authorization header to have the requests be authenticated
-        const onProxyReq = function(writeBodyFunction: Function) {
-            return (
-                proxyReq: http.ClientRequest,
-                req: http.IncomingMessage,
-                res: http.ServerResponse
-            ) => {
-                req.headers = req.headers || {};
-                req.headers.Authorization = `Bearer ${conn.accessToken}`;
-                // req.headers.Cookie = `sid=${sid_cookie}`;
-                return writeBodyFunction(proxyReq, req, res);
-            };
+        const onProxyReq = function(
+            proxyReq: http.ClientRequest,
+            req: http.IncomingMessage,
+            res: http.ServerResponse
+        ) {
+            req.headers = req.headers || {};
+            req.headers.Authorization = `Bearer ${conn.accessToken}`;
+            // req.headers.Cookie = `sid=${sid_cookie}`;
         };
 
         const sfdxConfiguration = new SfdxConfiguration(this.project.getPath());
-        sfdxConfiguration.setConfigValue('api_version', api.version);
-        sfdxConfiguration.setConfigValue('endpoint', conn.instanceUrl);
-        sfdxConfiguration.setConfigValue('onProxyReq', onProxyReq);
-        sfdxConfiguration.setConfigValue('port', port);
+        sfdxConfiguration.api_version = <string>api.version;
+        sfdxConfiguration.endpoint = conn.instanceUrl;
+        sfdxConfiguration.onProxyReq = onProxyReq;
+        sfdxConfiguration.port = port;
 
         // Start local dev server
         new LocalDevServer().start(

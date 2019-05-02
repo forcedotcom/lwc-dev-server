@@ -39,23 +39,51 @@ export default class SfdxConfiguration {
         }
     }
 
-    public setConfigValue(name: string, value: any) {
-        this.configMap[name] = value;
-    }
-
     public getPath(): string {
         return this._path;
-    }
-
-    public get(name: string): any {
-        return this.configMap[name];
     }
 
     public getPackageDirectories(): string[] {
         return this.packageDirectories;
     }
 
-    public getNamespace(): string {
+    public get namespace(): string {
         return this.configMap.namespace;
+    }
+
+    public set namespace(namespace: string) {
+        this.configMap.namespace = namespace;
+    }
+
+    public get api_version(): string {
+        return this.configMap.api_version;
+    }
+
+    public set api_version(api_version: string) {
+        this.configMap.api_version = api_version;
+    }
+
+    public get endpoint(): string {
+        return this.configMap.endpoint;
+    }
+
+    public set endpoint(endpoint: string) {
+        this.configMap.endpoint = endpoint;
+    }
+
+    public get onProxyReq(): Function {
+        return this.configMap.onProxyReq;
+    }
+
+    public set onProxyReq(onProxyReq: Function) {
+        this.configMap.onProxyReq = onProxyReq;
+    }
+
+    public get port(): number {
+        return this.configMap.port;
+    }
+
+    public set port(port: number) {
+        this.configMap.port = port;
     }
 }

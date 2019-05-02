@@ -67,7 +67,7 @@ export default class Server extends Command {
             directory: project.getDirectory(),
             moduleSourceDirectory: project.getModuleSourceDirectory(),
             main: main,
-            namespace: project.getConfiguration().getNamespace(),
+            namespace: project.getConfiguration().namespace,
             containerType: project.getConfiguration().getContainerType()
         });
 
