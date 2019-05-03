@@ -19,7 +19,7 @@ export default class Home extends LightningElement {
     "port": 3333
 }
 `;
-    @api components;
+    @api components = [];
 
     constructor() {
         super();

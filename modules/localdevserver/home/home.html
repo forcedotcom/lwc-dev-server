@@ -1,24 +1,21 @@
 <template>
-    <div class="slds-p-around_large">
-        <h1>Welcome to Local Dev Server</h1>
-
-        <div class="slds-grid slds-gutters">
-                <div class="slds-col slds-size_1-of-2">
-                    Here are the possible configuration values.
-
-                <code><pre>{configuration}</pre></code>
-                </div>
-                <div class="slds-col slds-size_1-of-2">
-                    <h2><a href="/lwc/preview/todo/app">Click to Preview TodoMVC</a></h2>
-
-                    <br/><br/>
-                    <h2>List of Components</h2>
-                    <ul>
-                        <template for:each={components} for:item="item" for:index="index">
-                            <li key={item.url}><a href={item.url}>{item.title}</a></li>
-                        </template>
-                    </ul>
-                </div>
+    <div class="slds-p-around_x-large">
+        <h1 class="slds-text-heading_large">Welcome to Local Dev Server</h1>
+        <div class="slds-grid slds-grid_vertical slds-gutters">
+            <div class="slds-p-top_large slds-col slds-size_1-of-2">
+                <h2 class="slds-text-heading_medium">View a component from your workspace</h2>
+                <ul class="slds-p-top_large">
+                    <template for:each={components} for:item="item" for:index="index">
+                        <li class="slds-m-horizontal_xx-small slds-m-bottom_x-small" key={item.url}><a href={item.url}>{item.title}</a></li>
+                    </template>
+                </ul>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <h2 class="slds-text-heading_medium slds-p-top_large">
+                    Configuration options for local development server
+                </h2>
+            <code><pre>{configuration}</pre></code>
+            </div>
         </div>
     </div>
 </template>
