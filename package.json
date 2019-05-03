@@ -55,7 +55,7 @@
     "precommit": "lint-staged",
     "prepush": "yarn prepare && yarn lint && yarn test",
     "link-talon": "yarn link @talon/common @talon/framework @talon/compiler",
-    "unlink-talon": "unlink @talon/common @talon/framework @talon/compiler",
+    "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
     "prepack": "oclif-dev manifest",
     "postpack": "rm -f oclif.manifest.json"
   },
