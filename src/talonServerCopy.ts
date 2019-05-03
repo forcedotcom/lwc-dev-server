@@ -5,12 +5,11 @@
  * to expose talon's express server for configuration
  *
  */
-
 import {
     templateMiddleware,
     resourceMiddleware,
     apiMiddleware
-} from '@talon/framework';
+} from '@talon/compiler';
 import { startContext, endContext } from '@talon/compiler';
 import compression from 'compression';
 import express from 'express';
@@ -23,7 +22,6 @@ import Project from './common/Project';
 
 const { log } = console;
 
-// TODO Does this work if we aren't source linked?
 const frameworkResourcesJson = require.resolve(
     '@talon/framework/dist/resources.json'
 );
@@ -35,7 +33,7 @@ const staticOptions = {
     maxAge: 31536000
 };
 
-async function createServer(options: object, proxyConfig: any = {}) {
+export async function createServer(options: object, proxyConfig: any = {}) {
     const { templateDir, outputDir, basePath } = await startContext(options);
     const app = express();
 
@@ -88,7 +86,7 @@ async function createServer(options: object, proxyConfig: any = {}) {
     return app;
 }
 
-async function startServer(app: any, basePath: string, port = 3000) {
+export async function startServer(app: any, basePath: string, port = 3000) {
     // 5. If none found, serve up the page for the current route depending on the path
     app.get(`${basePath}/*`, templateMiddleware());
 
@@ -110,5 +108,3 @@ async function startServer(app: any, basePath: string, port = 3000) {
 
     return server;
 }
-
-module.exports = { createServer, startServer };
