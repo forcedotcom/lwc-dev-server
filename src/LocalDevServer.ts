@@ -9,9 +9,10 @@ import {
 import metadataService from '@talon/compiler/src/metadata/metadata-service';
 import resourceService from '@talon/compiler/src/resources/resource-service';
 import validate from '@talon/compiler/src/metadata/metadata-validation';
-import { run } from '@talon/compiler/src/server/server';
+import { createServer, startServer } from '@talon/compiler/src/server/server';
 import Project from './common/Project';
 import rimraf from 'rimraf';
+import ComponentIndex from './common/ComponentIndex';
 
 const talonConfigJson = {};
 
@@ -142,11 +143,25 @@ export default class LocalDevServer {
 
         try {
             // Start the talon site.
-            await run(
+            const server = await createServer(
                 config,
-                project.getConfiguration().getHostPort(),
                 '' /*apiEndpoint*/,
                 true /*recordApiCalls*/
+            );
+            server.use('/componentList', function(
+                req: any,
+                res: any,
+                next: () => void
+            ) {
+                debugger;
+                const tmp = new ComponentIndex(project);
+                const modules = tmp.getModules();
+                res.json(modules);
+            });
+            await startServer(
+                server,
+                '',
+                project.getConfiguration().getHostPort()
             );
         } catch (e) {
             console.error(e);
