@@ -42,15 +42,13 @@ describe('dev', () => {
         });
     }
 
-    function setupOrg(results = [{ version: '99.0' }]) {
+    function setupOrg(version = '99.0') {
         Object.defineProperty(dev, 'org', {
             get: () => {
                 return {
                     getConnection: () => {
                         return {
-                            request: () => {
-                                return results;
-                            },
+                            retrieveMaxApiVersion: () => version,
                             accessToken: 'testingAccessToken',
                             instanceUrl: 'http://test.instance.url'
                         };
@@ -129,20 +127,6 @@ describe('dev', () => {
                 ).toBeTruthy();
             } else {
                 fail('result was nothing');
-            }
-        });
-
-        test('run will throw when connection results are empty', async () => {
-            setupUX();
-            setupFlags();
-            setupProject();
-            setupOrg([]);
-            try {
-                let result = await dev.run();
-                fail('should have thrown: ' + JSON.stringify(result));
-            } catch (error) {
-                console.log(error);
-                expect(error instanceof SfdxError).toBeTruthy();
             }
         });
 

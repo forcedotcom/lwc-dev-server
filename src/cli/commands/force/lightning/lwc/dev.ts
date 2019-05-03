@@ -61,24 +61,11 @@ export default class Dev extends SfdxCommand {
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
         const conn = this.org.getConnection();
 
-        // Query the org for the API versions supported
-        const result = <JsonArray>(
-            await conn.request({ url: '/services/data/' })
-        );
-
-        if (!result || !result.length || result.length <= 0) {
-            throw new SfdxError(
-                messages.getMessage('errorNoOrgApis', [this.org.getOrgId()])
-            );
-        }
-
         // Highest level API is always last
-        const api = <JsonMap>result[result.length - 1];
+        const api_version = await conn.retrieveMaxApiVersion();
 
         this.ux.log(
-            `You appear to be running on a Salesforce instance that can support up to API level ${
-                api.version
-            }`
+            `You appear to be running on a Salesforce instance that can support up to API level ${api_version}`
         );
 
         if (componentName) {
@@ -102,7 +89,7 @@ export default class Dev extends SfdxCommand {
         };
 
         const sfdxConfiguration = new SfdxConfiguration(this.project.getPath());
-        sfdxConfiguration.api_version = <string>api.version;
+        sfdxConfiguration.api_version = api_version;
         sfdxConfiguration.endpoint = conn.instanceUrl;
         sfdxConfiguration.onProxyReq = onProxyReq;
         sfdxConfiguration.port = port;
