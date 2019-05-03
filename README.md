@@ -71,3 +71,13 @@ script/update-local-deps.js
 ```
 
 This will download new jars and update the package.json file.
+
+
+### SFDX Plugin
+
+build the oclif manifest
+```console
+yarn oclif-dev manifest
+```
+
+See [SFDX Readme](SFDX_plugin.md)
