@@ -43,6 +43,15 @@ yarn install
 yarn build
 ```
 
+### link talon
+
+```console
+cd ~/git/talon
+yarn link-talon
+cd ~/git/local-dev-server
+yarn link-talon
+```
+
 As you are making changes, you'll probably want 
 
 ```console
@@ -62,3 +71,13 @@ script/update-local-deps.js
 ```
 
 This will download new jars and update the package.json file.
+
+
+### SFDX Plugin
+
+build the oclif manifest
+```console
+yarn oclif-dev manifest
+```
+
+See [SFDX Readme](SFDX_plugin.md)

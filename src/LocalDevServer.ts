@@ -92,10 +92,14 @@ export default class LocalDevServer {
         // Find where all the source code is.
         // This should have /lwc on the end, but I think the talon compiler expects the directory name to be the namespace passed
         // to the descriptor.
-        const directory = project.getDirectory();
+        const directory = project.getSfdxConfiguration().getPath();
         // the regular node_module paths
         const nodePaths = require.resolve.paths('.') || [];
-        const version = 218;
+
+        // Salesforce internal version == Salesforce API Version * 2 + 128
+        // 45 * 2 + 128 = 218
+        const version =
+            parseInt(project.getSfdxConfiguration().api_version, 10) * 2 + 128;
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
             path.join(__dirname, '..', 'vendors', `dependencies-${version}`)
@@ -144,9 +148,10 @@ export default class LocalDevServer {
             // Start the talon site.
             await run(
                 config,
-                project.getConfiguration().getHostPort(),
-                '' /*apiEndpoint*/,
-                true /*recordApiCalls*/
+                project.getConfiguration().port /* port */,
+                project.getSfdxConfiguration().endpoint /*apiEndpoint*/,
+                false /*recordApiCalls*/, // TODO configurable?
+                project.getSfdxConfiguration().onProxyReq /*onProxyReq*/
             );
         } catch (e) {
             console.error(e);

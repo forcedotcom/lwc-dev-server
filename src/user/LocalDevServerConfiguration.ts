@@ -22,6 +22,8 @@ export default class LocalDevServerConfiguration {
             } else {
                 this.configFromJson = {};
             }
+        } else {
+            this.configFromJson = {};
         }
     }
 
@@ -55,7 +57,7 @@ export default class LocalDevServerConfiguration {
         }
 
         if (!entryPoint.includes('/')) {
-            return `${this.getNamespace()}/${entryPoint}`;
+            return `${this.namespace}/${entryPoint}`;
         }
 
         return entryPoint;
@@ -69,7 +71,7 @@ export default class LocalDevServerConfiguration {
      *  "namespace": "..."
      * }
      */
-    public getNamespace(): string {
+    public get namespace(): string {
         return this.configFromJson.namespace || 'c';
     }
 
@@ -90,7 +92,7 @@ export default class LocalDevServerConfiguration {
      *  "port": 3334
      * }
      */
-    public getHostPort(): number {
+    public get port(): number {
         const defaultPort = 3333;
         let port = this.configFromJson.port;
         if (port === undefined || port === null) {
@@ -119,5 +121,13 @@ export default class LocalDevServerConfiguration {
         if (config.hasOwnProperty('main')) {
             this.entryPoint = config.main;
         }
+    }
+
+    public set port(port: number) {
+        this.configFromJson.port = port;
+    }
+
+    public set namespace(namespace: string) {
+        this.configFromJson.namespace = namespace;
     }
 }
