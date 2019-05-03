@@ -48,14 +48,14 @@ export default class Dev extends SfdxCommand {
 
         if (!this.org) {
             this.ux.log('org was undefined, an org is required.');
-            return { org: this.org };
+            return { org: typeof this.org };
         }
 
         if (!this.project) {
             this.ux.log(
                 'project is undefined. this must be run from a sfdx worksapce'
             );
-            return { project: this.project };
+            return { project: typeof this.project };
         }
 
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
@@ -85,17 +85,6 @@ export default class Dev extends SfdxCommand {
             this.ux.log(`You wanted to open this component: ${componentName}`);
         }
 
-        // Return an object to be displayed with --json
-        const retValue = {
-            orgId: this.org.getOrgId(),
-            'api version': api.version,
-            instance: conn.instanceUrl,
-            token: conn.accessToken,
-            componentName,
-            port
-        };
-        this.ux.log(JSON.stringify(retValue));
-
         // TODO resolve location of `componentName`, ensure directory structure is imported / compiled
 
         // TODO check if it's already running on the port first
@@ -119,13 +108,21 @@ export default class Dev extends SfdxCommand {
         sfdxConfiguration.port = port;
 
         // Start local dev server
+        // TODO pass in component to open & open browser
         new LocalDevServer().start(
             new Project(sfdxConfiguration),
             this.project.getPath()
         );
 
-        // TODO open browser page to component
-
+        const retValue = {
+            orgId: this.org.getOrgId(),
+            api_version: sfdxConfiguration.api_version,
+            endpoint: sfdxConfiguration.endpoint,
+            onProxyReq: JSON.stringify(sfdxConfiguration.onProxyReq),
+            componentName,
+            port
+        };
+        this.ux.log(JSON.stringify(retValue));
         return retValue;
     }
 }

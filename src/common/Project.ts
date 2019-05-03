@@ -152,7 +152,7 @@ export default class Project {
         // TODO: Support more than one package
         const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
         if (packageDirectories.length > 0) {
-            return `${packageDirectories[0]}/main/default/lwc`;
+            return `${packageDirectories[0]}/main/default/c`;
         }
 
         // What would we expect if no value is specified?
