@@ -9,9 +9,10 @@ import {
 import metadataService from '@talon/compiler/src/metadata/metadata-service';
 import resourceService from '@talon/compiler/src/resources/resource-service';
 import validate from '@talon/compiler/src/metadata/metadata-validation';
-import { run } from '@talon/compiler/src/server/server';
+import { createServer, startServer } from '@talon/compiler/src/server/server';
 import Project from './common/Project';
 import rimraf from 'rimraf';
+import ComponentIndex from './common/ComponentIndex';
 
 const talonConfigJson = {
     includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
@@ -147,15 +148,28 @@ export default class LocalDevServer {
         await this.copyAssets(config.outputDir);
 
         const proxyConfig = {
-            apiEndpoint: project.getSfdxConfiguration()
-                .endpoint /*apiEndpoint*/,
+            apiEndpoint: project.getSfdxConfiguration().endpoint,
             recordApiCalls: false,
             onProxyReq: project.getSfdxConfiguration().onProxyReq
         };
 
         try {
             // Start the talon site.
-            await run(config, project.getConfiguration().port, proxyConfig);
+            const server = await createServer(
+                config,
+                proxyConfig
+            );
+            server.use('/componentList', function(
+                req: any,
+                res: any,
+                next: () => void
+            ) {
+                debugger;
+                const tmp = new ComponentIndex(project);
+                const modules = tmp.getModules();
+                res.json(modules);
+            });
+            await startServer(server, '', project.getConfiguration().port);
         } catch (e) {
             console.error(e);
             process.exit(0);
