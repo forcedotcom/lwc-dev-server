@@ -8,6 +8,6 @@
 		}
 	],
 	"settings": {
-		"salesforcedx-vscode-lightning.activationMode": "off"
+		"salesforcedx-vscode-lightning.activationMode": "always"
 	}
 }

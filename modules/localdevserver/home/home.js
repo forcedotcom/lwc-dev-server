@@ -1,4 +1,4 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, api } from 'lwc';
 
 export default class Home extends LightningElement {
     configuration = `
@@ -19,4 +19,19 @@ export default class Home extends LightningElement {
     "port": 3333
 }
 `;
+    @api components;
+
+    constructor() {
+        super();
+
+        // fetch data from the server
+        fetch('/componentList')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                this.components = data;
+            });
+    }
 }

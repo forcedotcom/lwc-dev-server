@@ -153,7 +153,6 @@ export default class LocalDevServer {
                 res: any,
                 next: () => void
             ) {
-                debugger;
                 const tmp = new ComponentIndex(project);
                 const modules = tmp.getModules();
                 res.json(modules);
