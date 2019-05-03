@@ -57,7 +57,8 @@
     "link-talon": "yarn link @talon/common @talon/framework @talon/compiler",
     "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
     "prepack": "oclif-dev manifest",
-    "postpack": "rm -f oclif.manifest.json"
+    "postpack": "rm -f oclif.manifest.json",
+    "postinstall": "yarn build"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
