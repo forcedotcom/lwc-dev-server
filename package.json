@@ -81,9 +81,9 @@
     "lint-staged": "^8.1.5",
     "mock-fs": "^4.8.0",
     "prettier": "^1.17.0",
-    "rimraf": "^2.6.3",
     "shelljs": "^0.8.3",
     "ts-jest": "^24.0.2",
+    "ts-mockito": "^2.3.1",
     "ts-node": "^8.1.0",
     "tslint": "^5.0.0",
     "typescript": "^3.4.5"
@@ -111,6 +111,7 @@
     "helmet": "^3.16.0",
     "lwc-components-lightning": "file:./lib/lwc-components-lightning-1.2.1-alpha.tgz",
     "path": "^0.12.7",
+    "rimraf": "^2.6.3",
     "uuidv4": "^4.0.0"
   },
   "resolutions": {
