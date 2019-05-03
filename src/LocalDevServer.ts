@@ -9,7 +9,7 @@ import {
 import metadataService from '@talon/compiler/src/metadata/metadata-service';
 import resourceService from '@talon/compiler/src/resources/resource-service';
 import validate from '@talon/compiler/src/metadata/metadata-validation';
-import { createServer, startServer } from '@talon/compiler/src/server/server';
+import { createServer, startServer } from './talonServerCopy';
 import Project from './common/Project';
 import rimraf from 'rimraf';
 import ComponentIndex from './common/ComponentIndex';
@@ -143,11 +143,10 @@ export default class LocalDevServer {
 
         try {
             // Start the talon site.
-            const server = await createServer(
-                config,
-                '' /*apiEndpoint*/,
-                true /*recordApiCalls*/
-            );
+            const proxyConfig: any = {};
+            proxyConfig.apiEndpoint = '';
+            proxyConfig.recordApiCalls = true;
+            const server = await createServer(config, proxyConfig);
             server.use('/componentList', function(
                 req: any,
                 res: any,
