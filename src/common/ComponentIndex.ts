@@ -9,7 +9,7 @@ export default class ComponentIndex {
         this.project = project;
     }
 
-    public getModules(): string[] {
+    public getModules(): object[] {
         const temp = this.project.getModuleSourceDirectory();
         if (temp !== null) {
             return this.findModulesIn(temp + 'todo/');
@@ -20,8 +20,8 @@ export default class ComponentIndex {
     /**
      * @return list of .js modules inside namespaceRoot folder
      */
-    private findModulesIn(namespaceRoot: string): string[] {
-        const files: string[] = [];
+    private findModulesIn(namespaceRoot: string): object[] {
+        const files: object[] = [];
         const subdirs = this.findSubdirectories(namespaceRoot);
         for (const subdir of subdirs) {
             console.log('test');
@@ -31,8 +31,17 @@ export default class ComponentIndex {
                 fs.pathExistsSync(modulePath) &&
                 this.isJSComponent(modulePath)
             ) {
+                const componentName = basename;
+                const namespace = path.basename(path.dirname(subdir));
+                // TODO don't hardcode lwc/preview
+                const cmpUrl =
+                    '/lwc/preview/' + namespace + '/' + componentName;
+                const cmpTitle = namespace + '-' + componentName;
                 // TODO: check contents for: from 'lwc'?
-                files.push(modulePath);
+                files.push({
+                    url: cmpUrl,
+                    title: cmpTitle
+                });
             }
         }
         return files;

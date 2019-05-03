@@ -6,7 +6,7 @@
                 <div class="slds-col slds-size_1-of-2">
                     Here are the possible configuration values.
 
-<code><pre>{configuration}</pre></code>
+                <code><pre>{configuration}</pre></code>
                 </div>
                 <div class="slds-col slds-size_1-of-2">
                     <h2><a href="/lwc/preview/todo/app">Click to Preview TodoMVC</a></h2>
@@ -14,9 +14,10 @@
                     <br/><br/>
                     <h2>List of Components</h2>
                     <ul>
-                        <li>coming soon...</li>
+                        <template for:each={components} for:item="item" for:index="index">
+                            <li key={item.url}><a href={item.url}>{item.title}</a></li>
+                        </template>
                     </ul>
-
                 </div>
         </div>
     </div>
