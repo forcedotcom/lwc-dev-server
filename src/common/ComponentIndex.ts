@@ -24,7 +24,6 @@ export default class ComponentIndex {
         const files: object[] = [];
         const subdirs = this.findSubdirectories(namespaceRoot);
         for (const subdir of subdirs) {
-            console.log('test');
             const basename = path.basename(subdir);
             const modulePath = path.join(subdir, basename + '.js');
             if (
