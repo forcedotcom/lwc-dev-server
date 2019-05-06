@@ -1,6 +1,6 @@
 {
   "name": "lwc-dev-server",
-  "version": "1.0.0",
+  "version": "1.7.8",
   "description": "Local dev server",
   "main": "dist/LocalDevServer.js",
   "types": "dist/LocalDevServer.d.ts",
@@ -12,7 +12,7 @@
   },
   "oclif": {
     "macos": {
-      "identifier": "com.salesforce.localdevserver"
+      "identifier": "com.salesforce.lwcdevserver"
     },
     "commands": "./dist/cli/commands",
     "bin": "lwc-dev-server",
@@ -27,12 +27,16 @@
     }
   },
   "files": [
+    "bin",
     "dist",
     "!dist/__test__",
-    "bin",
+    "lib",
+    "!lib/unpacked",
     "modules",
-    "/oclif.manifest.json",
-    "/messages"
+    "script",
+    "vendors",
+    "/messages",
+    "/oclif.manifest.json"
   ],
   "lwc": {
     "mapNamespaceFromPath": true,
@@ -41,7 +45,7 @@
     ]
   },
   "scripts": {
-    "clean": "yarn rimraf dist",
+    "clean": "yarn rimraf dist reports coverage oclif.manifest.json",
     "build": "yarn clean && tsc && ts-node build/copy-assets",
     "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
     "lint": "yarn eslint src --ext js,ts",
@@ -56,11 +60,14 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "precommit": "lint-staged",
     "prepush": "yarn prepare && yarn lint && yarn test",
+    "preinstall": "script/libs-unpack.js",
+    "postinstall": "script/libs-install.js",
     "link-talon": "yarn link @talon/common @talon/framework @talon/compiler",
     "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
     "prepack": "oclif-dev manifest",
     "postpack": "rm -f oclif.manifest.json",
-    "postinstall": "yarn build"
+    "prepublishOnly": "script/packagejson-clean.js",
+    "postpublish": "script/packagejson-restore.js"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
@@ -81,7 +88,6 @@
     "lint-staged": "^8.1.5",
     "mock-fs": "^4.8.0",
     "prettier": "^1.17.0",
-    "shelljs": "^0.8.3",
     "ts-jest": "^24.0.2",
     "ts-mockito": "^2.3.1",
     "ts-node": "^8.1.0",
