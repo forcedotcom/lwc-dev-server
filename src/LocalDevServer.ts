@@ -146,15 +146,16 @@ export default class LocalDevServer {
 
         await this.copyAssets(config.outputDir);
 
+        const proxyConfig = {
+            apiEndpoint: project.getSfdxConfiguration()
+                .endpoint /*apiEndpoint*/,
+            recordApiCalls: false,
+            onProxyReq: project.getSfdxConfiguration().onProxyReq
+        };
+
         try {
             // Start the talon site.
-            await run(
-                config,
-                project.getConfiguration().port /* port */,
-                project.getSfdxConfiguration().endpoint /*apiEndpoint*/,
-                false /*recordApiCalls*/, // TODO configurable?
-                project.getSfdxConfiguration().onProxyReq /*onProxyReq*/
-            );
+            await run(config, project.getConfiguration().port, proxyConfig);
         } catch (e) {
             console.error(e);
             process.exit(0);
