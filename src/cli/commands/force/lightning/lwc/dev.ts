@@ -40,7 +40,7 @@ export default class Dev extends SfdxCommand {
     protected static supportsDevhubUsername = true;
 
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-    protected static requiresProject = true;
+    protected static requiresProject = false;
 
     public async run(): Promise<AnyJson> {
         const componentName = this.flags.open;
@@ -84,6 +84,9 @@ export default class Dev extends SfdxCommand {
             res: http.ServerResponse
         ) {
             req.headers = req.headers || {};
+            if (req.url && req.url.startsWith('/api/')) {
+                req.url = req.url.slice(4);
+            }
             req.headers.Authorization = `Bearer ${conn.accessToken}`;
             // req.headers.Cookie = `sid=${sid_cookie}`;
         };
