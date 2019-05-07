@@ -12,7 +12,7 @@ export default class ComponentIndex {
     public getModules(): object[] {
         const temp = this.project.getModuleSourceDirectory();
         if (temp !== null) {
-            return this.findModulesIn(temp + 'todo/');
+            return this.findModulesIn(temp);
         }
         return [];
     }
