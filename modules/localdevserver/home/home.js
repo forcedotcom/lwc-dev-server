@@ -30,7 +30,6 @@ export default class Home extends LightningElement {
                 return response.json();
             })
             .then(data => {
-                console.log(data);
                 this.components = data;
             });
     }
