@@ -131,7 +131,8 @@ export default class LocalDevServer {
             //            watchPath:
             //                '~/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
             isPreview: false,
-            modulePaths
+            modulePaths,
+            modes: ['dev']
         };
         const descriptor = `component://${entryPoint}@en`;
         console.log('Running Universal Container with config:');
