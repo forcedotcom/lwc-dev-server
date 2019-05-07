@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+process.env.NODE_OPTIONS = '';
+
 require('@oclif/command')
     .run()
     .then(require('@oclif/command/flush'))

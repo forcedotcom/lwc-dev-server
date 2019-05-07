@@ -13,7 +13,9 @@ import { run } from '@talon/compiler/src/server/server';
 import Project from './common/Project';
 import rimraf from 'rimraf';
 
-const talonConfigJson = {};
+const talonConfigJson = {
+    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
+};
 
 const routesJson = [
     {
