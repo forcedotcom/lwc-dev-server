@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "~/git/duckburrito/talon"
+		}
+	],
+	"settings": {
+		"salesforcedx-vscode-lightning.activationMode": "always"
+	}
+}
