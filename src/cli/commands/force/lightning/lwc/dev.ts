@@ -40,7 +40,7 @@ export default class Dev extends SfdxCommand {
     protected static supportsDevhubUsername = true;
 
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-    protected static requiresProject = false;
+    protected static requiresProject = true;
 
     public async run(): Promise<AnyJson> {
         const componentName = this.flags.open;
