@@ -14,11 +14,11 @@ import Project from './common/Project';
 import rimraf from 'rimraf';
 import ComponentIndex from './common/ComponentIndex';
 
-const talonConfigJson = {
+const talonConfig = {
     includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
 };
 
-const routesJson = [
+const routes = [
     {
         name: 'home',
         path: '/',
@@ -34,8 +34,8 @@ const routesJson = [
         label: 'LWC Preview'
     }
 ];
-const labelsJson = {};
-const themeJson = {
+const labels = {};
+const theme = {
     name: 'duck',
     label: 'Duck Burrito',
     themeLayouts: {
@@ -44,7 +44,7 @@ const themeJson = {
         }
     }
 };
-const viewsDir = {
+const views = {
     home: {
         name: 'home',
         label: 'Home',
@@ -119,13 +119,13 @@ export default class LocalDevServer {
 
         const config = {
             templateDir: directory,
-            talonConfigJson,
+            talonConfig,
             srcDir: project.getModuleSourceDirectory(),
-            viewsDir,
+            views,
             indexHtml: path.join(__dirname, 'config', 'index.html'),
-            routesJson,
-            labelsJson,
-            themeJson,
+            routes,
+            labels,
+            theme,
             outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,

@@ -41,6 +41,7 @@ export async function createServer(options: object, proxyConfig: any = {}) {
     app.use(compression());
 
     // 1. CSP for script-src directive
+    // @ts-ignore
     app.use((req, res, next) => {
         res.locals.nonce = uuidv4();
         next();
