@@ -155,10 +155,7 @@ export default class LocalDevServer {
 
         try {
             // Start the talon site.
-            const server = await createServer(
-                config,
-                proxyConfig
-            );
+            const server = await createServer(config, proxyConfig);
             server.use('/componentList', function(
                 req: any,
                 res: any,
