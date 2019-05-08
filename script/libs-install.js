@@ -40,14 +40,19 @@ const gunzip = require('gunzip-maybe');
 const tar = require('tar-fs');
 const { performance } = require('perf_hooks');
 
-const libPath = path.join(__dirname, '..', 'lib');
+const rootPath = path.join(__dirname, '..');
+const libPath = path.join(rootPath, 'lib');
 const unpackPath = path.join(libPath, 'unpacked');
 
 (async () => {
     try {
         const start = performance.now();
-        const packages = await readPackages();
-        console.error(packages);
+        await prepare();
+        const dirs = await unpack();
+        console.error('unpacked', dirs);
+        const packages = await getPackages(dirs);
+        console.error(JSON.stringify(packages, null, 2));
+        await fixReferences(packages);
         await addPackages(packages);
         const end = performance.now();
         console.error('libs-install took ' + (end - start) + ' ms');
@@ -57,14 +62,95 @@ const unpackPath = path.join(libPath, 'unpacked');
     }
 })();
 
-async function readPackages() {
-    const jsonPath = path.join(unpackPath, 'packages.json');
-    if (!fs.existsSync(jsonPath)) {
-        throw new Error(
-            `${jsonPath} does not exist, run libs-unpack.json first`
-        );
+function prepare() {
+    // create clean unpacked dir
+    console.error('libPath', libPath, unpackPath);
+    if (fs.existsSync(unpackPath)) {
+        shell.rm('-rf', unpackPath);
     }
-    return JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+    shell.mkdir('-p', unpackPath);
+}
+
+async function unpack() {
+    const tarballs = shell.ls(path.join(libPath, '*.tgz'));
+
+    return Promise.all(
+        tarballs.map(tarball => {
+            return new Promise((resolve, reject) => {
+                const dir = path.basename(tarball, path.extname(tarball));
+                const dest = path.join(unpackPath, dir);
+                const tmpdest = path.join(unpackPath, 'tmp', dir);
+                fs.createReadStream(tarball)
+                    .pipe(gunzip())
+                    .pipe(tar.extract(tmpdest))
+                    .on('finish', () => {
+                        shell.mv(path.join(tmpdest, 'package'), dest);
+                        resolve(dest);
+                    })
+                    .on('error', e => reject(e));
+            });
+        })
+    );
+}
+
+async function getPackages(dirs) {
+    const packages = {};
+
+    dirs.forEach(dir => {
+        const pkgPath = path.join(dir, 'package.json');
+        if (fs.existsSync(pkgPath)) {
+            const json = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+
+            const previous = packages[json.name];
+            if (previous !== undefined) {
+                throw new Error(
+                    `package '${
+                        json.name
+                    }' is specified by duplicate sources '${
+                        previous.dir
+                    }' and '${dir}'`
+                );
+            }
+
+            const relDir = path.relative(rootPath, dir);
+
+            packages[json.name] = {
+                dir: relDir,
+                version: json.version
+            };
+        }
+    });
+
+    return packages;
+}
+
+async function fixReferences(packages) {
+    Object.keys(packages).forEach(pkg => {
+        const packageFile = path.join(packages[pkg].dir, 'package.json');
+        const json = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+        let updated = false;
+        if (json.dependencies) {
+            Object.keys(json.dependencies).forEach(depKey => {
+                if (packages[depKey]) {
+                    const replacement =
+                        'file:' +
+                        path.relative(packages[pkg].dir, packages[depKey].dir);
+                    console.error(
+                        `replacing '${depKey}' in package '${pkg}' with '${replacement}'`
+                    );
+                    json.dependencies[depKey] = replacement;
+                    updated = true;
+                }
+            });
+        }
+        if (updated) {
+            fs.writeFileSync(
+                packageFile,
+                JSON.stringify(json, null, 2),
+                'utf8'
+            );
+        }
+    });
 }
 
 async function addPackages(packages) {
