@@ -151,7 +151,8 @@ export default class LocalDevServer {
         const proxyConfig = {
             apiEndpoint: project.getSfdxConfiguration().endpoint,
             recordApiCalls: false,
-            onProxyReq: project.getSfdxConfiguration().onProxyReq
+            onProxyReq: project.getSfdxConfiguration().onProxyReq,
+            customPathRewrite: this.customPathRewrite
         };
 
         try {
@@ -202,5 +203,19 @@ export default class LocalDevServer {
                 console.error(`Error copying ${src} to ${dest}: ${e}`);
             }
         });
+    }
+
+    private customPathRewrite(localPath: string) {
+        let retVal = localPath;
+        // Strip /api if we start with api
+        if (retVal.startsWith('/api/')) {
+            retVal = retVal.substring(4);
+        }
+
+        // hardcode our api version for now
+        retVal = retVal.replace('v47.0', 'v45.0');
+        retVal = retVal.replace('v46.0', 'v45.0');
+
+        return retVal;
     }
 }
