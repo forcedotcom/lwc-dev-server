@@ -1,5 +1,35 @@
 # Local Development (Duck Burrito)
 
+## Happy Path Setup for lwc-recipies
+
+```
+git clone git@git.soma.salesforce.com:communities/talon.git
+cd talon
+yarn install
+yarn build
+yarn link-talon
+
+cd ..
+git clone git@github.com:forcedotcom/lwc-dev-server.git
+cd lwc-dev-server
+yarn install
+yarn link-talon
+yarn build
+
+cd ..
+git clone git@github.com:trailheadapps/lwc-recipes.git
+cd lwc-recipies
+cp -R force-app/main/default/lwc force-app/main/default/c
+```
+
+## Launch lwc-recipies
+Run the following command from the lwc-recipies directory
+{PATH_TO_LOCAL_DEV_TOOLS}/local-dev-tools/bin/run force:lightning:lwc:dev
+
+Go to: http://localhost:3333/
+
+
+
 ## Usage in your project
 To get Local Development for your tools follow the following steps.
 
