@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
-// this (temporary) script checks for updates to nexus-hosted dependencies and
-// downloads them into tarballs. It updates package.json with references to the
-// new files and runs yarn install to update the lock file.
+// This script updates all local libs from the nexus registry.
 
 const fs = require('fs');
 const path = require('path');

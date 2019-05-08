@@ -13,9 +13,6 @@ module.exports = {
     coverageDirectory: 'reports/coverage',
     reporters: [
         'default',
-        [
-            'jest-junit',
-            { outputDirectory: './reports/tests', suiteName: 'Jest tests' }
-        ]
+        ['jest-junit', { output: './reports/junit/jest-results.xml' }]
     ]
 };
