@@ -24,7 +24,9 @@ cp -R force-app/main/default/lwc force-app/main/default/c
 
 ## Launch lwc-recipies
 Run the following command from the lwc-recipies directory
-{PATH_TO_LOCAL_DEV_TOOLS}/local-dev-tools/bin/run force:lightning:lwc:dev
+```
+{FILL_IN_YOUR_PATH_TO_LWC_DEV_SERVER}/lwc-dev-server/bin/run force:lightning:lwc:dev
+```
 
 Go to: http://localhost:3333/
 
