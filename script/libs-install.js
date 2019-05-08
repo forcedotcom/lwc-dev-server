@@ -12,7 +12,8 @@
 // only run on commands like `yarn`, `yarn install`, `npm install`,
 // `yarn add lwc-dev-server`
 const argv = process.env.npm_config_argv;
-const args = argv !== undefined ? JSON.parse(argv).original : [];
+let args = argv !== undefined ? JSON.parse(argv).original : [];
+args = args.filter(arg => !arg.startsWith('-'));
 if (
     process.env.SKIP_LIBS_INSTALL ||
     (args.length > 0 && !['install', 'i', 'add'].includes(args[0])) ||
