@@ -1,6 +1,6 @@
 {
   "name": "lwc-dev-server",
-  "version": "1.0.0",
+  "version": "1.9.4",
   "description": "Local dev server",
   "main": "dist/LocalDevServer.js",
   "types": "dist/LocalDevServer.d.ts",
@@ -60,7 +60,7 @@
     "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
     "prepack": "oclif-dev manifest",
     "postpack": "rm -f oclif.manifest.json",
-    "postinstall": "yarn build"
+    "prepublishOnly": "yarn build"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
@@ -70,10 +70,12 @@
     "@types/jest": "^24.0.11",
     "@types/shelljs": "^0.8.4",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@yarnpkg/lockfile": "^1.1.0",
     "aws-sdk": "^2.445.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "gunzip-maybe": "^1.4.1",
     "husky": "^2.1.0",
     "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
@@ -82,6 +84,7 @@
     "mock-fs": "^4.8.0",
     "prettier": "^1.17.0",
     "shelljs": "^0.8.3",
+    "tar-fs": "^2.0.0",
     "ts-jest": "^24.0.2",
     "ts-mockito": "^2.3.1",
     "ts-node": "^8.1.0",
@@ -100,25 +103,20 @@
     "@salesforce/command": "^1.5.0",
     "@salesforce/core": "^1.3.3",
     "@salesforce/ts-types": "^1.1.3",
-    "@talon/common": "file:./lib/talon-common-0.11.2.tgz",
-    "@talon/compiler": "file:./lib/talon-compiler-0.11.3-alpha.tgz",
-    "@talon/force-modules": "file:./lib/talon-force-modules-0.0.5.tgz",
-    "@talon/framework": "file:./lib/talon-framework-0.11.2.tgz",
+    "@talon/common": "^0.11.2",
+    "@talon/compiler": "^0.11.3-alpha",
+    "@talon/force-modules": "^0.0.5",
+    "@talon/framework": "^0.11.2",
     "colors": "^1.3.3",
     "compression": "^1.7.4",
     "cpx": "^1.5.0",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
     "helmet": "^3.16.0",
-    "lwc-components-lightning": "file:./lib/lwc-components-lightning-1.2.1-alpha.tgz",
+    "lwc-components-lightning": "^1.2.1-alpha",
     "path": "^0.12.7",
     "rimraf": "^2.6.3",
     "uuidv4": "^4.0.0"
-  },
-  "resolutions": {
-    "@talon/common": "file:./lib/talon-common-0.11.2.tgz",
-    "@talon/framework": "file:./lib/talon-framework-0.11.2.tgz",
-    "@talon/metadata-schema": "file:./lib/talon-metadata-schema-0.0.9.tgz"
   },
   "engines": {
     "node": "10.15.3"
