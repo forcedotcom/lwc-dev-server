@@ -30,18 +30,42 @@ Run the following command from the lwc-recipies directory
 
 Go to: http://localhost:3333/
 
+## Remaining Work
+
+### Open 
+W-6071012 - Local Development DRB
+W-6067203 - Static assets (like slds, images, etc) can be loaded by local dev server
+W-6067236 - Configuration of Local Development
+W-6067321 - Talon Packaged in Public NPM
+W-6072909 - SFDX CLI Plugin
+W-6072978 - use SFDX authentication token with Talon
+W-6091628 - [Duck Burrito] SFDX -Generate build artifacts automatically from CI
+W-6092668 - Integration with SFDX and distribution strategy
+W-6105664 - Custom static assets for SFDX projects
+W-6124443 - Record data proxy to org
+W-6067267 - Graceful error container when viewing components with compile errors
+W-6124774 - Support c namespace mapping to file based namespace in local development
+
+### Fixed (Not Closed)
+W-6066419 - Bootstrap Talon Server
+W-6092390 - List of components on the landing page
+W-6066586 - Enable CircleCI for Local Development
+
+
+
+## Trouble Shooting
+
+```
+$ ~/Dev/lwc-dev-server/bin/run force:lightning:lwc:dev
+(node:78804) [ENOENT] Error: spawn lwc-dev-server ENOENT
+ERROR running force:lightning:lwc:dev:  Must pass a username and/or OAuth options when creating an AuthInfo instance.
+```
+
+You need to ensure you authenticate to your devhub via Sfdx and create a scratch org.
+In lwc-recipies we have a scratch org json file, just create one from that.
+
 
 # NOTE: The Instructions below aren't fully up to date. Please follow the happy path above if you are trying to demo
-
-## Usage in your project
-To get Local Development for your tools follow the following steps.
-
-```console
-npm add local-dev-server -D
-npm install
-# This of course will improve
-./node_modules/local-dev-tools/packages/local-dev-server/bin/run [server|help]
-```
 
 ## Configuration
 To configure the local-dev-server, supply a localdevserver.config.json file at the base of your project.
