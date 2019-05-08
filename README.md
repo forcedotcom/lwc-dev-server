@@ -33,23 +33,23 @@ Go to: http://localhost:3333/
 ## Remaining Work
 
 ### Open 
-W-6071012 - Local Development DRB
-W-6067203 - Static assets (like slds, images, etc) can be loaded by local dev server
-W-6067236 - Configuration of Local Development
-W-6067321 - Talon Packaged in Public NPM
-W-6072909 - SFDX CLI Plugin
-W-6072978 - use SFDX authentication token with Talon
-W-6091628 - [Duck Burrito] SFDX -Generate build artifacts automatically from CI
-W-6092668 - Integration with SFDX and distribution strategy
-W-6105664 - Custom static assets for SFDX projects
-W-6124443 - Record data proxy to org
-W-6067267 - Graceful error container when viewing components with compile errors
-W-6124774 - Support c namespace mapping to file based namespace in local development
+W-6071012 - [Kris] Local Development DRB \
+W-6067203 - [Nathan] Static assets (like slds, images, etc) can be loaded by local dev server \
+W-6067236 - [Kris] Configuration of Local Development \
+W-6067321 - [Totten] Talon Packaged in Public NPM \
+W-6072909 - [Nathan] SFDX CLI Plugin \
+W-6072978 - [Luke] Use SFDX authentication token with Talon \
+W-6091628 - [Nathan] [Duck Burrito] SFDX -Generate build artifacts automatically from CI \
+W-6092668 - [Nathan] Integration with SFDX and distribution strategy \
+W-6105664 - [?] Custom static assets for SFDX projects \
+W-6124443 - [Nick] Record data proxy to org \
+W-6067267 - [Min] Graceful error container when viewing components with compile errors \
+W-6124774 - [Luke] Support c namespace mapping to file based namespace in local development \
 
 ### Fixed (Not Closed)
-W-6066419 - Bootstrap Talon Server
-W-6092390 - List of components on the landing page
-W-6066586 - Enable CircleCI for Local Development
+W-6066419 - [Nick] Bootstrap Talon Server \
+W-6092390 - [Nick] List of components on the landing page \
+W-6066586 - [Nathan] Enable CircleCI for Local Development \
 
 
 
