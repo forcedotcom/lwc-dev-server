@@ -133,18 +133,21 @@ describe('dev', () => {
         test('onProxyReq will add Authorization header', async () => {
             setupAllDev();
 
-            let request: { headers: any } = { headers: undefined };
+            let header = '';
+            let request: { setHeader: Function } = {
+                setHeader: function(name: string, value: string) {
+                    header = `${name}: ${value}`;
+                }
+            };
             // @ts-ignore
             Project.mockImplementation(
                 (sfdxConfiguration: SfdxConfiguration) => {
-                    sfdxConfiguration.onProxyReq(null, request, null);
+                    sfdxConfiguration.onProxyReq(request, null, null);
                 }
             );
 
             let result = await dev.run();
-            expect(request.headers.Authorization).toBe(
-                'Bearer testingAccessToken'
-            );
+            expect(header).toBe('Authorization: Bearer testingAccessToken');
         });
     });
 });

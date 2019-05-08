@@ -76,6 +76,7 @@ export default class Dev extends SfdxCommand {
 
         // TODO check if it's already running on the port first
 
+        let ux = this.ux;
         // custom onProxyReq function to inject into Talon's proxy
         // this will insert the Authorization header to have the requests be authenticated
         const onProxyReq = function(
@@ -83,11 +84,12 @@ export default class Dev extends SfdxCommand {
             req: http.IncomingMessage,
             res: http.ServerResponse
         ) {
-            req.headers = req.headers || {};
-            if (req.url && req.url.startsWith('/api/')) {
-                req.url = req.url.slice(4);
-            }
-            req.headers.Authorization = `Bearer ${conn.accessToken}`;
+            ux.log(
+                `onProxyReq, setting Authorization header to Bearer ${
+                    conn.accessToken
+                }`
+            );
+            proxyReq.setHeader('Authorization', `Bearer ${conn.accessToken}`);
             // req.headers.Cookie = `sid=${sid_cookie}`;
         };
 
@@ -97,6 +99,17 @@ export default class Dev extends SfdxCommand {
         sfdxConfiguration.onProxyReq = onProxyReq;
         sfdxConfiguration.port = port;
 
+        const retValue = {
+            orgId: this.org.getOrgId(),
+            api_version: sfdxConfiguration.api_version,
+            endpoint: sfdxConfiguration.endpoint,
+            onProxyReq: JSON.stringify(sfdxConfiguration.onProxyReq),
+            componentName,
+            port,
+            token: conn.accessToken
+        };
+        this.ux.log(JSON.stringify(retValue));
+
         // Start local dev server
         // TODO pass in component to open & open browser
         new LocalDevServer().start(
@@ -104,15 +117,6 @@ export default class Dev extends SfdxCommand {
             this.project.getPath()
         );
 
-        const retValue = {
-            orgId: this.org.getOrgId(),
-            api_version: sfdxConfiguration.api_version,
-            endpoint: sfdxConfiguration.endpoint,
-            onProxyReq: JSON.stringify(sfdxConfiguration.onProxyReq),
-            componentName,
-            port
-        };
-        this.ux.log(JSON.stringify(retValue));
         return retValue;
     }
 }
