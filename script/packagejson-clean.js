@@ -2,15 +2,14 @@
 
 // This is used in conjunction with packagejson-restore.js.
 //
-// The 'file:...' dependencies in package.json should not be persisted to a
-// published package. They don't work with yarn or npm due to various issues and
-// npm doc itself says packages should not be published with them.
+// The `file:...` dependencies in package.json should not be persisted to a
+// published package. They will cause issues with yarn and npm since published
+// packages aren't really supposed to have `file:...` dependencies.
 //
-// As a hack this script removes the file dependencies before publishing. They
-// will be reinstalled when the postinstall script runs on the client.
+// As a hack this script removes them before publishing. They will be
+// reinstalled when the postinstall script runs on the client.
 
 const shell = require('shelljs');
-const rimraf = require('rimraf');
 const path = require('path');
 const fs = require('fs');
 
@@ -30,12 +29,6 @@ Object.keys(pkgJson.dependencies).forEach(key => {
         delete pkgJson.dependencies[key];
     }
 });
-
-if (pkgJson.bundledDependencies) {
-    pkgJson.bundledDependencies = pkgJson.bundledDependencies.filter(dep => {
-        !fileDependencies.contains(dep);
-    });
-}
 
 console.log(`removed from package.json: ${fileDependencies}`);
 

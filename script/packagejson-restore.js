@@ -12,5 +12,5 @@ const pkgJsonOrigPath = path.join(__dirname, '..', 'package.json.orig');
 
 if (fs.existsSync(pkgJsonOrigPath)) {
     shell.mv(pkgJsonOrigPath, pkgJsonPath);
-    console.log('restore package.json from package.json.orig');
+    console.log('restored package.json from package.json.orig');
 }

@@ -6,7 +6,7 @@
   "types": "dist/LocalDevServer.d.ts",
   "author": "Lightning Tooling",
   "license": "MIT",
-  "repository": "forcedotcom/local-dev-tools",
+  "repository": "forcedotcom/lwc-dev-server",
   "bin": {
     "lwc-dev-server": "./bin/run"
   },
@@ -46,13 +46,12 @@
   },
   "scripts": {
     "clean": "yarn rimraf dist reports coverage oclif.manifest.json",
-    "build": "yarn clean && tsc && ts-node build/copy-assets",
+    "build": "yarn clean && tsc && ts-node script/copy-assets",
     "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
     "lint": "yarn eslint src --ext js,ts",
     "lint:ci": "yarn lint --format junit --output-file ./reports/junit/eslint-results.xml --no-color",
     "start:todo": "node ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "start:todo:debug": "node --inspect-brk ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
-    "debug": "node --inspect-brk dist/index.js",
     "test": "yarn jest src --runInBand --coverage",
     "test:watch": "yarn test --watch",
     "test:debug": "node --inspect node_modules/.bin/jest src --runInBand",
@@ -66,7 +65,7 @@
     "postinstall": "script/libs-install.js",
     "prepack": "oclif-dev manifest",
     "postpack": "rm -f oclif.manifest.json",
-    "prepublishOnly": "script/packagejson-clean.js",
+    "prepublishOnly": "yarn build && script/packagejson-clean.js",
     "postpublish": "script/packagejson-restore.js"
   },
   "devDependencies": {
