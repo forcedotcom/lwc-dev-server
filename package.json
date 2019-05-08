@@ -49,7 +49,7 @@
     "build": "yarn clean && tsc && ts-node build/copy-assets",
     "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
     "lint": "yarn eslint src --ext js,ts",
-    "lint:ci": "yarn lint --format junit --output-file ./reports/lint/eslint-results.xml --no-color",
+    "lint:ci": "yarn lint --format junit --output-file ./reports/junit/eslint-results.xml --no-color",
     "start:todo": "node ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "start:todo:debug": "node --inspect-brk ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "debug": "node --inspect-brk dist/index.js",
