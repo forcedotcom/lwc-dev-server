@@ -29,6 +29,7 @@ Run the following command from the lwc-recipies directory
 Go to: http://localhost:3333/
 
 
+# NOTE: The Instructions below aren't fully up to date. Please follow the happy path above if you are trying to demo
 
 ## Usage in your project
 To get Local Development for your tools follow the following steps.
