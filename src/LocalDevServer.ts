@@ -150,7 +150,7 @@ export default class LocalDevServer {
             apiEndpoint: project.getSfdxConfiguration().endpoint,
             recordApiCalls: false,
             onProxyReq: project.getSfdxConfiguration().onProxyReq,
-            customPathRewrite: this.customPathRewrite
+            pathRewrite: this.pathRewrite
         };
 
         try {
@@ -203,7 +203,7 @@ export default class LocalDevServer {
         });
     }
 
-    private customPathRewrite(localPath: string) {
+    private pathRewrite(localPath: string) {
         let retVal = localPath;
         // Strip /api if we start with api
         if (retVal.startsWith('/api/')) {

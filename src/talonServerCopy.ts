@@ -81,7 +81,7 @@ export async function createServer(options: object, proxyConfig: any = {}) {
             record: proxyConfig.recordApiCalls,
             recordDir: path.resolve(templateDir, 'api'),
             onProxyReq: proxyConfig.onProxyReq,
-            customPathRewrite: proxyConfig.customPathRewrite
+            pathRewrite: proxyConfig.pathRewrite
         })
     );
 
