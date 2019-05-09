@@ -19,6 +19,7 @@ import uuidv4 from 'uuidv4';
 import colors from 'colors';
 import ComponentIndex from './common/ComponentIndex';
 import Project from './common/Project';
+import { onError } from './errorHandler/errors';
 
 const { log } = console;
 
@@ -61,7 +62,7 @@ export async function createServer(options: object, proxyConfig: any = {}) {
     );
 
     // 2. resource middleware, compile component or views if needed and redirect to the generated resource
-    app.use(`${basePath}/talon/`, resourceMiddleware());
+    app.use(`${basePath}/talon/`, resourceMiddleware(onError));
 
     // 3. Serve up static files
     app.use(

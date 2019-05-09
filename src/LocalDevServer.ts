@@ -15,7 +15,11 @@ import rimraf from 'rimraf';
 import ComponentIndex from './common/ComponentIndex';
 
 const talonConfig = {
-    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
+    includeLwcModules: [
+        'force/lds',
+        'force/salesforceScopedModuleResolver',
+        'force/shared'
+    ]
 };
 
 const routes = [
