@@ -44,13 +44,7 @@ export default class Project {
 
             // Resolve the sfdx-project.json file at the root of the project.
             // If there is no configuration file, assume we aren't in that project structure.
-            const sfdxConfigurationFileLocation = path.join(
-                this.rootDirectory,
-                'sfdx-project.json'
-            );
-            this.sfdxConfiguration = new SfdxConfiguration(
-                sfdxConfigurationFileLocation
-            );
+            this.sfdxConfiguration = new SfdxConfiguration(this.rootDirectory);
 
             // Must be after isSfdx setting
             this.modulesSourceDirectory = this.resolveModulesSourceDirectory();
