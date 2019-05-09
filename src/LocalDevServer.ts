@@ -87,8 +87,6 @@ const views = {
 };
 
 export default class LocalDevServer {
-    public build() {}
-
     public async start(project: Project, entryPoint: string) {
         // Okay in this directory lets do the following things.
 
