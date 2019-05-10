@@ -34,10 +34,10 @@ describe('dev', () => {
         });
     }
 
-    function setupFlags() {
+    function setupFlags(name = 'openedFileName') {
         Object.defineProperty(dev, 'flags', {
             get: () => {
-                return { open: 'openedFileName' };
+                return { open: name };
             }
         });
     }
@@ -65,7 +65,12 @@ describe('dev', () => {
         Object.defineProperty(dev, 'project', {
             get: () => {
                 return {
-                    getPath: () => 'C:\\sfdx\\project'
+                    getPath: () => 'C:\\sfdx\\project',
+                    resolveProjectConfig: () => {
+                        return Promise.resolve({
+                            namespace: ''
+                        });
+                    }
                 };
             }
         });
