@@ -35,7 +35,10 @@ const staticOptions = {
 };
 
 export async function createServer(options: object, proxyConfig: any = {}) {
-    const { templateDir, outputDir, basePath } = await startContext(options);
+    const { templateDir, outputDir, basePath, srcDir } = await startContext(
+        options
+    );
+    const sourceDir = path.resolve(srcDir);
     const app = express();
 
     // 0. GZIP all assets
@@ -86,6 +89,14 @@ export async function createServer(options: object, proxyConfig: any = {}) {
         })
     );
 
+    app.use(`/show`, (req, res, next) => {
+        const file = req.query.file;
+        if (file) {
+            if (file.startsWith(sourceDir)) {
+                res.sendFile(file);
+            }
+        }
+    });
     return app;
 }
 

@@ -1,0 +1,20 @@
+<template>
+
+    <div>
+        <!-- container -->
+        <img src="/assets/Graphic.svg">
+        <h1>{errorMessage}</h1>
+        <h2>{errorLocation}</h2>
+        <div>
+            <!-- code block -->
+            {code}
+        </div>
+        View compiled
+        <localdevserver-error-stacks error={error}></localdevserver-error-stacks>
+        <div>
+            This screen is visible only in development. It will not appear if the app crashes in production.
+            Open your borwser's developer console to further inspect this error. 
+        </div>
+    </div>
+
+</template>

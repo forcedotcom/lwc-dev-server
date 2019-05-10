@@ -15,11 +15,7 @@ import rimraf from 'rimraf';
 import ComponentIndex from './common/ComponentIndex';
 
 const talonConfig = {
-    includeLwcModules: [
-        'force/lds',
-        'force/salesforceScopedModuleResolver',
-        'force/shared'
-    ]
+    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
 };
 
 const routes = [
@@ -195,6 +191,7 @@ export default class LocalDevServer {
         // Favicon
         // Prevents an exception in raptor code when requesting a file that doesn't exist.
         this.copy('src/assets/favicon.ico', assetsDir);
+        this.copy('src/assets/Graphic.svg', assetsDir);
     }
 
     private copy(src: string, dest: string) {
