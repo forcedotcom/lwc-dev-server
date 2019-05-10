@@ -48,11 +48,11 @@ export default class SfdxConfiguration {
     }
 
     public get namespace(): string {
-        return this.configMap.namespace;
+        return this.configMap.namespace || 'c';
     }
 
     public set namespace(namespace: string) {
-        this.configMap.namespace = namespace;
+        this.configMap.namespace = namespace || 'c';
     }
 
     public get api_version(): string {

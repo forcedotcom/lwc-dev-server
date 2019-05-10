@@ -56,7 +56,9 @@ export default class Project {
     private initWithSfdxConfiguration(sfdxConfiguration: SfdxConfiguration) {
         this.sfdxConfiguration = sfdxConfiguration;
         this.rootDirectory = sfdxConfiguration.getPath();
-        this.modulesSourceDirectory = this.getSfdxProjectLWCDirectory();
+        this.modulesSourceDirectory = this.getSfdxProjectLWCDirectory(
+            this.rootDirectory
+        );
         this.configuration.port = sfdxConfiguration.port;
         this.configuration.namespace = sfdxConfiguration.namespace;
     }
@@ -135,18 +137,18 @@ export default class Project {
 
         // If SFDX, we should know the path.
         if (this.isSfdx()) {
-            return this.getSfdxProjectLWCDirectory();
+            return this.getSfdxProjectLWCDirectory(rootDirectory);
         }
 
         // If Not, we should assume src for now.
         return path.join(rootDirectory, 'src');
     }
 
-    private getSfdxProjectLWCDirectory(): string {
+    private getSfdxProjectLWCDirectory(rootDirectory = '.'): string {
         // TODO: Support more than one package
         const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
         if (packageDirectories.length > 0) {
-            return `${packageDirectories[0]}/main/default/c`;
+            return path.join(rootDirectory, packageDirectories[0]);
         }
 
         // What would we expect if no value is specified?
