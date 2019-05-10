@@ -9,7 +9,8 @@ export default class Home extends LightningElement {
     // Which component is the default to preview.
     "main": "app",
 
-    // Where are your component files. If you have a namespace, specify the directory the namespace folder is in.
+    // Where are your component files. If you have a namespace, 
+    // specify the directory the namespace folder is in.
     "moduleSourceDirectory": "....",
 
     // Name of the component to load in the default container
