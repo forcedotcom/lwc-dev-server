@@ -9,12 +9,12 @@
                             <p class="slds-p-horizontal_small">The Component Library is the Lightning components developer reference. Rapidly develop apps with our building blocks.</p>
                         </lightning-card>
                     </a>
-                    <a href="https://developer.salesforce.com/docs/component-library" class="slds-text-link_reset slds-col">
+                    <a href="https://forcedotcom.github.io/salesforcedx-vscode/" class="slds-text-link_reset slds-col">
                         <lightning-card title="VS Code Extensions" icon-name="standard:code_playground">
                             <p class="slds-p-horizontal_small">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled.</p>
                         </lightning-card>
                     </a>
-                    <a href="https://developer.salesforce.com/docs/component-library" class="slds-text-link_reset slds-col">
+                    <a href="https://github.com/forcedotcom/lwc-dev-server" class="slds-text-link_reset slds-col">
                         <lightning-card title="Open Source" icon-name="custom:custom12">
                             <p class="slds-p-horizontal_small">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </p>
                         </lightning-card>
@@ -37,7 +37,8 @@
             </div>
             <div class="slds-col slds-size_1-of-4">
                 <h2 class="slds-text-heading_medium">Components</h2>
-                <input type="search" name="component-filter" placeholder="Filter" class="slds-input slds-m-vertical_small" />
+                <input type="search" name="component-filter" placeholder="Filter" 
+                    class="slds-input slds-m-vertical_small" onchange={onSearchChange} onkeyup={onSearchChange} />
                 <div class="slds-box">
                     <ul class="component-list">
                         <template for:each={components} for:item="item" for:index="index">

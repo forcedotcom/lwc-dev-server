@@ -159,8 +159,6 @@ The following configuration parameters are available.
 | W-6067203 | Nathan | Static assets (like slds, images, etc) can be loaded by local dev server
 | W-6067236 | Kris | Configuration of Local Development
 | W-6067321 | Totten | Talon Packaged in Public NPM
-| W-6072909 | Nathan | SFDX CLI Plugin
-| W-6072978 | Luke | Use SFDX authentication token with Talon
 | W-6091628 | Nathan | [Duck Burrito] SFDX -Generate build artifacts automatically from CI
 | W-6092668 | Nathan | Integration with SFDX and distribution strategy
 | W-6105664 | ? | Custom static assets for SFDX projects
@@ -174,6 +172,8 @@ The following configuration parameters are available.
 | W-6066419 | Nick | Bootstrap Talon Server
 | W-6092390 | Nick | List of components on the landing page
 | W-6066586 | Nathan | Enable CircleCI for Local Development
+| W-6072909 | Nathan | SFDX CLI Plugin
+| W-6072978 | Luke | Use SFDX authentication token with Talon
 
 ## Contributing
 

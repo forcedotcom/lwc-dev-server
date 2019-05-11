@@ -1,5 +1,8 @@
 ---
-version: 2.0
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.4
 
 jobs:
   build:
@@ -13,6 +16,9 @@ jobs:
       - run: yarn build
       - run: yarn lint:ci
       - run: yarn test:ci
+      - codecov/upload:
+          file: reports/coverage/coverage-final.json
+          flags: frontend
       - store_test_results:
           path: reports
       - store_artifacts:

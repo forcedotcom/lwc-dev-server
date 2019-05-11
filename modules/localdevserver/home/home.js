@@ -1,4 +1,4 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 
 export default class Home extends LightningElement {
     configuration = `
@@ -17,7 +17,19 @@ export default class Home extends LightningElement {
     "port": 3333
 }
 `;
-    @api components = [];
+    @track _components = [];
+
+    @api componentsFilter = '';
+
+    @api
+    get components() {
+        if (this.componentsFilter) {
+            return this._components.filter(item => {
+                return item.title.startsWith(this.componentsFilter);
+            });
+        }
+        return this._components;
+    }
 
     constructor() {
         super();
@@ -28,7 +40,11 @@ export default class Home extends LightningElement {
                 return response.json();
             })
             .then(data => {
-                this.components = data;
+                this._components = data;
             });
+    }
+
+    onSearchChange(e) {
+        this.componentsFilter = e.srcElement.value;
     }
 }
