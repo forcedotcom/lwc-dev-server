@@ -16,6 +16,9 @@ jobs:
       - run: yarn build
       - run: yarn lint:ci
       - run: yarn test:ci
+      - "codecov/upload":
+          file: reports/coverage/*.json
+          flags: frontend
       - store_test_results:
           path: reports
       - store_artifacts:
