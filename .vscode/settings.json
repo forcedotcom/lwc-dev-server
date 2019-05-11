@@ -6,10 +6,5 @@
         "**/CVS": true,
         "**/.DS_Store": true
     },
-    "salesforcedx-vscode-lightning.activationMode": "off",
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#5E052A",
-        "titleBar.activeBackground": "#84073B",
-        "titleBar.activeForeground": "#FFFBFD"
-    }
+    "salesforcedx-vscode-lightning.activationMode": "off"
 }
