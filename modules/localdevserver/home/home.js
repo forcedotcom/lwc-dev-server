@@ -13,9 +13,6 @@ export default class Home extends LightningElement {
     // specify the directory the namespace folder is in.
     "moduleSourceDirectory": "....",
 
-    // Name of the component to load in the default container
-    "main": "...",
-
     // The address port for your local server. Defaults to 3333
     "port": 3333
 }
