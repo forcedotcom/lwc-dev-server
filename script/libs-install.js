@@ -69,6 +69,7 @@ function needsUnpacking() {
     const tarballs = shell.ls(path.join(libPath, '*.tgz'));
     const unpackedDirs = shell
         .ls('-d', path.join(unpackPath, '*'))
+        .filter(dirPath => fs.existsSync(path.join(dirPath, 'package.json')))
         .map(entry => path.basename(entry));
 
     const areAllUnpacked = tarballs.every(tarball => {
