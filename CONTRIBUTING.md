@@ -81,7 +81,7 @@ Update everything to the 'latest' from nexus:
 script/update-all.js
 ```
 
-Update a specific package:
+Update or add a specific package:
 
 ```sh
 npm pack package@version --registry https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/
@@ -91,6 +91,12 @@ Move the downloaded tarball to `lib` and delete the old one. Then install:
 
 ```sh
 yarn install
+```
+
+To force unpack and replace all of the local libs:
+
+```sh
+./script/libs-install.js --force
 ```
 
 ### Caveats
@@ -117,7 +123,11 @@ To publish, first bump the package version. For example:
 
 ```sh
 npm version patch
+git push origin master
+git push --tags origin
 ```
+
+replace `origin` with whatever you named the master repo.
 
 Then publish it:
 ```sh
