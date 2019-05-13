@@ -18,7 +18,9 @@ jobs:
       - run: yarn test:ci
       - codecov/upload:
           file: reports/coverage/*.json
+          # conf: .circleci/.codecov.yml
           flags: frontend
+          token: 29e37c17-87a6-43a2-bff5-59e91d3da900
       - store_test_results:
           path: reports
       - store_artifacts:
