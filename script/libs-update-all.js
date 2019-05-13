@@ -30,10 +30,10 @@ const mapping = {};
 
 packages.forEach(pkg => {
     console.log(`\ndownloading ${pkg}`);
-    const out = shell.exec(
+    const { stdout } = shell.exec(
         `cd ${dest} && npm pack ${pkg} --registry ${registry}`
-    ).stdout;
-    mapping[pkg] = `file:./lib/${out.trim()}`;
+    );
+    mapping[pkg] = `file:lib/${stdout.trim()}`;
 });
 console.log('downloads complete');
 
@@ -44,30 +44,6 @@ const status = shell.exec(`git status lib`, { silent: true }).stdout;
 if (status.indexOf('nothing to commit') > -1) {
     console.log('\nno changes made to package.json');
 } else {
-    console.log('\nupdating package.json');
-    const packageFile = path.resolve(__dirname, '../package.json');
-    const packageJson = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-
-    const sections = [
-        'dependencies',
-        'devDependencies',
-        'peerDependdencies',
-        'bundleDependencies',
-        'optionalDependencies',
-        'resolutions'
-    ];
-
-    Object.keys(mapping).forEach(depKey => {
-        sections.forEach(section => {
-            if (packageJson[section] && packageJson[section][depKey]) {
-                packageJson[section][depKey] = mapping[depKey];
-            }
-        });
-    });
-
-    fs.writeFileSync(packageFile, JSON.stringify(packageJson, null, 2), 'utf8');
-    console.log('package.json updated');
-
-    console.log('\nupdating yarn lock file');
+    console.log('\ninstalling all libs');
     shell.exec('yarn');
 }
