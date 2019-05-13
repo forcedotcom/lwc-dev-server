@@ -23,7 +23,7 @@ let args = argv !== undefined ? JSON.parse(argv).original : [];
 args = args.filter(arg => !arg.startsWith('-'));
 
 if (
-    process.env.SKIP_LIBS_INSTALL ||
+    process.env.IS_LIBS_INSTALL ||
     (args.length > 0 && !['install', 'i', 'add'].includes(args[0])) ||
     (args.length > 1 && !args.some(arg => arg.includes('lwc-dev-server')))
 ) {
@@ -152,7 +152,7 @@ function addPackages(packages) {
         const dir = packages[pkg].dir;
         const command = `${execpath} add file:${dir}`;
         console.log(command);
-        const { stderr } = shell.exec(`SKIP_LIBS_INSTALL=1 ${command}`, {
+        const { stderr } = shell.exec(`IS_LIBS_INSTALL=1 ${command}`, {
             silent: true
         });
         if (stderr) {
