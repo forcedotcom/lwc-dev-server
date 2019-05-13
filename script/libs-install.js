@@ -123,16 +123,24 @@ function fixReferences(packages) {
         if (pkgJson.dependencies) {
             Object.keys(pkgJson.dependencies).forEach(name => {
                 if (packages[name]) {
-                    const relPath = path.relative(
-                        packages[pkg].dir,
-                        packages[name].dir
-                    );
-                    const replacement = `file:${relPath}`;
-                    console.log(
-                        `replacing dependency on '${name}' in ${pkg} with '${replacement}'`
-                    );
-                    pkgJson.dependencies[name] = replacement;
+                    const original = pkgJson.dependencies[name];
+                    const replacement = packages[name].version;
+
+                    if (!pkgJson.peerDependencies) {
+                        pkgJson.peerDependencies = {};
+                    }
+                    pkgJson.peerDependencies[name] = replacement;
+                    delete pkgJson.dependencies[name];
                     updated = true;
+
+                    console.log(
+                        `${pkg}: moved dependency '${name}@${original}' to peerDependency matching local version '${replacement}'`
+                    );
+                    if (!original.endsWith(replacement)) {
+                        console.warn(
+                            `warning: the local version does not match the original version specfied by the package.\n         replace the local tarball for '${name}' with a version matching '${original}'`
+                        );
+                    }
                 }
             });
         }
