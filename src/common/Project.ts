@@ -13,6 +13,7 @@ export default class Project {
     private sfdxConfiguration: SfdxConfiguration = new SfdxConfiguration('.');
     private configuration: LocalDevServerConfiguration;
     private isSFDX: boolean = false;
+    private staticResourcesDirectory: string | null = null;
 
     constructor(object?: string | SfdxConfiguration) {
         this.configuration = new LocalDevServerConfiguration();
@@ -59,6 +60,7 @@ export default class Project {
         this.modulesSourceDirectory = this.getSfdxProjectLWCDirectory(
             this.rootDirectory
         );
+        this.staticResourcesDirectory = this.getSfdxProjectStaticResourcesDirectory();
         this.configuration.port = sfdxConfiguration.port;
         this.configuration.namespace = sfdxConfiguration.namespace;
     }
@@ -77,6 +79,10 @@ export default class Project {
 
     public getModuleSourceDirectory(): string | null {
         return this.modulesSourceDirectory;
+    }
+
+    public getStaticResourcesDirectory(): string | null {
+        return this.staticResourcesDirectory;
     }
 
     public getDirectory(): string {
@@ -153,5 +159,16 @@ export default class Project {
 
         // What would we expect if no value is specified?
         return '.';
+    }
+
+    private getSfdxProjectStaticResourcesDirectory(): string | null {
+        // TODO: Support more than one package
+        const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
+        if (packageDirectories.length > 0) {
+            return `${packageDirectories[0]}/main/default/staticresources`;
+        }
+
+        // What would we expect if no value is specified?
+        return null;
     }
 }

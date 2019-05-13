@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import cpx from 'cpx';
 import { cp, mkdir, rm } from 'shelljs';
 import {
     startContext,
@@ -142,7 +143,7 @@ export default class LocalDevServer {
             console.log('cleared output dir');
         }
 
-        await this.copyAssets(config.outputDir);
+        await this.copyAssets(project, config.outputDir);
 
         const proxyConfig = {
             apiEndpoint: project.getSfdxConfiguration().endpoint,
@@ -170,7 +171,7 @@ export default class LocalDevServer {
         }
     }
 
-    public async copyAssets(dest: string) {
+    public async copyAssets(project: Project, dest: string) {
         const distPath = path.join(__dirname, '.');
         const assetsPath = path.join(dest, 'public', 'assets');
 
@@ -179,6 +180,19 @@ export default class LocalDevServer {
             cp('-R', `${distPath}/assets/*`, assetsPath);
         } catch (e) {
             console.error(`warning - unable to copy assets: ${e}`);
+        }
+
+        // Copy and watch these files
+        this.watchAssets(project, assetsPath);
+    }
+
+    private async watchAssets(project: Project, assetDir: string) {
+        let staticDir = project.getStaticResourcesDirectory();
+        if (staticDir !== null && fs.existsSync(staticDir)) {
+            staticDir = path.join(staticDir, '**', '*');
+            await cpx.copy(staticDir, assetDir);
+            // TODO just copy for now
+            //cpx.watch(staticDir, assetDir);
         }
     }
 
