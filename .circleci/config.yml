@@ -52,7 +52,7 @@ jobs:
       - run: yarn oclif-dev pack
       # - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
       - run: yarn oclif-dev publish
-  "pack:deb and publish":
+  "pack deb and publish":
     docker:
       - image: circleci/node:10.15.3
     steps:
@@ -63,7 +63,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y apt-utils
       - run: sudo -E /bin/bash -c "cp -R /home/circleci/.cache /usr/local/share && yarn oclif-dev pack:deb"
       - run: yarn oclif-dev publish:deb
-  "pack:macos and publish":
+  "pack macos and publish":
     macos:
       xcode: "10.0.0"
     steps:
@@ -73,7 +73,7 @@ jobs:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
       - run: yarn oclif-dev pack:macos
       - run: yarn oclif-dev publish:macos
-  "pack:win and publish":
+  "pack win and publish":
     docker:
       - image: circleci/node:10.15.3
     steps:
