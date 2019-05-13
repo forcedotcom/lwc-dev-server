@@ -176,7 +176,6 @@ export default class LocalDevServer {
 
         try {
             mkdir('-p', assetsPath);
-            cp('-R', `${distPath}/slds`, assetsPath);
             cp('-R', `${distPath}/assets/*`, assetsPath);
         } catch (e) {
             console.error(`warning - unable to copy assets: ${e}`);
