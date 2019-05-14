@@ -9,25 +9,26 @@
 // 3) calls `yarn add` or `npm add` to install the package and their
 //    subdependencies.
 
-// only run on commands like `yarn`, `yarn install`, `npm install`,
-// `yarn add lwc-dev-server`
-const argv = process.env.npm_config_argv;
-let args = argv !== undefined ? JSON.parse(argv).original : [];
-args = args.filter(arg => !arg.startsWith('-'));
-if (
-    process.env.SKIP_LIBS_INSTALL ||
-    (args.length > 0 && !['install', 'i', 'add'].includes(args[0])) ||
-    (args.length > 1 && !args.includes('lwc-dev-server'))
-) {
-    return;
-}
-
 const shell = require('shelljs');
 const fs = require('fs');
 const path = require('path');
 const gunzip = require('gunzip-maybe');
 const tar = require('tar-fs');
 const { performance } = require('perf_hooks');
+
+// only run on commands like `yarn`, `yarn install`, `npm install`,
+// `yarn add lwc-dev-server`
+const argv = process.env.npm_config_argv;
+let args = argv !== undefined ? JSON.parse(argv).original : [];
+args = args.filter(arg => !arg.startsWith('-'));
+
+if (
+    process.env.SKIP_LIBS_INSTALL ||
+    (args.length > 0 && !['install', 'i', 'add'].includes(args[0])) ||
+    (args.length > 1 && !args.some(arg => arg.includes('lwc-dev-server')))
+) {
+    return;
+}
 
 const rootPath = path.join(__dirname, '..');
 const libPath = path.join(rootPath, 'lib');

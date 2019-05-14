@@ -4,7 +4,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const rimraf = require('rimraf');
 const shell = require('shelljs');
 
 const packages = [
@@ -23,7 +22,7 @@ const registry =
 const dest = path.join(__dirname, '../lib');
 if (fs.existsSync(dest)) {
     console.log(`clearing '${dest}' directory`);
-    rimraf.sync(dest);
+    shell.rm('-rf', dest);
 }
 fs.mkdirSync(dest);
 

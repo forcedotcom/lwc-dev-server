@@ -82,7 +82,7 @@ export async function createServer(options: object, proxyConfig: any = {}) {
             record: proxyConfig.recordApiCalls,
             recordDir: path.resolve(templateDir, 'api'),
             onProxyReq: proxyConfig.onProxyReq,
-            customPathRewrite: proxyConfig.customPathRewrite
+            pathRewrite: proxyConfig.pathRewrite
         })
     );
 
@@ -104,8 +104,11 @@ export async function startServer(app: any, basePath: string, port = 3000) {
     // start the server
     const server = app.listen(port, () => {
         log(
-            `Server up on http://localhost:${server.address().port}${basePath}`
-                .magenta.bold
+            colors.magenta.bold(
+                `Server up on http://localhost:${
+                    server.address().port
+                }${basePath}`
+            )
         );
     });
 

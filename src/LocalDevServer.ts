@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import cpx from 'cpx';
-import mkdirp from 'mkdirp';
+import { cp, mkdir, rm } from 'shelljs';
 import {
     startContext,
     endContext
@@ -11,7 +10,6 @@ import resourceService from '@talon/compiler/src/resources/resource-service';
 import validate from '@talon/compiler/src/metadata/metadata-validation';
 import { createServer, startServer } from './talonServerCopy';
 import Project from './common/Project';
-import rimraf from 'rimraf';
 import ComponentIndex from './common/ComponentIndex';
 
 const talonConfig = {
@@ -139,7 +137,7 @@ export default class LocalDevServer {
         // fixme: clear outputDir for now because of a caching issue
         // with talon (maybe we need to force a recompile of the views?)
         if (fs.existsSync(config.outputDir)) {
-            rimraf.sync(config.outputDir);
+            rm('-rf', config.outputDir);
             console.log('cleared output dir');
         }
 
@@ -149,7 +147,7 @@ export default class LocalDevServer {
             apiEndpoint: project.getSfdxConfiguration().endpoint,
             recordApiCalls: false,
             onProxyReq: project.getSfdxConfiguration().onProxyReq,
-            customPathRewrite: this.customPathRewrite
+            pathRewrite: this.pathRewrite
         };
 
         try {
@@ -167,43 +165,24 @@ export default class LocalDevServer {
             await startServer(server, '', project.getConfiguration().port);
         } catch (e) {
             console.error(e);
-            process.exit(0);
+            process.exit(1);
         }
     }
 
     public async copyAssets(dest: string) {
-        const assetsDir = path.join(dest, 'public', 'assets');
+        const distPath = path.join(__dirname, '.');
+        const assetsPath = path.join(dest, 'public', 'assets');
 
-        mkdirp.sync(assetsDir);
-
-        // Copy Slds
-        // Whats the right thing to do here though?
-        this.copy(
-            'node_modules/@salesforce-ux/design-system/assets/**/symbols.svg',
-            assetsDir
-        );
-        this.copy(
-            'node_modules/@salesforce-ux/design-system/assets/**/*.{woff2,css}',
-            assetsDir
-        );
-
-        // Favicon
-        // Prevents an exception in raptor code when requesting a file that doesn't exist.
-        this.copy('src/assets/favicon.ico', assetsDir);
-        this.copy('src/assets/Graphic.svg', assetsDir);
+        try {
+            mkdir('-p', assetsPath);
+            cp('-R', `${distPath}/slds`, assetsPath);
+            cp('-R', `${distPath}/assets/*`, assetsPath);
+        } catch (e) {
+            console.error(`warning - unable to copy assets: ${e}`);
+        }
     }
 
-    private copy(src: string, dest: string) {
-        cpx.copy(path.join(__dirname, '..', src), dest, (e: Error) => {
-            if (e === undefined || e === null) {
-                console.log(`Done copying ${src} to ${dest}`);
-            } else {
-                console.error(`Error copying ${src} to ${dest}: ${e}`);
-            }
-        });
-    }
-
-    private customPathRewrite(localPath: string) {
+    private pathRewrite(localPath: string) {
         let retVal = localPath;
         // Strip /api if we start with api
         if (retVal.startsWith('/api/')) {
