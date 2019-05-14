@@ -67,8 +67,18 @@ export async function createServer(options: object, proxyConfig: any = {}) {
     // handle Salesforce static resource imported using @salesforce/resourceUrl/<resourceName>
     // remove versionKey from resourceURL and forward the request
     app.get(`${basePath}/assets/:versionKey/*`, (req, res, next) => {
-        req.url = `${basePath}/assets/${req.params[0]}`;
-        next('route');
+        // Ignore for our SLDS routes
+        if (
+            req.url.indexOf('/assets/styles/') === -1 &&
+            req.url.indexOf('/assets/fonts/') === -1 &&
+            req.url.indexOf('/assets/icons/') === -1
+        ) {
+            req.url = `${basePath}/assets/${req.params[0]}`;
+            next('route');
+            return;
+        } else {
+            next();
+        }
     });
 
     app.use(
