@@ -62,7 +62,7 @@
     "precommit": "lint-staged",
     "prepush": "yarn prepare && yarn lint && yarn test",
     "preinstall": "script/libs-prepare.js",
-    "postinstall": "script/libs-install.js",
+    "postinstall": "script/libs-install.js && script/postinstall-build.js",
     "prepack": "oclif-dev manifest",
     "postpack": "rm -f oclif.manifest.json",
     "prepublishOnly": "yarn build && script/packagejson-clean.js",
