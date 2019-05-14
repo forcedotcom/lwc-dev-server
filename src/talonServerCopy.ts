@@ -19,6 +19,9 @@ import uuidv4 from 'uuidv4';
 import colors from 'colors';
 import ComponentIndex from './common/ComponentIndex';
 import Project from './common/Project';
+import fs from 'fs';
+import { Parser } from 'xml2js';
+import mimeTypes from 'mime-types';
 
 const { log } = console;
 
@@ -64,6 +67,54 @@ export async function createServer(options: object, proxyConfig: any = {}) {
     app.use(`${basePath}/talon/`, resourceMiddleware());
 
     // 3. Serve up static files
+    // handle Salesforce static resource imported using @salesforce/resourceUrl/<resourceName>
+    // remove versionKey from resourceURL and forward the request
+    app.get(`${basePath}/assets/:versionKey/*`, (req, res, next) => {
+        // Ignore for our SLDS routes
+        log(req.url);
+
+        // Weird edge case where file extension isn't included for staticresource resolution
+        // except when the resource is part of an application/zip. Examples from lwc-recipes:
+        // libsD3 - resolution works properly because its metadata contentType is <contentType>application/zip</contentType>
+        // libsChartjs - resolution fails because its metadata contentType is <contentType>application/javascript</contentType>
+        if (req.url.indexOf('.') === -1) {
+            // TODO make this work on windows
+            req.url = `${basePath}/assets/${req.params[0]}`;
+            const xmlFileName =
+                '.localdevserver/public' + req.url + '.resource-meta.xml';
+            // Let's try to grab the file extension from the metadata.xml file
+            const parser = new Parser();
+            if (fs.existsSync(xmlFileName)) {
+                const data = fs.readFileSync(xmlFileName);
+                parser.parseString(data, function(err: any, result: any) {
+                    // Parse the xml into json
+                    if (result) {
+                        const contentType =
+                            result.StaticResource.contentType[0];
+                        const fileExt = mimeTypes.extension(contentType);
+                        // Tack on the file extension and send it through
+                        req.url = req.url + '.' + fileExt;
+                        next('route');
+                    }
+                });
+            } else {
+                // No metadata file, send along the request and pray
+                next();
+            }
+        } else {
+            if (
+                req.url.indexOf('/assets/styles/') === -1 &&
+                req.url.indexOf('/assets/fonts/') === -1 &&
+                req.url.indexOf('/assets/icons/') === -1
+            ) {
+                req.url = `${basePath}/assets/${req.params[0]}`;
+                next('route');
+            } else {
+                next();
+            }
+        }
+    });
+
     app.use(
         `${basePath}/`,
         express.static(`${frameworkOutputDir}/public/`, staticOptions)
