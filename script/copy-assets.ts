@@ -1,13 +1,15 @@
 import path from 'path';
 import { cp, mkdir } from 'shelljs';
 
-const src = path.join(__dirname, '../src');
-const dest = path.join(__dirname, '../dist');
-mkdir('-p', dest);
+const src = path.join(__dirname, '..', 'src');
+const dist = path.join(__dirname, '..', 'dist');
+const assets = path.join(dist, 'assets');
+
+mkdir('-p', assets);
 
 // copy non-compiled files from src to dist
-cp('-R', `${src}/assets`, dest);
-cp('-R', `${src}/config`, dest);
+cp('-R', `${src}/assets`, dist);
+cp('-R', `${src}/config`, dist);
 
 // copy SLDS assets
 const sldsPath = path.join(
@@ -15,11 +17,10 @@ const sldsPath = path.join(
     '../node_modules/@salesforce-ux/design-system'
 );
 
-mkdir('-p', `${dest}/slds`);
-cp('-R', `${sldsPath}/assets/styles`, `${dest}/slds`);
+cp('-R', `${sldsPath}/assets/styles`, assets);
 
-mkdir('-p', `${dest}/slds/fonts`);
-cp('-R', `${sldsPath}/assets/fonts/webfonts`, `${dest}/slds/fonts`);
+mkdir('-p', `${assets}/fonts`);
+cp('-R', `${sldsPath}/assets/fonts/webfonts`, `${assets}/fonts`);
 
-mkdir('-p', `${dest}/slds/icons`);
-cp('-R', `${sldsPath}/assets/icons/*-sprite`, `${dest}/slds/icons`);
+mkdir('-p', `${assets}/icons`);
+cp('-R', `${sldsPath}/assets/icons/*-sprite`, `${assets}/icons`);
