@@ -127,8 +127,7 @@ export default class LocalDevServer {
             outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,
-            //            watchPath:
-            //                '~/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
+            watchPath: path.resolve(__dirname, '../modules'),
             isPreview: false,
             modulePaths,
             modes: ['dev']

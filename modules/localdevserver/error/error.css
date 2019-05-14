@@ -1,0 +1,34 @@
+h1 {
+    font-size: 24pt;
+    color: #C23934;
+}
+h2 {
+    color: #16325C;
+}
+
+.error-image {
+    padding-top: 32px;
+    padding-bottom: 24px;
+}
+.error-message {
+    padding-bottom: 28px
+}
+.error-location {
+    padding-bottom: 24px;
+}
+.error-code {
+    padding-bottom: 12px;
+}
+.view-compiled {
+    padding-bottom: 32px;
+    color: #16325C;
+}
+.info-note {
+    margin-top: 82px;
+    font-size: 13pt;
+    background-color: #F4F6F9;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 80px;
+    color: #16325C; 
+}
