@@ -16,7 +16,7 @@ import express from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import uuidv4 from 'uuidv4';
-import 'colors';
+import colors from 'colors';
 
 const { log } = console;
 
