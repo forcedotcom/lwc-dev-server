@@ -100,7 +100,7 @@ export default class LocalDevServer {
         try {
             copyFiles(`${distPath}/assets/*`, assetsPath);
         } catch (e) {
-            console.error(`error - unable to copy assets: ${e}`);
+            throw new Error(`error - unable to copy assets: ${e}`);
         }
 
         // Copy and watch these files

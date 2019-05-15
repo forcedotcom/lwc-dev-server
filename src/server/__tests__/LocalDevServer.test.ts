@@ -1,22 +1,12 @@
 import path from 'path';
 import LocalDevServer, { defaultOutputDirectory } from '../LocalDevServer';
-import Project from '../..//common/Project';
-import { copyFiles, removeFile } from '../../common/fileUtils';
-import { createServer, startServer } from '../talonServerCopy';
+import Project from '../../common/Project';
+import * as fileUtils from '../../common/fileUtils';
+import * as talonServer from '../talonServerCopy';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
-jest.mock('../talonServerCopy', () => {
-    return {
-        createServer: jest.fn().mockImplementation(() => {
-            return {
-                start: jest.fn(),
-                use: jest.fn()
-            };
-        }),
-        startServer: jest.fn()
-    };
-});
+jest.mock('../talonServerCopy');
 
 function mockProject({
     projectPath,
@@ -54,8 +44,19 @@ function mockProject({
 }
 
 describe('LocalDevServer', () => {
+    beforeEach(() => {
+        jest.spyOn(talonServer, 'createServer').mockImplementation(
+            (): any => {
+                return {
+                    start: jest.fn(),
+                    use: jest.fn()
+                };
+            }
+        );
+    });
+
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     describe('start()', () => {
@@ -68,7 +69,7 @@ describe('LocalDevServer', () => {
 
             const expected = path.join(projectPath, defaultOutputDirectory);
 
-            expect(createServer).toBeCalledWith(
+            expect(talonServer.createServer).toBeCalledWith(
                 expect.objectContaining({
                     outputDir: expected
                 }),
@@ -85,7 +86,7 @@ describe('LocalDevServer', () => {
 
             const expected = path.resolve(__dirname, '../../../');
 
-            expect(createServer).toBeCalledWith(
+            expect(talonServer.createServer).toBeCalledWith(
                 expect.objectContaining({
                     modulePaths: expect.arrayContaining([expected])
                 }),
@@ -105,7 +106,7 @@ describe('LocalDevServer', () => {
                 '../../../vendors/dependencies-218'
             );
 
-            expect(createServer).toBeCalledWith(
+            expect(talonServer.createServer).toBeCalledWith(
                 expect.objectContaining({
                     modulePaths: expect.arrayContaining([expected])
                 }),
@@ -122,7 +123,7 @@ describe('LocalDevServer', () => {
 
             const expected = path.join(projectPath, defaultOutputDirectory);
 
-            expect(removeFile).toBeCalledWith(expected);
+            expect(fileUtils.removeFile).toBeCalledWith(expected);
         });
 
         it('calls copyFiles from assets directory to outputDirectory', async () => {
@@ -141,7 +142,25 @@ describe('LocalDevServer', () => {
             // be directly under 'assets' at the web root
             const expectedDest = `${projectPath}/${defaultOutputDirectory}/public/assets`;
 
-            expect(copyFiles).toBeCalledWith(expectedSource, expectedDest);
+            expect(fileUtils.copyFiles).toBeCalledWith(
+                expectedSource,
+                expectedDest
+            );
+        });
+
+        it('throws an error with expected message if copying assets fails', async () => {
+            jest.spyOn(fileUtils, 'copyFiles').mockImplementation(() => {
+                throw 'test error';
+            });
+
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath });
+
+            const server = new LocalDevServer();
+
+            await expect(server.start(project)).rejects.toThrow(
+                'error - unable to copy assets: test error'
+            );
         });
 
         it('calls startServer with the correct port', async () => {
@@ -152,10 +171,25 @@ describe('LocalDevServer', () => {
             const server = new LocalDevServer();
             await server.start(project);
 
-            expect(startServer).toBeCalledWith(
+            expect(talonServer.startServer).toBeCalledWith(
                 expect.anything(),
                 expect.anything(),
                 port
+            );
+        });
+
+        it('rethrows errors from startServer with an identifying message', async () => {
+            jest.spyOn(talonServer, 'startServer').mockImplementation(() => {
+                throw 'test error';
+            });
+
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath });
+
+            const server = new LocalDevServer();
+
+            await expect(server.start(project)).rejects.toThrow(
+                'Unable to start LocalDevServer: test error'
             );
         });
     });
