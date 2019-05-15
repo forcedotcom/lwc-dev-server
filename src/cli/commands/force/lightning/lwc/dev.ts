@@ -109,10 +109,7 @@ export default class Dev extends SfdxCommand {
 
         // Start local dev server
         // TODO pass in component to open & open browser
-        new LocalDevServer().start(
-            new Project(sfdxConfiguration),
-            this.project.getPath()
-        );
+        new LocalDevServer().start(new Project(sfdxConfiguration));
 
         return retValue;
     }

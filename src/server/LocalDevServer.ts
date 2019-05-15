@@ -1,92 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import cpx from 'cpx';
-import { cp, mkdir, rm } from 'shelljs';
-import {
-    startContext,
-    endContext
-} from '@talon/compiler/src/context/context-service';
-import metadataService from '@talon/compiler/src/metadata/metadata-service';
-import resourceService from '@talon/compiler/src/resources/resource-service';
-import validate from '@talon/compiler/src/metadata/metadata-validation';
+import { rm } from 'shelljs';
 import { createServer, startServer } from './talonServerCopy';
-import Project from './common/Project';
-import ComponentIndex from './common/ComponentIndex';
-
-const talonConfig = {
-    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
-};
-
-const routes = [
-    {
-        name: 'home',
-        path: '/',
-        isRoot: true,
-        view: 'home',
-        label: 'Home'
-    },
-    {
-        name: 'preview',
-        path: '/lwc/preview/:cmp*',
-        isRoot: false,
-        view: 'preview',
-        label: 'LWC Preview'
-    }
-];
-const labels = {};
-const theme = {
-    name: 'duck',
-    label: 'Duck Burrito',
-    themeLayouts: {
-        main: {
-            view: 'mainLayout'
-        }
-    }
-};
-const views = {
-    home: {
-        name: 'home',
-        label: 'Home',
-        themeLayoutType: 'main',
-        component: {
-            name: 'localdevserver/home',
-            regions: []
-        }
-    },
-    mainLayout: {
-        name: 'mainLayout',
-        label: 'Default Layout',
-        component: {
-            name: 'localdevserver/layout',
-            regions: [
-                {
-                    name: 'header',
-                    label: 'Header',
-                    components: []
-                },
-                {
-                    name: 'footer',
-                    label: 'Footer',
-                    components: []
-                }
-            ]
-        }
-    },
-    preview: {
-        name: 'preview',
-        label: 'LWC Preview',
-        themeLayoutType: 'main',
-        component: {
-            name: 'localdevserver/preview',
-            attributes: {
-                cmp: '{!cmp}'
-            }
-        }
-    }
-};
+import Project from '../common/Project';
+import ComponentIndex from '../common/ComponentIndex';
+import { talonConfig, views, labels, theme, routes } from './talonConfig';
+import { copyFiles } from '../common/fileUtils.ts';
 
 export default class LocalDevServer {
-    public async start(project: Project, entryPoint: string) {
+    public async start(project: Project) {
         // Okay in this directory lets do the following things.
 
         // Find where all the source code is.
@@ -119,20 +42,18 @@ export default class LocalDevServer {
             talonConfig,
             srcDir: project.getModuleSourceDirectory(),
             views,
-            indexHtml: path.join(__dirname, 'config', 'index.html'),
+            indexHtml: path.join(__dirname, '..', 'config', 'index.html'),
             routes,
             labels,
             theme,
             outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,
-            //            watchPath:
-            //                '~/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
             isPreview: false,
             modulePaths,
             modes: ['dev']
         };
-        const descriptor = `component://${entryPoint}@en`;
+
         console.log('Running Universal Container with config:');
         console.dir(config);
 
@@ -166,24 +87,17 @@ export default class LocalDevServer {
             });
             await startServer(server, '', project.getConfiguration().port);
         } catch (e) {
-            console.error(e);
-            process.exit(1);
+            throw new Error(`Unable to start LocalDevServer: ${e}`);
         }
     }
 
-    public async copyAssets(project: Project, dest: string) {
-        const distPath = path.join(__dirname, '.');
+    private async copyAssets(project: Project, dest: string) {
+        const distPath = path.join(__dirname, '..', '..', 'dist');
         const assetsPath = path.join(dest, 'public', 'assets');
-
-        try {
-            mkdir('-p', assetsPath);
-            cp('-R', `${distPath}/assets/*`, assetsPath);
-        } catch (e) {
-            console.error(`warning - unable to copy assets: ${e}`);
-        }
+        copyFiles(`${distPath}/assets/*`, assetsPath);
 
         // Copy and watch these files
-        this.watchAssets(project, assetsPath);
+        // this.watchAssets(project, assetsPath);
     }
 
     private async watchAssets(project: Project, assetDir: string) {
