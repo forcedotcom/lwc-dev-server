@@ -8,7 +8,8 @@
 import {
     templateMiddleware,
     resourceMiddleware,
-    apiMiddleware
+    apiMiddleware,
+    errorMiddleware
 } from '@talon/compiler';
 import { startContext, endContext } from '@talon/compiler';
 import compression from 'compression';
@@ -86,6 +87,7 @@ export async function createServer(options: object, proxyConfig: any = {}) {
         })
     );
 
+    // 6. Show source handler
     app.use(`/show`, (req, res, next) => {
         const file = req.query.file;
         if (file) {
@@ -94,12 +96,15 @@ export async function createServer(options: object, proxyConfig: any = {}) {
             }
         }
     });
+
     return app;
 }
 
 export async function startServer(app: any, basePath: string, port = 3000) {
     // 5. If none found, serve up the page for the current route depending on the path
     app.get(`${basePath}/*`, templateMiddleware());
+
+    app.use(errorMiddleware());
 
     // start the server
     const server = app.listen(port, () => {

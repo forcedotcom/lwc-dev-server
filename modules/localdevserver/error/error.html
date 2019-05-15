@@ -8,12 +8,6 @@
     >
         <div class="slds-modal__container">
             <header class="slds-modal__header">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleClose}>
-                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
-                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
-                    </svg>
-                    <span class="slds-assistive-text">Close</span>
-                </button>
                 <h2 id="modal-heading-01"><img class="error-image" src="/assets/Graphic.svg" /></h2>
             </header>
             <div class="slds-modal__content slds-p-around_medium">
@@ -25,7 +19,7 @@
                     line={errorLine}
                     line-offset={lineOffset}
                 ></localdevserver-code-highlighter>
-                <h3 if:true={hasErrorFilename} class="view-compiled slds-text-title"><a class="slds-text-link_reset" href={href}>Go to source (vscode)</a></h3>
+                <h3 if:true={hasErrorFilename} class="view-compiled slds-text-title"><a class="slds-text-link_reset" href={errorLocation}>Go to source (vscode)</a></h3>
                 <localdevserver-error-stacks
                     class="error-stacks"
                     error={error}

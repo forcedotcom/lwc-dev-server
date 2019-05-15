@@ -23,21 +23,19 @@ export default class Error extends LightningElement {
     @track
     visible = true;
 
-    get href() {
-        if (this.error && this.error.filename) {
-            return `vscode://file${this.error.filename}:${
-                this.error.location.line
-            }:${this.error.location.column}`;
-        }
-    }
     @api
     set error(newError) {
         this._error = newError;
         if (this.error && this.error.filename) {
-            this.errorLocation = `${this.error.filename}:${
-                this.error.location.line
-            }:${this.error.location.column}`;
-            this.errorLine = this.error.location.line;
+            if (this.error.location) {
+                this.errorLocation = `${this.error.filename}:${
+                    this.error.location.line
+                }:${this.error.location.column}`;
+                this.errorLine = this.error.location.line;
+            } else {
+                this.errorLocation = `${this.error.filename}`;
+                this.errorLine = null;
+            }
             this.errorMessage = this.processMessage(this.error.message);
             fetch(`/show?file=${this._error.filename}`, {
                 credentials: 'same-origin'
@@ -50,12 +48,21 @@ export default class Error extends LightningElement {
                 })
                 .then(text => {
                     if (text) {
-                        let lines = text.split('\n');
-                        const start = Math.max(1, this.errorLine - 5);
-                        const end = Math.min(this.errorLine + 5, lines.length);
-                        lines = lines.slice(start, end);
-                        this.lineOffset = start + 1;
-                        this.code = lines.join('\n');
+                        // source code can be thousands of lines. Just show context
+                        // around where the error occured. 5 lines before, and 5 lines after.
+                        if (this.errorLine) {
+                            let lines = text.split('\n');
+                            const start = Math.max(1, this.errorLine - 5);
+                            const end = Math.min(
+                                this.errorLine + 5,
+                                lines.length
+                            );
+                            lines = lines.slice(start, end);
+                            this.lineOffset = start + 1;
+                            this.code = lines.join('\n');
+                        } else {
+                            this.code = text;
+                        }
                     }
                 });
         } else {

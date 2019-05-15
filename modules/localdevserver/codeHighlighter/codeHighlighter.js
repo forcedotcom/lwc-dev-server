@@ -39,6 +39,11 @@ export default class CodeHighlighter extends LightningElement {
             codeEL.innerHTML = this.code;
 
             div.appendChild(pre);
+
+            // the reason we have this timeout is because the changes
+            // need to go through a rehydration cycle before they are
+            // fully on the real DOM. The highlighter expects to run on
+            // fully rendered DOM nodes. (I think!)
             setTimeout(() => {
                 this.highlight();
             }, 0);
@@ -56,7 +61,7 @@ export default class CodeHighlighter extends LightningElement {
     connectedCallback() {
         const namespace = 'localdevserver';
         const modulename = 'codehighlighter';
-        const scopeAttribute = `${namespace.toLowerCase()}-${modulename.toLowerCase()}_${modulename.toLowerCase()}`;
+        const scopeAttribute = `${namespace}-${modulename}_${modulename}`;
         Prismjs.createElementFn = element => {
             element.setAttribute(scopeAttribute, '');
             const elems = element.querySelectorAll('*');

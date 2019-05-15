@@ -125,7 +125,6 @@ export default class LocalDevServer {
             outputDir: `${directory}/.localdevserver`,
             locale: `en_US`,
             basePath: ``,
-            watchPath: path.resolve(__dirname, '../modules'),
             isPreview: false,
             modulePaths,
             modes: ['dev']
