@@ -3,11 +3,16 @@
 // This is fragile-- we should not GA with this. This installs all the tarballs
 // from lib with the following steps:
 // 1) unpack them to lib/unpacked.
-// 2) fix references to other local deps to point to the unpacked folders e.g.,
-//    if @talon/compiler has a dep on @talon/common, rewrite the dep to point to
-//    the local file dep instead. dangerous!
-// 3) calls `yarn add` or `npm add` to install the package and their
-//    subdependencies.
+// 2) fix sub-dependency references to other local dependencies. e.g., if
+//    @talon/compiler has a dep on @talon/common, in the unpacked directory for
+//    @talon/compiler remove the `dependencies` entry for @talon/common and add
+//    an entry to `peerDependencies`, referencing the local unpacked version...
+//    dangerous! A warning is given if the versions don't match.
+// 3) calls `yarn add` or `npm add` on the unpacked folder to install the
+//    package and their subdependencies.
+//
+// call with `--force` to force clear and unpack all tarballs even if they are
+// already unpacked.
 
 const shell = require('shelljs');
 const fs = require('fs');
@@ -16,17 +21,8 @@ const gunzip = require('gunzip-maybe');
 const tar = require('tar-fs');
 const { performance } = require('perf_hooks');
 
-// only run on commands like `yarn`, `yarn install`, `npm install`,
-// `yarn add lwc-dev-server`
-const argv = process.env.npm_config_argv;
-let args = argv !== undefined ? JSON.parse(argv).original : [];
-args = args.filter(arg => !arg.startsWith('-'));
-
-if (
-    process.env.SKIP_LIBS_INSTALL ||
-    (args.length > 0 && !['install', 'i', 'add'].includes(args[0])) ||
-    (args.length > 1 && !args.some(arg => arg.includes('lwc-dev-server')))
-) {
+// don't infinite loop from this script calling yarn/npm add
+if (process.env.IS_LIBS_INSTALL) {
     return;
 }
 
@@ -37,6 +33,15 @@ const unpackPath = path.join(libPath, 'unpacked');
 (async () => {
     try {
         const start = performance.now();
+
+        const scriptArgs = process.argv.slice(2);
+        const force = scriptArgs.length && scriptArgs[0].includes('force');
+
+        if (!force && !needsUnpacking()) {
+            console.log('everything already unpacked');
+            return;
+        }
+
         prepare();
 
         const dirs = await unpack();
@@ -48,12 +53,32 @@ const unpackPath = path.join(libPath, 'unpacked');
         addPackages(packages);
 
         const end = performance.now();
-        console.error(`libs-install took ${end - start} ms`);
+        console.error(`libs-install took ${(end - start) / 1000} s`);
     } catch (e) {
         console.error(`unable to install local libs - ${e}`);
         process.exit(1);
     }
 })();
+
+function needsUnpacking() {
+    if (!fs.existsSync(unpackPath)) {
+        return true;
+    }
+
+    // return true if there's at least one unpacked tarball
+    const tarballs = shell.ls(path.join(libPath, '*.tgz'));
+    const unpackedDirs = shell
+        .ls('-d', path.join(unpackPath, '*'))
+        .filter(dirPath => fs.existsSync(path.join(dirPath, 'package.json')))
+        .map(entry => path.basename(entry));
+
+    const areAllUnpacked = tarballs.every(tarball => {
+        const expectedDir = path.basename(tarball, path.extname(tarball));
+        return unpackedDirs.some(unpackedDir => expectedDir === unpackedDir);
+    });
+
+    return !areAllUnpacked;
+}
 
 function prepare() {
     // create clean unpacked dir
@@ -123,16 +148,24 @@ function fixReferences(packages) {
         if (pkgJson.dependencies) {
             Object.keys(pkgJson.dependencies).forEach(name => {
                 if (packages[name]) {
-                    const relPath = path.relative(
-                        packages[pkg].dir,
-                        packages[name].dir
-                    );
-                    const replacement = `file:${relPath}`;
-                    console.log(
-                        `replacing dependency on '${name}' in ${pkg} with '${replacement}'`
-                    );
-                    pkgJson.dependencies[name] = replacement;
+                    const original = pkgJson.dependencies[name];
+                    const replacement = packages[name].version;
+
+                    if (!pkgJson.peerDependencies) {
+                        pkgJson.peerDependencies = {};
+                    }
+                    pkgJson.peerDependencies[name] = replacement;
+                    delete pkgJson.dependencies[name];
                     updated = true;
+
+                    console.log(
+                        `${pkg}: moved dependency '${name}@${original}' to peerDependency matching local version '${replacement}'`
+                    );
+                    if (!original.endsWith(replacement)) {
+                        console.warn(
+                            `warning: the local version does not match the original version specfied by the package.\n         replace the local tarball for '${name}' with a version matching '${original}'`
+                        );
+                    }
                 }
             });
         }
@@ -152,7 +185,7 @@ function addPackages(packages) {
         const dir = packages[pkg].dir;
         const command = `${execpath} add file:${dir}`;
         console.log(command);
-        const { stderr } = shell.exec(`SKIP_LIBS_INSTALL=1 ${command}`, {
+        const { stderr } = shell.exec(`IS_LIBS_INSTALL=1 ${command}`, {
             silent: true
         });
         if (stderr) {
