@@ -1,21 +1,23 @@
 import fs from 'fs';
 import path from 'path';
 import cpx from 'cpx';
-import { rm } from 'shelljs';
 import { createServer, startServer } from './talonServerCopy';
 import Project from '../common/Project';
 import ComponentIndex from '../common/ComponentIndex';
 import { talonConfig, views, labels, theme, routes } from './talonConfig';
-import { copyFiles } from '../common/fileUtils.ts';
+import { copyFiles, removeDirectory } from '../common/fileUtils';
+
+export const defaultOutputDirectory = '.localdevserver';
+const packageRoot = path.join(__dirname, '..', '..');
 
 export default class LocalDevServer {
     public async start(project: Project) {
-        // Okay in this directory lets do the following things.
-
         // Find where all the source code is.
-        // This should have /lwc on the end, but I think the talon compiler expects the directory name to be the namespace passed
-        // to the descriptor.
+        // This should have /lwc on the end, but I think the talon compiler
+        // expects the directory name to be the namespace passed to the
+        // descriptor.
         const directory = project.getSfdxConfiguration().getPath();
+
         // the regular node_module paths
         const nodePaths = require.resolve.paths('.') || [];
 
@@ -23,12 +25,14 @@ export default class LocalDevServer {
         // 45 * 2 + 128 = 218
         const version =
             parseInt(project.getSfdxConfiguration().api_version, 10) * 2 + 128;
+
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
-            path.join(__dirname, '..', 'vendors', `dependencies-${version}`)
+            path.join(packageRoot, 'vendors', `dependencies-${version}`)
         );
+
         // our own lwc modules to host the local app
-        const localDependencies = path.resolve(__dirname, '..', '..');
+        const localDependencies = packageRoot;
 
         // all the deps, filtered by existing
         let modulePaths = [
@@ -46,9 +50,9 @@ export default class LocalDevServer {
             routes,
             labels,
             theme,
-            outputDir: `${directory}/.localdevserver`,
-            locale: `en_US`,
-            basePath: ``,
+            outputDir: path.join(directory, defaultOutputDirectory),
+            locale: 'en_US',
+            basePath: '',
             isPreview: false,
             modulePaths,
             modes: ['dev']
@@ -59,10 +63,8 @@ export default class LocalDevServer {
 
         // fixme: clear outputDir for now because of a caching issue
         // with talon (maybe we need to force a recompile of the views?)
-        if (fs.existsSync(config.outputDir)) {
-            rm('-rf', config.outputDir);
-            console.log('cleared output dir');
-        }
+        removeDirectory(config.outputDir);
+        console.log('cleared outputDirectory');
 
         await this.copyAssets(project, config.outputDir);
 
@@ -92,12 +94,12 @@ export default class LocalDevServer {
     }
 
     private async copyAssets(project: Project, dest: string) {
-        const distPath = path.join(__dirname, '..', '..', 'dist');
+        const distPath = path.join(packageRoot, 'dist');
         const assetsPath = path.join(dest, 'public', 'assets');
         copyFiles(`${distPath}/assets/*`, assetsPath);
 
         // Copy and watch these files
-        // this.watchAssets(project, assetsPath);
+        this.watchAssets(project, assetsPath);
     }
 
     private async watchAssets(project: Project, assetDir: string) {
