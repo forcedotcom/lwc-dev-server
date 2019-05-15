@@ -1,7 +1,7 @@
 import path from 'path';
 import LocalDevServer, { defaultOutputDirectory } from '../LocalDevServer';
 import Project from '../..//common/Project';
-import { copyFiles, removeDirectory } from '../../common/fileUtils';
+import { copyFiles, removeFile } from '../../common/fileUtils';
 import { createServer, startServer } from '../talonServerCopy';
 
 jest.mock('../../common/Project');
@@ -18,7 +18,6 @@ jest.mock('../talonServerCopy', () => {
     };
 });
 
-// this crap shouldn't be necessary once Project is simplified
 function mockProject({
     projectPath,
     modulesPath = 'src/modules',
@@ -59,7 +58,7 @@ describe('LocalDevServer', () => {
         jest.clearAllMocks();
     });
 
-    describe('#start', () => {
+    describe('start()', () => {
         it('specifies the outputDirectory in the talon server configuration', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });
@@ -123,7 +122,7 @@ describe('LocalDevServer', () => {
 
             const expected = path.join(projectPath, defaultOutputDirectory);
 
-            expect(removeDirectory).toBeCalledWith(expected);
+            expect(removeFile).toBeCalledWith(expected);
         });
 
         it('calls copyFiles from assets directory to outputDirectory', async () => {

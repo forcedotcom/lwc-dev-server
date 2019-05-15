@@ -5,7 +5,7 @@ import { createServer, startServer } from './talonServerCopy';
 import Project from '../common/Project';
 import ComponentIndex from '../common/ComponentIndex';
 import { talonConfig, views, labels, theme, routes } from './talonConfig';
-import { copyFiles, removeDirectory } from '../common/fileUtils';
+import { copyFiles, removeFile } from '../common/fileUtils';
 
 export const defaultOutputDirectory = '.localdevserver';
 const packageRoot = path.join(__dirname, '..', '..');
@@ -46,7 +46,7 @@ export default class LocalDevServer {
             talonConfig,
             srcDir: project.getModuleSourceDirectory(),
             views,
-            indexHtml: path.join(__dirname, '..', 'config', 'index.html'),
+            indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
             routes,
             labels,
             theme,
@@ -63,7 +63,7 @@ export default class LocalDevServer {
 
         // fixme: clear outputDir for now because of a caching issue
         // with talon (maybe we need to force a recompile of the views?)
-        removeDirectory(config.outputDir);
+        removeFile(config.outputDir);
         console.log('cleared outputDirectory');
 
         await this.copyAssets(project, config.outputDir);
@@ -96,7 +96,12 @@ export default class LocalDevServer {
     private async copyAssets(project: Project, dest: string) {
         const distPath = path.join(packageRoot, 'dist');
         const assetsPath = path.join(dest, 'public', 'assets');
-        copyFiles(`${distPath}/assets/*`, assetsPath);
+
+        try {
+            copyFiles(`${distPath}/assets/*`, assetsPath);
+        } catch (e) {
+            console.error(`error - unable to copy assets: ${e}`);
+        }
 
         // Copy and watch these files
         this.watchAssets(project, assetsPath);

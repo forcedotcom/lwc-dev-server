@@ -1,17 +1,30 @@
 import { cp, mkdir, rm } from 'shelljs';
 import fs from 'fs';
 
+// just one thing to mock instead of the various modules used.
+
+/**
+ * Copies source to dest.
+ *
+ * To copy only the files in a directory and not the directory itself use a
+ * source like `directory/*`.
+ *
+ * @param source The source file or directory to copy.
+ * @param dest The destination.
+ */
 export function copyFiles(source: string, dest: string) {
-    try {
-        mkdir('-p', dest);
-        cp('-R', source, dest);
-    } catch (e) {
-        console.error(`warning - unable to copy assets: ${e}`);
-    }
+    mkdir('-p', dest);
+    cp('-R', source, dest);
 }
 
-export function removeDirectory(directoryPath: string) {
-    if (fs.existsSync(directoryPath)) {
-        rm('-rf', directoryPath);
+/**
+ * Recursively removes a directory or file. Does nothing if the file doesn't
+ * exist.
+ *
+ * @param file The path of the directory or file to remove.
+ */
+export function removeFile(file: string) {
+    if (fs.existsSync(file)) {
+        rm('-rf', file);
     }
 }
