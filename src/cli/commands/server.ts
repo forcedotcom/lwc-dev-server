@@ -1,5 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import LocalDevServer from '../../LocalDevServer';
+import LocalDevServer from '../../server/LocalDevServer';
 import Project from '../../common/Project';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 import fs from 'fs';

@@ -39,7 +39,7 @@
         "type": "node",
         "request": "launch",
         "name": "Launch Program",
-        "program": "${workspaceFolder}/LocalDevServer.ts",
+        "program": "${workspaceFolder}/server/LocalDevServer.ts",
         "outFiles": [
             "${workspaceFolder}/**/*.js"
         ]

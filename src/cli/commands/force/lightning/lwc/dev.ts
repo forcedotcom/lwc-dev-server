@@ -4,7 +4,7 @@ import { AnyJson, JsonArray, JsonMap } from '@salesforce/ts-types';
 import * as http from 'http';
 import Project from '../../../../../common/Project';
 import SfdxConfiguration from '../../../../../user/SfdxConfiguration';
-import LocalDevServer from '../../../../../LocalDevServer';
+import LocalDevServer from '../../../../../server/LocalDevServer';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
