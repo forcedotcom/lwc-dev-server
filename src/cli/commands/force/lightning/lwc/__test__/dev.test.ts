@@ -7,7 +7,7 @@ import Project from '../../../../../../common/Project';
 import { SfdxError } from '@salesforce/core';
 
 jest.mock('../../../../../../user/SfdxConfiguration');
-jest.mock('../../../../../../LocalDevServer');
+jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
 
 describe('dev', () => {
