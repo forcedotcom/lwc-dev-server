@@ -74,7 +74,7 @@ export default class Server extends Command {
         const localDevServer = new LocalDevServer();
 
         // Start the server
-        localDevServer.start(project, main);
+        localDevServer.start(project);
 
         // Yay! We did it.
         console.log('Done running local dev tools.');
