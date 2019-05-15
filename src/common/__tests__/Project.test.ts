@@ -93,8 +93,8 @@ describe('project', () => {
         });
     });
 
-    describe('project creation with SfdxConfiguration', () => {
-        test('when creating from sfdxconfiguration, then resolve to the sfdx-project directory', () => {
+    describe('when creating from sfdxconfiguration', () => {
+        test('then resolve to the sfdx-project directory', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
@@ -106,7 +106,7 @@ describe('project', () => {
             expect(project.getDirectory()).toBe('my-project/');
         });
 
-        test('when creating from sfdxconfiguration, then configuration passed in is stored', () => {
+        test('then configuration passed in is stored', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
@@ -118,7 +118,7 @@ describe('project', () => {
             expect(project.getSfdxConfiguration()).toBe(sfdxConfiguration);
         });
 
-        test('when creating from sfdxconfiguration, then use the packageDirectories to resolve the module directory', () => {
+        test('then use the packageDirectories to resolve the module directory', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify({
@@ -139,7 +139,7 @@ describe('project', () => {
             );
         });
 
-        test('when creating from sfdxconfiguration, then use the packageDirectories to resolve the static resources directory', () => {
+        test('then use the packageDirectories to resolve the static resources directory', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify({
@@ -160,7 +160,7 @@ describe('project', () => {
             );
         });
 
-        test('when creating from sfdxconfiguration, then configure the port from the configuration', () => {
+        test('then configure the port from the configuration', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
@@ -175,7 +175,7 @@ describe('project', () => {
             );
         });
 
-        test('when creating from sfdxconfiguration, then configure the namespace from the configuration', () => {
+        test('then configure the namespace from the configuration', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
