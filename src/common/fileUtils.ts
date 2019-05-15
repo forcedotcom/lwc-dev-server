@@ -1,8 +1,6 @@
 import { cp, mkdir, rm } from 'shelljs';
 import fs from 'fs';
 
-// just one thing to mock instead of the various modules used.
-
 /**
  * Copies source to dest.
  *
