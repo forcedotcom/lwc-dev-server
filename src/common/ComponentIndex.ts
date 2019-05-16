@@ -34,7 +34,10 @@ export default class ComponentIndex {
                 this.isJSComponent(modulePath)
             ) {
                 const componentName = basename;
-                const namespace = path.basename(path.dirname(subdir));
+                let namespace = path.basename(path.dirname(subdir));
+                if (this.project.isSfdx()) {
+                    namespace = this.project.getSfdxConfiguration().namespace;
+                }
                 // TODO don't hardcode lwc/preview
                 const cmpUrl =
                     '/lwc/preview/' + namespace + '/' + componentName;
