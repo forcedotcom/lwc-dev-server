@@ -6,6 +6,8 @@ import Project from '../../../../../common/Project';
 import SfdxConfiguration from '../../../../../user/SfdxConfiguration';
 import LocalDevServer from '../../../../../server/LocalDevServer';
 
+const debug = require('debug')('localdevserver');
+
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
@@ -64,12 +66,12 @@ export default class Dev extends SfdxCommand {
         // Highest level API is always last
         const api_version = await conn.retrieveMaxApiVersion();
 
-        this.ux.log(
+        debug(
             `You appear to be running on a Salesforce instance that can support up to API level ${api_version}`
         );
 
         if (componentName) {
-            this.ux.log(`You wanted to open this component: ${componentName}`);
+            debug(`You wanted to open this component: ${componentName}`);
         }
 
         // TODO resolve location of `componentName`, ensure directory structure is imported / compiled
@@ -105,7 +107,7 @@ export default class Dev extends SfdxCommand {
             port,
             token: conn.accessToken
         };
-        this.log(JSON.stringify(retValue));
+        debug(JSON.stringify(retValue));
 
         // Start local dev server
         // TODO pass in component to open & open browser

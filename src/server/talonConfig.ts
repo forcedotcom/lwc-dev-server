@@ -1,5 +1,13 @@
-export const talonConfig = {
-    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
+export const talonConfig: {
+    includeLwcModules: string[];
+    rollup: {
+        plugins: object[];
+    };
+} = {
+    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver'],
+    rollup: {
+        plugins: []
+    }
 };
 
 export const routes = [

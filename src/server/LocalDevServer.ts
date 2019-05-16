@@ -47,13 +47,13 @@ export default class LocalDevServer {
         ].filter(fs.existsSync);
 
         if (project.isSfdx()) {
-            talonConfig.rollup.plugins = [
+            talonConfig.rollup.plugins.push(
                 customComponentPlugin(
                     sfdxConfig.namespace,
                     'lwc',
                     sfdxConfig.getPath()
                 )
-            ];
+            );
         }
 
         const config = {
