@@ -10,12 +10,10 @@ export default class SfdxConfiguration {
         this._path = sfdxPath;
 
         let jsonFileContents = null;
-        if (fs.existsSync(path.join(this._path, 'sfdx-project.json'))) {
+        const sfdxProjectPath = path.join(this._path, 'sfdx-project.json');
+        if (fs.existsSync(sfdxProjectPath)) {
             try {
-                jsonFileContents = fs.readFileSync(
-                    'sfdx-project.json',
-                    'utf-8'
-                );
+                jsonFileContents = fs.readFileSync(sfdxProjectPath, 'utf-8');
             } catch (e) {}
         }
         if (jsonFileContents !== null && jsonFileContents !== '') {
