@@ -11,12 +11,12 @@
                     </a>
                     <a href="https://forcedotcom.github.io/salesforcedx-vscode/" class="slds-text-link_reset slds-col">
                         <lightning-card title="VS Code Extensions" icon-name="standard:code_playground">
-                            <p class="slds-p-horizontal_small">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled.</p>
+                            <p class="slds-p-horizontal_small">This extension pack includes tools for developing on the Salesforce platform in the lightweight, extensible VS Code editor.</p>
                         </lightning-card>
                     </a>
                     <a href="https://github.com/forcedotcom/lwc-dev-server" class="slds-text-link_reset slds-col">
                         <lightning-card title="Open Source" icon-name="custom:custom12">
-                            <p class="slds-p-horizontal_small">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </p>
+                            <p class="slds-p-horizontal_small">Salesforce uses and contributes to tons of Open Source projects. Learn more about the projects available for developers.</p>
                         </lightning-card>
                     </a>
                 </div>
@@ -27,7 +27,7 @@
                     the .localdevserver.config.json file. For more information on this
                     file see the documentation.
                 </p>
-                
+
                 <div class="slds-box">
                     <code><pre>{configuration}</pre></code>
                 </div>
@@ -37,12 +37,12 @@
             </div>
             <div class="slds-col slds-size_1-of-4">
                 <h2 class="slds-text-heading_medium">Components</h2>
-                <input type="search" name="component-filter" placeholder="Filter" 
+                <input type="search" name="component-filter" placeholder="Filter"
                     class="slds-input slds-m-vertical_small" onchange={onSearchChange} onkeyup={onSearchChange} />
                 <div class="slds-box">
                     <ul class="component-list">
                         <template for:each={components} for:item="item" for:index="index">
-                            <li class="slds-m-horizontal_xx-small slds-m-bottom_x-small" key={item.url}><a href={item.url}>{item.title}</a></li>
+                            <li class="slds-m-horizontal_xx-small slds-m-bottom_x-small slds-truncate" key={item.url}><a href={item.url} title={item.title}>{item.title}</a></li>
                         </template>
                     </ul>
                 </div>

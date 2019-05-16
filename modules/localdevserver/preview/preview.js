@@ -14,4 +14,8 @@ export default class Preview extends LightningElement {
     get cmp() {
         return this._cmp;
     }
+
+    get href() {
+        return `/lwc/preview/${this._cmp}`;
+    }
 }
