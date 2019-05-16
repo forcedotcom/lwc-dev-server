@@ -1,7 +1,11 @@
 <template>
-    <!-- <h1>Preview</h1> -->
-    <slot name="entryPoint"></slot>
-    <div lwc:dom="manual" class="container"></div>
+    <lightning-breadcrumbs class="slds-m-around_small">
+        <lightning-breadcrumb label="home" href="/"></lightning-breadcrumb>
+        <lightning-breadcrumb label={cmp} href={href}></lightning-breadcrumb>
+    </lightning-breadcrumbs>
+
+    <div lwc:dom="manual" class="container slds-m-around_small"></div>
+
     <template if:true={error}>
         <localdevserver-error error={error}></localdevserver-error>
     </template>

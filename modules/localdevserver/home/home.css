@@ -4,7 +4,7 @@
 
 .container {
     background: white;
-    height:100vh;
+    min-height:100vh;
     width: 100vw;
     /* Center the content */
     display: flex;
@@ -12,5 +12,5 @@
 }
 
 .container > .slds-grid {
-    width: 1200px;
+    max-width: 1200px;
 }
