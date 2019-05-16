@@ -5,8 +5,9 @@ import * as http from 'http';
 import Project from '../../../../../common/Project';
 import SfdxConfiguration from '../../../../../user/SfdxConfiguration';
 import LocalDevServer from '../../../../../server/LocalDevServer';
+import debugLogger from 'debug';
 
-const debug = require('debug')('localdevserver');
+const debug = debugLogger('localdevserver');
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);

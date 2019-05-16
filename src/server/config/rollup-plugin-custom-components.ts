@@ -1,8 +1,9 @@
 import path from 'path';
 import glob from 'fast-glob';
 import { EntryItem } from 'fast-glob/out/types/entries';
+import debugLogger from 'debug';
 
-const debug = require('debug')('localdevserver');
+const debug = debugLogger('localdevserver');
 
 function isInNamespace(id: string, namespace: string) {
     return (

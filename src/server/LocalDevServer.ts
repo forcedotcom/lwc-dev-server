@@ -8,8 +8,9 @@ import { talonConfig, views, labels, theme, routes } from './talonConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
 import SfdxConfiguration from '../user/SfdxConfiguration';
+import debugLogger from 'debug';
 
-const debug = require('debug')('localdevserver');
+const debug = debugLogger('localdevserver');
 
 export const defaultOutputDirectory = '.localdevserver';
 const packageRoot = path.join(__dirname, '..', '..');
