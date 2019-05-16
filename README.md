@@ -165,7 +165,6 @@ The following configuration parameters are available.
 | W-6105664 | ? | Custom static assets for SFDX projects
 | W-6124443 | Nick | Record data proxy to org
 | W-6067267 | Min | Graceful error container when viewing components with compile errors
-| W-6124774 | Luke | Support c namespace mapping to file based namespace in local development
 
 ### Fixed (Not Closed)
 | Work ID | Dev | Description |
@@ -175,6 +174,7 @@ The following configuration parameters are available.
 | W-6066586 | Nathan | Enable CircleCI for Local Development
 | W-6072909 | Nathan | SFDX CLI Plugin
 | W-6072978 | Luke | Use SFDX authentication token with Talon
+| W-6124774 | Luke | Support c namespace mapping to file based namespace in local development
 
 ## Contributing
 
