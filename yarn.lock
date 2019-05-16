@@ -6211,8 +6211,8 @@ lru-queue@0.1:
   dependencies:
     es5-ext "~0.10.2"
 
-"lwc-components-lightning@file:lib/unpacked/lwc-components-lightning-1.0.19-alpha":
-  version "1.0.19-alpha"
+"lwc-components-lightning@file:lib/unpacked/lwc-components-lightning-1.2.1-alpha":
+  version "1.2.1-alpha"
 
 magic-string@^0.25.2, magic-string@~0.25.1:
   version "0.25.2"
