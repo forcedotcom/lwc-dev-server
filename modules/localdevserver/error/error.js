@@ -28,12 +28,12 @@ export default class Error extends LightningElement {
         this._error = newError;
         if (this.error && this.error.filename) {
             if (this.error.location) {
-                this.errorLocation = `${this.error.filename}:${
+                this.errorLocation = `vscode://file${this.error.filename}:${
                     this.error.location.line
                 }:${this.error.location.column}`;
                 this.errorLine = this.error.location.line;
             } else {
-                this.errorLocation = `${this.error.filename}`;
+                this.errorLocation = `vscode://file${this.error.filename}`;
                 this.errorLine = null;
             }
             this.errorMessage = this.processMessage(this.error.message);
