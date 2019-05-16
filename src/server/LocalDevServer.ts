@@ -6,25 +6,31 @@ import Project from '../common/Project';
 import ComponentIndex from '../common/ComponentIndex';
 import { talonConfig, views, labels, theme, routes } from './talonConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
+import { customComponentPlugin } from './config/rollup-plugin-custom-components';
+import SfdxConfiguration from '../user/SfdxConfiguration';
+import debugLogger from 'debug';
+
+const debug = debugLogger('localdevserver');
 
 export const defaultOutputDirectory = '.localdevserver';
 const packageRoot = path.join(__dirname, '..', '..');
 
 export default class LocalDevServer {
     public async start(project: Project) {
+        const sfdxConfig: SfdxConfiguration = project.getSfdxConfiguration();
+
         // Find where all the source code is.
         // This should have /lwc on the end, but I think the talon compiler
         // expects the directory name to be the namespace passed to the
         // descriptor.
-        const directory = project.getSfdxConfiguration().getPath();
+        const directory = sfdxConfig.getPath();
 
         // the regular node_module paths
         const nodePaths = require.resolve.paths('.') || [];
 
         // Salesforce internal version == Salesforce API Version * 2 + 128
         // 45 * 2 + 128 = 218
-        const version =
-            parseInt(project.getSfdxConfiguration().api_version, 10) * 2 + 128;
+        const version = parseInt(sfdxConfig.api_version, 10) * 2 + 128;
 
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
@@ -41,6 +47,16 @@ export default class LocalDevServer {
             ...nodePaths
         ].filter(fs.existsSync);
 
+        if (project.isSfdx()) {
+            talonConfig.rollup.plugins.push(
+                customComponentPlugin(
+                    sfdxConfig.namespace,
+                    'lwc',
+                    sfdxConfig.getPath()
+                )
+            );
+        }
+
         const config = {
             templateDir: directory,
             talonConfig,
@@ -55,23 +71,24 @@ export default class LocalDevServer {
             basePath: '',
             isPreview: false,
             modulePaths,
+            runInBand: true,
             modes: ['dev']
         };
 
-        console.log('Running Universal Container with config:');
-        console.dir(config);
+        debug('Running Universal Container with config:');
+        debug(config);
 
         // fixme: clear outputDir for now because of a caching issue
         // with talon (maybe we need to force a recompile of the views?)
         removeFile(config.outputDir);
-        console.log('cleared outputDirectory');
+        debug('cleared outputDirectory');
 
         await this.copyAssets(project, config.outputDir);
 
         const proxyConfig = {
-            apiEndpoint: project.getSfdxConfiguration().endpoint,
+            apiEndpoint: sfdxConfig.endpoint,
             recordApiCalls: false,
-            onProxyReq: project.getSfdxConfiguration().onProxyReq,
+            onProxyReq: sfdxConfig.onProxyReq,
             pathRewrite: this.pathRewrite
         };
 
