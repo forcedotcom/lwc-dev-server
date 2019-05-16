@@ -9,7 +9,7 @@ mkdir('-p', assets);
 
 // copy non-compiled files from src to dist
 cp('-R', `${src}/assets`, dist);
-cp('-R', `${src}/config`, dist);
+cp('-R', `${src}/html`, dist);
 
 // copy SLDS assets
 const sldsPath = path.join(
