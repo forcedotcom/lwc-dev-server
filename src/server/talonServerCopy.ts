@@ -8,7 +8,8 @@
 import {
     templateMiddleware,
     resourceMiddleware,
-    apiMiddleware
+    apiMiddleware,
+    errorMiddleware
 } from '@talon/compiler';
 import { startContext, endContext } from '@talon/compiler';
 import compression from 'compression';
@@ -17,8 +18,6 @@ import helmet from 'helmet';
 import path from 'path';
 import uuidv4 from 'uuidv4';
 import colors from 'colors';
-import ComponentIndex from './common/ComponentIndex';
-import Project from './common/Project';
 import fs from 'fs';
 import { Parser } from 'xml2js';
 import mimeTypes from 'mime-types';
@@ -37,7 +36,10 @@ const staticOptions = {
 };
 
 export async function createServer(options: object, proxyConfig: any = {}) {
-    const { templateDir, outputDir, basePath } = await startContext(options);
+    const { templateDir, outputDir, basePath, srcDir } = await startContext(
+        options
+    );
+    const sourceDir = path.resolve(srcDir);
     const app = express();
 
     // 0. GZIP all assets
@@ -136,12 +138,24 @@ export async function createServer(options: object, proxyConfig: any = {}) {
         })
     );
 
+    // 6. Show source handler
+    app.use(`/show`, (req, res, next) => {
+        const file = req.query.file;
+        if (file) {
+            if (file.startsWith(sourceDir)) {
+                res.sendFile(file);
+            }
+        }
+    });
+
     return app;
 }
 
 export async function startServer(app: any, basePath: string, port = 3000) {
     // 5. If none found, serve up the page for the current route depending on the path
     app.get(`${basePath}/*`, templateMiddleware());
+
+    app.use(errorMiddleware());
 
     // start the server
     const server = app.listen(port, () => {

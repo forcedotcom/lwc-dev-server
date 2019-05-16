@@ -1,0 +1,17 @@
+<template>
+    <div class="stack-message slds-text-heading_small">
+        <div class="button-container" onclick={handleOnClick}> 
+            <div class="line"></div>
+            <div class="collapse-container">
+                <div class="collapse">
+                    {collapseMessage}
+                </div>
+            </div>
+        </div>
+    </div>
+    <template if:false={collapsed}>
+        <pre>
+            {stack}
+        </pre>
+    </template>
+</template>

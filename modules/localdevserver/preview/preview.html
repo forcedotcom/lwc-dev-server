@@ -5,4 +5,8 @@
     </lightning-breadcrumbs>
 
     <div lwc:dom="manual" class="container slds-m-around_small"></div>
+
+    <template if:true={error}>
+        <localdevserver-error error={error}></localdevserver-error>
+    </template>
 </template>
