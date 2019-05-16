@@ -1,98 +1,23 @@
 import fs from 'fs';
 import path from 'path';
 import cpx from 'cpx';
-import { cp, mkdir, rm } from 'shelljs';
-import {
-    startContext,
-    endContext
-} from '@talon/compiler/src/context/context-service';
-import metadataService from '@talon/compiler/src/metadata/metadata-service';
-import resourceService from '@talon/compiler/src/resources/resource-service';
-import validate from '@talon/compiler/src/metadata/metadata-validation';
 import { createServer, startServer } from './talonServerCopy';
-import Project from './common/Project';
-import ComponentIndex from './common/ComponentIndex';
+import Project from '../common/Project';
+import ComponentIndex from '../common/ComponentIndex';
+import { talonConfig, views, labels, theme, routes } from './talonConfig';
+import { copyFiles, removeFile } from '../common/fileUtils';
 
-const talonConfig = {
-    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver']
-};
-
-const routes = [
-    {
-        name: 'home',
-        path: '/',
-        isRoot: true,
-        view: 'home',
-        label: 'Home'
-    },
-    {
-        name: 'preview',
-        path: '/lwc/preview/:cmp*',
-        isRoot: false,
-        view: 'preview',
-        label: 'LWC Preview'
-    }
-];
-const labels = {};
-const theme = {
-    name: 'duck',
-    label: 'Duck Burrito',
-    themeLayouts: {
-        main: {
-            view: 'mainLayout'
-        }
-    }
-};
-const views = {
-    home: {
-        name: 'home',
-        label: 'Home',
-        themeLayoutType: 'main',
-        component: {
-            name: 'localdevserver/home',
-            regions: []
-        }
-    },
-    mainLayout: {
-        name: 'mainLayout',
-        label: 'Default Layout',
-        component: {
-            name: 'localdevserver/layout',
-            regions: [
-                {
-                    name: 'header',
-                    label: 'Header',
-                    components: []
-                },
-                {
-                    name: 'footer',
-                    label: 'Footer',
-                    components: []
-                }
-            ]
-        }
-    },
-    preview: {
-        name: 'preview',
-        label: 'LWC Preview',
-        themeLayoutType: 'main',
-        component: {
-            name: 'localdevserver/preview',
-            attributes: {
-                cmp: '{!cmp}'
-            }
-        }
-    }
-};
+export const defaultOutputDirectory = '.localdevserver';
+const packageRoot = path.join(__dirname, '..', '..');
 
 export default class LocalDevServer {
-    public async start(project: Project, entryPoint: string) {
-        // Okay in this directory lets do the following things.
-
+    public async start(project: Project) {
         // Find where all the source code is.
-        // This should have /lwc on the end, but I think the talon compiler expects the directory name to be the namespace passed
-        // to the descriptor.
+        // This should have /lwc on the end, but I think the talon compiler
+        // expects the directory name to be the namespace passed to the
+        // descriptor.
         const directory = project.getSfdxConfiguration().getPath();
+
         // the regular node_module paths
         const nodePaths = require.resolve.paths('.') || [];
 
@@ -100,12 +25,14 @@ export default class LocalDevServer {
         // 45 * 2 + 128 = 218
         const version =
             parseInt(project.getSfdxConfiguration().api_version, 10) * 2 + 128;
+
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
-            path.join(__dirname, '..', 'vendors', `dependencies-${version}`)
+            path.join(packageRoot, 'vendors', `dependencies-${version}`)
         );
+
         // our own lwc modules to host the local app
-        const localDependencies = path.resolve(__dirname, '..', '..');
+        const localDependencies = packageRoot;
 
         // all the deps, filtered by existing
         let modulePaths = [
@@ -119,29 +46,25 @@ export default class LocalDevServer {
             talonConfig,
             srcDir: project.getModuleSourceDirectory(),
             views,
-            indexHtml: path.join(__dirname, 'config', 'index.html'),
+            indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
             routes,
             labels,
             theme,
-            outputDir: `${directory}/.localdevserver`,
-            locale: `en_US`,
-            basePath: ``,
-            //            watchPath:
-            //                '~/git/duckburrito/local-dev-tools/packages/local-dev-modules/src/modules/localdevserver',
+            outputDir: path.join(directory, defaultOutputDirectory),
+            locale: 'en_US',
+            basePath: '',
             isPreview: false,
             modulePaths,
             modes: ['dev']
         };
-        const descriptor = `component://${entryPoint}@en`;
+
         console.log('Running Universal Container with config:');
         console.dir(config);
 
         // fixme: clear outputDir for now because of a caching issue
         // with talon (maybe we need to force a recompile of the views?)
-        if (fs.existsSync(config.outputDir)) {
-            rm('-rf', config.outputDir);
-            console.log('cleared output dir');
-        }
+        removeFile(config.outputDir);
+        console.log('cleared outputDirectory');
 
         await this.copyAssets(project, config.outputDir);
 
@@ -166,20 +89,18 @@ export default class LocalDevServer {
             });
             await startServer(server, '', project.getConfiguration().port);
         } catch (e) {
-            console.error(e);
-            process.exit(1);
+            throw new Error(`Unable to start LocalDevServer: ${e}`);
         }
     }
 
-    public async copyAssets(project: Project, dest: string) {
-        const distPath = path.join(__dirname, '.');
+    private async copyAssets(project: Project, dest: string) {
+        const distPath = path.join(packageRoot, 'dist');
         const assetsPath = path.join(dest, 'public', 'assets');
 
         try {
-            mkdir('-p', assetsPath);
-            cp('-R', `${distPath}/assets/*`, assetsPath);
+            copyFiles(`${distPath}/assets/*`, assetsPath);
         } catch (e) {
-            console.error(`warning - unable to copy assets: ${e}`);
+            throw new Error(`error - unable to copy assets: ${e}`);
         }
 
         // Copy and watch these files
