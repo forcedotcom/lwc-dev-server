@@ -78,7 +78,7 @@ Non-public dependencies from nexus such as @talon and lwc-components-lightning a
 Update everything to the 'latest' from nexus:
 
 ```sh
-script/update-all.js
+script/libs-update-all.js
 ```
 
 Update or add a specific package:
