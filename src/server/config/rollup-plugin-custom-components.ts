@@ -1,9 +1,6 @@
 import path from 'path';
 import glob from 'fast-glob';
-import fs from 'fs-extra';
 import { EntryItem } from 'fast-glob/out/types/entries';
-const compiler = require('@lwc/compiler');
-import CompilerOptions from '@lwc/compiler/dist/types/compiler/options';
 
 const debug = require('debug')('localdevserver');
 
@@ -56,13 +53,12 @@ export function customComponentPlugin(
                             _index: number,
                             _array: EntryItem[]
                         ) => {
-                            let extension = path.extname(<string>value);
+                            const fileName = value.toString();
+                            let extension = path.extname(fileName);
                             if (extension === '.js') {
-                                jsFileName = value.toString();
+                                jsFileName = fileName;
                             }
-                            mappings[
-                                `./${path.basename(value.toString())}`
-                            ] = value.toString();
+                            mappings[`./${path.basename(fileName)}`] = fileName;
                         }
                     );
                 debug(
