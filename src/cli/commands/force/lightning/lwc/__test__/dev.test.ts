@@ -2,12 +2,12 @@ import Dev from '../dev';
 import * as Config from '@oclif/config';
 import { JsonMap } from '@salesforce/ts-types';
 import SfdxConfiguration from '../../../../../../user/SfdxConfiguration';
-import LocalDevServer from '../../../../../../LocalDevServer';
+import LocalDevServer from '../../../../../../server/LocalDevServer';
 import Project from '../../../../../../common/Project';
 import { SfdxError } from '@salesforce/core';
 
 jest.mock('../../../../../../user/SfdxConfiguration');
-jest.mock('../../../../../../LocalDevServer');
+jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
 
 describe('dev', () => {

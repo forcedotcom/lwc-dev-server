@@ -165,7 +165,14 @@ export default class Project {
         // TODO: Support more than one package
         const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
         if (packageDirectories.length > 0) {
-            return `${packageDirectories[0]}/main/default/staticresources`;
+            const resourcePath = path.join(
+                packageDirectories[0],
+                'main/default/staticresources'
+            );
+            if (this.rootDirectory) {
+                return path.join(this.rootDirectory, resourcePath);
+            }
+            return resourcePath;
         }
 
         // What would we expect if no value is specified?
