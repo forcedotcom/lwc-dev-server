@@ -21,6 +21,7 @@ function mockProject({
 }): Project {
     const project = new Project(projectPath);
     project.getDirectory = () => projectPath;
+    project.getModuleSourceDirectory = () => modulesPath;
 
     project.getConfiguration = jest.fn().mockImplementation(() => {
         return {
@@ -35,10 +36,6 @@ function mockProject({
             }
         };
     });
-
-    project.getModuleSourceDirectory = jest
-        .fn()
-        .mockImplementation(() => modulesPath);
 
     return project;
 }
