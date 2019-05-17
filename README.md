@@ -57,7 +57,7 @@ New "stable" versions of the plugin will be pushed to the internal SFDX npm regi
 SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:update
 ```
 
-### Running the Plugin
+### Running lwc-dev-server
 
 At the moment the plugin **must be run within an SFDX project**, such as [LWC Recipes](https://github.com/trailheadapps/lwc-recipes).
 
@@ -71,7 +71,7 @@ Once it's started, visit [http://localhost:3333](http://localhost:3333) in your 
 
 For more information on the command see the [SFDX_plugin.md](SFDX_plugin.md) file.
 
-### Running from Source
+### Running lwc-dev-server from Source
 
 With linking you can run the latest code from source with the SFDX CLI.
 
