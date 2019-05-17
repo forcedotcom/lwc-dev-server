@@ -1,6 +1,6 @@
 {
   "name": "lwc-dev-server",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Local dev server",
   "main": "dist/server/LocalDevServer.js",
   "types": "dist/server/LocalDevServer.d.ts",
