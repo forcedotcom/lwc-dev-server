@@ -18,7 +18,7 @@ export default class Project {
     /**
      * Would not be valid if you ran the command on a directory without a package.json file.
      */
-    private readonly rootDirectory: string = '';
+    private readonly rootDirectory: string;
     private readonly _isSFDX: boolean = false;
     private readonly _configuration: LocalDevServerConfiguration;
     private _modulesSourceDirectory: string | null = null;
@@ -51,21 +51,17 @@ export default class Project {
         // Resolve the default SfdxConfiguration
         this._sfdxConfiguration = new SfdxConfiguration(this);
 
-        // Must be after isSfdx setting
-        this._modulesSourceDirectory = this.resolveModulesSourceDirectory();
-
         // Use detection of the sfdx-project configuration to detect if this is an Sfdx Project and we should
         // treat it as such.
         this._isSFDX = fs.existsSync(
             path.join(this.rootDirectory, 'sfdx-project.json')
         );
+
+        // Must be after isSfdx setting
+        this._modulesSourceDirectory = this.resolveModulesSourceDirectory();
     }
 
     private initWithSfdxConfiguration() {
-        if (this.sfdxConfiguration === undefined) {
-            return;
-        }
-
         // The SfdxConfiguration will specify where the modules are located.
         this._modulesSourceDirectory = this.getSfdxProjectLWCDirectory(
             this.rootDirectory
@@ -147,7 +143,7 @@ export default class Project {
     }
 
     private resolveModulesSourceDirectory(): string {
-        const rootDirectory = this.rootDirectory || '.';
+        const rootDirectory = this.rootDirectory;
         // Try to get the value from the configuration file
         let dirFromConfig =
             this.configuration && this.configuration.getModuleSourceDirectory();
@@ -186,10 +182,8 @@ export default class Project {
                 packageDirectories[0],
                 'main/default/staticresources'
             );
-            if (this.rootDirectory) {
-                return path.join(this.rootDirectory, resourcePath);
-            }
-            return resourcePath;
+
+            return path.join(this.rootDirectory, resourcePath);
         }
 
         // What would we expect if no value is specified?

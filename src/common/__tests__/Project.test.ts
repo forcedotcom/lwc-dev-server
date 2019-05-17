@@ -253,7 +253,7 @@ describe('project', () => {
             );
         });
 
-        test('then detect the project static resource directory from sfdx-project.json', () => {
+        test('then detect the static resource directory from sfdx-project.json', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify({
@@ -268,12 +268,31 @@ describe('project', () => {
             });
             const project = new Project('my-project/');
             const sfdxConfiguration = new SfdxConfiguration(project);
-            sfdxConfiguration.namespace = 'my-project-namespace';
             project.sfdxConfiguration = sfdxConfiguration;
 
             expect(project.staticResourcesDirectory).toBe(
                 'my-project/force-app/main/default/staticresources'
             );
+        });
+
+        test('then detect the modules source directory from sfdx-project.json', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    })
+                }
+            });
+            const project = new Project('my-project/');
+            const sfdxConfiguration = new SfdxConfiguration(project);
+            project.sfdxConfiguration = sfdxConfiguration;
+
+            expect(project.modulesSourceDirectory).toBe('my-project/force-app');
         });
     });
 });
