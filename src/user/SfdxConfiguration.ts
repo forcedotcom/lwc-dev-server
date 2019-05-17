@@ -1,13 +1,15 @@
 import fs from 'fs';
 import path from 'path';
+import Project from '../common/Project';
 
 export default class SfdxConfiguration {
     private readonly configMap: any = {};
     private readonly _path: string;
     private readonly packageDirectories: string[] = [];
 
-    constructor(sfdxPath: string) {
-        this._path = sfdxPath;
+    constructor(project: Project) {
+        //this._path = sfdxPath;
+        this._path = project.getDirectory();
 
         let jsonFileContents = null;
         const sfdxProjectPath = path.join(this._path, 'sfdx-project.json');
@@ -37,9 +39,9 @@ export default class SfdxConfiguration {
         }
     }
 
-    public getPath(): string {
-        return this._path;
-    }
+    // public getPath(): string {
+    //     return this._path;
+    // }
 
     public getPackageDirectories(): string[] {
         return this.packageDirectories;

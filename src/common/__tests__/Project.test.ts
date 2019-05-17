@@ -81,15 +81,24 @@ describe('project', () => {
             expect(project.getModuleSourceDirectory()).toBe('my-project/src');
         });
 
-        test('returns null when the project is invalid', () => {
+        test('throws an exception when referencing an invalid project', () => {
             mock({
+                'invalid-project': {
+                    // Empty
+                },
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json': '{}'
                 }
             });
-            const project = new Project('.');
-            expect(project.getModuleSourceDirectory()).toBe(null);
+            try {
+                new Project('invalid-project/');
+            } catch (e) {
+                expect(e.message).toBe(
+                    "Directory specified 'invalid-project/' does not resolve to a project. The specified directory must have package.json in it."
+                );
+            }
+            // expect().toThrowError();
         });
     });
 
@@ -98,11 +107,12 @@ describe('project', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
-                    'localdevserver.config.json': '{}'
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
                 }
             });
-            const sfdxConfiguration = new SfdxConfiguration('my-project/');
-            const project = new Project(sfdxConfiguration);
+            const project = new Project('my-project/');
+            const sfdxConfiguration = new SfdxConfiguration(project);
             expect(project.getDirectory()).toBe('my-project/');
         });
 
@@ -110,11 +120,14 @@ describe('project', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
-                    'localdevserver.config.json': '{}'
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
                 }
             });
-            const sfdxConfiguration = new SfdxConfiguration('my-project/');
-            const project = new Project(sfdxConfiguration);
+            const project = new Project('my-project/');
+            const sfdxConfiguration = new SfdxConfiguration(project);
+            project.setSfdxConfiguration(sfdxConfiguration);
+
             expect(project.getSfdxConfiguration()).toBe(sfdxConfiguration);
         });
 
@@ -129,11 +142,14 @@ describe('project', () => {
                             }
                         ]
                     }),
-                    'localdevserver.config.json': '{}'
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
                 }
             });
-            const sfdxConfiguration = new SfdxConfiguration('my-project/');
-            const project = new Project(sfdxConfiguration);
+            const project = new Project('my-project/');
+            const sfdxConfiguration = new SfdxConfiguration(project);
+            project.setSfdxConfiguration(sfdxConfiguration);
+
             expect(project.getModuleSourceDirectory()).toBe(
                 'my-project/force-app'
             );
@@ -150,11 +166,14 @@ describe('project', () => {
                             }
                         ]
                     }),
-                    'localdevserver.config.json': '{}'
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
                 }
             });
-            const sfdxConfiguration = new SfdxConfiguration('my-project/');
-            const project = new Project(sfdxConfiguration);
+            const project = new Project('my-project/');
+            const sfdxConfiguration = new SfdxConfiguration(project);
+            project.setSfdxConfiguration(sfdxConfiguration);
+
             expect(project.getStaticResourcesDirectory()).toBe(
                 'my-project/force-app/main/default/staticresources'
             );
@@ -164,12 +183,15 @@ describe('project', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
-                    'localdevserver.config.json': '{}'
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
                 }
             });
-            const sfdxConfiguration = new SfdxConfiguration('my-project/');
+            const project = new Project('my-project/');
+            const sfdxConfiguration = new SfdxConfiguration(project);
             sfdxConfiguration.port = 123456;
-            const project = new Project(sfdxConfiguration);
+            project.setSfdxConfiguration(sfdxConfiguration);
+
             expect(project.getConfiguration().port).toBe(
                 sfdxConfiguration.port
             );
@@ -179,12 +201,15 @@ describe('project', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': '{}',
-                    'localdevserver.config.json': '{}'
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
                 }
             });
-            const sfdxConfiguration = new SfdxConfiguration('my-project/');
+            const project = new Project('my-project/');
+            const sfdxConfiguration = new SfdxConfiguration(project);
             sfdxConfiguration.namespace = 'my-project-namespace';
-            const project = new Project(sfdxConfiguration);
+            project.setSfdxConfiguration(sfdxConfiguration);
+
             expect(project.getConfiguration().namespace).toBe(
                 sfdxConfiguration.namespace
             );

@@ -4,65 +4,83 @@ import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import SfdxConfiguration from '../user/SfdxConfiguration';
 import { SfdxProject } from '@salesforce/core';
 
+/**
+ * The project object describes two things.
+ *
+ * App Structure.
+ * It resolves the location of your package.json file. It'll resolve the
+ * location of your modules directory and other locations for assets we'll need to run the server.
+ *
+ * Configuration
+ * Contains the configuration object we'll use to run the Local Dev Server.
+ */
 export default class Project {
     /**
      * Would not be valid if you ran the command on a directory without a package.json file.
      */
-    private rootDirectory: string | null = null;
+    private rootDirectory: string = '';
     private modulesSourceDirectory: string | null = null;
-    private sfdxConfiguration: SfdxConfiguration = new SfdxConfiguration('.');
+    private sfdxConfiguration: SfdxConfiguration;
     private configuration: LocalDevServerConfiguration;
     private isSFDX: boolean = false;
     private staticResourcesDirectory: string | null = null;
 
-    constructor(object?: string | SfdxConfiguration) {
-        this.configuration = new LocalDevServerConfiguration();
-        if (object instanceof SfdxConfiguration) {
-            this.initWithSfdxConfiguration(object);
-        } else {
-            this.initWithDirectory(object || '.');
+    constructor(directory: string, sfdxConfiguration?: SfdxConfiguration) {
+        // Directory could be either the project, or a folder in a project.
+        // Resolve to find the right folder.
+        const rootDirectory = this.resolveProjectDirectory(directory);
+
+        if (rootDirectory === null) {
+            throw new Error(
+                `Directory specified '${directory}' does not resolve to a project. The specified directory must have package.json in it.`
+            );
         }
+
+        this.rootDirectory = rootDirectory;
+
+        // Base configuration for the project.
+        // Also merges the config at localdevserver.config.json as well
+        const configurationPath = path.join(
+            this.rootDirectory,
+            'localdevserver.config.json'
+        );
+        this.configuration = new LocalDevServerConfiguration(configurationPath);
+
+        if (sfdxConfiguration === undefined) {
+            // Resolve the default SfdxConfiguration
+            this.sfdxConfiguration = new SfdxConfiguration(this);
+        } else {
+            this.sfdxConfiguration = sfdxConfiguration;
+
+            // Merge in the Sfdx Configuration values.
+            this.initWithSfdxConfiguration();
+        }
+
+        // Must be after isSfdx setting
+        this.modulesSourceDirectory = this.resolveModulesSourceDirectory();
+
+        // Use detection of the sfdx-project configuration to detect if this is an Sfdx Project and we should
+        // treat it as such.
         this.isSFDX = fs.existsSync(
-            path.join(this.sfdxConfiguration.getPath(), 'sfdx-project.json')
+            path.join(this.rootDirectory, 'sfdx-project.json')
         );
     }
 
-    private initWithDirectory(directory: string) {
-        // Directory could be either the project, or a folder in a project.
-        // Resolve to find the right folder.
-        this.rootDirectory = this.resolveProjectDirectory(directory);
-
-        if (this.rootDirectory != null) {
-            // Base configuration for the project.
-            // Also merges the config at localdevserver.config.json as well
-            const configurationPath = path.join(
-                this.rootDirectory,
-                'localdevserver.config.json'
-            );
-            this.configuration = new LocalDevServerConfiguration(
-                configurationPath
-            );
-
-            // Resolve the sfdx-project.json file at the root of the project.
-            // If there is no configuration file, assume we aren't in that project structure.
-            this.sfdxConfiguration = new SfdxConfiguration(this.rootDirectory);
-
-            // Must be after isSfdx setting
-            this.modulesSourceDirectory = this.resolveModulesSourceDirectory();
-        } else {
-            this.modulesSourceDirectory = null;
+    private initWithSfdxConfiguration() {
+        if (this.sfdxConfiguration === undefined) {
+            return;
         }
-    }
 
-    private initWithSfdxConfiguration(sfdxConfiguration: SfdxConfiguration) {
-        this.sfdxConfiguration = sfdxConfiguration;
-        this.rootDirectory = sfdxConfiguration.getPath();
+        // The SfdxConfiguration will specify where the modules are located.
         this.modulesSourceDirectory = this.getSfdxProjectLWCDirectory(
             this.rootDirectory
         );
+        // Figure out where the static resources are from the configuration as well.
         this.staticResourcesDirectory = this.getSfdxProjectStaticResourcesDirectory();
-        this.configuration.port = sfdxConfiguration.port;
-        this.configuration.namespace = sfdxConfiguration.namespace;
+
+        // Merge the configuration values from Sfdx over the default configuration.
+        this.configuration.port = this.sfdxConfiguration.port;
+        this.configuration.namespace = this.sfdxConfiguration.namespace;
     }
 
     public getConfiguration(): LocalDevServerConfiguration {
@@ -75,6 +93,12 @@ export default class Project {
 
     public getSfdxConfiguration(): SfdxConfiguration {
         return this.sfdxConfiguration;
+    }
+
+    public setSfdxConfiguration(sfdxConfiguration: SfdxConfiguration) {
+        this.sfdxConfiguration = sfdxConfiguration;
+
+        this.initWithSfdxConfiguration();
     }
 
     public getModuleSourceDirectory(): string | null {
@@ -102,7 +126,7 @@ export default class Project {
             return null;
         }
 
-        if (currentDirectory === this.rootDirectory) {
+        if (currentDirectory && currentDirectory === this.rootDirectory) {
             if (!fs.existsSync(path.join(currentDirectory, 'package.json'))) {
                 return null;
             }

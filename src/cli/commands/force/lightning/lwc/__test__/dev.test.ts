@@ -145,7 +145,7 @@ describe('dev', () => {
                 }
             };
             // @ts-ignore
-            Project.mockImplementation(
+            Project.prototype.setSfdxConfiguration.mockImplementation(
                 (sfdxConfiguration: SfdxConfiguration) => {
                     sfdxConfiguration.onProxyReq(request, null, null);
                 }

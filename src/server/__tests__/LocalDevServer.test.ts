@@ -20,6 +20,7 @@ function mockProject({
     version?: string;
 }): Project {
     const project = new Project(projectPath);
+    project.getDirectory = () => projectPath;
 
     project.getConfiguration = jest.fn().mockImplementation(() => {
         return {
@@ -29,7 +30,6 @@ function mockProject({
 
     project.getSfdxConfiguration = jest.fn().mockImplementation(() => {
         return {
-            getPath: () => projectPath,
             get api_version() {
                 return version;
             }
