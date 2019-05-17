@@ -18,21 +18,21 @@ export default class Project {
     /**
      * Would not be valid if you ran the command on a directory without a package.json file.
      */
-    private rootDirectory: string = '';
-    private modulesSourceDirectory: string | null = null;
-    private sfdxConfiguration: SfdxConfiguration;
-    private configuration: LocalDevServerConfiguration;
-    private isSFDX: boolean = false;
-    private staticResourcesDirectory: string | null = null;
+    private readonly rootDirectory: string = '';
+    private readonly _isSFDX: boolean = false;
+    private readonly _configuration: LocalDevServerConfiguration;
+    private _modulesSourceDirectory: string | null = null;
+    private _staticResourcesDirectory: string | null = null;
+    private _sfdxConfiguration: SfdxConfiguration;
 
-    constructor(directory: string, sfdxConfiguration?: SfdxConfiguration) {
+    constructor(directory: string) {
         // Directory could be either the project, or a folder in a project.
         // Resolve to find the right folder.
         const rootDirectory = this.resolveProjectDirectory(directory);
 
         if (rootDirectory === null) {
             throw new Error(
-                `Directory specified '${directory}' does not resolve to a project. The specified directory must have package.json in it.`
+                `Directory specified '${directory}' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it.`
             );
         }
 
@@ -44,24 +44,19 @@ export default class Project {
             this.rootDirectory,
             'localdevserver.config.json'
         );
-        this.configuration = new LocalDevServerConfiguration(configurationPath);
+        this._configuration = new LocalDevServerConfiguration(
+            configurationPath
+        );
 
-        if (sfdxConfiguration === undefined) {
-            // Resolve the default SfdxConfiguration
-            this.sfdxConfiguration = new SfdxConfiguration(this);
-        } else {
-            this.sfdxConfiguration = sfdxConfiguration;
-
-            // Merge in the Sfdx Configuration values.
-            this.initWithSfdxConfiguration();
-        }
+        // Resolve the default SfdxConfiguration
+        this._sfdxConfiguration = new SfdxConfiguration(this);
 
         // Must be after isSfdx setting
-        this.modulesSourceDirectory = this.resolveModulesSourceDirectory();
+        this._modulesSourceDirectory = this.resolveModulesSourceDirectory();
 
         // Use detection of the sfdx-project configuration to detect if this is an Sfdx Project and we should
         // treat it as such.
-        this.isSFDX = fs.existsSync(
+        this._isSFDX = fs.existsSync(
             path.join(this.rootDirectory, 'sfdx-project.json')
         );
     }
@@ -72,49 +67,51 @@ export default class Project {
         }
 
         // The SfdxConfiguration will specify where the modules are located.
-        this.modulesSourceDirectory = this.getSfdxProjectLWCDirectory(
+        this._modulesSourceDirectory = this.getSfdxProjectLWCDirectory(
             this.rootDirectory
         );
         // Figure out where the static resources are from the configuration as well.
-        this.staticResourcesDirectory = this.getSfdxProjectStaticResourcesDirectory();
+        this._staticResourcesDirectory = this.getSfdxProjectStaticResourcesDirectory();
 
         // Merge the configuration values from Sfdx over the default configuration.
         this.configuration.port = this.sfdxConfiguration.port;
         this.configuration.namespace = this.sfdxConfiguration.namespace;
     }
 
-    public getConfiguration(): LocalDevServerConfiguration {
-        return this.configuration;
+    public get configuration(): LocalDevServerConfiguration {
+        return this._configuration;
     }
 
-    public isSfdx(): Boolean {
-        return this.isSFDX;
+    public get isSfdx(): boolean {
+        return this._isSFDX;
     }
 
-    public getSfdxConfiguration(): SfdxConfiguration {
-        return this.sfdxConfiguration;
+    public get sfdxConfiguration(): SfdxConfiguration {
+        return this._sfdxConfiguration;
     }
 
-    public setSfdxConfiguration(sfdxConfiguration: SfdxConfiguration) {
-        this.sfdxConfiguration = sfdxConfiguration;
-
+    public set sfdxConfiguration(sfdxConfiguration: SfdxConfiguration) {
+        this._sfdxConfiguration = sfdxConfiguration;
         this.initWithSfdxConfiguration();
     }
 
-    public getModuleSourceDirectory(): string | null {
-        return this.modulesSourceDirectory;
+    public get modulesSourceDirectory(): string | null {
+        return this._modulesSourceDirectory;
     }
 
-    public getStaticResourcesDirectory(): string | null {
-        return this.staticResourcesDirectory;
+    public get staticResourcesDirectory(): string | null {
+        return this._staticResourcesDirectory;
     }
 
+    /**
+     * The Root directory of the Project.
+     * Where the package.json or the root sfdx-project.json file is located.
+     */
     public getDirectory(): string {
-        return this.rootDirectory || '.';
+        return this.rootDirectory;
     }
 
     // Look for package.json or go up directories until found
-    // Feels like a Project data structure here.
     private resolveProjectDirectory(
         directory: string,
         previousDirectory?: string
@@ -124,13 +121,6 @@ export default class Project {
         // We've reached the top. Fail as invalid.
         if (currentDirectory === previousDirectory) {
             return null;
-        }
-
-        if (currentDirectory && currentDirectory === this.rootDirectory) {
-            if (!fs.existsSync(path.join(currentDirectory, 'package.json'))) {
-                return null;
-            }
-            return this.rootDirectory;
         }
 
         if (currentDirectory === '.' || currentDirectory === '') {
@@ -143,7 +133,10 @@ export default class Project {
 
         // Search up until we find package.json
         // What if we find nothing?
-        if (!fs.existsSync(path.join(currentDirectory, 'package.json'))) {
+        if (
+            !fs.existsSync(path.join(currentDirectory, 'package.json')) &&
+            !fs.existsSync(path.join(currentDirectory, 'sfdx-project.json'))
+        ) {
             return this.resolveProjectDirectory(
                 path.join(currentDirectory, '..'),
                 currentDirectory
@@ -166,7 +159,7 @@ export default class Project {
         }
 
         // If SFDX, we should know the path.
-        if (this.isSfdx()) {
+        if (this.isSfdx) {
             return this.getSfdxProjectLWCDirectory(rootDirectory);
         }
 
@@ -174,7 +167,7 @@ export default class Project {
         return path.join(rootDirectory, 'src');
     }
 
-    private getSfdxProjectLWCDirectory(rootDirectory = '.'): string {
+    private getSfdxProjectLWCDirectory(rootDirectory: string): string {
         // TODO: Support more than one package
         const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
         if (packageDirectories.length > 0) {

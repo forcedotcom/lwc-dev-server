@@ -10,9 +10,9 @@ export default class ComponentIndex {
     }
 
     public getModules(): object[] {
-        let temp = this.project.getModuleSourceDirectory();
+        let temp = this.project.modulesSourceDirectory;
         if (temp !== null) {
-            if (this.project.isSfdx()) {
+            if (this.project.isSfdx) {
                 temp = path.join(temp, 'main/default/lwc');
             }
             return this.findModulesIn(temp);

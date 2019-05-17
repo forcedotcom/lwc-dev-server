@@ -4,20 +4,25 @@ import Project from '../common/Project';
 
 export default class SfdxConfiguration {
     private readonly configMap: any = {};
-    private readonly _path: string;
     private readonly packageDirectories: string[] = [];
 
     constructor(project: Project) {
-        //this._path = sfdxPath;
-        this._path = project.getDirectory();
+        const _path = project.getDirectory();
 
         let jsonFileContents = null;
-        const sfdxProjectPath = path.join(this._path, 'sfdx-project.json');
+        const sfdxProjectPath = path.join(_path, 'sfdx-project.json');
         if (fs.existsSync(sfdxProjectPath)) {
             try {
                 jsonFileContents = fs.readFileSync(sfdxProjectPath, 'utf-8');
-            } catch (e) {}
+            } catch (e) {
+                console.error(
+                    `Loading ${sfdxProjectPath} failed JSON parsing with error ${
+                        e.message
+                    }`
+                );
+            }
         }
+
         if (jsonFileContents !== null && jsonFileContents !== '') {
             this.configMap = JSON.parse(jsonFileContents);
 

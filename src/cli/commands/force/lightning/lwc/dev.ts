@@ -101,7 +101,7 @@ export default class Dev extends SfdxCommand {
             (await this.project.resolveProjectConfig()).namespace
         );
 
-        project.setSfdxConfiguration(sfdxConfiguration);
+        project.sfdxConfiguration = sfdxConfiguration;
 
         const retValue = {
             orgId: this.org.getOrgId(),

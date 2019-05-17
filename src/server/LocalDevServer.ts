@@ -17,7 +17,7 @@ const packageRoot = path.join(__dirname, '..', '..');
 
 export default class LocalDevServer {
     public async start(project: Project) {
-        const sfdxConfig: SfdxConfiguration = project.getSfdxConfiguration();
+        const sfdxConfig: SfdxConfiguration = project.sfdxConfiguration;
 
         // Find where all the source code is.
         // This should have /lwc on the end, but I think the talon compiler
@@ -47,7 +47,7 @@ export default class LocalDevServer {
             ...nodePaths
         ].filter(fs.existsSync);
 
-        if (project.isSfdx()) {
+        if (project.isSfdx) {
             talonConfig.rollup.plugins.push(
                 customComponentPlugin(
                     sfdxConfig.namespace,
@@ -60,7 +60,7 @@ export default class LocalDevServer {
         const config = {
             templateDir: directory,
             talonConfig,
-            srcDir: project.getModuleSourceDirectory(),
+            srcDir: project.modulesSourceDirectory,
             views,
             indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
             routes,
@@ -104,7 +104,7 @@ export default class LocalDevServer {
                 const modules = tmp.getModules();
                 res.json(modules);
             });
-            await startServer(server, '', project.getConfiguration().port);
+            await startServer(server, '', project.configuration.port);
         } catch (e) {
             throw new Error(`Unable to start LocalDevServer: ${e}`);
         }
@@ -125,7 +125,7 @@ export default class LocalDevServer {
     }
 
     private async watchAssets(project: Project, assetDir: string) {
-        let staticDir = project.getStaticResourcesDirectory();
+        let staticDir = project.staticResourcesDirectory;
         if (staticDir !== null && fs.existsSync(staticDir)) {
             staticDir = path.join(staticDir, '**', '*');
             await cpx.copy(staticDir, assetDir);

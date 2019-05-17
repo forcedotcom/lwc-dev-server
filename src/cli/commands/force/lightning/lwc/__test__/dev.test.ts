@@ -144,12 +144,19 @@ describe('dev', () => {
                     header = `${name}: ${value}`;
                 }
             };
-            // @ts-ignore
-            Project.prototype.setSfdxConfiguration.mockImplementation(
-                (sfdxConfiguration: SfdxConfiguration) => {
+
+            // TODO: Reset this.
+            Object.defineProperty(Project.prototype, 'sfdxConfiguration', {
+                set: (sfdxConfiguration: SfdxConfiguration) => {
                     sfdxConfiguration.onProxyReq(request, null, null);
                 }
-            );
+            });
+
+            // jest.spyOn(Project.prototype, 'sfdxConfiguration', 'set').mockImplementation(
+            //     (sfdxConfiguration: SfdxConfiguration) => {
+            //         sfdxConfiguration.onProxyReq(request, null, null);
+            //     }
+            // );
 
             let result = await dev.run();
             expect(header).toBe('Authorization: Bearer testingAccessToken');
