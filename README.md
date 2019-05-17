@@ -5,19 +5,20 @@
 
 Local Development lets you run an LWC-enabled server on your local machine and view live changes to components without pushing to your org.
 
-## LWC Recipes Happy Path
+# Setup
 
-Currently the best way to test this project is with [LWC Recipes](https://github.com/trailheadapps/lwc-recipes). 
+## Quick Start
+
+Currently the best way to test this project is with [LWC Recipes](https://github.com/trailheadapps/lwc-recipes). These setup steps will get you started using lwc-dev-server if you've never installed it previously. For more detailed instructions / explanations, read the Usage section below.
 
 ```sh
-sfdx plugins:install lwc-dev-server
+SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install lwc-dev-server
 git clone git@github.com:trailheadapps/lwc-recipes.git
 cd lwc-recipes
 sfdx force:auth:web:login -d -a myhuborg
 sfdx force:lightning:lwc:dev
 ```
-
-After this follow the usage instructions for [SFDX CLI](#sfdx-cli).
+Now your local server should be started -> http://localhost:3333/
 
 ## Usage
 
@@ -25,7 +26,7 @@ After this follow the usage instructions for [SFDX CLI](#sfdx-cli).
 
 You must be on the internal network or the VPN in order to install the plugin or get updates.
 
-#### Installation
+### Installation
 
 The plugin is installed from the internal SFDX npm registry. You can point the CLI to this registry by setting the `SFDX_NPM_REGISTRY` environment variable. For example, in your `~/.bash_profile` file add this line:
 
@@ -48,41 +49,29 @@ SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:
 ```
 Installation will take a few minutes which is something we will improve. 
 
-#### Running the Plugin
+### Updates
+
+New "stable" versions of the plugin will be pushed to the internal SFDX npm registry. Grab it like so:
+
+```sh
+SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:update
+```
+
+### Running the Plugin
 
 At the moment the plugin **must be run within an SFDX project**, such as [LWC Recipes](https://github.com/trailheadapps/lwc-recipes).
 
 Start the server:
 
 ```sh
-SFDX_COMPILE_CACHE=false sfdx force:lightning:lwc:dev
+sfdx force:lightning:lwc:dev
 ```
 
 Once it's started, visit [http://localhost:3333](http://localhost:3333) in your browser.
 
 For more information on the command see the [SFDX_plugin.md](SFDX_plugin.md) file.
 
-##### Notes
-
-`SFDX_COMPILE_CACHE` is temporary and due to a [bug in the SFDX CLI](https://git.soma.salesforce.com/salesforcedx/cli/issues/188). To avoid exposing this detail in a demo you can export this in your `~/.bash_profile`:
-
-```sh
-export SFDX_COMPILE_CACHE=false
-```
-
-#### Updating the Plugin
-
-New "stable" versions of the plugin will be pushed to the internal SFDX npm registry. Grab it like so:
-
-```sh
-sfdx plugins:update
-```
-
-### As a Package Dependency
-
-Coming later.
-
-### From Source
+### Running from Source
 
 With linking you can run the latest code from source with the SFDX CLI.
 
@@ -115,10 +104,10 @@ salesforcedx 45.13.1-0 (release)
 ├─ force-language-services 45.9.1-0
 └─ salesforce-alm 45.15.1-1
 ```
-
-#### Running Talon From Source
-
-Occasionally when running from source you might also need to run Talon from source due to updates there. Steps to do this are in [CONTRIBUTING.md](CONTRIBUTING.md#running-talon-from-source).
+Note you can also unlink the plugins by running the unlink command from the same directory:
+```sh
+sfdx plugins:unlink
+```
 
 ## Troubleshooting
 
@@ -130,6 +119,8 @@ ERROR running force:lightning:lwc:dev:  Must pass a username and/or OAuth option
 
 You need to ensure you authenticate to your devhub via SFDX and create a scratch org.
 In lwc-recipes we have a scratch org json file, just create one from that.
+
+
 
 ## Configuration for Projects (WIP)
 
