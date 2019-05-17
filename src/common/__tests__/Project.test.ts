@@ -9,7 +9,7 @@ describe('project', () => {
     describe('getDirectory()', () => {
         test('when a project is resolved to the relative current directory "." then we utilize the current working directory', () => {
             const project = new Project('.');
-            expect(project.getDirectory()).toEqual(process.cwd());
+            expect(project.directory).toEqual(process.cwd());
         });
 
         test('when a project is specified as an existing relative directory, then we return that directory', () => {
@@ -21,7 +21,7 @@ describe('project', () => {
 
             const project = new Project('my-project/');
 
-            expect(project.getDirectory()).toEqual('my-project/');
+            expect(project.directory).toEqual('my-project/');
         });
 
         test('when a project is specified as an existing relative directory without a backslash, then we return that directory without a backslash', () => {
@@ -33,7 +33,7 @@ describe('project', () => {
 
             const project = new Project('my-project');
 
-            expect(project.getDirectory()).toEqual('my-project');
+            expect(project.directory).toEqual('my-project');
         });
 
         test('when searching the current directory, the package.json file is found.', () => {
@@ -155,7 +155,7 @@ describe('project', () => {
             });
             const project = new Project('my-project/');
             const sfdxConfiguration = new SfdxConfiguration(project);
-            expect(project.getDirectory()).toBe('my-project/');
+            expect(project.directory).toBe('my-project/');
         });
 
         test('then configuration passed in is stored', () => {

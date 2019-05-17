@@ -28,7 +28,9 @@ function mockProject({
     );
 
     const project = new Project(projectPath);
-    project.getDirectory = () => projectPath;
+    Object.defineProperty(project, 'directory', {
+        get: jest.fn(() => projectPath)
+    });
 
     const sfdxConfigurationMock = new SfdxConfiguration(project);
     jest.spyOn(sfdxConfigurationMock, 'api_version', 'get').mockReturnValue(

@@ -23,7 +23,7 @@ export default class LocalDevServer {
         // This should have /lwc on the end, but I think the talon compiler
         // expects the directory name to be the namespace passed to the
         // descriptor.
-        const directory = project.getDirectory();
+        const directory = project.directory;
 
         // the regular node_module paths
         const nodePaths = require.resolve.paths('.') || [];
@@ -52,7 +52,7 @@ export default class LocalDevServer {
                 customComponentPlugin(
                     sfdxConfig.namespace,
                     'lwc',
-                    project.getDirectory()
+                    project.directory
                 )
             );
         }

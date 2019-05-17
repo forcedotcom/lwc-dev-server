@@ -7,7 +7,7 @@ export default class SfdxConfiguration {
     private readonly packageDirectories: string[] = [];
 
     constructor(project: Project) {
-        const _path = project.getDirectory();
+        const _path = project.directory;
 
         let jsonFileContents = null;
         const sfdxProjectPath = path.join(_path, 'sfdx-project.json');

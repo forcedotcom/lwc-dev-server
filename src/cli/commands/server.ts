@@ -43,16 +43,20 @@ export default class Server extends Command {
 
         const main = configuration.getEntryPointComponent();
 
-        if (!project.isSfdx && !fs.existsSync(project.getDirectory())) {
+        if (!project.isSfdx && !fs.existsSync(project.directory)) {
             console.error(
-                `Failed starting local dev server in directory: ${project.getDirectory()}.
+                `Failed starting local dev server in directory: ${
+                    project.directory
+                }.
                  No project could be found in the current or parent directory.`
             );
             process.exit();
         }
 
         console.log(
-            `Starting the local dev server in directory: ${project.getDirectory()} with component: ${main}`
+            `Starting the local dev server in directory: ${
+                project.directory
+            } with component: ${main}`
         );
 
         this.startServer(project, main);
@@ -64,7 +68,7 @@ export default class Server extends Command {
         // We're about to do something.
         console.log(`Running local dev server with the config values`);
         console.dir({
-            directory: project.getDirectory(),
+            directory: project.directory,
             moduleSourceDirectory: project.modulesSourceDirectory,
             main: main,
             namespace: project.configuration.namespace,

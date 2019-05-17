@@ -103,7 +103,7 @@ export default class Project {
      * The Root directory of the Project.
      * Where the package.json or the root sfdx-project.json file is located.
      */
-    public getDirectory(): string {
+    public get directory(): string {
         return this.rootDirectory;
     }
 
@@ -143,24 +143,23 @@ export default class Project {
     }
 
     private resolveModulesSourceDirectory(): string {
-        const rootDirectory = this.rootDirectory;
         // Try to get the value from the configuration file
         let dirFromConfig =
             this.configuration && this.configuration.getModuleSourceDirectory();
         if (dirFromConfig !== null && dirFromConfig !== '') {
             if (!path.isAbsolute(dirFromConfig)) {
-                dirFromConfig = path.join(rootDirectory, dirFromConfig);
+                dirFromConfig = path.join(this.rootDirectory, dirFromConfig);
             }
             return dirFromConfig;
         }
 
         // If SFDX, we should know the path.
         if (this.isSfdx) {
-            return this.getSfdxProjectLWCDirectory(rootDirectory);
+            return this.getSfdxProjectLWCDirectory(this.rootDirectory);
         }
 
         // If Not, we should assume src for now.
-        return path.join(rootDirectory, 'src');
+        return path.join(this.rootDirectory, 'src');
     }
 
     private getSfdxProjectLWCDirectory(rootDirectory: string): string {
