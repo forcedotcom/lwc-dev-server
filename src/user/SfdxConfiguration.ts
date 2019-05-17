@@ -39,10 +39,6 @@ export default class SfdxConfiguration {
         }
     }
 
-    // public getPath(): string {
-    //     return this._path;
-    // }
-
     public getPackageDirectories(): string[] {
         return this.packageDirectories;
     }
