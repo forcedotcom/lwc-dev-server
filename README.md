@@ -7,12 +7,14 @@ Local Development lets you run an LWC-enabled server on your local machine and v
 
 ## LWC Recipes Happy Path
 
-Currently the best way to test this project is with [LWC Recipes](https://github.com/trailheadapps/lwc-recipes). After cloning, a few temporary steps are required:
+Currently the best way to test this project is with [LWC Recipes](https://github.com/trailheadapps/lwc-recipes). 
 
 ```sh
+sfdx plugins:install lwc-dev-server
 git clone git@github.com:trailheadapps/lwc-recipes.git
 cd lwc-recipes
-cp -R force-app/main/default/lwc force-app/main/default/c
+sfdx force:auth:web:login -d -a myhuborg
+sfdx force:lightning:lwc:dev
 ```
 
 After this follow the usage instructions for [SFDX CLI](#sfdx-cli).
