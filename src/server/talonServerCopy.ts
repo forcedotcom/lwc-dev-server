@@ -21,7 +21,9 @@ import colors from 'colors';
 import fs from 'fs';
 import { Parser } from 'xml2js';
 import mimeTypes from 'mime-types';
+import debugLogger from 'debug';
 
+const debug = debugLogger('localdevserver');
 const { log } = console;
 
 const frameworkResourcesJson = require.resolve(
@@ -73,7 +75,7 @@ export async function createServer(options: object, proxyConfig: any = {}) {
     // remove versionKey from resourceURL and forward the request
     app.get(`${basePath}/assets/:versionKey/*`, (req, res, next) => {
         // Ignore for our SLDS routes
-        log(req.url);
+        debug(req.url);
 
         // Weird edge case where file extension isn't included for staticresource resolution
         // except when the resource is part of an application/zip. Examples from lwc-recipes:
@@ -130,8 +132,8 @@ export async function createServer(options: object, proxyConfig: any = {}) {
     app.use(
         `${basePath}/api`,
         apiMiddleware({
-            target: proxyConfig.apiEndpoint,
-            record: proxyConfig.recordApiCalls,
+            apiEndpoint: proxyConfig.apiEndpoint,
+            recordApiCalls: proxyConfig.recordApiCalls,
             recordDir: path.resolve(templateDir, 'api'),
             onProxyReq: proxyConfig.onProxyReq,
             pathRewrite: proxyConfig.pathRewrite
