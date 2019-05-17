@@ -1,12 +1,13 @@
 <template>
-    <lightning-breadcrumbs class="slds-m-around_small">
-        <lightning-breadcrumb label="home" href="/"></lightning-breadcrumb>
-        <lightning-breadcrumb label={cmp} href={href}></lightning-breadcrumb>
-    </lightning-breadcrumbs>
+    <div class="container slds-p-around_large">
+        <lightning-breadcrumbs class="slds-m-around_small">
+            <lightning-breadcrumb label="home" href="/"></lightning-breadcrumb>
+            <lightning-breadcrumb label={cmp} href={href}></lightning-breadcrumb>
+        </lightning-breadcrumbs>
+        <div lwc:dom="manual" class="container slds-m-around_small"></div>
 
-    <div lwc:dom="manual" class="container slds-m-around_small"></div>
-
-    <template if:true={error}>
-        <localdevserver-error error={error}></localdevserver-error>
-    </template>
+        <template if:true={error}>
+            <localdevserver-error error={error}></localdevserver-error>
+        </template>
+    </div>
 </template>

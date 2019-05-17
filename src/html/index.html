@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background: white;">
 
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/assets/favicon.ico" />
 
     {{ talonInit }}
-    <!-- Your custom scripts here -->
     {{ talonViews }}
 
     <script type="text/javascript" nonce="{{ sourceNonce }}">console.log("This script should NOT be blocked by CSP");</script>
