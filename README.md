@@ -71,7 +71,7 @@ Once it's started, visit [http://localhost:3333](http://localhost:3333) in your 
 
 For more information on the command see the [SFDX_plugin.md](SFDX_plugin.md) file.
 
-### Running lwc-dev-server from Source
+### Running from Source
 
 With linking you can run the latest code from source with the SFDX CLI.
 
@@ -119,7 +119,6 @@ ERROR running force:lightning:lwc:dev:  Must pass a username and/or OAuth option
 
 You need to ensure you authenticate to your devhub via SFDX and create a scratch org.
 In lwc-recipes we have a scratch org json file, just create one from that.
-
 
 
 ## Configuration for Projects (WIP)
