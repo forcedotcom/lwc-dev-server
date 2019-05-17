@@ -23,6 +23,12 @@ export default class Error extends LightningElement {
     @track
     visible = true;
 
+    get href() {
+        if (this.errorLocation) {
+            return 'vscode://file' + this.errorLocation;
+        }
+    }
+
     @api
     set error(newError) {
         this._error = newError;
@@ -68,8 +74,11 @@ export default class Error extends LightningElement {
         } else {
             this.errorMessage = this.error.message;
             this.errorLine = 0;
-            this.errorLocation = '';
+            this.errorLocation = null;
         }
+    }
+    get error() {
+        return this._error;
     }
     processMessage(message) {
         let msg = message.split('\n')[0];
@@ -79,13 +88,8 @@ export default class Error extends LightningElement {
         }
         return msg;
     }
-    get error() {
-        return this._error;
-    }
+
     handleClose() {
         this.visible = false;
-    }
-    get hasErrorFilename() {
-        return this.error && this.error.filename;
     }
 }
