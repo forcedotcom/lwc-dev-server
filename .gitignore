@@ -16,16 +16,16 @@ lib/unpacked/
 # config
 .env*
 
+# tests
 reports
+errorShots
+coverage
 
 # Stores custom attributes of its containing folder, such as the position of icons or the choice of a background image
 .DS_Store
 
 # Don't watch git for publishing to npm
 .git
-
-# Code Coverage
-coverage
 
 # oclif
 tmp/
