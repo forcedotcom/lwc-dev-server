@@ -35,8 +35,8 @@ export default class ComponentIndex {
             ) {
                 const componentName = basename;
                 let namespace = path.basename(path.dirname(subdir));
-                if (this.project.isSfdx()) {
-                    namespace = this.project.getSfdxConfiguration().namespace;
+                if (this.project.isSfdx) {
+                    namespace = this.project.sfdxConfiguration.namespace;
                 }
                 // TODO don't hardcode lwc/preview
                 const cmpUrl =
