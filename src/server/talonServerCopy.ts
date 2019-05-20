@@ -22,14 +22,33 @@ import fs from 'fs';
 import { Parser } from 'xml2js';
 import mimeTypes from 'mime-types';
 import debugLogger from 'debug';
+import csurf from 'csurf';
+import cookieParser from 'cookie-parser';
+
+const PUBLIC_DIR = 'public';
 
 const debug = debugLogger('localdevserver');
 const { log } = console;
 
-const frameworkResourcesJson = require.resolve(
+const FRAMEWORK_RESOURCE_JSON = require.resolve(
     '@talon/framework/dist/resources.json'
 );
-const frameworkOutputDir = path.dirname(frameworkResourcesJson);
+const FRAMEWORK_OUTPUT_DIR = path.dirname(FRAMEWORK_RESOURCE_JSON);
+
+/**
+ * The path to the directory containing Talon framework static files.
+ *
+ * To be used with `express.static`.
+ *
+ * @example
+ *
+ * const { FRAMEWORK_PUBLIC_DIR } = require('@talon/compiler');
+ *
+ * app.use(express.static(FRAMEWORK_PUBLIC_DIR));
+ *
+ * @public
+ */
+const FRAMEWORK_PUBLIC_DIR = `${FRAMEWORK_OUTPUT_DIR}/public/`;
 
 const staticOptions = {
     index: false,
@@ -37,7 +56,17 @@ const staticOptions = {
     maxAge: 31536000
 };
 
-export async function createServer(options: object, proxyConfig: any = {}) {
+function getRootApp(app: any, basePath: string) {
+    if (basePath) {
+        const rootApp = express();
+        rootApp.use(basePath, app);
+        return rootApp;
+    }
+
+    return app;
+}
+
+export async function createServer(options: object, apiConfig: any = {}) {
     const { templateDir, outputDir, basePath, srcDir } = await startContext(
         options
     );
@@ -67,13 +96,17 @@ export async function createServer(options: object, proxyConfig: any = {}) {
         })
     );
 
+    // Setup CSRF Token
+    app.use(cookieParser());
+    app.use(csurf({ cookie: true }));
+
     // 2. resource middleware, compile component or views if needed and redirect to the generated resource
-    app.use(`${basePath}/talon/`, resourceMiddleware());
+    app.use(resourceMiddleware());
 
     // 3. Serve up static files
     // handle Salesforce static resource imported using @salesforce/resourceUrl/<resourceName>
     // remove versionKey from resourceURL and forward the request
-    app.get(`${basePath}/assets/:versionKey/*`, (req, res, next) => {
+    app.get(`/assets/:versionKey/*`, (req, res, next) => {
         // Ignore for our SLDS routes
         debug(req.url);
 
@@ -119,28 +152,16 @@ export async function createServer(options: object, proxyConfig: any = {}) {
         }
     });
 
-    app.use(
-        `${basePath}/`,
-        express.static(`${frameworkOutputDir}/public/`, staticOptions)
-    );
-    app.use(
-        `${basePath}/`,
-        express.static(`${outputDir}/public/`, staticOptions)
-    );
+    // Serve static files from Talon framework public dir
+    app.use(express.static(FRAMEWORK_PUBLIC_DIR, staticOptions));
 
-    // 4. proxy, record and replay API calls
-    app.use(
-        `${basePath}/api`,
-        apiMiddleware({
-            apiEndpoint: proxyConfig.apiEndpoint,
-            recordApiCalls: proxyConfig.recordApiCalls,
-            recordDir: path.resolve(templateDir, 'api'),
-            onProxyReq: proxyConfig.onProxyReq,
-            pathRewrite: proxyConfig.pathRewrite
-        })
-    );
+    // Serve static files from the template public dir
+    app.use(express.static(`${outputDir}/${PUBLIC_DIR}`, staticOptions));
 
-    // 6. Show source handler
+    // Proxy, record and replay API calls
+    app.use(apiMiddleware(apiConfig));
+
+    // LWC-DEV-SERVER: Show source handler
     app.use(`/show`, (req, res, next) => {
         const file = req.query.file;
         if (file) {
@@ -154,19 +175,17 @@ export async function createServer(options: object, proxyConfig: any = {}) {
 }
 
 export async function startServer(app: any, basePath: string, port = 3000) {
-    // 5. If none found, serve up the page for the current route depending on the path
+    // If none found, serve up the page for the current route depending on the path
     app.get(`${basePath}/*`, templateMiddleware());
 
+    // Error handling
     app.use(errorMiddleware());
 
-    // start the server
-    const server = app.listen(port, () => {
+    // Start the server
+    const server = getRootApp(app, basePath).listen(port, () => {
         log(
-            colors.magenta.bold(
-                `Server up on http://localhost:${
-                    server.address().port
-                }${basePath}`
-            )
+            `Server up on http://localhost:${server.address().port}${basePath}`
+                .magenta.bold
         );
     });
 

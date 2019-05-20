@@ -2,7 +2,7 @@
     background: white;
 }
 
-.container {
+.preview {
     background: white;
     display: flex;
     flex-direction: column;

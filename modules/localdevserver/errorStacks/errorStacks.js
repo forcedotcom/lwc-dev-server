@@ -17,11 +17,12 @@ export default class ErrorStacks extends LightningElement {
         if (this.error) {
             if (Array.isArray(this.error.stack)) {
                 return this.error.stack.length;
-            } else {
+            } else if (this.error.stack) {
                 const split = this.error.stack.split('\n');
                 return split.length;
             }
         }
+        return 0;
     }
     get stack() {
         if (this.error) {
