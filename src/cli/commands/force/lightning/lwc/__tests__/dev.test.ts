@@ -1,12 +1,11 @@
 import Dev from '../dev';
 import * as Config from '@oclif/config';
 import { JsonMap } from '@salesforce/ts-types';
-import SfdxConfiguration from '../../../../../../user/SfdxConfiguration';
 import LocalDevServer from '../../../../../../server/LocalDevServer';
 import Project from '../../../../../../common/Project';
 import { SfdxError } from '@salesforce/core';
+import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerConfiguration';
 
-jest.mock('../../../../../../user/SfdxConfiguration');
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
 
@@ -90,17 +89,21 @@ describe('dev', () => {
                 };
             });
 
-            let result = await dev.run();
+            let _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
+            Object.defineProperty(Project.prototype, 'configuration', {
+                configurable: true,
+                get: () => {
+                    return _configuration;
+                }
+            });
+
+            let result: JsonMap = (await dev.run()) as JsonMap;
             if (result) {
-                expect((<JsonMap>result)['endpoint']).toEqual(
-                    'http://test.instance.url'
-                );
-                expect((<JsonMap>result)['orgId']).toEqual('testingOrgIDX');
-                expect((<JsonMap>result)['api_version']).toEqual('99.0');
-                expect((<JsonMap>result)['componentName']).toEqual(
-                    'openedFileName'
-                );
-                expect((<JsonMap>result)['port']).toEqual(3333);
+                expect(result['endpoint']).toEqual('http://test.instance.url');
+                expect(result['orgId']).toEqual('testingOrgIDX');
+                expect(result['api_version']).toEqual('99.0');
+                expect(result['componentName']).toEqual('openedFileName');
+                expect(result['port']).toEqual(3333);
 
                 expect(startCalled).toBeTruthy();
             } else {
@@ -145,13 +148,16 @@ describe('dev', () => {
                 }
             };
 
-            Object.defineProperty(Project.prototype, 'sfdxConfiguration', {
-                set: (sfdxConfiguration: SfdxConfiguration) => {
-                    sfdxConfiguration.onProxyReq(request, null, null);
+            let _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
+            Object.defineProperty(Project.prototype, 'configuration', {
+                configurable: true,
+                get: () => {
+                    return _configuration;
                 }
             });
-
             let result = await dev.run();
+            _configuration.onProxyReq(request, null, null);
+
             expect(header).toBe('Authorization: Bearer testingAccessToken');
         });
     });

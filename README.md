@@ -136,10 +136,17 @@ The following configuration parameters are available.
     "main": "app", 
 
     // Where are your component files. If you have a namespace, specify the directory the namespace folder is in.
-    "moduleSourceDirectory": "src/", 
+    "modulesSourceDirectory": "src/", 
+
+    // Where are your static assets.
+    "staticResourcesDirectory": "",
 
     // The address port for your local server. Defaults to 3333
-    "port": 3333
+    "port": 3333,
+
+    "api_version": 47,
+
+    "endpoint": "...",
 }
 ```
 

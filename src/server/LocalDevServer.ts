@@ -7,8 +7,8 @@ import ComponentIndex from '../common/ComponentIndex';
 import { talonConfig, views, labels, theme, routes } from './talonConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
-import SfdxConfiguration from '../user/SfdxConfiguration';
 import debugLogger from 'debug';
+import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 
 const debug = debugLogger('localdevserver');
 
@@ -17,7 +17,8 @@ const packageRoot = path.join(__dirname, '..', '..');
 
 export default class LocalDevServer {
     public async start(project: Project) {
-        const sfdxConfig: SfdxConfiguration = project.sfdxConfiguration;
+        const configuration: LocalDevServerConfiguration =
+            project.configuration;
 
         // Find where all the source code is.
         // This should have /lwc on the end, but I think the talon compiler
@@ -30,7 +31,10 @@ export default class LocalDevServer {
 
         // Salesforce internal version == Salesforce API Version * 2 + 128
         // 45 * 2 + 128 = 218
-        const version = parseInt(sfdxConfig.api_version, 10) * 2 + 128;
+        const version =
+            configuration.api_version !== undefined
+                ? parseInt(configuration.api_version, 10) * 2 + 128
+                : 0;
 
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
@@ -50,7 +54,7 @@ export default class LocalDevServer {
         if (project.isSfdx) {
             talonConfig.rollup.plugins.push(
                 customComponentPlugin(
-                    sfdxConfig.namespace,
+                    configuration.namespace,
                     'lwc',
                     project.directory
                 )
@@ -86,9 +90,9 @@ export default class LocalDevServer {
         await this.copyAssets(project, config.outputDir);
 
         const proxyConfig = {
-            apiEndpoint: sfdxConfig.endpoint,
+            apiEndpoint: configuration.endpoint,
             recordApiCalls: false,
-            onProxyReq: sfdxConfig.onProxyReq,
+            onProxyReq: configuration.onProxyReq,
             pathRewrite: this.pathRewrite
         };
 

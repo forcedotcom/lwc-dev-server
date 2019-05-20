@@ -37,11 +37,11 @@ export default class Server extends Command {
         // applies the values from the configuration json file.
         const configuration = project.configuration;
 
-        // Takes the configured values from the JSON file and applies
-        // the values from the CLI run
+        // Updates the configuration from the flags on
+        // the CLI run.
         configuration.configureFromCliArguments(args);
 
-        const main = configuration.getEntryPointComponent();
+        const main = configuration.entryPointComponent;
 
         if (!project.isSfdx && !fs.existsSync(project.directory)) {
             console.error(
@@ -69,10 +69,10 @@ export default class Server extends Command {
         console.log(`Running local dev server with the config values`);
         console.dir({
             directory: project.directory,
-            moduleSourceDirectory: project.modulesSourceDirectory,
+            modulesSourceDirectory: project.modulesSourceDirectory,
             main: main,
             namespace: project.configuration.namespace,
-            containerType: project.configuration.getContainerType()
+            containerType: project.configuration.containerType
         });
 
         const localDevServer = new LocalDevServer();
