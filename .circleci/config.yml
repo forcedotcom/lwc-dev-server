@@ -7,7 +7,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:10.15.3-browsers
     steps:
       - checkout
       - restore_cache:
@@ -23,6 +23,8 @@ jobs:
           path: reports
       - store_artifacts:
           path: reports
+      - store_artifacts:
+          path: errorShots
       - save_cache:
           key: dependency-cache-3-{{ checksum "yarn.lock" }}
           paths:
