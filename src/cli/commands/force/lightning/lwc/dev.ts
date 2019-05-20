@@ -90,7 +90,9 @@ export default class Dev extends SfdxCommand {
             // req.headers.Cookie = `sid=${sid_cookie}`;
         };
 
-        const sfdxConfiguration = new SfdxConfiguration(this.project.getPath());
+        const project = new Project(this.project.getPath());
+
+        const sfdxConfiguration = new SfdxConfiguration(project);
         sfdxConfiguration.api_version = api_version;
         sfdxConfiguration.endpoint = conn.instanceUrl;
         sfdxConfiguration.onProxyReq = onProxyReq;
@@ -98,6 +100,8 @@ export default class Dev extends SfdxCommand {
         sfdxConfiguration.namespace = <string>(
             (await this.project.resolveProjectConfig()).namespace
         );
+
+        project.sfdxConfiguration = sfdxConfiguration;
 
         const retValue = {
             orgId: this.org.getOrgId(),
@@ -112,7 +116,7 @@ export default class Dev extends SfdxCommand {
 
         // Start local dev server
         // TODO pass in component to open & open browser
-        new LocalDevServer().start(new Project(sfdxConfiguration));
+        new LocalDevServer().start(project);
 
         return retValue;
     }

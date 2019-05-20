@@ -3,6 +3,8 @@ import LocalDevServer, { defaultOutputDirectory } from '../LocalDevServer';
 import Project from '../../common/Project';
 import * as fileUtils from '../../common/fileUtils';
 import * as talonServer from '../talonServerCopy';
+import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
+import SfdxConfiguration from '../../user/SfdxConfiguration';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -19,26 +21,31 @@ function mockProject({
     port?: number;
     version?: string;
 }): Project {
+    // Some ts-ignores because mockImplementation doesn't exist on the class.
+    const localDevServerConfigurationMock = new LocalDevServerConfiguration();
+    jest.spyOn(localDevServerConfigurationMock, 'port', 'get').mockReturnValue(
+        port
+    );
+
     const project = new Project(projectPath);
-
-    project.getConfiguration = jest.fn().mockImplementation(() => {
-        return {
-            port
-        };
+    Object.defineProperty(project, 'directory', {
+        get: jest.fn(() => projectPath)
     });
 
-    project.getSfdxConfiguration = jest.fn().mockImplementation(() => {
-        return {
-            getPath: () => projectPath,
-            get api_version() {
-                return version;
-            }
-        };
-    });
+    const sfdxConfigurationMock = new SfdxConfiguration(project);
+    jest.spyOn(sfdxConfigurationMock, 'api_version', 'get').mockReturnValue(
+        version
+    );
 
-    project.getModuleSourceDirectory = jest
-        .fn()
-        .mockImplementation(() => modulesPath);
+    Object.defineProperty(project, 'modulesSourceDirectory', {
+        get: jest.fn(() => modulesPath)
+    });
+    Object.defineProperty(project, 'configuration', {
+        get: jest.fn(() => localDevServerConfigurationMock)
+    });
+    Object.defineProperty(project, 'sfdxConfiguration', {
+        get: jest.fn(() => sfdxConfigurationMock)
+    });
 
     return project;
 }

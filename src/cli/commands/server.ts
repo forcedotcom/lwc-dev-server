@@ -35,7 +35,7 @@ export default class Server extends Command {
 
         // Gets the default configuration and then
         // applies the values from the configuration json file.
-        const configuration = project.getConfiguration();
+        const configuration = project.configuration;
 
         // Takes the configured values from the JSON file and applies
         // the values from the CLI run
@@ -43,16 +43,20 @@ export default class Server extends Command {
 
         const main = configuration.getEntryPointComponent();
 
-        if (!project.isSfdx() && !fs.existsSync(project.getDirectory())) {
+        if (!project.isSfdx && !fs.existsSync(project.directory)) {
             console.error(
-                `Failed starting local dev server in directory: ${project.getDirectory()}.
+                `Failed starting local dev server in directory: ${
+                    project.directory
+                }.
                  No project could be found in the current or parent directory.`
             );
             process.exit();
         }
 
         console.log(
-            `Starting the local dev server in directory: ${project.getDirectory()} with component: ${main}`
+            `Starting the local dev server in directory: ${
+                project.directory
+            } with component: ${main}`
         );
 
         this.startServer(project, main);
@@ -64,11 +68,11 @@ export default class Server extends Command {
         // We're about to do something.
         console.log(`Running local dev server with the config values`);
         console.dir({
-            directory: project.getDirectory(),
-            moduleSourceDirectory: project.getModuleSourceDirectory(),
+            directory: project.directory,
+            moduleSourceDirectory: project.modulesSourceDirectory,
             main: main,
-            namespace: project.getConfiguration().namespace,
-            containerType: project.getConfiguration().getContainerType()
+            namespace: project.configuration.namespace,
+            containerType: project.configuration.getContainerType()
         });
 
         const localDevServer = new LocalDevServer();

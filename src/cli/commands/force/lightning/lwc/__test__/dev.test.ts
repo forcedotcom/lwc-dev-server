@@ -144,12 +144,12 @@ describe('dev', () => {
                     header = `${name}: ${value}`;
                 }
             };
-            // @ts-ignore
-            Project.mockImplementation(
-                (sfdxConfiguration: SfdxConfiguration) => {
+
+            Object.defineProperty(Project.prototype, 'sfdxConfiguration', {
+                set: (sfdxConfiguration: SfdxConfiguration) => {
                     sfdxConfiguration.onProxyReq(request, null, null);
                 }
-            );
+            });
 
             let result = await dev.run();
             expect(header).toBe('Authorization: Bearer testingAccessToken');

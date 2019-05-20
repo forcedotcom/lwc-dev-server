@@ -10,9 +10,9 @@ export default class ComponentIndex {
     }
 
     public getModules(): object[] {
-        let temp = this.project.getModuleSourceDirectory();
+        let temp = this.project.modulesSourceDirectory;
         if (temp !== null) {
-            if (this.project.isSfdx()) {
+            if (this.project.isSfdx) {
                 temp = path.join(temp, 'main/default/lwc');
             }
             return this.findModulesIn(temp);
@@ -35,8 +35,8 @@ export default class ComponentIndex {
             ) {
                 const componentName = basename;
                 let namespace = path.basename(path.dirname(subdir));
-                if (this.project.isSfdx()) {
-                    namespace = this.project.getSfdxConfiguration().namespace;
+                if (this.project.isSfdx) {
+                    namespace = this.project.sfdxConfiguration.namespace;
                 }
                 // TODO don't hardcode lwc/preview
                 const cmpUrl =
