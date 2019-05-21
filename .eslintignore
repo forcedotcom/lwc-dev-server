@@ -4,3 +4,4 @@
 **/db/**
 test-projects
 **/vendors/**
+**/lwc-jest-resolver/**

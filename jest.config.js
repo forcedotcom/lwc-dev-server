@@ -3,8 +3,11 @@ module.exports = {
     transform: {
         '^.+\\.tsx?$': 'ts-jest'
     },
+    moduleNameMapper: {
+        '^(localdevserver)/(.+)$': '<rootDir>/modules/$1/$2/$2'
+    },
     testMatch: ['**/__tests__/**/?(*.)(spec|test).(js|ts)'],
-    // testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
+    resolver: '<rootDir>/lwc-jest-resolver/resolver.js',
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     testPathIgnorePatterns: [
         '/node_modules/',
@@ -12,7 +15,9 @@ module.exports = {
         '/dist/',
         '/test-projects/'
     ],
-    collectCoverage: true,
+    transformIgnorePatterns: ['.*node_modules/(?!@talon).*'],
+    moduleDirectories: ['node_modules'],
+    collectCoverage: false,
     coverageReporters: ['json', 'html', 'text'],
     collectCoverageFrom: ['src/**/*.ts', 'src/**/*.js', 'modules/**/*.js'],
     coveragePathIgnorePatterns: ['prismjs.js'],
