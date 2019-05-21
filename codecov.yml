@@ -1,3 +1,4 @@
+# codecov config
 coverage:
   # See http://docs.codecov.io/docs/ignoring-paths
   ignore:
