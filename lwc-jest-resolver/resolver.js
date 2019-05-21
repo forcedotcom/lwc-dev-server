@@ -50,7 +50,13 @@ function resolveAsFile(name, extensions) {
 }
 
 function getLightningMock(modulePath) {
-    const p = path.join(__dirname, 'lightning-stubs', modulePath);
+    const stubs = path.join(
+        require.resolve('@salesforce/lwc-jest/package.json'),
+        '..',
+        'src',
+        'lightning-stubs'
+    );
+    const p = path.join(stubs, modulePath);
     if (fs.existsSync(p)) {
         return path.join(p, modulePath + '.js');
     }

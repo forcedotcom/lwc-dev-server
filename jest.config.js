@@ -15,7 +15,9 @@ module.exports = {
         '/dist/',
         '/test-projects/'
     ],
-    transformIgnorePatterns: ['.*node_modules/(?!@talon).*'],
+    transformIgnorePatterns: [
+        '.*node_modules/(?!@talon|@salesforce/lwc-jest).*'
+    ],
     moduleDirectories: ['node_modules'],
     collectCoverage: false,
     coverageReporters: ['json', 'html', 'text'],
