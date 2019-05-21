@@ -52,7 +52,7 @@
     "lint:ci": "yarn lint --format junit --output-file ./reports/junit/eslint-results.xml --no-color",
     "start:todo": "node ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "start:todo:debug": "node --inspect-brk ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
-    "test": "yarn jest src --runInBand --coverage",
+    "test": "yarn jest --coverage",
     "test:watch": "yarn test --watch",
     "test:debug": "node --inspect node_modules/.bin/jest src --runInBand",
     "test:ci": "yarn test --ci",
@@ -69,6 +69,7 @@
     "postpublish": "script/packagejson-restore.js"
   },
   "devDependencies": {
+    "@lwc/jest-preset": "^0.39.1-222.2",
     "@oclif/dev-cli": "^1",
     "@oclif/test": "^1",
     "@oclif/tslint": "^3",

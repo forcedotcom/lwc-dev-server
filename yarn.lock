@@ -1187,6 +1187,37 @@
   resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-0.39.1-222.2.tgz#acab1603ee125554ceb9411b808d115b47e0ad78"
   integrity sha512-PgnZaenXJYj/4bOqyRfRDOfxXqYbS7CiNUUb3kgOYTjZVk43lCMsqU3ZiVTUrAMPNSLPKSkEL/ttL2Akql4EEw==
 
+"@lwc/jest-preset@^0.39.1-222.2":
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/@lwc/jest-preset/-/jest-preset-0.39.1.tgz#49604147cdfb4d541196f7dab282fbf6ddd4fdd4"
+  integrity sha512-P7wTjDmVanN/M6kh2qiuYGFqMF8RL7LhJTo7MD73DadXuVrz03nmgklkSDGKWU/nPqFFwh0YM6CQ/DuEqtTJKA==
+  dependencies:
+    "@lwc/jest-resolver" "0.39.1"
+    "@lwc/jest-serializer" "0.39.1"
+    "@lwc/jest-transformer" "0.39.1"
+    "@lwc/test-utils" "0.39.1"
+
+"@lwc/jest-resolver@0.39.1":
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/@lwc/jest-resolver/-/jest-resolver-0.39.1.tgz#9f6d6ce30887cabb66f77e1ef7f9133e50236f83"
+  integrity sha512-HjCCywYsdZXrpg5hlD7eZNDSZYlIXxsIzhOc46oCdt1zIKqg1AV+ME9hyttjc5RUW2Za198sbXMcfRk/dsU1qQ==
+
+"@lwc/jest-serializer@0.39.1":
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/@lwc/jest-serializer/-/jest-serializer-0.39.1.tgz#5e83722e9c2e670dbe1b61401fb10c56cfab62ae"
+  integrity sha512-7xUx3b+lmFdjt7P9lCtqMfyggtMvdgrMckoU1rLVAAcwi+TG5jxRJy8oUsLfied2p/u0JH+JGzBEkzlcrN4BPA==
+
+"@lwc/jest-transformer@0.39.1":
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/@lwc/jest-transformer/-/jest-transformer-0.39.1.tgz#c3fe39da0f8ccd42465177f86abdc8c254651163"
+  integrity sha512-PrgXTavU7b1RSooIpKfuu6jrBwVTXQTQJTGdRlZWdjudUBbpwa0g1erzVJ+5p5P+lU7FgfxOSuTPf6IVBJLFwg==
+  dependencies:
+    "@babel/core" "7.1.0"
+    "@babel/plugin-transform-modules-commonjs" "7.1.0"
+    "@babel/template" "~7.1.2"
+    "@lwc/errors" "0.39.1"
+    babel-preset-jest "^24.0.0"
+
 "@lwc/module-resolver@0.39.1-222.2":
   version "0.39.1-222.2"
   resolved "https://registry.yarnpkg.com/@lwc/module-resolver/-/module-resolver-0.39.1-222.2.tgz#72e7fbdf13995aad0643773b6095fdcfa81f6624"
@@ -1254,6 +1285,11 @@
     camelcase "~5.0.0"
     he "^1.1.1"
     parse5-with-errors "^4.0.1"
+
+"@lwc/test-utils@0.39.1":
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/@lwc/test-utils/-/test-utils-0.39.1.tgz#65a13be09d2194efad3b7c459628333a69817969"
+  integrity sha512-9sBftLkcOFYcdIXrUG5kn1xL+DC0Uu7T9oLqsrS5xbFQlD/z5zfgHlwtlzyT7lID9/gyhKpVJRfbwNFi/tQbsw==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -2233,7 +2269,7 @@ babel-preset-compat@0.21.4:
     "@babel/plugin-transform-unicode-regex" "7.0.0"
     babel-plugin-transform-proxy-compat "0.21.4"
 
-babel-preset-jest@^24.6.0:
+babel-preset-jest@^24.0.0, babel-preset-jest@^24.6.0:
   version "24.6.0"
   resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-24.6.0.tgz#66f06136eefce87797539c0d63f1769cc3915984"
   integrity sha512-pdZqLEdmy1ZK5kyRUfvBb2IfTPb2BUvIJczlPspS8fWmBQslNNDBqVfh7BW5leOVJMDZKzjD8XEyABTk6gQ5yw==

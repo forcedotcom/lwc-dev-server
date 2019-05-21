@@ -1,13 +1,3 @@
-# codecov config
-coverage:
-  # See http://docs.codecov.io/docs/ignoring-paths
-  ignore:
-    # compiled output
-    - '**/dist'
-    # dependencies
-    - '**/node_modules'
-    # IDEs and editors
-    - '.vscode'
 comment:
   layout: "header, diff, tree"
   behavior: default
