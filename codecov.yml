@@ -5,3 +5,10 @@ comment:
   branches: null
   flags: null
   paths: null
+flags:
+  frontend:
+    paths:
+      - modules/
+  backend:
+    paths:
+      - src/
