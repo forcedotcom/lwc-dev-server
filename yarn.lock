@@ -1574,14 +1574,14 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
   integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
-"@talon/common@file:lib/unpacked/talon-common-0.11.9":
-  version "0.11.9"
+"@talon/common@file:lib/unpacked/talon-common-0.11.10":
+  version "0.11.10"
   dependencies:
     "@babel/plugin-transform-regenerator" "^7.4.4"
     "@babel/preset-env" "^7.4.4"
 
-"@talon/compiler@file:lib/unpacked/talon-compiler-0.11.9":
-  version "0.11.9"
+"@talon/compiler@file:lib/unpacked/talon-compiler-0.11.10":
+  version "0.11.10"
   dependencies:
     "@babel/core" "^7.4.4"
     "@lwc/compiler" "0.39.1-222.2"
@@ -1625,8 +1625,8 @@
 "@talon/force-modules@file:lib/unpacked/talon-force-modules-0.0.5":
   version "0.0.5"
 
-"@talon/framework@file:lib/unpacked/talon-framework-0.11.9":
-  version "0.11.9"
+"@talon/framework@file:lib/unpacked/talon-framework-0.11.10":
+  version "0.11.10"
 
 "@talon/metadata-schema@file:lib/unpacked/talon-metadata-schema-0.0.11":
   version "0.0.11"
@@ -6800,9 +6800,9 @@ node-pre-gyp@^0.12.0:
     tar "^4"
 
 node-releases@^1.1.19:
-  version "1.1.20"
-  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.20.tgz#f77f9f9a4fcb22e74ba88fe15732a3a8b037146d"
-  integrity sha512-YnC3NemTLgzOkQTmR4+0yl/7pIsXZcfWXoquNp0Dql03GQ+CYURhnjUDFsSJxpX/Q9nw8lAjLFdnACQoKs6h5w==
+  version "1.1.21"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.21.tgz#46c86f9adaceae4d63c75d3c2f2e6eee618e55f3"
+  integrity sha512-TwnURTCjc8a+ElJUjmDqU6+12jhli1Q61xOQmdZ7ECZVBZuQpN/1UnembiIHDM1wCcfLvh5wrWXUF5H6ufX64Q==
   dependencies:
     semver "^5.3.0"
 

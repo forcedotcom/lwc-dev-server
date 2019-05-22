@@ -9,7 +9,7 @@ import {
     templateMiddleware,
     resourceMiddleware,
     apiMiddleware,
-    errorMiddleware
+    compileErrorMiddleware
 } from '@talon/compiler';
 import { startContext, endContext } from '@talon/compiler';
 import compression from 'compression';
@@ -179,7 +179,7 @@ export async function startServer(app: any, basePath: string, port = 3000) {
     app.get(`${basePath}/*`, templateMiddleware());
 
     // Error handling
-    app.use(errorMiddleware());
+    app.use(compileErrorMiddleware());
 
     // Start the server
     const server = getRootApp(app, basePath).listen(port, () => {
