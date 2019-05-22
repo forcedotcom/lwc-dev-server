@@ -17,6 +17,8 @@ cp -R force-app/main/default/lwc force-app/main/default/c
 
 After this follow the usage instructions for [SFDX CLI](#sfdx-cli).
 
+testing
+
 ## Usage
 
 ### SFDX CLI
