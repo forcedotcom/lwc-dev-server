@@ -4,7 +4,6 @@ import Project from '../../common/Project';
 import * as fileUtils from '../../common/fileUtils';
 import * as talonServer from '../talonServerCopy';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
-import SfdxConfiguration from '../../user/SfdxConfiguration';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -26,25 +25,21 @@ function mockProject({
     jest.spyOn(localDevServerConfigurationMock, 'port', 'get').mockReturnValue(
         port
     );
+    jest.spyOn(
+        localDevServerConfigurationMock,
+        'api_version',
+        'get'
+    ).mockReturnValue(version);
 
     const project = new Project(projectPath);
     Object.defineProperty(project, 'directory', {
         get: jest.fn(() => projectPath)
     });
-
-    const sfdxConfigurationMock = new SfdxConfiguration(project);
-    jest.spyOn(sfdxConfigurationMock, 'api_version', 'get').mockReturnValue(
-        version
-    );
-
     Object.defineProperty(project, 'modulesSourceDirectory', {
         get: jest.fn(() => modulesPath)
     });
     Object.defineProperty(project, 'configuration', {
         get: jest.fn(() => localDevServerConfigurationMock)
-    });
-    Object.defineProperty(project, 'sfdxConfiguration', {
-        get: jest.fn(() => sfdxConfigurationMock)
     });
 
     return project;

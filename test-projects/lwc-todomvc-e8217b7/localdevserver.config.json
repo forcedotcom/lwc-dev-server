@@ -1,9 +1,9 @@
 {
   "namespace": "todo",
-  
+
   "main": "app",
 
-  "moduleSourceDirectory": "src/todo",
+  "modulesSourceDirectory": "src",
 
   "port":3334
 }

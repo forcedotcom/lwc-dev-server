@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 export default class LocalDevServerConfiguration {
+    private _onProxyReq: Function = function() {};
     private entryPoint: string = '';
     private readonly configFromJson: any;
 
@@ -16,9 +17,21 @@ export default class LocalDevServerConfiguration {
                         e
                     );
                 }
+            } else {
+                console.warn(
+                    `Specified configuration file ${configFilePath} does not exist.`
+                );
             }
             if (jsonFileContents !== null && jsonFileContents !== '') {
-                this.configFromJson = JSON.parse(jsonFileContents);
+                try {
+                    this.configFromJson = JSON.parse(jsonFileContents);
+                } catch (e) {
+                    console.error(
+                        `Loading JSON in '${configFilePath}' failed with the error ${
+                            e.message
+                        }`
+                    );
+                }
             } else {
                 this.configFromJson = {};
             }
@@ -36,7 +49,7 @@ export default class LocalDevServerConfiguration {
      *  "containerType": "..."
      * }
      */
-    public getContainerType(): string {
+    public get containerType(): string {
         return this.configFromJson.containerType || 'component';
     }
 
@@ -48,7 +61,7 @@ export default class LocalDevServerConfiguration {
      *  "main": "..."
      * }
      */
-    public getEntryPointComponent(): string {
+    public get entryPointComponent(): string {
         // Returns this.entryPoint first as it gets configured on the cli
         // so if they specify that, it should override the json file.
         const entryPoint = this.entryPoint || this.configFromJson.main;
@@ -75,14 +88,36 @@ export default class LocalDevServerConfiguration {
         return this.configFromJson.namespace || 'c';
     }
 
+    public set namespace(namespace: string) {
+        this.configFromJson.namespace = namespace;
+    }
+
     /**
      * To specify in json file, use
      * {
-     *  "moduleSourceDirectory": "..."
+     *  "modulesSourceDirectory": "..."
      * }
      */
-    public getModuleSourceDirectory(): string {
-        return this.configFromJson.moduleSourceDirectory || '';
+    public get modulesSourceDirectory(): string {
+        return this.configFromJson.modulesSourceDirectory || '';
+    }
+
+    public set modulesSourceDirectory(directory: string) {
+        this.configFromJson.modulesSourceDirectory = directory;
+    }
+
+    /**
+     * To specify in json file, use
+     * {
+     *  "staticResourcesDirectory": "..."
+     * }
+     */
+    public get staticResourcesDirectory(): string {
+        return this.configFromJson.staticResourcesDirectory || '';
+    }
+
+    public set staticResourcesDirectory(directory: string) {
+        this.configFromJson.staticResourcesDirectory = directory;
     }
 
     /**
@@ -109,6 +144,34 @@ export default class LocalDevServerConfiguration {
         return port || defaultPort;
     }
 
+    public set port(port: number) {
+        this.configFromJson.port = port;
+    }
+
+    public get api_version(): string | undefined {
+        return this.configFromJson.api_version;
+    }
+
+    public set api_version(api_version: string | undefined) {
+        this.configFromJson.api_version = api_version;
+    }
+
+    public get endpoint(): string | undefined {
+        return this.configFromJson.endpoint;
+    }
+
+    public set endpoint(endpoint: string | undefined) {
+        this.configFromJson.endpoint = endpoint;
+    }
+
+    public get onProxyReq(): Function {
+        return this._onProxyReq || function() {};
+    }
+
+    public set onProxyReq(onProxyReq: Function) {
+        this._onProxyReq = onProxyReq;
+    }
+
     /**
      * When you run the project from the command line, you can specify configuration parameters.
      * Those need to get merged with this configuration object.
@@ -121,13 +184,5 @@ export default class LocalDevServerConfiguration {
         if (config.hasOwnProperty('main')) {
             this.entryPoint = config.main;
         }
-    }
-
-    public set port(port: number) {
-        this.configFromJson.port = port;
-    }
-
-    public set namespace(namespace: string) {
-        this.configFromJson.namespace = namespace;
     }
 }

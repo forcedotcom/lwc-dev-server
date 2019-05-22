@@ -3,7 +3,6 @@ import { Messages, SfdxError } from '@salesforce/core';
 import { AnyJson, JsonArray, JsonMap } from '@salesforce/ts-types';
 import * as http from 'http';
 import Project from '../../../../../common/Project';
-import SfdxConfiguration from '../../../../../user/SfdxConfiguration';
 import LocalDevServer from '../../../../../server/LocalDevServer';
 import debugLogger from 'debug';
 
@@ -92,22 +91,19 @@ export default class Dev extends SfdxCommand {
 
         const project = new Project(this.project.getPath());
 
-        const sfdxConfiguration = new SfdxConfiguration(project);
-        sfdxConfiguration.api_version = api_version;
-        sfdxConfiguration.endpoint = conn.instanceUrl;
-        sfdxConfiguration.onProxyReq = onProxyReq;
-        sfdxConfiguration.port = port;
-        sfdxConfiguration.namespace = <string>(
+        project.configuration.api_version = api_version;
+        project.configuration.endpoint = conn.instanceUrl;
+        project.configuration.onProxyReq = onProxyReq;
+        project.configuration.port = port;
+        project.configuration.namespace = <string>(
             (await this.project.resolveProjectConfig()).namespace
         );
 
-        project.sfdxConfiguration = sfdxConfiguration;
-
         const retValue = {
             orgId: this.org.getOrgId(),
-            api_version: sfdxConfiguration.api_version,
-            endpoint: sfdxConfiguration.endpoint,
-            onProxyReq: JSON.stringify(sfdxConfiguration.onProxyReq),
+            api_version: project.configuration.api_version,
+            endpoint: project.configuration.endpoint,
+            onProxyReq: JSON.stringify(project.configuration.onProxyReq),
             componentName,
             port,
             token: conn.accessToken

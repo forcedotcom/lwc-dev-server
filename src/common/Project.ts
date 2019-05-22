@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
-import SfdxConfiguration from '../user/SfdxConfiguration';
 import { SfdxProject } from '@salesforce/core';
 
 /**
@@ -21,9 +20,6 @@ export default class Project {
     private readonly rootDirectory: string;
     private readonly _isSFDX: boolean = false;
     private readonly _configuration: LocalDevServerConfiguration;
-    private _modulesSourceDirectory: string | null = null;
-    private _staticResourcesDirectory: string | null = null;
-    private _sfdxConfiguration: SfdxConfiguration;
 
     constructor(directory: string) {
         // Directory could be either the project, or a folder in a project.
@@ -48,30 +44,15 @@ export default class Project {
             configurationPath
         );
 
-        // Resolve the default SfdxConfiguration
-        this._sfdxConfiguration = new SfdxConfiguration(this);
-
         // Use detection of the sfdx-project configuration to detect if this is an Sfdx Project and we should
         // treat it as such.
         this._isSFDX = fs.existsSync(
             path.join(this.rootDirectory, 'sfdx-project.json')
         );
 
-        // Must be after isSfdx setting
-        this._modulesSourceDirectory = this.resolveModulesSourceDirectory();
-    }
-
-    private initWithSfdxConfiguration() {
-        // The SfdxConfiguration will specify where the modules are located.
-        this._modulesSourceDirectory = this.getSfdxProjectLWCDirectory(
-            this.rootDirectory
-        );
-        // Figure out where the static resources are from the configuration as well.
-        this._staticResourcesDirectory = this.getSfdxProjectStaticResourcesDirectory();
-
-        // Merge the configuration values from Sfdx over the default configuration.
-        this.configuration.port = this.sfdxConfiguration.port;
-        this.configuration.namespace = this.sfdxConfiguration.namespace;
+        if (this._isSFDX) {
+            this.initWithSfdxConfiguration();
+        }
     }
 
     public get configuration(): LocalDevServerConfiguration {
@@ -82,21 +63,24 @@ export default class Project {
         return this._isSFDX;
     }
 
-    public get sfdxConfiguration(): SfdxConfiguration {
-        return this._sfdxConfiguration;
+    public get modulesSourceDirectory(): string {
+        if (path.isAbsolute(this.configuration.modulesSourceDirectory)) {
+            return this.configuration.modulesSourceDirectory;
+        }
+        return path.join(
+            this.rootDirectory,
+            this.configuration.modulesSourceDirectory || 'src'
+        );
     }
 
-    public set sfdxConfiguration(sfdxConfiguration: SfdxConfiguration) {
-        this._sfdxConfiguration = sfdxConfiguration;
-        this.initWithSfdxConfiguration();
-    }
-
-    public get modulesSourceDirectory(): string | null {
-        return this._modulesSourceDirectory;
-    }
-
-    public get staticResourcesDirectory(): string | null {
-        return this._staticResourcesDirectory;
+    public get staticResourcesDirectory(): string {
+        if (path.isAbsolute(this.configuration.staticResourcesDirectory)) {
+            return this.configuration.staticResourcesDirectory;
+        }
+        return path.join(
+            this.rootDirectory,
+            this.configuration.staticResourcesDirectory
+        );
     }
 
     /**
@@ -142,50 +126,70 @@ export default class Project {
         return currentDirectory;
     }
 
-    private resolveModulesSourceDirectory(): string {
-        // Try to get the value from the configuration file
-        let dirFromConfig =
-            this.configuration && this.configuration.getModuleSourceDirectory();
-        if (dirFromConfig !== null && dirFromConfig !== '') {
-            if (!path.isAbsolute(dirFromConfig)) {
-                dirFromConfig = path.join(this.rootDirectory, dirFromConfig);
+    private initWithSfdxConfiguration() {
+        const _path = this.directory;
+        let jsonFileContents = null;
+        const sfdxProjectPath = path.join(_path, 'sfdx-project.json');
+        const packageDirectories: string[] = [];
+
+        if (fs.existsSync(sfdxProjectPath)) {
+            try {
+                jsonFileContents = fs.readFileSync(sfdxProjectPath, 'utf-8');
+            } catch (e) {
+                console.error(
+                    `Loading ${sfdxProjectPath} failed JSON parsing with error ${
+                        e.message
+                    }`
+                );
             }
-            return dirFromConfig;
+
+            try {
+                if (
+                    jsonFileContents !== null &&
+                    jsonFileContents.trim() !== ''
+                ) {
+                    const configMap: any = JSON.parse(jsonFileContents);
+
+                    if (configMap.packageDirectories instanceof Array) {
+                        let defaultPackage: string = '';
+                        configMap.packageDirectories.forEach(
+                            (element: { default: boolean; path: string }) => {
+                                if (element.default) {
+                                    defaultPackage = element.path;
+                                } else {
+                                    packageDirectories.push(element.path);
+                                }
+                            }
+                        );
+                        if (defaultPackage) {
+                            packageDirectories.unshift(defaultPackage);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(
+                    `Loading configuration from ${sfdxProjectPath} failed with the error ${
+                        e.message
+                    }`
+                );
+            }
         }
 
-        // If SFDX, we should know the path.
-        if (this.isSfdx) {
-            return this.getSfdxProjectLWCDirectory(this.rootDirectory);
-        }
-
-        // If Not, we should assume src for now.
-        return path.join(this.rootDirectory, 'src');
-    }
-
-    private getSfdxProjectLWCDirectory(rootDirectory: string): string {
-        // TODO: Support more than one package
-        const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
         if (packageDirectories.length > 0) {
-            return path.join(rootDirectory, packageDirectories[0]);
+            if (!this.configuration.modulesSourceDirectory) {
+                // The sfdx-project.json specifies where the modules are located.
+                this.configuration.modulesSourceDirectory =
+                    packageDirectories[0];
+            }
+
+            if (!this.configuration.staticResourcesDirectory) {
+                // Figure out where the static resources are from the configuration as well.
+                const resourcePath = path.join(
+                    packageDirectories[0],
+                    'main/default/staticresources'
+                );
+                this.configuration.staticResourcesDirectory = resourcePath;
+            }
         }
-
-        // What would we expect if no value is specified?
-        return '.';
-    }
-
-    private getSfdxProjectStaticResourcesDirectory(): string | null {
-        // TODO: Support more than one package
-        const packageDirectories = this.sfdxConfiguration.getPackageDirectories();
-        if (packageDirectories.length > 0) {
-            const resourcePath = path.join(
-                packageDirectories[0],
-                'main/default/staticresources'
-            );
-
-            return path.join(this.rootDirectory, resourcePath);
-        }
-
-        // What would we expect if no value is specified?
-        return null;
     }
 }

@@ -1,6 +1,5 @@
 import Project from '../Project';
 import mock from 'mock-fs';
-import SfdxConfiguration from '../../user/SfdxConfiguration';
 
 describe('project', () => {
     // Stop mocking 'fs' after each test
@@ -58,12 +57,12 @@ describe('project', () => {
     });
 
     describe('when retrieving the module source directory', () => {
-        test('handles a relative moduleSourceDirectory specified in the json config', () => {
+        test('handles a relative modulesSourceDirectory specified in the json config', () => {
             mock({
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json':
-                        '{"moduleSourceDirectory": "modulesSrc/"}'
+                        '{"modulesSourceDirectory": "modulesSrc/"}'
                 }
             });
 
@@ -74,12 +73,12 @@ describe('project', () => {
             );
         });
 
-        test('handles an absolute moduleSourceDirectory specified in the json config', () => {
+        test('handles an absolute modulesSourceDirectory specified in the json config', () => {
             mock({
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json':
-                        '{"moduleSourceDirectory": "/foo/modulesSrc/"}'
+                        '{"modulesSourceDirectory": "/foo/modulesSrc/"}'
                 }
             });
 
@@ -88,7 +87,7 @@ describe('project', () => {
             expect(project.modulesSourceDirectory).toBe('/foo/modulesSrc/');
         });
 
-        test('uses a fallback when moduleSourceDirectory is not specified in the json config', () => {
+        test('uses a fallback when modulesSourceDirectory is not specified in the json config', () => {
             mock({
                 'my-project': {
                     'package.json': '{}',
@@ -144,7 +143,7 @@ describe('project', () => {
         });
     });
 
-    describe('when creating from sfdxconfiguration', () => {
+    describe('when creating with sfdx-project.json', () => {
         test('then resolve to the sfdx-project directory', () => {
             mock({
                 'my-project': {
@@ -154,23 +153,8 @@ describe('project', () => {
                 }
             });
             const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
+
             expect(project.directory).toBe('my-project/');
-        });
-
-        test('then configuration passed in is stored', () => {
-            mock({
-                'my-project': {
-                    'sfdx-project.json': '{}',
-                    'localdevserver.config.json': '{}',
-                    'package.json': '{}'
-                }
-            });
-            const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
-            project.sfdxConfiguration = sfdxConfiguration;
-
-            expect(project.sfdxConfiguration).toBe(sfdxConfiguration);
         });
 
         test('then use the packageDirectories to resolve the module directory', () => {
@@ -188,9 +172,8 @@ describe('project', () => {
                     'package.json': '{}'
                 }
             });
+
             const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
-            project.sfdxConfiguration = sfdxConfiguration;
 
             expect(project.modulesSourceDirectory).toBe('my-project/force-app');
         });
@@ -210,9 +193,8 @@ describe('project', () => {
                     'package.json': '{}'
                 }
             });
+
             const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
-            project.sfdxConfiguration = sfdxConfiguration;
 
             expect(project.staticResourcesDirectory).toBe(
                 'my-project/force-app/main/default/staticresources'
@@ -227,12 +209,11 @@ describe('project', () => {
                     'package.json': '{}'
                 }
             });
-            const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
-            sfdxConfiguration.port = 123456;
-            project.sfdxConfiguration = sfdxConfiguration;
 
-            expect(project.configuration.port).toBe(sfdxConfiguration.port);
+            const project = new Project('my-project/');
+            project.configuration.port = 123456;
+
+            expect(project.configuration.port).toBe(123456);
         });
 
         test('then configure the namespace from the configuration', () => {
@@ -243,13 +224,12 @@ describe('project', () => {
                     'package.json': '{}'
                 }
             });
+
             const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
-            sfdxConfiguration.namespace = 'my-project-namespace';
-            project.sfdxConfiguration = sfdxConfiguration;
+            project.configuration.namespace = 'my-project-namespace';
 
             expect(project.configuration.namespace).toBe(
-                sfdxConfiguration.namespace
+                'my-project-namespace'
             );
         });
 
@@ -266,9 +246,8 @@ describe('project', () => {
                     })
                 }
             });
+
             const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
-            project.sfdxConfiguration = sfdxConfiguration;
 
             expect(project.staticResourcesDirectory).toBe(
                 'my-project/force-app/main/default/staticresources'
@@ -288,11 +267,60 @@ describe('project', () => {
                     })
                 }
             });
+
             const project = new Project('my-project/');
-            const sfdxConfiguration = new SfdxConfiguration(project);
-            project.sfdxConfiguration = sfdxConfiguration;
 
             expect(project.modulesSourceDirectory).toBe('my-project/force-app');
+        });
+    });
+
+    describe('configuration overrides', () => {
+        test('when modulesSourceDirectory is specified in the config json file, it takes precedence over sfdx-project.json', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory: 'specified/directory/'
+                    })
+                }
+            });
+
+            const project = new Project('my-project/');
+
+            expect(project.modulesSourceDirectory).toBe(
+                'my-project/specified/directory/'
+            );
+        });
+
+        test('when staticResourcesDirectory is specified in the config json file, it takes precedence over sfdx-project.json', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': JSON.stringify({
+                        staticResourcesDirectory: 'specified/directory/assets/'
+                    })
+                }
+            });
+
+            const project = new Project('my-project/');
+
+            expect(project.staticResourcesDirectory).toBe(
+                'my-project/specified/directory/assets/'
+            );
         });
     });
 });
