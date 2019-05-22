@@ -64,20 +64,14 @@ export default class Project {
     }
 
     public get modulesSourceDirectory(): string {
-        if (path.isAbsolute(this.configuration.modulesSourceDirectory)) {
-            return this.configuration.modulesSourceDirectory;
-        }
-        return path.join(
+        return path.resolve(
             this.rootDirectory,
             this.configuration.modulesSourceDirectory || 'src'
         );
     }
 
     public get staticResourcesDirectory(): string {
-        if (path.isAbsolute(this.configuration.staticResourcesDirectory)) {
-            return this.configuration.staticResourcesDirectory;
-        }
-        return path.join(
+        return path.resolve(
             this.rootDirectory,
             this.configuration.staticResourcesDirectory
         );
@@ -144,7 +138,10 @@ export default class Project {
             }
 
             try {
-                if (jsonFileContents !== null && jsonFileContents !== '') {
+                if (
+                    jsonFileContents !== null &&
+                    jsonFileContents.trim() !== ''
+                ) {
                     const configMap: any = JSON.parse(jsonFileContents);
 
                     if (configMap.packageDirectories instanceof Array) {

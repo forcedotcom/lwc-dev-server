@@ -3,7 +3,7 @@
 
   "main": "app",
 
-  "modulesSourceDirectory": "src/todo",
+  "modulesSourceDirectory": "src",
 
   "port":3334
 }
