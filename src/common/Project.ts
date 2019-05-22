@@ -64,14 +64,20 @@ export default class Project {
     }
 
     public get modulesSourceDirectory(): string {
-        return path.resolve(
+        if (path.isAbsolute(this.configuration.modulesSourceDirectory)) {
+            return this.configuration.modulesSourceDirectory;
+        }
+        return path.join(
             this.rootDirectory,
             this.configuration.modulesSourceDirectory || 'src'
         );
     }
 
     public get staticResourcesDirectory(): string {
-        return path.resolve(
+        if (path.isAbsolute(this.configuration.staticResourcesDirectory)) {
+            return this.configuration.staticResourcesDirectory;
+        }
+        return path.join(
             this.rootDirectory,
             this.configuration.staticResourcesDirectory
         );
