@@ -24,6 +24,8 @@ import mimeTypes from 'mime-types';
 import debugLogger from 'debug';
 import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
+import connectLiveReload from 'connect-livereload';
+import livereload from 'livereload';
 
 const PUBLIC_DIR = 'public';
 
@@ -83,18 +85,18 @@ export async function createServer(options: object, apiConfig: any = {}) {
         next();
     });
 
-    app.use(
-        helmet({
-            contentSecurityPolicy: {
-                directives: {
-                    scriptSrc: [
-                        `'self'`,
-                        (req: any, res: any) => `'nonce-${res.locals.nonce}'`
-                    ]
-                }
-            }
-        })
-    );
+    // app.use(
+    //     helmet({
+    //         contentSecurityPolicy: {
+    //             directives: {
+    //                 scriptSrc: [
+    //                     `'self'`,
+    //                     (req: any, res: any) => `'nonce-${res.locals.nonce}'`
+    //                 ]
+    //             }
+    //         }
+    //     })
+    // );
 
     // Setup CSRF Token
     app.use(cookieParser());
@@ -157,6 +159,28 @@ export async function createServer(options: object, apiConfig: any = {}) {
 
     // Serve static files from the template public dir
     app.use(express.static(`${outputDir}/${PUBLIC_DIR}`, staticOptions));
+
+    // Live reload
+    app.use(
+        connectLiveReload({
+            port: 35729
+        })
+    );
+
+    // Create a livereload server
+    const reloadServer = livereload.createServer({
+        // Reload on changes to these file extensions.
+        exts: ['js', 'html', 'css'],
+        applyCSSLive: false
+    });
+
+    // Force node to exit properly on CTRL+C
+    process.on('SIGINT', function() {
+        process.exit();
+    });
+
+    // Specify the folder to watch for file-changes.
+    reloadServer.watch(sourceDir);
 
     // Proxy, record and replay API calls
     app.use(apiMiddleware(apiConfig));
