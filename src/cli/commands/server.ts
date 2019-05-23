@@ -1,7 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import LocalDevServer from '../../server/LocalDevServer';
 import Project from '../../common/Project';
-import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 import fs from 'fs';
 
 export default class Server extends Command {
@@ -14,7 +13,11 @@ export default class Server extends Command {
     //   ]
 
     static flags = {
-        help: flags.help({ char: 'h' })
+        help: flags.help({ char: 'h' }),
+        port: flags.integer({
+            char: 'p',
+            description: 'port to run local dev server on'
+        })
         // flag with a value (-n, --name=VALUE)
         // directory: flags.string({
         //     char: 'd',
@@ -40,6 +43,10 @@ export default class Server extends Command {
         // Updates the configuration from the flags on
         // the CLI run.
         configuration.configureFromCliArguments(args);
+
+        if (flags.port !== undefined && flags.port !== null) {
+            project.configuration.port = flags.port;
+        }
 
         const main = configuration.entryPointComponent;
 

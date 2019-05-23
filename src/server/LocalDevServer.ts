@@ -9,13 +9,16 @@ import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
 import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
+import { Server } from 'http';
 
 const debug = debugLogger('localdevserver');
-
-export const defaultOutputDirectory = '.localdevserver';
 const packageRoot = path.join(__dirname, '..', '..');
 
+export const defaultOutputDirectory = '.localdevserver';
+
 export default class LocalDevServer {
+    private server?: Server;
+
     public async start(project: Project) {
         const configuration: LocalDevServerConfiguration =
             project.configuration;
@@ -108,9 +111,28 @@ export default class LocalDevServer {
                 const modules = tmp.getModules();
                 res.json(modules);
             });
-            await startServer(server, '', project.configuration.port);
+            this.server = await startServer(
+                server,
+                '',
+                project.configuration.port
+            );
         } catch (e) {
             throw new Error(`Unable to start LocalDevServer: ${e}`);
+        }
+    }
+
+    public async stop() {
+        if (this.server) {
+            this.server.close();
+        }
+    }
+
+    public get port() {
+        if (this.server) {
+            const address = this.server.address();
+            if (address != null && typeof address !== 'string') {
+                return address.port;
+            }
         }
     }
 

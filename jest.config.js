@@ -1,4 +1,5 @@
 module.exports = {
+    displayName: 'Unit Tests',
     preset: '@lwc/jest-preset',
     transform: {
         '^.+\\.tsx?$': 'ts-jest'
@@ -26,6 +27,12 @@ module.exports = {
     coverageDirectory: 'reports/coverage',
     reporters: [
         'default',
-        ['jest-junit', { output: './reports/junit/jest-results.xml' }]
+        [
+            'jest-junit',
+            {
+                suiteName: 'Unit Tests',
+                output: './reports/junit/jest-results.xml'
+            }
+        ]
     ]
 };
