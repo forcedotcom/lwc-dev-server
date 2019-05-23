@@ -14,5 +14,7 @@ module.exports = {
             }
         ]
     ],
-    setupFilesAfterEnv: ['<rootDir>/setup.ts']
+    setupFilesAfterEnv: ['<rootDir>/setup/setupFiles.ts'],
+    globalSetup: '<rootDir>/setup/globalSetup.ts',
+    globalTeardown: '<rootDir>/setup/globalTeardown.ts'
 };
