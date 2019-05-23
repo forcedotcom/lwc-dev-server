@@ -2,7 +2,7 @@ module.exports = {
     transform: {
         '^.+\\.tsx?$': 'ts-jest'
     },
-    testMatch: ['<rootDir>/**/?(*.)(spec|test).(js|ts)'],
+    testMatch: ['<rootDir>/**/?(*.)test.ts'],
     moduleFileExtensions: ['ts', 'js'],
     reporters: [
         'default',
