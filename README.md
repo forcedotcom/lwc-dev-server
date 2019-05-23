@@ -12,7 +12,7 @@ Local Development lets you run an LWC-enabled server on your local machine and v
 Currently the best way to test this project is with [LWC Recipes](https://github.com/trailheadapps/lwc-recipes). These setup steps will get you started using lwc-dev-server if you've never installed it previously. For more detailed instructions / explanations, read the Usage section below.
 
 ```sh
-SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install lwc-dev-server
+SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install lwc-dev-server
 git clone git@github.com:trailheadapps/lwc-recipes.git
 cd lwc-recipes
 sfdx force:auth:web:login -d -a myhuborg
@@ -32,6 +32,7 @@ The plugin is installed from the internal SFDX npm registry. You can point the C
 
 ```sh
 export SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880'
+export SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli'
 ```
 
 Afterwards open a new terminal window and install:
@@ -45,7 +46,7 @@ sfdx plugins:install lwc-dev-server
 If you do not edit `.bash_profile` you can alternatively specify it inline:
 
 ```sh
-SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install lwc-dev-server
+SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install lwc-dev-server
 ```
 Installation will take a few minutes which is something we will improve. 
 
@@ -54,7 +55,7 @@ Installation will take a few minutes which is something we will improve.
 New "stable" versions of the plugin will be pushed to the internal SFDX npm registry. Grab it like so:
 
 ```sh
-SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:update
+SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:update
 ```
 
 ### Running lwc-dev-server
