@@ -168,7 +168,7 @@ describe('LocalDevServerConfiguration', () => {
         expect(configuration.port).toBe(3333);
     });
 
-    test('Empty string port defaults to 80', () => {
+    test('Empty string value in config file uses default port', () => {
         mock({
             'config.json': JSON.stringify({
                 port: ''
@@ -179,10 +179,10 @@ describe('LocalDevServerConfiguration', () => {
             'config.json'
         );
 
-        expect(configuration.port).toBe(80);
+        expect(configuration.port).toBe(3333);
     });
 
-    test('Zero port defaults to 80', () => {
+    test('value of `0` in config file uses 0', () => {
         mock({
             'config.json': JSON.stringify({
                 port: 0
@@ -193,7 +193,7 @@ describe('LocalDevServerConfiguration', () => {
             'config.json'
         );
 
-        expect(configuration.port).toBe(80);
+        expect(configuration.port).toBe(0);
     });
 
     test('loading of api_version from config json', () => {

@@ -1,5 +1,6 @@
 import fs from 'fs';
 
+export const defaultPort = 3333;
 export default class LocalDevServerConfiguration {
     private _onProxyReq: Function = function() {};
     private entryPoint: string = '';
@@ -128,20 +129,12 @@ export default class LocalDevServerConfiguration {
      * }
      */
     public get port(): number {
-        const defaultPort = 3333;
         let port = this.configFromJson.port;
-        if (port === undefined || port === null) {
-            return defaultPort;
+        if (port !== undefined && port !== null && port !== '') {
+            return port * 1;
         }
 
-        port = port * 1;
-
-        // If there is no port, default to http://localhost/ which is port 80 by default.
-        if (port === 0) {
-            port = 80;
-        }
-
-        return port || defaultPort;
+        return defaultPort;
     }
 
     public set port(port: number) {

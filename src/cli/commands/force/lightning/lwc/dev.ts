@@ -46,7 +46,13 @@ export default class Dev extends SfdxCommand {
 
     public async run(): Promise<AnyJson> {
         const componentName = this.flags.open;
-        const port = this.flags.port || 3333;
+
+        let port: number;
+        if (this.flags.port !== undefined && this.flags.port !== null) {
+            port = this.flags.port;
+        } else {
+            port = 3333;
+        }
 
         if (!this.org) {
             this.ux.log('org was undefined, an org is required.');

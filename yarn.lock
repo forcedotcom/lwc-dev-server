@@ -1978,6 +1978,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/selenium-standalone@^6.15.0":
+  version "6.15.0"
+  resolved "https://registry.yarnpkg.com/@types/selenium-standalone/-/selenium-standalone-6.15.0.tgz#daa3ba1c5d46be614f84aecfe975ff5af4837a43"
+  integrity sha512-hP/pI5N9pqX4nEK58myrx3A04M2cm+q5kXpIE+va4HsiJO+HV1hkUprcA83DURMFUaAHAGZDDOaKPWtW4UuYew==
+  dependencies:
+    "@types/node" "*"
+
 "@types/semver@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.5.0.tgz#146c2a29ee7d3bae4bf2fcb274636e264c813c45"
