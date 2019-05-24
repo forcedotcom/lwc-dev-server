@@ -160,5 +160,31 @@ describe('dev', () => {
 
             expect(header).toBe('Authorization: Bearer testingAccessToken');
         });
+
+        test('uses port from flags', async () => {
+            setupUX();
+            setupOrg();
+            setupProject();
+
+            Object.defineProperty(dev, 'flags', {
+                get: () => {
+                    return { port: '5151' };
+                }
+            });
+
+            let configuredPort = null;
+            // @ts-ignore
+            LocalDevServer.mockImplementation(() => {
+                return {
+                    start: (project: Project) => {
+                        configuredPort = project.configuration.port;
+                    }
+                };
+            });
+
+            await dev.run();
+
+            expect(configuredPort).toBe(5151);
+        });
     });
 });

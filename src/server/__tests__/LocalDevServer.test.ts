@@ -4,6 +4,7 @@ import Project from '../../common/Project';
 import * as fileUtils from '../../common/fileUtils';
 import * as talonServer from '../talonServerCopy';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
+import { Server } from 'http';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -193,6 +194,45 @@ describe('LocalDevServer', () => {
             await expect(server.start(project)).rejects.toThrow(
                 'Unable to start LocalDevServer: test error'
             );
+        });
+    });
+
+    describe('stop()', () => {
+        it('calls close on the server', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath });
+
+            const mockServer = {
+                close: jest.fn()
+            };
+            jest.spyOn(talonServer, 'startServer').mockResolvedValueOnce(
+                mockServer
+            );
+
+            const server = new LocalDevServer();
+            await server.start(project);
+            await server.stop();
+
+            expect(mockServer.close).toBeCalledTimes(1);
+        });
+    });
+
+    describe('port()', () => {
+        it('returns the port number', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath });
+
+            jest.spyOn(talonServer, 'startServer').mockResolvedValueOnce({
+                close: jest.fn(),
+                address: jest.fn().mockReturnValue({
+                    port: 5151
+                })
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            expect(server.port).toBe(5151);
         });
     });
 });
