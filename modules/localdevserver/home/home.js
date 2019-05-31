@@ -19,13 +19,13 @@ export default class Home extends LightningElement {
 `;
     @track _components = [];
 
-    @api componentsFilter = '';
+    @track componentsFilter = '';
 
     @api
     get components() {
         if (this.componentsFilter) {
             return this._components.filter(item => {
-                return item.title.startsWith(this.componentsFilter);
+                return item.title.indexOf(this.componentsFilter) != -1;
             });
         }
         return this._components;
