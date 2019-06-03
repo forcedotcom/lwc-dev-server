@@ -1,20 +1,12 @@
 import Page from './Page';
 
-declare global {
-    namespace NodeJS {
-        interface Global {
-            serverPort?: number;
-        }
-    }
-}
-
 class HomePage implements Page {
     async open() {
         await browser.url(`http://localhost:${global.serverPort}`);
     }
 
-    async getContainer() {
-        const container = await browser
+    get container(): Promise<WebdriverIO.Element> {
+        const container = browser
             .$('talon-app')
             .then(el => el.shadow$('localdevserver-layout'))
             .then(el => el.$('talon-router-container'))
@@ -23,9 +15,10 @@ class HomePage implements Page {
         return container;
     }
 
-    async getComponentList() {
-        const container = await this.getContainer();
-        return await container.shadow$('.component-list');
+    get containerList(): Promise<WebdriverIO.Element> {
+        return this.container.then(container => {
+            return container.shadow$('.component-list');
+        });
     }
 }
 
