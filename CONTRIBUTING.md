@@ -133,3 +133,32 @@ Then publish it:
 ```sh
 npm publish --registry http://platform-cli-registry.eng.sfdc.net:4880
 ```
+
+## Running Tests
+
+### Running Specific Tests
+
+You can pass in a pattern or a test filename after `yarn test` to run just a specific test, for example:
+
+```sh
+yarn test dependencies # will run dependencies.test.ts
+```
+
+Jest has (many other options)[https://jestjs.io/docs/en/cli#running-from-the-command-line] for selecting which tests to run as well.
+
+### Debugging
+
+#### Integration Tests
+
+Add this line to your test:
+
+```js
+await browser.debug();
+```
+
+It will leave the browser open and you can REPL in the terminal (e.g., use `$` to find elements on the page). In this case you will want to temporarily increase the timeout with `jest.setTimeout` in your test file, or when running the test set the `DEBUG` environment variable which will increase the timeout to one day:
+
+```sh
+DEBUG=true yarn test test-file
+DEBUG=localdevserver yarn test test-file
+```

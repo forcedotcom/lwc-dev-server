@@ -1,6 +1,8 @@
 import { remote } from 'webdriverio';
 
-jest.setTimeout(60000);
+const debug = process.env.DEBUG;
+
+jest.setTimeout(debug ? 24 * 60 * 60 * 1000 : 60000);
 
 declare global {
     namespace NodeJS {
