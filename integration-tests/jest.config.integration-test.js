@@ -8,7 +8,7 @@ module.exports = {
     globalTeardown: '<rootDir>/setup/globalTeardown.ts',
     globals: {
         'ts-jest': {
-            tsConfig: '<rootDir>/tsconfig.integration-test.json'
+            tsConfig: '<rootDir>/tsconfig.json'
         }
     },
     reporters: [

@@ -1,10 +1,17 @@
 {
-    "files.exclude": {
+  "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true
     },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "npm.packageManager": "yarn",
+    "npm.exclude": [
+      "**/lib/unpacked/**",
+      "**/test-projects/**",
+      "**/integration-tests/**"
+    ],
     "salesforcedx-vscode-lightning.activationMode": "always"
 }

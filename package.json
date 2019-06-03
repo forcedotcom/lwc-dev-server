@@ -104,8 +104,8 @@
     "ts-mockito": "^2.3.1",
     "ts-node": "^8.1.0",
     "tslint": "^5.0.0",
-    "typescript": "^3.4.5",
-    "webdriverio": "^5.9.1"
+    "typescript": "^3.5.1",
+    "webdriverio": "^5.9.6"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-0",
