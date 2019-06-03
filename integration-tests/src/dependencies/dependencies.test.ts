@@ -42,7 +42,6 @@ describe('Serving container default static resources', () => {
         const href = await element.getAttribute('xlink:href');
         const resolvedHref = new url.URL(href, pageUrl).href;
 
-        await browser.debug();
         http.get(resolvedHref, res => {
             expect(res.statusCode).toBe(200);
             done();
