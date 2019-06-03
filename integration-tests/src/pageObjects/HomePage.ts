@@ -1,8 +1,15 @@
 import Page from './Page';
 
+declare global {
+    namespace NodeJS {
+        interface Global {
+            serverPort?: number;
+        }
+    }
+}
+
 class HomePage implements Page {
     async open() {
-        // @ts-ignore
         await browser.url(`http://localhost:${global.serverPort}`);
     }
 
