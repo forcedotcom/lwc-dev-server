@@ -19,6 +19,7 @@ beforeEach(async () => {
         capabilities: {
             browserName: process.env.BROWSER_NAME || 'chrome',
             'goog:chromeOptions': {
+                // @ts-ignore
                 w3c: 'true',
                 args:
                     process.env.HEADLESS === 'false'
