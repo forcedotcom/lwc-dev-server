@@ -1,24 +1,39 @@
 import Page from './Page';
 
 class HomePage implements Page {
+    private container: WebdriverIO.Element | undefined;
+
+    constructor() {}
+
     async open() {
         await browser.url(`http://localhost:${global.serverPort}`);
-    }
-
-    get container(): Promise<WebdriverIO.Element> {
-        const container = browser
+        let self = this;
+        return browser
             .$('talon-app')
             .then(el => el.shadow$('localdevserver-layout'))
             .then(el => el.$('talon-router-container'))
-            .then(el => el.shadow$('localdevserver-home'));
-
-        return container;
+            .then(el => el.shadow$('localdevserver-home'))
+            .then(el => (self.container = el));
     }
 
     get containerList(): Promise<WebdriverIO.Element> {
-        return this.container.then(container => {
-            return container.shadow$('.component-list');
-        });
+        if (this.container) {
+            return Promise.resolve(this.container.shadow$('.component-list'));
+        }
+        throw new Error('container not initialized first, call open() first');
+    }
+
+    protected get filterInput(): Promise<WebdriverIO.Element> {
+        if (this.container) {
+            return Promise.resolve(
+                this.container.shadow$('input[name="component-filter"]')
+            );
+        }
+        throw new Error('container not initialized first, call open() first');
+    }
+
+    public async filter(filter: string) {
+        return this.filterInput.then(el => el.setValue(filter));
     }
 }
 
