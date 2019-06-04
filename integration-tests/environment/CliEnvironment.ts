@@ -62,7 +62,12 @@ export default class CliEnvironment extends BaseEnvironment {
 
         let commandArgs: Array<string> = [];
         if (params['command-args']) {
-            commandArgs = [...params['command-args']];
+            const value = params['command-args'];
+            if (Array.isArray(value)) {
+                commandArgs = value.map(v => v.trim());
+            } else {
+                commandArgs = value.split(' ').map(v => v.trim());
+            }
         }
         this.commandArgs = commandArgs;
     }
@@ -103,7 +108,7 @@ export default class CliEnvironment extends BaseEnvironment {
 
             serverProcess.stderr.on('data', data => {
                 const stderr = data.toString('utf8');
-                log(stderr);
+                console.error(stderr);
                 // too much stuff is printing logs to stderr
                 // reject(new Error(stderr));
             });
