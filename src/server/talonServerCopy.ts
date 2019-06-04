@@ -9,10 +9,9 @@ import {
     templateMiddleware,
     resourceMiddleware,
     apiMiddleware,
-    compileErrorMiddleware,
-    startContext,
-    endContext
+    compileErrorMiddleware
 } from '@talon/compiler';
+import { startContext, endContext } from '@talon/compiler';
 import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
