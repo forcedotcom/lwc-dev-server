@@ -1,8 +1,8 @@
 import debug from 'debug';
-import Project from '../../dist/common/Project';
+import Project from '../../src/common/Project';
 import BaseEnvironment from './BaseEnvironment';
-import LocalDevServer from '../../dist/server/LocalDevServer';
-import { defaultPort } from '../../dist/user/LocalDevServerConfiguration';
+import LocalDevServer from '../../src/server/LocalDevServer';
+import { defaultPort } from '../../src/user/LocalDevServerConfiguration';
 
 const log = debug('localdevserver');
 

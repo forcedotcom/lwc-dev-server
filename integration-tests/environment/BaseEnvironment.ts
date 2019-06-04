@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';
 import NodeEnvironment from 'jest-environment-node';
-import { defaultOutputDirectory } from '../../dist/server/LocalDevServer';
+import { defaultOutputDirectory } from '../../src/server/LocalDevServer';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
 
