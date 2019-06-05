@@ -19,13 +19,13 @@ export default class Home extends LightningElement {
 `;
     @track _components = [];
 
-    @api componentsFilter = '';
+    @track componentsFilter = '';
 
     @api
     get components() {
         if (this.componentsFilter) {
             return this._components.filter(item => {
-                return item.title.startsWith(this.componentsFilter);
+                return item.title.toLowerCase().includes(this.componentsFilter);
             });
         }
         return this._components;
@@ -45,6 +45,6 @@ export default class Home extends LightningElement {
     }
 
     onSearchChange(e) {
-        this.componentsFilter = e.srcElement.value;
+        this.componentsFilter = e.srcElement.value.toLowerCase();
     }
 }

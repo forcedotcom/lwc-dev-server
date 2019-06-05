@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
-import { SfdxProject } from '@salesforce/core';
 
 /**
  * The project object describes two things.
