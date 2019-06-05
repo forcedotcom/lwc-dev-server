@@ -8,15 +8,15 @@ describe('Component Listing on the Home Page', () => {
         const text = await list.getText();
 
         expect(text).toBe(
-            'test-component1\ntest-componentOne\ntest-componentTwo\ntest-hello'
+            'test-component1\ntest-componentOne\ntest-componentTwo\ntest-hello\ntest-theLife'
         );
     });
 
     it('opens the home page, checks all list', async () => {
         await HomePage.open();
-        await HomePage.filter('hell');
+        await HomePage.filter('hel');
         const text = await (await HomePage.containerList).getText();
 
-        expect(text).toBe('test-hello');
+        expect(text).toBe('test-hello\ntest-theLife');
     });
 });

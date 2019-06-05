@@ -25,7 +25,7 @@ export default class Home extends LightningElement {
     get components() {
         if (this.componentsFilter) {
             return this._components.filter(item => {
-                return item.title.indexOf(this.componentsFilter) != -1;
+                return item.title.toLowerCase().includes(this.componentsFilter);
             });
         }
         return this._components;
@@ -45,6 +45,6 @@ export default class Home extends LightningElement {
     }
 
     onSearchChange(e) {
-        this.componentsFilter = e.srcElement.value;
+        this.componentsFilter = e.srcElement.value.toLowerCase();
     }
 }

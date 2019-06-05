@@ -3,9 +3,7 @@ import Page from './Page';
 class HomePage implements Page {
     private container: WebdriverIO.Element | undefined;
 
-    constructor() {}
-
-    async open() {
+    public async open() {
         await browser.url(`http://localhost:${global.serverPort}`);
         let self = this;
         return browser
@@ -16,7 +14,7 @@ class HomePage implements Page {
             .then(el => (self.container = el));
     }
 
-    get containerList(): Promise<WebdriverIO.Element> {
+    public get containerList(): Promise<WebdriverIO.Element> {
         if (this.container) {
             return Promise.resolve(this.container.shadow$('.component-list'));
         }
