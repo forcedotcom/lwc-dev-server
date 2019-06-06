@@ -141,7 +141,7 @@ npm publish --registry http://platform-cli-registry.eng.sfdc.net:4880
 You can pass in a pattern or a test filename after `yarn test` to run just a specific test, for example:
 
 ```sh
-yarn test dev.test.ts # will only run tests in this file
+yarn test dev.test.ts # will only run tests in this file    
 ```
 
 For integration tests use `test:e2e`:
@@ -150,13 +150,13 @@ For integration tests use `test:e2e`:
 yarn test:e2e dependencies # will run dependencies.test.ts
 ```
 
-Jest has (many other options)[https://jestjs.io/docs/en/cli#running-from-the-command-line] for selecting which tests to run as well.
+Jest has [many other options](https://jestjs.io/docs/en/cli#running-from-the-command-line) for selecting which tests to run as well.
 
 ### Integration Tests
 
 Integration tests can specify a jest docblock prama to choose the environment and other parameters.
 
-Specifying the environment:
+Specify the environment:
 
 ```js
 /**
@@ -164,7 +164,7 @@ Specifying the environment:
  */
 ```
 
-Specifying the project folder (defaults to `project`):
+Specify the project folder (defaults to `./project`):
 
 ```js
 /**
@@ -172,7 +172,7 @@ Specifying the project folder (defaults to `project`):
  */
 ```
 
-See the (specific environment typescript files)[/integration-tests/environment ]for more documentation on available parameters for tests using that environment.
+See the [specific environment typescript files](/integration-tests/environment ) for more documentation on available parameters for tests using that environment.
 
 #### Debugging
 
