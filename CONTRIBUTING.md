@@ -134,21 +134,47 @@ Then publish it:
 npm publish --registry http://platform-cli-registry.eng.sfdc.net:4880
 ```
 
-## Running Tests
+## Tests
 
 ### Running Specific Tests
 
 You can pass in a pattern or a test filename after `yarn test` to run just a specific test, for example:
 
 ```sh
-yarn test dependencies # will run dependencies.test.ts
+yarn test dev.test.ts # will only run tests in this file
+```
+
+For integration tests use `test:e2e`:
+
+```sh
+yarn test:e2e dependencies # will run dependencies.test.ts
 ```
 
 Jest has (many other options)[https://jestjs.io/docs/en/cli#running-from-the-command-line] for selecting which tests to run as well.
 
-### Debugging
+### Integration Tests
 
-#### Integration Tests
+Integration tests can specify a jest docblock prama to choose the environment and other parameters.
+
+Specifying the environment:
+
+```js
+/**
+ * @jest-environment ./environment/DefaultEnvironment.js
+ */
+```
+
+Specifying the project folder (defaults to `project`):
+
+```js
+/**
+ * @project ../relative/path/to/project
+ */
+```
+
+See the (specific environment typescript files)[/integration-tests/environment ]for more documentation on available parameters for tests using that environment.
+
+#### Debugging
 
 Add this line to your test:
 
@@ -159,6 +185,6 @@ await browser.debug();
 It will leave the browser open and you can REPL in the terminal (e.g., use `$` to find elements on the page). In this case you will want to temporarily increase the timeout with `jest.setTimeout` in your test file, or when running the test set the `DEBUG` environment variable which will increase the timeout to one day:
 
 ```sh
-DEBUG=true yarn test test-file
-DEBUG=localdevserver yarn test test-file
+DEBUG=true yarn test:e2e test-file
+DEBUG=localdevserver yarn test:e2e test-file
 ```
