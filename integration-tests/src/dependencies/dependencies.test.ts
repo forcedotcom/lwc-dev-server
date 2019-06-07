@@ -13,8 +13,8 @@ describe('Serving container default static resources', () => {
 
         expect(await stylesheet.isExisting()).toBeTruthy();
 
-        const pageUrl = await browser.getUrl();
         const href = await stylesheet.getAttribute('href');
+        const pageUrl = await browser.getUrl();
         const resolvedHref = new url.URL(href, pageUrl).href;
 
         http.get(resolvedHref, res => {
