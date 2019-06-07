@@ -1,7 +1,7 @@
 import http from 'http';
 import url from 'url';
 import HomePage from '../pageObjects/HomePage';
-import PreviewPage from '../pageObjects/PreviewPage';
+import PreviewTestComponentPage from '../pageObjects/PreviewTestComponentPage';
 
 describe('Serving container default static resources', () => {
     it('responds with code 200 for the SLDS CSS', async done => {
@@ -24,16 +24,10 @@ describe('Serving container default static resources', () => {
     });
 
     it('responds with code 200 for the utility icon sprite', async done => {
-        await PreviewPage.open('test', 'component');
+        await PreviewTestComponentPage.open();
 
-        const element = await PreviewPage.container
-            .then(el => el.shadow$('test-component'))
-            .then(el => el.shadow$('lightning-icon'))
-            .then(el => el.shadow$('lightning-primitive-icon'))
-            .then(el => el.shadow$('use'));
-
+        const href = await PreviewTestComponentPage.lightningIconHref;
         const pageUrl = await browser.getUrl();
-        const href = await element.getAttribute('xlink:href');
         const resolvedHref = new url.URL(href, pageUrl).href;
 
         http.get(resolvedHref, res => {

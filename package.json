@@ -94,6 +94,7 @@
     "@types/xml2js": "^0.4.4",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "aws-sdk": "^2.445.0",
+    "decamelize": "^3.2.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
