@@ -13,7 +13,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest All",
+      "name": "Jest: All Unit Tests",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest",
       "args": [
         "--runInBand",
@@ -27,12 +27,28 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest Current File",
+      "name": "Jest: Current File (unit test)",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest",
       "args": [
         "${fileBasenameNoExtension}",
         "--config",
         "jest.config.js",
+        "--coverage",
+        "false"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest: Current File (integration test)",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": [
+        "${fileBasenameNoExtension}",
+        "--config",
+        "integration-tests/jest.config.integration-test.js",
         "--coverage",
         "false"
       ],

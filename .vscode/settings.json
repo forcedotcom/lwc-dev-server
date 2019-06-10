@@ -13,5 +13,12 @@
     "**/test-projects/**",
     "**/integration-tests/**"
   ],
+  "eslint.validate": [
+    "javascript",
+    {
+      "language": "typescript",
+      "autoFix": true
+    }
+  ],
   "salesforcedx-vscode-lightning.activationMode": "always"
 }
