@@ -1,5 +1,6 @@
 {
   "commandDescription": "development locally of your Lightning Web Components without uploading to salesforce",
   "portFlagDescription": "port to run local dev server on, defaults to 3333",
+  "tokenFlagDescription": "salesforce rest API authorized token, defaults to SFDX provided authentication",
   "errorNoOrgApis": "No API levels found for the org '%s'."
 }

@@ -41,7 +41,8 @@ export default class LocalDevServer {
 
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
-            path.join(packageRoot, 'vendors', `dependencies-${version}`)
+            // TODO FIXME! 220 LDS does not appear to work with aggregate-ui
+            path.join(packageRoot, 'vendors', 'dependencies-218') // `dependencies-${version}`)
         );
 
         // our own lwc modules to host the local app
@@ -96,7 +97,7 @@ export default class LocalDevServer {
             apiEndpoint: configuration.endpoint,
             recordApiCalls: false,
             onProxyReq: configuration.onProxyReq,
-            pathRewrite: this.pathRewrite
+            pathRewrite: this.pathRewrite(configuration.api_version || '45.0')
         };
 
         try {
@@ -160,17 +161,16 @@ export default class LocalDevServer {
         }
     }
 
-    private pathRewrite(localPath: string) {
-        let retVal = localPath;
-        // Strip /api if we start with api
-        if (retVal.startsWith('/api/')) {
-            retVal = retVal.substring(4);
-        }
+    private pathRewrite(version: string): Function {
+        return (localPath: string) => {
+            let retVal = localPath;
+            // Strip /api if we start with api
+            if (retVal.startsWith('/api/')) {
+                retVal = retVal.substring(4);
+            }
+            retVal = retVal.replace(/v[\d]*\.0/, `v${version}`);
 
-        // hardcode our api version for now
-        retVal = retVal.replace('v47.0', 'v45.0');
-        retVal = retVal.replace('v46.0', 'v45.0');
-
-        return retVal;
+            return retVal;
+        };
     }
 }

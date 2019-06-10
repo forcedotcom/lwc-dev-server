@@ -46,18 +46,14 @@ export default class Server extends Command {
 
         if (!project.isSfdx && !fs.existsSync(project.directory)) {
             console.error(
-                `Failed starting local dev server in directory: ${
-                    project.directory
-                }.
+                `Failed starting local dev server in directory: ${project.directory}.
                  No project could be found in the current or parent directory.`
             );
             process.exit(1);
         }
 
         console.log(
-            `Starting the local dev server in directory: ${
-                project.directory
-            } with component: ${main}`
+            `Starting the local dev server in directory: ${project.directory} with component: ${main}`
         );
 
         this.startServer(project, main);

@@ -25,7 +25,7 @@ const log = debug('localdevserver');
  *
  * @see https://jestjs.io/docs/en/configuration#testenvironment-string
  */
-class DefaultEnvironment extends BaseEnvironment {
+export default class DefaultEnvironment extends BaseEnvironment {
     server?: LocalDevServer;
 
     async setup() {
@@ -59,5 +59,3 @@ class DefaultEnvironment extends BaseEnvironment {
         await super.teardown();
     }
 }
-
-module.exports = DefaultEnvironment;

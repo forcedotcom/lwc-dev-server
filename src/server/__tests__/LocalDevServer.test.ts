@@ -48,14 +48,12 @@ function mockProject({
 
 describe('LocalDevServer', () => {
     beforeEach(() => {
-        jest.spyOn(talonServer, 'createServer').mockImplementation(
-            (): any => {
-                return {
-                    start: jest.fn(),
-                    use: jest.fn()
-                };
-            }
-        );
+        jest.spyOn(talonServer, 'createServer').mockImplementation((): any => {
+            return {
+                start: jest.fn(),
+                use: jest.fn()
+            };
+        });
     });
 
     afterEach(() => {

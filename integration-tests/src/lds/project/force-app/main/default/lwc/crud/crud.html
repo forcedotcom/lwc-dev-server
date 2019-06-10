@@ -1,0 +1,11 @@
+<template>
+    <lightning-input label="Name" class="slds-m-bottom_x-small name-input" ></lightning-input>
+    <br/>
+    <lightning-button label="Create" variant="brand" class="create-btn" onclick={create} ></lightning-button>
+    <br/>
+    <p>id: <span class="recordId">{readId}</span> value: <span class="data">{readData}</span></p>
+    <lightning-input label="Value" class="slds-m-bottom_x-small value-input" value={readData}></lightning-input>
+    <lightning-button label="Read" variant="brand" class="read-btn" onclick={read} ></lightning-button>
+    <lightning-button label="Edit" variant="brand" class="edit-btn" onclick={edit} ></lightning-button>
+    <lightning-button label="Delete" variant="brand" class="delete-btn" onclick={delet} ></lightning-button>
+</template>

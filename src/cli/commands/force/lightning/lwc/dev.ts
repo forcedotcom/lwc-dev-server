@@ -71,8 +71,11 @@ export default class Dev extends SfdxCommand {
             `You appear to be running on a Salesforce instance that can support up to API level ${api_version}`
         );
 
-        // TODO check if it's already running on the port first
+        if (componentName) {
+            debug(`You wanted to open this component: ${componentName}`);
+        }
 
+        const accessToken = conn.accessToken;
         // custom onProxyReq function to inject into Talon's proxy
         // this will insert the Authorization header to have the requests be authenticated
         const onProxyReq = function(
@@ -80,7 +83,7 @@ export default class Dev extends SfdxCommand {
             req: http.IncomingMessage,
             res: http.ServerResponse
         ) {
-            proxyReq.setHeader('Authorization', `Bearer ${conn.accessToken}`);
+            proxyReq.setHeader('Authorization', `Bearer ${accessToken}`);
             // req.headers.Cookie = `sid=${sid_cookie}`;
         };
 
@@ -100,12 +103,11 @@ export default class Dev extends SfdxCommand {
             endpoint: project.configuration.endpoint,
             onProxyReq: JSON.stringify(project.configuration.onProxyReq),
             port,
-            token: conn.accessToken
+            token: accessToken
         };
         debug(JSON.stringify(retValue));
 
         // Start local dev server
-        // TODO pass in component to open & open browser
         new LocalDevServer().start(project);
 
         return retValue;

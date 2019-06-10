@@ -136,9 +136,7 @@ export default class Project {
                 jsonFileContents = fs.readFileSync(sfdxProjectPath, 'utf-8');
             } catch (e) {
                 console.error(
-                    `Loading ${sfdxProjectPath} failed JSON parsing with error ${
-                        e.message
-                    }`
+                    `Loading ${sfdxProjectPath} failed JSON parsing with error ${e.message}`
                 );
             }
 
@@ -167,9 +165,7 @@ export default class Project {
                 }
             } catch (e) {
                 console.error(
-                    `Loading configuration from ${sfdxProjectPath} failed with the error ${
-                        e.message
-                    }`
+                    `Loading configuration from ${sfdxProjectPath} failed with the error ${e.message}`
                 );
             }
         }

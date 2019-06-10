@@ -23,6 +23,7 @@ describe('home.js', () => {
 
     beforeAll(() => {
         const mockFetchPromise = Promise.resolve({
+            ok: true,
             json: () =>
                 Promise.resolve([
                     { title: 'c-test1', url: '/preview/c/test1' },

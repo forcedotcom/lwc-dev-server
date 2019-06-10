@@ -11,7 +11,7 @@ import {
     apiMiddleware,
     compileErrorMiddleware
 } from '@talon/compiler';
-import { startContext, endContext } from '@talon/compiler';
+import { startContext, endContext, staticMiddleware } from '@talon/compiler';
 import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
@@ -156,7 +156,7 @@ export async function createServer(options: object, apiConfig: any = {}) {
     app.use(express.static(FRAMEWORK_PUBLIC_DIR, staticOptions));
 
     // Serve static files from the template public dir
-    app.use(express.static(`${outputDir}/${PUBLIC_DIR}`, staticOptions));
+    app.use(staticMiddleware());
 
     // Proxy, record and replay API calls
     app.use(apiMiddleware(apiConfig));

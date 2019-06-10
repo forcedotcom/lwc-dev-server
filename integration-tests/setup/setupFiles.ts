@@ -1,4 +1,4 @@
-import { remote } from 'webdriverio';
+import { remote, BrowserObject } from 'webdriverio';
 
 const debug = process.env.DEBUG;
 
