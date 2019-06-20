@@ -47,6 +47,7 @@ export default class Error extends LightningElement {
                 credentials: 'same-origin'
             })
                 .then(response => {
+                    debugger;
                     if (!response.ok) {
                         return;
                     }

@@ -1,14 +1,8 @@
 import { createElement } from 'lwc';
+import { flushPromises } from '../../../__tests__/testutils';
 import Home from '../home';
 
 describe('home.js', () => {
-    // Helper function to wait until the microtask queue is empty.
-    // This is needed for promise timing.
-    function flushPromises() {
-        // eslint-disable-next-line no-undef
-        return new Promise(resolve => setImmediate(resolve));
-    }
-
     afterEach(() => {
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
