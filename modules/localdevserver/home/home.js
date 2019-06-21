@@ -23,7 +23,6 @@ export default class Home extends LightningElement {
 
     @api
     get components() {
-        debugger;
         if (this.componentsFilter) {
             return this._components.filter(item => {
                 return item.title.toLowerCase().includes(this.componentsFilter);
@@ -41,9 +40,7 @@ export default class Home extends LightningElement {
                 return response.json();
             })
             .then(data => {
-                debugger;
                 this._components = data;
-                debugger;
             });
     }
 
