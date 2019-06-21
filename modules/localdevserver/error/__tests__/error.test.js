@@ -1,6 +1,7 @@
 import { createElement } from 'lwc';
 import ErrorStacks from 'localdevserver/error';
-import { flushPromises } from '../../../__tests__/testutils';
+
+jest.useFakeTimers();
 
 // this is indirectly imported by talon framework stuff, and needs to be mocked!
 jest.mock('@talon/connect-gen/dist/forceChatterApi/util/util', () => ({}), {
@@ -52,7 +53,7 @@ function createComponentUnderTest(props) {
 }
 
 describe('localdevserver-error-stacks', () => {
-    it.skip('renders - no error', () => {
+    it('renders - no error', () => {
         const componentElement = createComponentUnderTest();
         expect(componentElement).toMatchSnapshot();
     });
@@ -68,7 +69,8 @@ describe('localdevserver-error-stacks', () => {
             );
 
             const componentElement = createComponentUnderTest({ error });
-            await flushPromises();
+            jest.runAllTicks();
+            jest.runAllTimers();
             if (error.filename) {
                 const href = componentElement.shadowRoot
                     .querySelector('a')

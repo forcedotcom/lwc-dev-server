@@ -2,10 +2,7 @@ import { createElement } from 'lwc';
 import ErrorStacks from 'localdevserver/errorStacks';
 import { flushPromises } from '../../../__tests__/testutils';
 
-// // this is indirectly imported by talon framework stuff, and needs to be mocked!
-// jest.mock('@talon/connect-gen/dist/forceChatterApi/util/util', () => ({}), {
-//     virtual: true
-// });
+jest.useFakeTimers();
 
 function createComponentUnderTest(props) {
     const el = createElement('localdevserver-error-stacks', {
@@ -21,21 +18,21 @@ describe('localdevserver-error-stacks', () => {
         const componentElement = createComponentUnderTest();
         expect(componentElement).toMatchSnapshot();
     });
-    it('renders - error - string stack', async () => {
+    it('renders - error - string stack', () => {
         const err = new Error();
         const componentElement = createComponentUnderTest({ error: err });
-        await flushPromises();
+        jest.runAllTicks();
         const container = componentElement.shadowRoot.querySelector(
             '.collapse'
         );
         const len = err.stack.split('\n').length;
         expect(container.textContent).toMatch(`${len} stack frames collapsed`);
     });
-    it('renders - error - array stack', async () => {
+    it('renders - error - array stack', () => {
         const err = new Error();
         err.stack = ['one,two,three'];
         const componentElement = createComponentUnderTest({ error: err });
-        await flushPromises();
+        jest.runAllTicks();
         const container = componentElement.shadowRoot.querySelector(
             '.collapse'
         );
@@ -53,6 +50,7 @@ describe('localdevserver-error-stacks', () => {
         container.dispatchEvent(evt);
         await flushPromises();
         const pre = componentElement.shadowRoot.querySelector('pre');
+
         expect(pre.textContent).toMatch(err.stack);
 
         const collapse = componentElement.shadowRoot.querySelector('.collapse');

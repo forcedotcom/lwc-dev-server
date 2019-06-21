@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-error-stacks renders 1`] = `
+<localdevserver-layout>
+  #shadow-root(open)
+    <slot
+      name="header"
+    />
+    <slot />
+    <slot
+      name="footer"
+    />
+</localdevserver-layout>
+`;

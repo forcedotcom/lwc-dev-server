@@ -24,6 +24,7 @@ export default class CodeHighlighter extends LightningElement {
         return this._lineOffset;
     }
     doHighlight() {
+        debugger;
         const div = this.template.querySelector('div');
         if (div && this.code) {
             while (div.hasChildNodes()) {
