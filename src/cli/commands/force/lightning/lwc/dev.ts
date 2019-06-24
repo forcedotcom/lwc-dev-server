@@ -19,16 +19,13 @@ export default class Dev extends SfdxCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
-        `$ sfdx force:lighting:lwc:dev --open myComponent`
+        `$ sfdx force:lighting:lwc:dev`,
+        `$ sfdx force:lighting:lwc:dev --port 3000`
     ];
 
     public static args = [{ open: 'file', name: 'lwc-dev' }];
 
     protected static flagsConfig = {
-        open: flags.string({
-            char: 'o',
-            description: messages.getMessage('openFlagDescription')
-        }),
         port: flags.integer({
             char: 'p',
             description: messages.getMessage('portFlagDescription')
@@ -45,8 +42,6 @@ export default class Dev extends SfdxCommand {
     protected static requiresProject = true;
 
     public async run(): Promise<AnyJson> {
-        const componentName = this.flags.open;
-
         let port: number;
         if (this.flags.port !== undefined && this.flags.port !== null) {
             port = this.flags.port;
@@ -76,12 +71,6 @@ export default class Dev extends SfdxCommand {
             `You appear to be running on a Salesforce instance that can support up to API level ${api_version}`
         );
 
-        if (componentName) {
-            debug(`You wanted to open this component: ${componentName}`);
-        }
-
-        // TODO resolve location of `componentName`, ensure directory structure is imported / compiled
-
         // TODO check if it's already running on the port first
 
         // custom onProxyReq function to inject into Talon's proxy
@@ -110,7 +99,6 @@ export default class Dev extends SfdxCommand {
             api_version: project.configuration.api_version,
             endpoint: project.configuration.endpoint,
             onProxyReq: JSON.stringify(project.configuration.onProxyReq),
-            componentName,
             port,
             token: conn.accessToken
         };
