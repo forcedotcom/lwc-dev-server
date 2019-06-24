@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-error-stacks renders - arraystack 1`] = `"array stack"`;
+
+exports[`localdevserver-error-stacks renders - filenameinmessage 1`] = `" with filename in message"`;
+
+exports[`localdevserver-error-stacks renders - no error 1`] = `
+<localdevserver-error>
+  #shadow-root(open)
+    <section
+      aria-modal="true"
+      class="slds-modal slds-fade-in-open slds-modal_large"
+      role="dialog"
+      tabindex="-1"
+    >
+      <div
+        class="slds-modal__container"
+      >
+        <header
+          class="slds-modal__header"
+        >
+          <h2
+            id="modal-heading-01-1"
+          >
+            <img
+              class="error-image"
+              src="/assets/Buggy.svg"
+            />
+          </h2>
+        </header>
+        <div
+          class="slds-modal__content slds-p-around_medium"
+        >
+          <h1
+            class="error-message slds-text-heading_large"
+          />
+          <h2
+            class="error-location slds-text-heading_small"
+          />
+          <localdevserver-code-highlighter
+            class="error-code"
+          >
+            #shadow-root(open)
+              <div />
+          </localdevserver-code-highlighter>
+          <localdevserver-error-stacks
+            class="error-stacks"
+          >
+            #shadow-root(open)
+              <div
+                class="stack-message slds-text-heading_small"
+              >
+                <div
+                  class="button-container"
+                >
+                  <div
+                    class="line"
+                  />
+                  <div
+                    class="collapse-container"
+                  >
+                    <div
+                      class="collapse"
+                    >
+                      0 stack frames collapsed
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </localdevserver-error-stacks>
+          <div
+            class="info-note slds-text-heading_small"
+          >
+            This screen is visible only in development. It will not appear if the app crashes in production. Open your browser's developer console to further inspect this error.
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      class="slds-backdrop slds-backdrop_open"
+    />
+</localdevserver-error>
+`;
+
+exports[`localdevserver-error-stacks renders - simple 1`] = `"simple error"`;
+
+exports[`localdevserver-error-stacks renders - withfilename 1`] = `"with filename"`;
+
+exports[`localdevserver-error-stacks renders - withfilenameandline 1`] = `"with filename and line"`;

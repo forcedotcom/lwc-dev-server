@@ -1,0 +1,850 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-code-highlighter renders - code, no line info 1`] = `
+<localdevserver-code-highlighter>
+  #shadow-root(open)
+    <div>
+      <pre
+        class="line-numbers language-javascript"
+        data-line="undefined"
+        data-start="1"
+        style="counter-reset: linenumber 0;"
+      >
+        <code
+          class=" language-javascript"
+        >
+          
+
+          <span
+            class="token comment"
+          >
+            // this is sameple code
+          </span>
+          
+
+          <span
+            class="token comment"
+          >
+            // forEach polyfill
+          </span>
+          
+
+          <span
+            class="token class-name"
+          >
+            Array
+          </span>
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          prototype
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          <span
+            class="token function-variable function"
+          >
+            forEach
+          </span>
+           
+          <span
+            class="token operator"
+          >
+            =
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            function
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          <span
+            class="token parameter"
+          >
+            callback
+            <span
+              class="token punctuation"
+            >
+              ,
+            </span>
+             thisArg
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token punctuation"
+          >
+            {
+          </span>
+          
+    
+          <span
+            class="token keyword"
+          >
+            if
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          <span
+            class="token keyword"
+          >
+            typeof
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          callback
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token operator"
+          >
+            !==
+          </span>
+           
+          <span
+            class="token string"
+          >
+            "function"
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token punctuation"
+          >
+            {
+          </span>
+          
+        
+          <span
+            class="token keyword"
+          >
+            throw
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            new
+          </span>
+           
+          <span
+            class="token class-name"
+          >
+            TypeError
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          callback 
+          <span
+            class="token operator"
+          >
+            +
+          </span>
+           
+          <span
+            class="token string"
+          >
+            " is not a function!"
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+          
+    
+          <span
+            class="token punctuation"
+          >
+            }
+          </span>
+          
+    
+          <span
+            class="token keyword"
+          >
+            var
+          </span>
+           len 
+          <span
+            class="token operator"
+          >
+            =
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            this
+          </span>
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          length
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+          
+    
+          <span
+            class="token keyword"
+          >
+            for
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          <span
+            class="token keyword"
+          >
+            var
+          </span>
+           i 
+          <span
+            class="token operator"
+          >
+            =
+          </span>
+           
+          <span
+            class="token number"
+          >
+            0
+          </span>
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+           i 
+          <span
+            class="token operator"
+          >
+            &lt;
+          </span>
+           len
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+           i
+          <span
+            class="token operator"
+          >
+            ++
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token punctuation"
+          >
+            {
+          </span>
+          
+        
+          <span
+            class="token function"
+          >
+            callback
+          </span>
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          <span
+            class="token function"
+          >
+            call
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          thisArg
+          <span
+            class="token punctuation"
+          >
+            ,
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            this
+          </span>
+          <span
+            class="token punctuation"
+          >
+            [
+          </span>
+          i
+          <span
+            class="token punctuation"
+          >
+            ]
+          </span>
+          <span
+            class="token punctuation"
+          >
+            ,
+          </span>
+           i
+          <span
+            class="token punctuation"
+          >
+            ,
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            this
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+          
+    
+          <span
+            class="token punctuation"
+          >
+            }
+          </span>
+          
+
+          <span
+            class="token punctuation"
+          >
+            }
+          </span>
+          <span
+            aria-hidden="true"
+            class="line-numbers-rows"
+            localdevserver-codehighlighter_codehighlighter=""
+          >
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+          </span>
+        </code>
+        <div
+          aria-hidden="true"
+          class="line-highlight"
+          data-range="undefined"
+          localdevserver-codehighlighter_codehighlighter=""
+        />
+      </pre>
+    </div>
+</localdevserver-code-highlighter>
+`;
+
+exports[`localdevserver-code-highlighter renders - code, with line info 1`] = `
+<localdevserver-code-highlighter>
+  #shadow-root(open)
+    <div>
+      <pre
+        class="line-numbers  language-javascript"
+        data-line="undefined"
+        data-start="3"
+        style="counter-reset: linenumber 2;"
+      >
+        <code
+          class="  language-javascript"
+        >
+          
+
+          <span
+            class="token comment"
+          >
+            // this is sameple code
+          </span>
+          
+
+          <span
+            class="token comment"
+          >
+            // forEach polyfill
+          </span>
+          
+
+          <span
+            class="token class-name"
+          >
+            Array
+          </span>
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          prototype
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          <span
+            class="token function-variable function"
+          >
+            forEach
+          </span>
+           
+          <span
+            class="token operator"
+          >
+            =
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            function
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          <span
+            class="token parameter"
+          >
+            callback
+            <span
+              class="token punctuation"
+            >
+              ,
+            </span>
+             thisArg
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token punctuation"
+          >
+            {
+          </span>
+          
+    
+          <span
+            class="token keyword"
+          >
+            if
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          <span
+            class="token keyword"
+          >
+            typeof
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          callback
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token operator"
+          >
+            !==
+          </span>
+           
+          <span
+            class="token string"
+          >
+            "function"
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token punctuation"
+          >
+            {
+          </span>
+          
+        
+          <span
+            class="token keyword"
+          >
+            throw
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            new
+          </span>
+           
+          <span
+            class="token class-name"
+          >
+            TypeError
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          callback 
+          <span
+            class="token operator"
+          >
+            +
+          </span>
+           
+          <span
+            class="token string"
+          >
+            " is not a function!"
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+          
+    
+          <span
+            class="token punctuation"
+          >
+            }
+          </span>
+          
+    
+          <span
+            class="token keyword"
+          >
+            var
+          </span>
+           len 
+          <span
+            class="token operator"
+          >
+            =
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            this
+          </span>
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          length
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+          
+    
+          <span
+            class="token keyword"
+          >
+            for
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          <span
+            class="token keyword"
+          >
+            var
+          </span>
+           i 
+          <span
+            class="token operator"
+          >
+            =
+          </span>
+           
+          <span
+            class="token number"
+          >
+            0
+          </span>
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+           i 
+          <span
+            class="token operator"
+          >
+            &lt;
+          </span>
+           len
+          <span
+            class="token punctuation"
+          >
+            ;
+          </span>
+           i
+          <span
+            class="token operator"
+          >
+            ++
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+           
+          <span
+            class="token punctuation"
+          >
+            {
+          </span>
+          
+        
+          <span
+            class="token function"
+          >
+            callback
+          </span>
+          <span
+            class="token punctuation"
+          >
+            .
+          </span>
+          <span
+            class="token function"
+          >
+            call
+          </span>
+          <span
+            class="token punctuation"
+          >
+            (
+          </span>
+          thisArg
+          <span
+            class="token punctuation"
+          >
+            ,
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            this
+          </span>
+          <span
+            class="token punctuation"
+          >
+            [
+          </span>
+          i
+          <span
+            class="token punctuation"
+          >
+            ]
+          </span>
+          <span
+            class="token punctuation"
+          >
+            ,
+          </span>
+           i
+          <span
+            class="token punctuation"
+          >
+            ,
+          </span>
+           
+          <span
+            class="token keyword"
+          >
+            this
+          </span>
+          <span
+            class="token punctuation"
+          >
+            )
+          </span>
+          
+    
+          <span
+            class="token punctuation"
+          >
+            }
+          </span>
+          
+
+          <span
+            class="token punctuation"
+          >
+            }
+          </span>
+          <span
+            aria-hidden="true"
+            class="line-numbers-rows"
+            localdevserver-codehighlighter_codehighlighter=""
+          >
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+            <span
+              localdevserver-codehighlighter_codehighlighter=""
+            />
+          </span>
+        </code>
+        <div
+          aria-hidden="true"
+          class="line-highlight"
+          data-range="undefined"
+          localdevserver-codehighlighter_codehighlighter=""
+        />
+      </pre>
+    </div>
+</localdevserver-code-highlighter>
+`;
+
+exports[`localdevserver-code-highlighter renders - no code 1`] = `
+<localdevserver-code-highlighter>
+  #shadow-root(open)
+    <div />
+</localdevserver-code-highlighter>
+`;

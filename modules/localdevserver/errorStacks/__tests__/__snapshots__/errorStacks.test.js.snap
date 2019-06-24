@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-error-stacks renders - no error 1`] = `
+<localdevserver-error-stacks>
+  #shadow-root(open)
+    <div
+      class="stack-message slds-text-heading_small"
+    >
+      <div
+        class="button-container"
+      >
+        <div
+          class="line"
+        />
+        <div
+          class="collapse-container"
+        >
+          <div
+            class="collapse"
+          >
+            0 stack frames collapsed
+          </div>
+        </div>
+      </div>
+    </div>
+</localdevserver-error-stacks>
+`;

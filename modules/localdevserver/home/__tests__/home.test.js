@@ -1,14 +1,19 @@
 import { createElement } from 'lwc';
 import Home from '../home';
+import { flushPromises } from '../../../__tests__/testutils';
+
+jest.useFakeTimers();
+
+function createComponentUnderTest(props) {
+    const el = createElement('localdevserver-error-home', {
+        is: Home
+    });
+    Object.assign(el, props);
+    document.body.appendChild(el);
+    return el;
+}
 
 describe('home.js', () => {
-    // Helper function to wait until the microtask queue is empty.
-    // This is needed for promise timing.
-    function flushPromises() {
-        // eslint-disable-next-line no-undef
-        return new Promise(resolve => setImmediate(resolve));
-    }
-
     afterEach(() => {
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
@@ -27,46 +32,42 @@ describe('home.js', () => {
         global.fetch = jest.fn(() => mockFetchPromise);
     });
 
-    it('lists components', () => {
-        const element = createElement('localdevserver-home', { is: Home });
-        document.body.appendChild(element);
+    it('lists components', async () => {
+        const element = createComponentUnderTest();
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
-        return flushPromises().then(() => {
-            const componentList = element.shadowRoot.querySelector(
-                '.component-list'
-            );
-            expect(componentList.children.length).toBe(2);
-            expect(componentList.children[0].children[0].href).toMatch(
-                new RegExp('/preview/c/test1$')
-            );
-            expect(componentList.children[1].children[0].href).toMatch(
-                new RegExp('/preview/c/cmp2$')
-            );
-        });
+        await flushPromises();
+
+        const componentList = element.shadowRoot.querySelector(
+            '.component-list'
+        );
+        expect(componentList.children.length).toBe(2);
+        expect(componentList.children[0].children[0].href).toMatch(
+            new RegExp('/preview/c/test1$')
+        );
+        expect(componentList.children[1].children[0].href).toMatch(
+            new RegExp('/preview/c/cmp2$')
+        );
     });
 
-    it('filters components', () => {
-        const element = createElement('localdevserver-home', { is: Home });
-        document.body.appendChild(element);
+    it('filters components', async () => {
+        const element = createComponentUnderTest();
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
-        return flushPromises().then(() => {
-            const search = element.shadowRoot.querySelector(
-                'input[name="component-filter"]'
-            );
-            search.value = 'cmp';
-            search.dispatchEvent(new CustomEvent('change'));
+        await flushPromises();
+        const search = element.shadowRoot.querySelector(
+            'input[name="component-filter"]'
+        );
+        search.value = 'cmp';
+        search.dispatchEvent(new CustomEvent('change'));
 
-            return flushPromises().then(() => {
-                const componentList = element.shadowRoot.querySelector(
-                    '.component-list'
-                );
-                expect(componentList.children.length).toBe(1);
-                expect(componentList.children[0].children[0].href).toMatch(
-                    new RegExp('/preview/c/cmp2$')
-                );
-            });
-        });
+        await flushPromises();
+        const componentList = element.shadowRoot.querySelector(
+            '.component-list'
+        );
+        expect(componentList.children.length).toBe(1);
+        expect(componentList.children[0].children[0].href).toMatch(
+            new RegExp('/preview/c/cmp2$')
+        );
     });
 });
