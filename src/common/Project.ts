@@ -72,14 +72,17 @@ export default class Project {
         );
     }
 
-    public get staticResourcesDirectory(): string {
+    public get staticResourcesDirectory(): string | null {
         if (path.isAbsolute(this.configuration.staticResourcesDirectory)) {
             return this.configuration.staticResourcesDirectory;
         }
-        return path.join(
-            this.rootDirectory,
-            this.configuration.staticResourcesDirectory
-        );
+        if (this.configuration.staticResourcesDirectory !== '') {
+            return path.join(
+                this.rootDirectory,
+                this.configuration.staticResourcesDirectory
+            );
+        }
+        return null;
     }
 
     /**

@@ -322,5 +322,27 @@ describe('project', () => {
                 'my-project/specified/directory/assets/'
             );
         });
+
+        test('when staticResourcesDirectory is specified as empty in the config json file, project returns null', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': JSON.stringify({
+                        staticResourcesDirectory: ''
+                    })
+                }
+            });
+
+            const project = new Project('my-project/');
+
+            expect(project.staticResourcesDirectory).toBeNull();
+        });
     });
 });
