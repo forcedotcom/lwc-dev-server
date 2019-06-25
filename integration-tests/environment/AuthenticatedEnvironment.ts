@@ -56,8 +56,9 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
         if (this.token === null) {
             const connection = new jsforce.Connection({});
             this.global.jsforceConnection = connection;
+            console.log(`Logging in as ${process.env.SFDC_USER}`);
             this.token = await (async function() {
-                return new Promise<string>(resolve => {
+                return new Promise<string>((resolve, reject) => {
                     connection.login(
                         process.env.SFDC_USER || '',
                         process.env.SFDC_PWD || '',
@@ -66,6 +67,7 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
                                 return resolve(connection.accessToken);
                             }
                             console.error(JSON.stringify(err));
+                            reject(err);
                         }
                     );
                 });
