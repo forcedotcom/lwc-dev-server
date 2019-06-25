@@ -13,6 +13,7 @@ import { Server } from 'http';
 
 const debug = debugLogger('localdevserver');
 const packageRoot = path.join(__dirname, '..', '..');
+const DEFAULT_API_VERSION = '45.0';
 
 export const defaultOutputDirectory = '.localdevserver';
 
@@ -97,7 +98,9 @@ export default class LocalDevServer {
             apiEndpoint: configuration.endpoint,
             recordApiCalls: false,
             onProxyReq: configuration.onProxyReq,
-            pathRewrite: this.pathRewrite(configuration.api_version || '45.0')
+            pathRewrite: this.pathRewrite(
+                configuration.api_version || DEFAULT_API_VERSION
+            )
         };
 
         try {
