@@ -323,17 +323,10 @@ describe('project', () => {
             );
         });
 
-        test('when staticResourcesDirectory is specified as empty in the config json file, project returns null', () => {
+        test('when staticResourcesDirectory is specified as empty in the config json file, staticResourcesDirectory property returns null', () => {
             mock({
                 'my-project': {
-                    'sfdx-project.json': JSON.stringify({
-                        packageDirectories: [
-                            {
-                                path: 'force-app',
-                                default: true
-                            }
-                        ]
-                    }),
+                    'package.json': '{}',
                     'localdevserver.config.json': JSON.stringify({
                         staticResourcesDirectory: ''
                     })
