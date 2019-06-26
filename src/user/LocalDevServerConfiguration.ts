@@ -14,8 +14,7 @@ export default class LocalDevServerConfiguration {
                     jsonFileContents = fs.readFileSync(configFilePath, 'utf-8');
                 } catch (e) {
                     console.error(
-                        `Loading file ${configFilePath} failed with error: `,
-                        e
+                        `Loading file ${configFilePath} failed with error: ${e}`
                     );
                 }
             } else {
