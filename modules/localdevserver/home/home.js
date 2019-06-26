@@ -37,23 +37,20 @@ export default class Home extends LightningElement {
 
         // fetch data from the server
         fetch('/componentList')
-            .then(function(response) {
+            .then(async response => {
                 if (response.ok) {
                     return response.json();
                 }
                 // we had some kind of error
-                return response.text().then(text => {
-                    this.dispatchEvent(
-                        new ShowToastEvent({
-                            title: 'Error',
-                            message: `Error ${
-                                response.status
-                            } loading components: ${text}`,
-                            variant: 'error'
-                        })
-                    );
-                    return [];
-                });
+                const text = await response.text();
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error',
+                        message: `Error ${response.status} loading components: ${text}`,
+                        variant: 'error'
+                    })
+                );
+                return [];
             })
             .then(data => {
                 this._components = data;

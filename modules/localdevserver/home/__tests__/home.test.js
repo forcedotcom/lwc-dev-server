@@ -71,4 +71,23 @@ describe('home.js', () => {
             new RegExp('/preview/c/cmp2$')
         );
     });
+
+    it('fires toast event when componentList request fails', async () => {
+        const mockFetchPromise = Promise.resolve({
+            ok: false,
+            text: () => Promise.resolve('some kind of error')
+        });
+        global.fetch = jest.fn(() => mockFetchPromise);
+
+        const element = createComponentUnderTest();
+        let dispatchEventCalled = false;
+        element.addEventListener(
+            'lightning__showtoast',
+            () => (dispatchEventCalled = true)
+        );
+
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        await flushPromises();
+        expect(dispatchEventCalled).toBeTruthy();
+    });
 });
