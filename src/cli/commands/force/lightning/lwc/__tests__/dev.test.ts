@@ -33,10 +33,10 @@ describe('dev', () => {
         });
     }
 
-    function setupFlags(name = 'openedFileName') {
+    function setupFlags() {
         Object.defineProperty(dev, 'flags', {
             get: () => {
-                return { open: name };
+                return {};
             }
         });
     }
@@ -102,7 +102,6 @@ describe('dev', () => {
                 expect(result['endpoint']).toEqual('http://test.instance.url');
                 expect(result['orgId']).toEqual('testingOrgIDX');
                 expect(result['api_version']).toEqual('99.0');
-                expect(result['componentName']).toEqual('openedFileName');
                 expect(result['port']).toEqual(3333);
 
                 expect(startCalled).toBeTruthy();

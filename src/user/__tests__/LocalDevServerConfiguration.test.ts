@@ -28,6 +28,22 @@ describe('LocalDevServerConfiguration', () => {
         );
     });
 
+    test('when it cannot read the json file, it notifies you that an error occured.', () => {
+        mock({
+            'config.json': {}
+        });
+
+        console.error = jest.fn();
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+
+        // @ts-ignore
+        expect(console.error.mock.calls[0][0]).toBe(
+            'Loading file config.json failed with error: Error: EBADF: bad file descriptor, read'
+        );
+    });
+
     test('when you pass a file that is not json to the constructor, it notifies you that the file was an invalid syntax.', () => {
         mock({
             'config.json': '}{' // Invalid JSON

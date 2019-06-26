@@ -6,12 +6,6 @@ import fs from 'fs';
 export default class Server extends Command {
     static description = 'start the Lightning Local Development server';
 
-    //   static examples = [
-    //     `$ example-multi-ts hello
-    // hello world from ./src/hello.ts!
-    // `,
-    //   ]
-
     static flags = {
         help: flags.help({ char: 'h' }),
         port: flags.integer({
@@ -57,7 +51,7 @@ export default class Server extends Command {
                 }.
                  No project could be found in the current or parent directory.`
             );
-            process.exit();
+            process.exit(1);
         }
 
         console.log(
