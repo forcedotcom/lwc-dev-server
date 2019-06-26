@@ -71,10 +71,6 @@ export default class Dev extends SfdxCommand {
             `You appear to be running on a Salesforce instance that can support up to API level ${api_version}`
         );
 
-        if (componentName) {
-            debug(`You wanted to open this component: ${componentName}`);
-        }
-
         const accessToken = conn.accessToken;
         // custom onProxyReq function to inject into Talon's proxy
         // this will insert the Authorization header to have the requests be authenticated
