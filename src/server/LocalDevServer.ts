@@ -140,7 +140,7 @@ export default class LocalDevServer {
         }
     }
 
-    private async copyAssets(project: Project, dest: string) {
+    protected async copyAssets(project: Project, dest: string) {
         const distPath = path.join(packageRoot, 'dist');
         const assetsPath = path.join(dest, 'public', 'assets');
 
@@ -164,7 +164,7 @@ export default class LocalDevServer {
         }
     }
 
-    private pathRewrite(version: string): Function {
+    protected pathRewrite(version: string): Function {
         return (localPath: string) => {
             let retVal = localPath;
             // Strip /api if we start with api

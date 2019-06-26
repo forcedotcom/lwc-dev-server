@@ -4,11 +4,12 @@ import Project from '../../common/Project';
 import * as fileUtils from '../../common/fileUtils';
 import * as talonServer from '../talonServerCopy';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
-import { Server } from 'http';
+import cpx from 'cpx';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
 jest.mock('../talonServerCopy');
+jest.mock('cpx');
 
 function mockProject({
     projectPath,
@@ -231,6 +232,41 @@ describe('LocalDevServer', () => {
             await server.start(project);
 
             expect(server.port).toBe(5151);
+        });
+    });
+
+    describe('pathRewrite', () => {
+        class RewriteExposedLocalDevServer extends LocalDevServer {
+            public pathRewrite(version: string) {
+                return super.pathRewrite(version);
+            }
+        }
+
+        it('rewrites different api versions to the specified one', () => {
+            const server = new RewriteExposedLocalDevServer();
+            const rewriteFunction = server.pathRewrite('99.0');
+            expect(
+                rewriteFunction('/api/services/data/v47.0/ui-api/records')
+            ).toBe('/services/data/v99.0/ui-api/records');
+        });
+    });
+
+    describe('copyAssets', () => {
+        class CopyAssetsExposedLocalDevServer extends LocalDevServer {
+            public async copyAssets(project: Project, dest: string) {
+                return super.copyAssets(project, dest);
+            }
+        }
+
+        it('copies assests and "watches" them', async () => {
+            const server = new CopyAssetsExposedLocalDevServer();
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath });
+            // @ts-ignore
+            project.staticResourcesDirectory = '/tmp';
+
+            await server.copyAssets(project, 'wat');
+            expect(cpx.copy).toBeCalledTimes(1);
         });
     });
 });
