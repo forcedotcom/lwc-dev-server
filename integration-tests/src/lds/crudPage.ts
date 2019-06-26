@@ -1,7 +1,7 @@
 import PreviewPage from '../pageObjects/PreviewPage';
 import { Element } from 'webdriverio';
 
-export default class CRUDPage extends PreviewPage {
+class CRUDPage extends PreviewPage {
     private _recordId: string | null = null;
 
     public constructor() {
@@ -74,3 +74,5 @@ export default class CRUDPage extends PreviewPage {
             });
     }
 }
+
+export default new CRUDPage();

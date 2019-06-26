@@ -56,24 +56,26 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
         if (this.token === null) {
             const connection = new jsforce.Connection({});
             this.global.jsforceConnection = connection;
-            console.log(`Logging in as ${process.env.SFDC_USER}`);
+            const user: string | undefined = process.env.SFDC_USER;
+            if (!user) {
+                throw new Error(
+                    'Required SFDC_USER environment variable not provided'
+                );
+            }
+            console.log(`Logging in as ${user}`);
             this.token = await (async function() {
                 return new Promise<string>((resolve, reject) => {
-                    connection.login(
-                        process.env.SFDC_USER || '',
-                        process.env.SFDC_PWD || '',
-                        err => {
-                            if (!err) {
-                                return resolve(connection.accessToken);
-                            }
-                            console.error(JSON.stringify(err));
-                            reject(err);
+                    connection.login(user, process.env.SFDC_PWD || '', err => {
+                        if (!err) {
+                            return resolve(connection.accessToken);
                         }
-                    );
+                        console.error(JSON.stringify(err));
+                        reject(err);
+                    });
                 });
             })();
             const authInfo = await AuthInfo.create({
-                username: process.env.SFDC_USER || '',
+                username: user,
                 accessTokenOptions: {
                     instanceUrl: connection.instanceUrl,
                     accessToken: connection.accessToken,
@@ -81,7 +83,7 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
                 }
             });
             authInfo.save();
-            this.commandArgs.push(`--targetusername=${process.env.SFDC_USER}`);
+            this.commandArgs.push(`--targetusername=${user}`);
         }
 
         return super.setup();

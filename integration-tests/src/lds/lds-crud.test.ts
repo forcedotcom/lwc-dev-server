@@ -6,12 +6,11 @@ import CRUDPage from './crudPage';
 import { QueryResult } from 'jsforce';
 
 describe('Lightning data service CRUD proxies to the org', () => {
-    it('Create, ~Read~, Edit, Delete an Account object via SLDS', async () => {
-        const page = new CRUDPage();
-        await page.open();
+    it('Create, ~Read~, Edit, Delete an Account object via LDS', async () => {
+        await CRUDPage.open();
         let name = `CRUDTest ${Date.now()}`;
-        await page.setValue(name);
-        const recordId = await page.createRecord();
+        await CRUDPage.setValue(name);
+        const recordId = await CRUDPage.createRecord();
 
         console.log(`recordId is ${recordId}`);
         return new Promise((resolve, reject) => {
@@ -30,7 +29,7 @@ describe('Lightning data service CRUD proxies to the org', () => {
         })
             .then(async () => {
                 name = `edited ${name}`;
-                await page.editItem(name);
+                await CRUDPage.editItem(name);
                 return new Promise((resolve, reject) => {
                     global.jsforceConnection.query(
                         `select Name from Account where Id='${recordId}'`,
@@ -47,7 +46,7 @@ describe('Lightning data service CRUD proxies to the org', () => {
                 });
             })
             .then(async () => {
-                await page.deleteItem();
+                await CRUDPage.deleteItem();
                 return new Promise((resolve, reject) => {
                     global.jsforceConnection.query(
                         `select Name from Account where Id='${recordId}'`,
