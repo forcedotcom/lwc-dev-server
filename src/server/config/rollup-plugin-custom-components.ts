@@ -69,9 +69,7 @@ export function customComponentPlugin(
             }
             if (mappings[id]) {
                 debug(
-                    `[CustomComponent rollup plugin] resolving as mapped ${
-                        mappings[id]
-                    }`
+                    `[CustomComponent rollup plugin] resolving as mapped ${mappings[id]}`
                 );
                 return mappings[id];
             }

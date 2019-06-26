@@ -40,15 +40,4 @@ export default class PreviewPage implements Page {
         }
         throw new Error('container not initialized first, call open() first');
     }
-
-    public get lightningIcon() {
-        return this.testComponent.then(el => el.shadow$('lightning-icon'));
-    }
-
-    public get lightningIconHref() {
-        return this.lightningIcon
-            .then(el => el.shadow$('lightning-primitive-icon'))
-            .then(el => el.shadow$('use'))
-            .then(el => el.getAttribute('xlink:href'));
-    }
 }

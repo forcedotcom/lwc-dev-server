@@ -23,6 +23,7 @@ describe('home.js', () => {
 
     beforeAll(() => {
         const mockFetchPromise = Promise.resolve({
+            ok: true,
             json: () =>
                 Promise.resolve([
                     { title: 'c-test1', url: '/preview/c/test1' },
@@ -69,5 +70,24 @@ describe('home.js', () => {
         expect(componentList.children[0].children[0].href).toMatch(
             new RegExp('/preview/c/cmp2$')
         );
+    });
+
+    it('fires toast event when componentList request fails', async () => {
+        const mockFetchPromise = Promise.resolve({
+            ok: false,
+            text: () => Promise.resolve('some kind of error')
+        });
+        global.fetch = jest.fn(() => mockFetchPromise);
+
+        const element = createComponentUnderTest();
+        let dispatchEventCalled = false;
+        element.addEventListener(
+            'lightning__showtoast',
+            () => (dispatchEventCalled = true)
+        );
+
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        await flushPromises();
+        expect(dispatchEventCalled).toBeTruthy();
     });
 });

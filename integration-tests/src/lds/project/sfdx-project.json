@@ -1,0 +1,14 @@
+{
+    "packageDirectories": [
+        {
+            "path": "force-app",
+            "default": true,
+            "package": "CRUDTest",
+            "versionName": "Spring '19",
+            "versionNumber": "1.0.0.NEXT"
+        }
+    ],
+    "namespace": "",
+    "sourceApiVersion": "45.0",
+    "sfdcLoginUrl": "https://login.salesforce.com"
+}

@@ -1,4 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class Home extends LightningElement {
     configuration = `
@@ -36,8 +37,20 @@ export default class Home extends LightningElement {
 
         // fetch data from the server
         fetch('/componentList')
-            .then(function(response) {
-                return response.json();
+            .then(async response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                // we had some kind of error
+                const text = await response.text();
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error',
+                        message: `Error ${response.status} loading components: ${text}`,
+                        variant: 'error'
+                    })
+                );
+                return [];
             })
             .then(data => {
                 this._components = data;
