@@ -265,4 +265,40 @@ describe('LocalDevServerConfiguration', () => {
         configuration.configureFromCliArguments({ main: 'mainEntryPoint' });
         expect(configuration.entryPointComponent).toBe('c/mainEntryPoint');
     });
+
+    test('liveReload enabled by default', () => {
+        mock({
+            'config.json': JSON.stringify({})
+        });
+
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+        expect(configuration.liveReload).toBe(true);
+    });
+
+    test('sets liveReload off when configured', () => {
+        mock({
+            'config.json': JSON.stringify({
+                liveReload: false
+            })
+        });
+
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+        expect(configuration.liveReload).toBe(false);
+    });
+
+    test('liveReload can be set to disabled', () => {
+        mock({
+            'config.json': JSON.stringify({})
+        });
+
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+        configuration.liveReload = false;
+        expect(configuration.liveReload).toBe(false);
+    });
 });
