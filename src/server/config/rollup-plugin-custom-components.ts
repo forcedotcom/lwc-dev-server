@@ -1,6 +1,6 @@
 import path from 'path';
 import glob from 'fast-glob';
-import { EntryItem } from 'fast-glob/out/types/entries';
+import { EntryItem } from 'fast-glob/out/types/index';
 import debugLogger from 'debug';
 
 const debug = debugLogger('localdevserver');
