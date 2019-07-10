@@ -50,8 +50,6 @@
     "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
     "lint": "yarn eslint src --ext js,ts",
     "lint:ci": "yarn lint --format junit --output-file ./reports/junit/eslint-results.xml --no-color",
-    "start:todo": "node ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
-    "start:todo:debug": "node --inspect-brk ./bin/run server test-projects/lwc-todomvc-e8217b7 todo/app",
     "test": "yarn jest --coverage",
     "test:watch": "yarn test --watch",
     "test:debug": "node --inspect node_modules/.bin/jest src --runInBand",
@@ -160,7 +158,6 @@
   },
   "resolutions": {
     "js-yaml": "^3.13.1",
-    "braces": "^3.0.2",
-    "handlebars": "^4.1.2"
+    "braces": "^3.0.2"
   }
 }
