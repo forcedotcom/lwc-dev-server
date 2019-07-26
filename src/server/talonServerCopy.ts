@@ -198,6 +198,7 @@ export async function startServer(app: any, basePath: string, port = 3000) {
 
     process.on('SIGINT', () => {
         server.close();
+        process.exit();
     });
 
     return server;
