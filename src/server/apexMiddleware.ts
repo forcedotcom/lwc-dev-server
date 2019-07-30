@@ -2,28 +2,51 @@ import { Request, Response, NextFunction } from 'express';
 import request from 'request-promise-native';
 import { Connection } from '@salesforce/core';
 import { JSDOM, ResourceLoader, FetchOptions } from 'jsdom';
+import debug from 'debug';
+
+const log = debug('localdevserver');
+const ONE_APP_URL = '/one/one.app';
 
 let cachedConfig: any = null;
 
+interface ConnectionParams {
+    instanceUrl: string;
+    accessToken: string;
+}
+interface ApexRequest {
+    namespace: string;
+    classname: string;
+    method: string;
+    cacheable: boolean;
+    params?: any;
+}
 export function apexMiddleware({ connection }: { connection?: Connection }) {
     return async function(req: Request, res: Response, next: NextFunction) {
         if (req.url.startsWith('/api/apex/execute') && connection) {
             const classname = req.body.classname;
-            // TODO throw if not present
+            if (typeof classname !== 'string') {
+                return sendError(res, 'classname must be specified');
+            }
             const method = req.body.method;
-            // TODO throw if not present
+            if (typeof method !== 'string') {
+                return sendError(res, 'method must be specified');
+            }
             const namespace = req.body.namespace;
-            // TODO throw if not present
+            if (typeof method !== 'string') {
+                return sendError(res, 'namespace must be specified');
+            }
             const cacheable = req.body.cacheable;
-            // TODO throw if not present
-
+            if (typeof cacheable !== 'boolean') {
+                return sendError(res, 'cacheable must be specified');
+            }
+            // Note: params are optional
+            const params = req.body.params;
             if (!cachedConfig) {
                 cachedConfig = await getConfig(connection);
             }
             const auraconfig = cachedConfig;
             if (!auraconfig) {
-                console.log('No aura config!');
-                res.sendStatus(500);
+                res.status(500).send('Error retrieving aura config');
                 return;
             }
 
@@ -31,7 +54,8 @@ export function apexMiddleware({ connection }: { connection?: Connection }) {
                 namespace,
                 classname,
                 method,
-                cacheable
+                cacheable,
+                params
             });
 
             res.type('json').send(JSON.parse(response).actions[0].returnValue);
@@ -40,22 +64,17 @@ export function apexMiddleware({ connection }: { connection?: Connection }) {
         next();
     };
 }
+
+function sendError(res: Response, message: string) {
+    res.status(500).send(message);
+}
+
 async function callAuraApexRequest(
-    connection: Connection,
+    connectionParams: ConnectionParams,
     auraconfig: any,
-    {
-        namespace,
-        classname,
-        method,
-        cacheable
-    }: {
-        namespace: string;
-        classname: string;
-        method: string;
-        cacheable: string;
-    }
+    { namespace, classname, method, cacheable, params }: ApexRequest
 ) {
-    console.log('Calling apex controller');
+    log('Calling apex controller');
     const context = {
         mode: auraconfig.context.mode,
         fwuid: auraconfig.context.fwuid,
@@ -77,7 +96,8 @@ async function callAuraApexRequest(
                     classname,
                     method,
                     cacheable,
-                    isContinuation: false
+                    isContinuation: false,
+                    params
                 }
             }
         ]
@@ -90,62 +110,58 @@ async function callAuraApexRequest(
         'aura.token': auraconfig.token
     };
 
-    const orgRequest = getOrgRequest(connection);
+    const orgRequest = getOrgRequest(connectionParams);
     const apexResponse = await orgRequest.post({
-        url: '/aura?r=18&aura.ApexAction.execute=1',
+        url: '/aura?aura.ApexAction.execute=1',
         form
     });
-    debugger;
     return apexResponse;
 }
 
-function getOrgRequest(connection: Connection) {
+function getOrgRequest({ accessToken, instanceUrl }: ConnectionParams) {
     const jar = request.jar();
-    const sid = request.cookie(`sid=${connection.accessToken}`);
+    const sid = request.cookie(`sid=${accessToken}`);
     if (sid) {
-        jar.setCookie(sid, connection.instanceUrl + '/');
+        jar.setCookie(sid, instanceUrl + '/');
     }
     const orgRequest = request.defaults({
-        baseUrl: connection.instanceUrl,
+        baseUrl: instanceUrl,
         jar
     });
     return orgRequest;
 }
 
-async function getConfig(connection: Connection) {
-    console.log('Getting aura configuration');
-    const orgRequest = getOrgRequest(connection);
+async function getConfig(connectionParams: ConnectionParams) {
+    log('Getting aura configuration');
+    const orgRequest = getOrgRequest(connectionParams);
     const response = await orgRequest.get({
-        url: '/one/one.app'
+        url: ONE_APP_URL
     });
 
     const resourceLoader = new (class extends ResourceLoader {
         async fetch(url: string, options: FetchOptions) {
-            let res;
-            try {
-                if (url.indexOf('//') === 0 || url.indexOf('://') !== -1) {
-                    res = await orgRequest.get({
-                        baseUrl: '',
-                        url
-                    });
-                } else {
-                    res = await orgRequest.get({
-                        url
-                    });
-                }
-            } catch (e) {
-                console.log(e);
-                res = '';
+            const opts: { url: string; baseUrl?: string } = {
+                url
+            };
+            if (url.indexOf('//') === 0 || url.indexOf('://') !== -1) {
+                // unset baseUrl if url has scheme
+                opts.baseUrl = '';
             }
-            return Promise.resolve(Buffer.from(res));
+            try {
+                const res = await orgRequest.get(opts);
+                return Promise.resolve(Buffer.from(res));
+            } catch (e) {
+                log(e);
+            }
+            return Promise.resolve(Buffer.from(''));
         }
-    })({});
+    })();
 
     const oneApp = new JSDOM(response, {
         resources: resourceLoader,
         runScripts: 'dangerously',
-        url: connection.instanceUrl + '/one/one.app',
-        referrer: connection.instanceUrl + '/one/one.app'
+        url: connectionParams.instanceUrl + ONE_APP_URL,
+        referrer: connectionParams.instanceUrl + ONE_APP_URL
     });
     let config;
     // 30 seconds....
