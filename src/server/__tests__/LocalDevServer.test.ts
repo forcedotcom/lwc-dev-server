@@ -142,7 +142,12 @@ describe('LocalDevServer', () => {
 
             // without further configuration, LGC expects the SLDS icons dir to
             // be directly under 'assets' at the web root
-            const expectedDest = `${projectPath}/${defaultOutputDirectory}/public/assets`;
+            const expectedDest = path.join(
+                projectPath,
+                defaultOutputDirectory,
+                'public',
+                'assets'
+            );
 
             expect(fileUtils.copyFiles).toBeCalledWith(
                 expectedSource,

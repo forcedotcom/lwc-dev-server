@@ -145,7 +145,7 @@ export default class LocalDevServer {
         const assetsPath = path.join(dest, 'public', 'assets');
 
         try {
-            copyFiles(`${distPath}/assets/*`, assetsPath);
+            copyFiles(path.join(distPath, 'assets', '*'), assetsPath);
         } catch (e) {
             throw new Error(`error - unable to copy assets: ${e}`);
         }

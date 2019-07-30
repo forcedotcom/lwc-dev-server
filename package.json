@@ -61,12 +61,12 @@
     "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
     "precommit": "lint-staged",
     "prepush": "yarn prepare && yarn lint && yarn test",
-    "preinstall": "script/libs-prepare.js",
-    "postinstall": "script/libs-install.js && script/postinstall-build.js",
+    "preinstall": "node script/libs-prepare.js",
+    "postinstall": "node script/libs-install.js && node script/postinstall-build.js",
     "prepack": "oclif-dev manifest",
     "postpack": "rm -f oclif.manifest.json",
-    "prepublishOnly": "yarn build && script/packagejson-clean.js",
-    "postpublish": "script/packagejson-restore.js"
+    "prepublishOnly": "yarn build && node script/packagejson-clean.js",
+    "postpublish": "node script/packagejson-restore.js"
   },
   "devDependencies": {
     "@lwc/jest-preset": "1.0.0",
@@ -92,6 +92,7 @@
     "@types/xml2js": "^0.4.4",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "aws-sdk": "^2.490.0",
+    "cross-env": "^5.2.0",
     "decamelize": "^3.2.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
