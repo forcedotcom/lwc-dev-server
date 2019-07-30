@@ -165,9 +165,15 @@ export async function createServer(
     // Serve static files from the template public dir
     app.use(staticMiddleware());
 
-    app.use(bodyParser.json());
-    app.use(apexMiddleware({ connection }));
-
+    if (connection) {
+        app.use(bodyParser.json());
+        app.use(
+            apexMiddleware({
+                instanceUrl: connection.instanceUrl,
+                accessToken: connection.accessToken
+            })
+        );
+    }
     // Proxy, record and replay API calls
     app.use(apiMiddleware(apiConfig));
 

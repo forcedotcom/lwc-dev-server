@@ -1,15 +1,38 @@
 import { Request, Response, NextFunction } from 'express';
-import request from 'request-promise-native';
-import { Connection } from '@salesforce/core';
+import request, { RequestPromiseAPI } from 'request-promise-native';
 import { JSDOM, ResourceLoader, FetchOptions } from 'jsdom';
 import debug from 'debug';
+import { MAX_RETRIES } from './apexConstants';
+import { Cookie } from 'request';
 
 const log = debug('localdevserver');
 const ONE_APP_URL = '/one/one.app';
 
 let cachedConfig: any = null;
 
-interface ConnectionParams {
+export class ApexResourceLoader extends ResourceLoader {
+    constructor(private readonly orgRequest: RequestPromiseAPI) {
+        super();
+    }
+    async fetch(url: string, options: FetchOptions) {
+        const opts: { url: string; baseUrl?: string } = {
+            url
+        };
+        if (url.indexOf('//') === 0 || url.indexOf('://') !== -1) {
+            // unset baseUrl if url has scheme
+            opts.baseUrl = '';
+        }
+        try {
+            const res = await this.orgRequest.get(opts);
+            return Promise.resolve(Buffer.from(res));
+        } catch (e) {
+            log(e);
+        }
+        return Promise.resolve(Buffer.from(''));
+    }
+}
+
+export interface ConnectionParams {
     instanceUrl: string;
     accessToken: string;
 }
@@ -20,9 +43,9 @@ interface ApexRequest {
     cacheable: boolean;
     params?: any;
 }
-export function apexMiddleware({ connection }: { connection?: Connection }) {
+export function apexMiddleware(connectionParams: ConnectionParams) {
     return async function(req: Request, res: Response, next: NextFunction) {
-        if (req.url.startsWith('/api/apex/execute') && connection) {
+        if (req.url.startsWith('/api/apex/execute') && connectionParams) {
             const classname = req.body.classname;
             if (typeof classname !== 'string') {
                 return sendError(res, 'classname must be specified');
@@ -32,7 +55,7 @@ export function apexMiddleware({ connection }: { connection?: Connection }) {
                 return sendError(res, 'method must be specified');
             }
             const namespace = req.body.namespace;
-            if (typeof method !== 'string') {
+            if (typeof namespace !== 'string') {
                 return sendError(res, 'namespace must be specified');
             }
             const cacheable = req.body.cacheable;
@@ -42,7 +65,7 @@ export function apexMiddleware({ connection }: { connection?: Connection }) {
             // Note: params are optional
             const params = req.body.params;
             if (!cachedConfig) {
-                cachedConfig = await getConfig(connection);
+                cachedConfig = await getConfig(connectionParams);
             }
             const auraconfig = cachedConfig;
             if (!auraconfig) {
@@ -50,13 +73,19 @@ export function apexMiddleware({ connection }: { connection?: Connection }) {
                 return;
             }
 
-            const response = await callAuraApexRequest(connection, auraconfig, {
+            const apexRequest: ApexRequest = {
                 namespace,
                 classname,
                 method,
                 cacheable,
                 params
-            });
+            };
+
+            const response = await callAuraApexRequest(
+                connectionParams,
+                auraconfig,
+                apexRequest
+            );
 
             res.type('json').send(JSON.parse(response).actions[0].returnValue);
             return;
@@ -120,10 +149,10 @@ async function callAuraApexRequest(
 
 function getOrgRequest({ accessToken, instanceUrl }: ConnectionParams) {
     const jar = request.jar();
-    const sid = request.cookie(`sid=${accessToken}`);
-    if (sid) {
-        jar.setCookie(sid, instanceUrl + '/');
-    }
+    // use as Cookie to override possible undefined, which is impossible
+    const sid = request.cookie(`sid=${accessToken}`) as Cookie;
+    jar.setCookie(sid, instanceUrl + '/');
+
     const orgRequest = request.defaults({
         baseUrl: instanceUrl,
         jar
@@ -138,25 +167,7 @@ async function getConfig(connectionParams: ConnectionParams) {
         url: ONE_APP_URL
     });
 
-    const resourceLoader = new (class extends ResourceLoader {
-        async fetch(url: string, options: FetchOptions) {
-            const opts: { url: string; baseUrl?: string } = {
-                url
-            };
-            if (url.indexOf('//') === 0 || url.indexOf('://') !== -1) {
-                // unset baseUrl if url has scheme
-                opts.baseUrl = '';
-            }
-            try {
-                const res = await orgRequest.get(opts);
-                return Promise.resolve(Buffer.from(res));
-            } catch (e) {
-                log(e);
-            }
-            return Promise.resolve(Buffer.from(''));
-        }
-    })();
-
+    const resourceLoader = new ApexResourceLoader(orgRequest);
     const oneApp = new JSDOM(response, {
         resources: resourceLoader,
         runScripts: 'dangerously',
@@ -164,12 +175,13 @@ async function getConfig(connectionParams: ConnectionParams) {
         referrer: connectionParams.instanceUrl + ONE_APP_URL
     });
     let config;
-    // 30 seconds....
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < MAX_RETRIES; i++) {
         try {
+            const window = oneApp.window;
             // @ts-ignore
-            config = oneApp.window.Aura.initConfig;
-            if (config) {
+            const aura = window.Aura;
+            if (aura) {
+                config = aura.initConfig;
                 break;
             }
         } catch (ignore) {}
