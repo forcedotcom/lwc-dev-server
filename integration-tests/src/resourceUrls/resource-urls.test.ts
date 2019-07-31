@@ -32,7 +32,7 @@ describe('Static Resources', () => {
             expect(element).toBe(true);
         });
 
-        return Promise.resolve();
+        return Promise.resolve('Done');
     });
 
     it('Test Javascript Libraries', async () => {
@@ -50,6 +50,6 @@ describe('Static Resources', () => {
         const isRendered = await browser.execute(scriptToRun, canvas);
         expect(isRendered).toBe(true);
 
-        return Promise.resolve();
+        return Promise.resolve('Done');
     });
 });
