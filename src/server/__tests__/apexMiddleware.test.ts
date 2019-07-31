@@ -4,7 +4,7 @@ import { MAX_RETRIES } from '../apexConstants';
 function mockRequestFactory() {
     const original = require.requireActual('request-promise-native');
     const mockRequest: any = {
-        cookie: original.cookie.bind(original),
+        cookie: jest.fn(args => original.cookie.call(original, ...args)),
         jar: jest.fn(() => {
             return {
                 setCookie: jest.fn()
@@ -56,6 +56,93 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
         expect(res).not.toBeCalled();
         expect(next).toBeCalledTimes(1);
+    });
+    it('apex call has sid cookie', async () => {
+        const mockConnection = {
+            instanceUrl: 'http://url',
+            accessToken: 'XXX'
+        };
+        jest.doMock('../apexConstants', () => {
+            return { MAX_RETRIES: 1 };
+        });
+        const middleware = getMiddleware(mockConnection);
+        const req: any = {
+            url: '/api/apex/execute',
+            body: {
+                classname: 'classname',
+                method: 'method',
+                namespace: 'namespace',
+                cacheable: false
+            }
+        };
+        const res: any = {
+            type: jest.fn(() => res),
+            status: jest.fn(() => res),
+            send: jest.fn(() => res)
+        };
+        const next: any = jest.fn();
+
+        const request = getRequest();
+        //@ts-ignore
+        request.get.mockImplementation(() => {
+            return Promise.resolve('');
+        });
+
+        await middleware(req, res, next);
+
+        expect(request.jar).toHaveBeenCalled();
+        expect(request.cookie).toHaveBeenCalledWith('sid=XXX');
+        const cookie = request.cookie.mock.results[0].value;
+        expect(
+            request.jar.mock.results[0].value.setCookie
+        ).toHaveBeenCalledWith(cookie, 'http://url/');
+    });
+    it('unauthenticated aura config response', async () => {
+        const mockConnection = {
+            instanceUrl: 'http://url',
+            accessToken: 'XXX'
+        };
+        const middleware = getMiddleware(mockConnection);
+        const req: any = {
+            url: '/api/apex/execute',
+            body: {
+                classname: 'classname',
+                method: 'method',
+                namespace: 'namespace',
+                cacheable: false
+            }
+        };
+        const res: any = {
+            type: jest.fn(() => res),
+            status: jest.fn(() => res),
+            send: jest.fn(() => res)
+        };
+        const next: any = jest.fn();
+
+        const request = getRequest();
+        //@ts-ignore
+        request.get.mockImplementation(() => {
+            return Promise.resolve(`<html><body><script>
+            function redirectOnLoad() {
+            if (this.SfdcApp && this.SfdcApp.projectOneNavigator) { SfdcApp.projectOneNavigator.handleRedirect('https://force-site-2021-dev-ed.cs47.my.salesforce.com?ec=302&startURL=%2Fone%2Fone.app'); }  else
+            if (window.location.replace){
+            window.location.replace('https://force-site-2021-dev-ed.cs47.my.salesforce.com?ec=302&startURL=%2Fone%2Fone.app');
+            } else {
+            window.location.href ='https://force-site-2021-dev-ed.cs47.my.salesforce.com?ec=302&startURL=%2Fone%2Fone.app';
+            }
+            }
+            redirectOnLoad();
+            </script>
+            </body></html>`);
+        });
+
+        await middleware(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenLastCalledWith(
+            'error retrieving aura config: unauthenticated'
+        );
+        expect(next).not.toBeCalled();
     });
     it('apex call without params', async () => {
         const mockConnection = {
@@ -308,7 +395,7 @@ describe('apexMiddleware', () => {
 
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.send).toHaveBeenLastCalledWith(
-            'Error retrieving aura config'
+            'error retrieving aura config'
         );
         expect(next).not.toBeCalled();
     });

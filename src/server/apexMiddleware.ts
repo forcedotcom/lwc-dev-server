@@ -65,11 +65,18 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
             // Note: params are optional
             const params = req.body.params;
             if (!cachedConfig) {
-                cachedConfig = await getConfig(connectionParams);
+                try {
+                    cachedConfig = await getConfig(connectionParams);
+                } catch (e) {
+                    console.log(e.message);
+                    res.status(500).send(e.message);
+                    return;
+                }
             }
             const auraconfig = cachedConfig;
             if (!auraconfig) {
-                res.status(500).send('Error retrieving aura config');
+                console.log('error retrieving aura config');
+                res.status(500).send('error retrieving aura config');
                 return;
             }
 
@@ -152,7 +159,6 @@ function getOrgRequest({ accessToken, instanceUrl }: ConnectionParams) {
     // use as Cookie to override possible undefined, which is impossible
     const sid = request.cookie(`sid=${accessToken}`) as Cookie;
     jar.setCookie(sid, instanceUrl + '/');
-
     const orgRequest = request.defaults({
         baseUrl: instanceUrl,
         jar
@@ -166,7 +172,9 @@ async function getConfig(connectionParams: ConnectionParams) {
     const response = await orgRequest.get({
         url: ONE_APP_URL
     });
-
+    if (response.indexOf('window.location.replace(') != -1) {
+        throw new Error('error retrieving aura config: unauthenticated');
+    }
     const resourceLoader = new ApexResourceLoader(orgRequest);
     const oneApp = new JSDOM(response, {
         resources: resourceLoader,
