@@ -4,6 +4,7 @@ import { JSDOM, ResourceLoader, FetchOptions } from 'jsdom';
 import debug from 'debug';
 import { MAX_RETRIES } from './apexConstants';
 import { Cookie } from 'request';
+import parse from 'co-body';
 
 const log = debug('localdevserver');
 const ONE_APP_URL = '/one/one.app';
@@ -46,24 +47,25 @@ interface ApexRequest {
 export function apexMiddleware(connectionParams: ConnectionParams) {
     return async function(req: Request, res: Response, next: NextFunction) {
         if (req.url.startsWith('/api/apex/execute') && connectionParams) {
-            const classname = req.body.classname;
+            const body = await parse.json(req);
+            const classname = body.classname;
             if (typeof classname !== 'string') {
                 return sendError(res, 'classname must be specified');
             }
-            const method = req.body.method;
+            const method = body.method;
             if (typeof method !== 'string') {
                 return sendError(res, 'method must be specified');
             }
-            const namespace = req.body.namespace;
+            const namespace = body.namespace;
             if (typeof namespace !== 'string') {
                 return sendError(res, 'namespace must be specified');
             }
-            const cacheable = req.body.cacheable;
+            const cacheable = body.cacheable;
             if (typeof cacheable !== 'boolean') {
                 return sendError(res, 'cacheable must be specified');
             }
             // Note: params are optional
-            const params = req.body.params;
+            const params = body.params;
             if (!cachedConfig) {
                 try {
                     cachedConfig = await getConfig(connectionParams);

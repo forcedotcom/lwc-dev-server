@@ -26,7 +26,6 @@ import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
 import { apexMiddleware } from './apexMiddleware';
 import { Connection } from '@salesforce/core';
-import bodyParser from 'body-parser';
 
 const PUBLIC_DIR = 'public';
 
@@ -166,7 +165,6 @@ export async function createServer(
     app.use(staticMiddleware());
 
     if (connection) {
-        app.use(bodyParser.json());
         app.use(
             apexMiddleware({
                 instanceUrl: connection.instanceUrl,

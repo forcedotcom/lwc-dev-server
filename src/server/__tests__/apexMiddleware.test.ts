@@ -24,6 +24,13 @@ function mockRequestFactory() {
     return mockRequest;
 }
 jest.mock('request-promise-native', () => mockRequestFactory());
+jest.mock('co-body', () => {
+    return {
+        json: (req: any) => {
+            return Promise.resolve(req.body);
+        }
+    };
+});
 
 function getMiddleware(connection: ConnectionParams) {
     const { apexMiddleware } = require('../apexMiddleware');
