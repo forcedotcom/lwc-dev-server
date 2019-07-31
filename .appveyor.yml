@@ -14,13 +14,17 @@ skip_branch_with_pr: true
 platform: x64
 
 install:
-  - ps: Install-Product node 10 x64
-  - appveyor-retry yarn install
-  - yarn run lint
+  - ps: Install-Product node 10.15.3 x64
+  - node --version
+  - yarn --version
+  - appveyor-retry yarn install --frozen-lockfile
+  - yarn build
+  - yarn lint:ci
 
 build: off
 
 test_script:
   - node --version
   - yarn --version
-  - yarn test
+  - yarn test:ci
+  - yarn test:e2e-ci
