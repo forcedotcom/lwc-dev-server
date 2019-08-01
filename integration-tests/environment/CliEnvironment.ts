@@ -87,7 +87,8 @@ export default class CliEnvironment extends BaseEnvironment {
                 this.execPath,
                 [this.command, ...this.commandArgs],
                 {
-                    cwd: this.projectPath
+                    cwd: this.projectPath,
+                    shell: process.platform === 'win32'
                 }
             );
 
