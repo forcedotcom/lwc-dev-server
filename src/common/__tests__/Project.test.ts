@@ -74,17 +74,19 @@ describe('project', () => {
         });
 
         test('handles an absolute modulesSourceDirectory specified in the json config', () => {
-            const expected = path.normalize('/foo/modulesSrc/');
+            const modulesSourceDirectory = path.normalize('/foo/modulesSrc/');
             mock({
                 'my-project': {
                     'package.json': '{}',
-                    'localdevserver.config.json': `{"modulesSourceDirectory": "${expected}"}`
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory
+                    })
                 }
             });
 
             const project = new Project('my-project');
 
-            expect(project.modulesSourceDirectory).toBe(expected);
+            expect(project.modulesSourceDirectory).toBe(modulesSourceDirectory);
         });
 
         test('uses a fallback when modulesSourceDirectory is not specified in the json config', () => {
@@ -97,6 +99,7 @@ describe('project', () => {
 
             const project = new Project('my-project');
             const expected = path.join('my-project', 'src');
+
             expect(project.modulesSourceDirectory).toBe(expected);
         });
 
