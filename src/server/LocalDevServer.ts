@@ -10,6 +10,7 @@ import { customComponentPlugin } from './config/rollup-plugin-custom-components'
 import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { Server } from 'http';
+import { Connection } from '@salesforce/core';
 
 const debug = debugLogger('localdevserver');
 const packageRoot = path.join(__dirname, '..', '..');
@@ -20,7 +21,7 @@ export const defaultOutputDirectory = '.localdevserver';
 export default class LocalDevServer {
     private server?: Server;
 
-    public async start(project: Project) {
+    public async start(project: Project, connection?: Connection) {
         const configuration: LocalDevServerConfiguration =
             project.configuration;
 
@@ -105,7 +106,7 @@ export default class LocalDevServer {
 
         try {
             // Start the talon site.
-            const server = await createServer(config, proxyConfig);
+            const server = await createServer(config, proxyConfig, connection);
             server.use('/componentList', function(
                 req: any,
                 res: any,

@@ -65,9 +65,10 @@ describe('LocalDevServer', () => {
         it('specifies the outputDirectory in the talon server configuration', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });
+            const mockConn: any = {};
 
             const server = new LocalDevServer();
-            await server.start(project);
+            await server.start(project, mockConn);
 
             const expected = path.join(projectPath, defaultOutputDirectory);
 
@@ -75,16 +76,18 @@ describe('LocalDevServer', () => {
                 expect.objectContaining({
                     outputDir: expected
                 }),
-                expect.anything()
+                expect.anything(),
+                mockConn
             );
         });
 
         it('configures the modulePaths with the localdevserver modules', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });
+            const mockConn: any = {};
 
             const server = new LocalDevServer();
-            await server.start(project);
+            await server.start(project, mockConn);
 
             const expected = path.resolve(__dirname, '../../../');
 
@@ -92,16 +95,18 @@ describe('LocalDevServer', () => {
                 expect.objectContaining({
                     modulePaths: expect.arrayContaining([expected])
                 }),
-                expect.anything()
+                expect.anything(),
+                mockConn
             );
         });
 
         it('configures the modulePaths with the matching version resources directory', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath, version: '45.0' });
+            const mockConn: any = {};
 
             const server = new LocalDevServer();
-            await server.start(project);
+            await server.start(project, mockConn);
 
             const expected = path.resolve(
                 __dirname,
@@ -112,7 +117,8 @@ describe('LocalDevServer', () => {
                 expect.objectContaining({
                     modulePaths: expect.arrayContaining([expected])
                 }),
-                expect.anything()
+                expect.anything(),
+                mockConn
             );
         });
 
