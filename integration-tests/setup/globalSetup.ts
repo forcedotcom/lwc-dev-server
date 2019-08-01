@@ -16,7 +16,7 @@ module.exports = async () => {
         baseURL: 'https://selenium-release.storage.googleapis.com',
         drivers: {
             chrome: {
-                version: '74.0.3729.6',
+                version: '75.0.3770.90',
                 arch: process.arch,
                 baseURL: 'https://chromedriver.storage.googleapis.com'
             }
