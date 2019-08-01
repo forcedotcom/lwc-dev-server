@@ -1,6 +1,7 @@
 # Local Development (Duck Burrito)
 
 [![CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server.svg?style=svg&circle-token=19ea057fcc409cec956c360fc347b727d0429396)](https://circleci.com/gh/forcedotcom/lwc-dev-server)
+[![Build status](https://ci.appveyor.com/api/projects/status/ix3iloviwyyg4agt/branch/master?svg=true)](https://ci.appveyor.com/project/forcedotcom/lwc-dev-server/branch/master)
 [![codecov](https://codecov.io/gh/forcedotcom/lwc-dev-server/branch/master/graph/badge.svg?token=LJxxclDlYz)](https://codecov.io/gh/forcedotcom/lwc-dev-server)
 
 Local Development lets you run an LWC-enabled server on your local machine and view live changes to components without pushing to your org.
