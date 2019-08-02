@@ -16,8 +16,8 @@ platform: x64
 install:
   - ps: Install-Product node 10.15.3 x64
   - choco install googlechrome
-  - npm install sfdx-cli --global
-  - sfdx --version
+#  - npm install sfdx-cli --global
+#  - sfdx --version
   - appveyor-retry yarn install
 
 build: off
