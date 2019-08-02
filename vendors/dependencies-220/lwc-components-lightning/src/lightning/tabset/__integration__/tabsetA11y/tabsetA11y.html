@@ -1,0 +1,25 @@
+<template>
+    <lightning-tabset class="default_tabset">
+        <template for:each={tabs} for:item="tab">
+            <lightning-tab label={tab.label} key={tab.id}>
+                {tab.content}
+            </lightning-tab>
+        </template>
+    </lightning-tabset>
+
+    <lightning-tabset class="scoped_tabset" variant="scoped">
+        <template for:each={tabs} for:item="tab">
+            <lightning-tab label={tab.label} key={tab.id}>
+                {tab.content}
+            </lightning-tab>
+        </template>
+    </lightning-tabset>
+
+    <lightning-tabset class="vertical_tabset" variant="vertical">
+        <template for:each={tabs} for:item="tab">
+            <lightning-tab label={tab.label} key={tab.id}>
+                {tab.content}
+            </lightning-tab>
+        </template>
+    </lightning-tabset>
+</template>

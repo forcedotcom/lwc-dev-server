@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`formatted-address format address based on locale 1`] = `
+<lightning-formatted-address>
+  #shadow-root(open)
+    <a
+      href="https://www.google.com/maps/?q=121%20Spear%20St.%0ASan%20Francisco,%20CA%2094105%0AUS"
+      rel="noopener"
+      target="_blank"
+      title="121 Spear St.
+San Francisco, CA 94105
+US"
+    >
+      <div
+        class="slds-truncate"
+      >
+        121 Spear St.
+      </div>
+      <div
+        class="slds-truncate"
+      >
+        San Francisco, CA 94105
+      </div>
+      <div
+        class="slds-truncate"
+      >
+        US
+      </div>
+    </a>
+</lightning-formatted-address>
+`;

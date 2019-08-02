@@ -1,0 +1,10 @@
+<template>
+    <lightning-button label="Change Accordion List" class="change-button" onclick={onClickHandler}></lightning-button>
+    <lightning-accordion>
+        <template for:each={state.listActive} for:item="item">
+            <lightning-accordion-section id={item.id} name={item.name} key={item.id} label={item.name}>
+                <p>hello there</p>
+            </lightning-accordion-section>
+        </template>
+    </lightning-accordion>
+</template>

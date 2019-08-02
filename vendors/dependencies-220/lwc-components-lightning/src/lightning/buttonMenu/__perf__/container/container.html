@@ -1,0 +1,32 @@
+<template>
+        <lightning-button-menu
+            class="button-menu-perf"
+            variant={variant}
+            is-loading={isLoading}
+            is-deaft={isDraft}
+            label={label}
+            alternative-text="Show actions" icon-name={iconName} icon-size={iconSize}>
+
+            <template if:true={showSubheader}>
+                <lightning-menu-subheader label="Menu subheader"></lightning-menu-subheader>
+            </template>
+
+            <template if:true={showMenuDivider}>
+                <lightning-menu-divider variant="tighter"></lightning-menu-divider>
+            </template>
+            <template for:each={privateMenuItems} for:item="item" for:index="idx">
+                <lightning-menu-item
+                    id={item.id}
+                    value={item.value}
+                    label={item.label}
+                    key={item.label}
+                    prefix-icon-name={item.prefixIconName}
+                    href={item.href}
+                    is-draft={item.isDraft}
+                    icon-name={item.iconName}
+                    checked={item.checked}>
+                </lightning-menu-item>
+            </template>
+        </lightning-button-menu>
+
+</template>

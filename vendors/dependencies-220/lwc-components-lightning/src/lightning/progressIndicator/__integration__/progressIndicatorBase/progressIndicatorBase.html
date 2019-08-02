@@ -1,0 +1,12 @@
+<template>
+    <div style="margin-top: 200px;">
+        <lightning-progress-indicator current-step={current}>
+            <lightning-progress-step value="step1" label="steps1"></lightning-progress-step>
+            <lightning-progress-step value="step2" label="steps2"></lightning-progress-step>
+            <lightning-progress-step value="step3" label="steps3" class="step3"></lightning-progress-step>
+            <lightning-progress-step value="step4" label="steps4"></lightning-progress-step>
+            <lightning-progress-step value="step5" label="steps5"></lightning-progress-step>
+        </lightning-progress-indicator>
+        <lightning-button label="Next" onclick={handleClick}></lightning-button>
+    </div>
+</template>

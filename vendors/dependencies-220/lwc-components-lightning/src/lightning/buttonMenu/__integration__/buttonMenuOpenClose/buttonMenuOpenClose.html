@@ -1,0 +1,29 @@
+<template>
+    <lightning-button-menu class="button-menu-base" alternative-text="Show actions" label="Menu" menu-alignment={alignment}>
+        <lightning-menu-subheader label="Menu subheader"></lightning-menu-subheader>
+        <lightning-menu-item class="menu1-id" value="menu1-value" label="menu1-label"></lightning-menu-item>
+        <lightning-menu-item class="menu2-id" value="menu2-value" label="menu2-label"></lightning-menu-item>
+        <lightning-menu-item class="menu3-id" value="menu3-value" label="menu3-label"></lightning-menu-item>
+    </lightning-button-menu>
+
+    <lightning-button-menu
+        class="button-menu-lazy"
+        variant="border"
+        label="Menu"
+        alternative-text="Show actions" menu-alignment={alignment} onopen={handleOpen} is-loading={loading}>
+
+        <lightning-menu-subheader label="Menu subheader"></lightning-menu-subheader>
+        <template for:each={privateMenuItems} for:item="item" for:index="idx">
+            <lightning-menu-item
+                id={item.id}
+                value={item.value}
+                label={item.label}
+                key={item.label}>
+            </lightning-menu-item>
+        </template>
+    </lightning-button-menu>
+
+    <lightning-button label="Focus Away" class="clickAway"></lightning-button>
+    <lightning-button label="Change Alignment" class="chngAlign" onclick={changeAlignment}></lightning-button>
+    <h1>random text</h1>
+</template>

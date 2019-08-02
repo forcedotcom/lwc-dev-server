@@ -1,0 +1,14 @@
+<template>
+    <button class="focus-me-first">Focus Me First</button>
+    <x-extended-datatable
+        key-field="id"
+        data={data}
+        show-row-number-column
+        columns={columns}>
+    </x-extended-datatable>
+    <div class="slds-m-around_x-small">
+        <lightning-button
+            label="Outside button">
+        </lightning-button>
+    </div>
+</template>

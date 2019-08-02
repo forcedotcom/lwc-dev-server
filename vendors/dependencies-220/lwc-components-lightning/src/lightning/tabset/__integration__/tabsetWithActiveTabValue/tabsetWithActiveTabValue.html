@@ -1,0 +1,27 @@
+<template>
+    <button class="renderTabsetButton" onclick={renderTabset}>Render Tabset</button>
+    <div class="activeValue">
+        <input value={activeValue}/>
+        <button onclick={selectTab}>Select tab with value</button>
+    </div>
+    <div class="tabsToHide">
+        <input/>
+        <button onclick={setTabsToHide}>Set Tabs To Hide</button>
+    </div>
+    <div class="changeTabValue">
+        <input/>
+        <button onclick={changeTabValue}>Change value of tab by tab index (old value * 10)</button>
+    </div>
+
+    <template if:true={showTabset}>
+        <lightning-tabset class="default_tabset" active-tab-value={activeValue}>
+            <template for:each={tabs} for:item="tab">
+                <template if:true={tab.show}>
+                    <lightning-tab label={tab.label} key={tab.value} value={tab.value}>
+                        {tab.content}
+                    </lightning-tab>
+                </template>
+            </template>
+        </lightning-tabset>
+    </template>
+</template>

@@ -1,0 +1,7 @@
+<template>
+    <div class="slds-box">
+        <p class="is-checked">{isChecked}</p>
+        <p class="is-checked-via-click">{checkedViaClick}</p>
+        <lightning-input id="input" class="slds-m-around_large" onchange={handleChange} onclick={handleClick} type="checkbox" label="Click me"></lightning-input>
+    </div>
+</template>

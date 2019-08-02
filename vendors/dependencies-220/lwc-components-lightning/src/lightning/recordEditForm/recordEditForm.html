@@ -1,0 +1,13 @@
+<template>
+    <!-- novalidate is required so browser validation does not run (we do it ourselves) -->
+    <form novalidate class={formClass}
+          onclick={handleSubmit}
+          onregisteroutputfield={handleRegister}
+          onregisterinputfield={handleRegister}
+          onregisterfielddependency={registerDependentField}
+          onupdatedependentfields={updateDependentFields}
+          onerror={handleError}
+          >
+        <slot></slot>
+    </form>
+</template>

@@ -1,0 +1,65 @@
+<template>
+    <lightning-vertical-navigation selected-item={selectedItem}>
+        <template for:each={sections} for:item='section'>
+            <lightning-vertical-navigation-section 
+                key={section.label}
+                label={section.label}>
+                <template for:each={section.children} for:item='child'>
+                    <template if:true={child.item}>
+                        <lightning-vertical-navigation-item 
+                            key={child.name}
+                            name={child.name} 
+                            label={child.label}>
+                        </lightning-vertical-navigation-item>
+                    </template>
+                    <template if:true={child.badge}>
+                        <lightning-vertical-navigation-item-badge
+                            key={child.name}
+                            name={child.name} 
+                            label={child.label}
+                            badge-count={child.badgeCount}>
+                        </lightning-vertical-navigation-item-badge>
+                    </template>
+                    <template if:true={child.icon}>
+                        <lightning-vertical-navigation-item-icon
+                            key={child.name}
+                            name={child.name} 
+                            label={child.label}
+                            icon-name={child.iconName}>
+                        </lightning-vertical-navigation-item-icon>
+                    </template>
+                </template>
+            </lightning-vertical-navigation-section>
+        </template>
+        <template for:each={overflows} for:item='overflow'>
+            <lightning-vertical-navigation-overflow 
+                key={overflow.label}>
+                <template for:each={overflow.children} for:item='child'>
+                    <template if:true={child.item}>
+                        <lightning-vertical-navigation-item 
+                            key={child.name}
+                            name={child.name} 
+                            label={child.label}>
+                        </lightning-vertical-navigation-item>
+                    </template>
+                    <template if:true={child.badge}>
+                        <lightning-vertical-navigation-item-badge
+                            key={child.name}
+                            name={child.name} 
+                            label={child.label}
+                            badge-count={child.badgeCount}>
+                        </lightning-vertical-navigation-item-badge>
+                    </template>
+                    <template if:true={child.icon}>
+                        <lightning-vertical-navigation-item-icon
+                            key={child.name}
+                            name={child.name} 
+                            label={child.label}
+                            icon-name={child.iconName}>
+                        </lightning-vertical-navigation-item-icon>
+                    </template>
+                </template>
+            </lightning-vertical-navigation-overflow>
+        </template>
+    </lightning-vertical-navigation>
+</template>

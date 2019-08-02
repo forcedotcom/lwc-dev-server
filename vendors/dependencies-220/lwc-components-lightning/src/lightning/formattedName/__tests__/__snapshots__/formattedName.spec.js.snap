@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lightning-formatted-name default by not passing any value 1`] = `
+<lightning-formatted-name>
+  #shadow-root(open)
+    Mr. John Middleton Doe The 3rd Jo
+</lightning-formatted-name>
+`;

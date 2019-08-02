@@ -1,0 +1,14 @@
+<template>
+    <lightning-input
+        label="filter rows here"
+        type="search"
+        name="search"
+        onchange={filter}>
+    </lightning-input>
+    <lightning-datatable
+        key-field="id"
+        data={data}
+        columns={columns}
+        onrowselection={handleRowSelection}>
+    </lightning-datatable>
+</template>

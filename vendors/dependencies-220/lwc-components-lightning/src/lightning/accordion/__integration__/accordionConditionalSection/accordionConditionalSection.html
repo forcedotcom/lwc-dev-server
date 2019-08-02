@@ -1,0 +1,19 @@
+<template>
+    <lightning-button class="hide-button" label={state.buttonText} onclick={hiddenSectionHandler}></lightning-button>
+    <lightning-button  class="active-button" label="Make Section Active" onclick={activeSectionHandler}></lightning-button>
+    <lightning-button  class="change-button" label="Change Section 3 Data" onclick={changeSectionInfoHandler}></lightning-button>
+    <lightning-accordion class="accordion-obj" active-section-name={state.activeSection} onchange={onChangeHandler}>
+        <lightning-accordion-section name="First Section" class="section-1" label="First Accordion Section">
+            <p>Donec vitae tellus egestas, faucibus ipsum ac, imperdiet erat. Nam venenatis non ante at sagittis. Integer vel purus eget nunc semper placerat. Nam tristique quam leo, et posuere enim condimentum quis. Ut sagittis libero id lectus tempor maximus. Nunc ut tincidunt eros, a hendrerit leo. Suspendisse quis fermentum dolor. Nulla euismod consectetur leo, id condimentum nunc consequat quis.</p>
+        </lightning-accordion-section>
+        <lightning-accordion-section name="Second Section" class="section-2" label="Second Accordion Section">
+            <p>Nam at elit et justo scelerisque ullamcorper vel a felis. Mauris sit amet lorem sed est sagittis blandit nec ac turpis. Ut a mi id turpis pharetra ornare. Nullam rhoncus feugiat nunc, ac pulvinar felis pulvinar at. Nullam efficitur aliquet justo et ultricies. Maecenas eu felis aliquam, tincidunt elit at, suscipit leo. Duis ut urna nec nibh hendrerit lacinia. Sed non auctor libero. Sed pellentesque tempor mollis.</p>
+        </lightning-accordion-section>
+        <lightning-accordion-section if:false={state.isHidden} name="Hidden Section" class="section-hidden" label="Hidden Accordion Section">
+            <p>Nam at elit et justo scelerisque ullamcorper vel a felis. Mauris sit amet lorem sed est sagittis blandit nec ac turpis. Ut a mi id turpis pharetra ornare. Nullam rhoncus feugiat nunc, ac pulvinar felis pulvinar at. Nullam efficitur aliquet justo et ultricies. Maecenas eu felis aliquam, tincidunt elit at, suscipit leo. Duis ut urna nec nibh hendrerit lacinia. Sed non auctor libero. Sed pellentesque tempor mollis.</p>
+        </lightning-accordion-section>
+        <lightning-accordion-section name="Third Section" class="section-3" label="Third Accordion Section">
+            <p>{state.sectionThreeData}</p>
+        </lightning-accordion-section>
+    </lightning-accordion>
+</template>

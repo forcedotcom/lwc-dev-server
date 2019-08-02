@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lightning-formatted-rich-text should have the following default template 1`] = `
+<lightning-formatted-rich-text
+  class="slds-rich-text-editor__output"
+>
+  #shadow-root(open)
+    <span />
+</lightning-formatted-rich-text>
+`;
+
+exports[`lightning-formatted-rich-text should have the following structure when a link is used 1`] = `
+<lightning-formatted-rich-text
+  class="slds-rich-text-editor__output"
+>
+  #shadow-root(open)
+    <span>
+      This is a link to 
+      <a
+        href="www.salesforce.com"
+      >
+        Salesforce
+      </a>
+    </span>
+</lightning-formatted-rich-text>
+`;
+
+exports[`lightning-formatted-rich-text should have the following structure when no formatting is used 1`] = `
+<lightning-formatted-rich-text
+  class="slds-rich-text-editor__output"
+>
+  #shadow-root(open)
+    <span>
+      This is plain text
+    </span>
+</lightning-formatted-rich-text>
+`;
+
+exports[`lightning-formatted-rich-text should have the following structure when rich text and a link are used 1`] = `
+<lightning-formatted-rich-text
+  class="slds-rich-text-editor__output"
+>
+  #shadow-root(open)
+    <span>
+      <ul>
+        <li>
+          <a
+            href="http://www.google.com"
+          >
+            www.google.com
+          </a>
+        </li>
+        <li>
+          <a
+            href="http://www.salesforce.com"
+            rel="noopener"
+            target="_blank"
+          >
+            www.salesforce.com
+          </a>
+        </li>
+        <li>
+          <a
+            href="http://www.google.com"
+            rel="noopener"
+            target="_blank"
+          >
+            http://www.google.com
+          </a>
+        </li>
+        <li>
+          <a
+            href="http://salesforce.com"
+            rel="noopener"
+            target="_blank"
+          >
+            salesforce.com
+          </a>
+        </li>
+        <li>
+          <a
+            href="mailto:email@richtext.com"
+          >
+            email@richtext.com
+          </a>
+        </li>
+      </ul>
+    </span>
+</lightning-formatted-rich-text>
+`;
+
+exports[`lightning-formatted-rich-text should have the following structure when rich text is used 1`] = `
+<lightning-formatted-rich-text
+  class="slds-rich-text-editor__output"
+>
+  #shadow-root(open)
+    <span>
+      <h2>
+        This
+      </h2>
+       
+      <p>
+        is 
+        <i>
+          some
+        </i>
+         simple 
+        <b>
+          rich
+        </b>
+         text
+      </p>
+    </span>
+</lightning-formatted-rich-text>
+`;

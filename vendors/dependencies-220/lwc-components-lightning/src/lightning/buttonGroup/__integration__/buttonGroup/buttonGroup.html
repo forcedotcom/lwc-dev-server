@@ -1,0 +1,56 @@
+<template>
+    <lightning-button-group>
+        <template for:each={buttons} for:item="button">
+            <lightning-button
+                key={button.key}
+                label={button.label}
+            ></lightning-button>
+        </template>
+        <template for:each={buttonStatefuls} for:item="button">
+            <lightning-button-stateful
+                key={button.key}
+                label-when-off={button.labelWhenOff}
+                label-when-on={button.labelWhenOn}
+                label-when-hover={button.labelWhenHober}
+                icon-name-when-off={button.iconNameWhenOff}
+                icon-name-when-on={button.iconNameWhenOn}
+                icon-name-when-hover={button.iconNameWhenHover}
+            ></lightning-button-stateful>
+        </template>
+        <template for:each={buttonIcons} for:item="button">
+            <lightning-button-icon
+                key={button.key}
+                icon-name={button.iconName}
+                variant="border-filled"
+                alternative-text={button.alternativeText}>
+            </lightning-button-icon>
+        </template>
+        <template for:each={buttonIconStatefuls} for:item="button">
+            <lightning-button-icon-stateful
+                key={button.key}
+                icon-name={button.iconName}
+                selected={button.selected}
+                alternative-text={button.alternativeText}>
+            </lightning-button-icon-stateful>
+        </template>
+        <template for:each={buttonMenus} for:item="button">
+            <lightning-button-menu
+                key={button.key}
+                alternative-text={button.alternativeText}>
+                <template for:each={button.menuItems} for:item="menuItem">
+                    <lightning-menu-item
+                        key={menuItem.key}
+                        label={menuItem.label}
+                        value={menuItem.value}>
+                    </lightning-menu-item>
+                </template>
+            </lightning-button-menu>
+        </template>
+    </lightning-button-group>
+
+    <div class="slds-m-around_large">
+        <lightning-button class="button_prepend" label="Prepend a button" onclick={prependButton}></lightning-button>
+        <lightning-button class="button_insert" label="Insert a button" onclick={insertButton}></lightning-button>
+        <lightning-button class="button_append" label="Append a button" onclick={appendButton}></lightning-button>
+    </div>
+</template>

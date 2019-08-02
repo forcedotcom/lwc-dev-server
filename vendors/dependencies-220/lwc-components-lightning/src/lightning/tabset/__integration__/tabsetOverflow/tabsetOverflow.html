@@ -1,0 +1,33 @@
+<template>
+    <div class="numOfTabs">
+        <input value={numOfTabs} />
+        <button onclick={setNumOfTabs}>Set Number Of Tabs</button>
+    </div>
+    <div class="tabsToHide">
+        <input />
+        <button onclick={setTabsToHide}>Set Tabs To Hide</button>
+    </div>
+    <div class="labelPrefix">
+        <input value={labelPrefix} />
+        <button onclick={setLabelPrefix}>Set Label Prefix</button>
+    </div>
+    <lightning-tabset class="default_tabset">
+        <template for:each={tabs} for:item="tab">
+            <template if:true={tab.show}>
+                <lightning-tab label={tab.label} key={tab.key}>
+                    {tab.content}
+                </lightning-tab>
+            </template>
+        </template>
+    </lightning-tabset>
+
+    <lightning-tabset class="scoped_tabset" variant="scoped">
+        <template for:each={tabs} for:item="tab">
+            <template if:true={tab.show}>
+                <lightning-tab label={tab.label} key={tab.key}>
+                    {tab.content}
+                </lightning-tab>
+            </template>
+        </template>
+    </lightning-tabset>
+</template>

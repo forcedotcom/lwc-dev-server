@@ -1,0 +1,15 @@
+<template>
+    <div class="slds-box slds-m-around__large">
+
+        <lightning-input
+            label="Input"
+            onchange={handleChange}
+            name="Input">
+        </lightning-input>
+
+        <button class="blur-input"></button>
+        <div class="input-value">{inputValue}</div>
+        <button class="check-value-button" onclick={handleCheckValueClick}></button>
+
+    </div>
+</template>
