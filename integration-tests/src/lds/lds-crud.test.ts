@@ -5,7 +5,6 @@
 import CRUDPage from './crudPage';
 import { QueryResult } from 'jsforce';
 
-// currently disabled for windows until we get the Auth working
 describe('Lightning data service CRUD proxies to the org', () => {
     it('Create, ~Read~, Edit, Delete an Account object via LDS', async () => {
         await CRUDPage.open();
