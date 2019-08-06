@@ -24,6 +24,8 @@ import mimeTypes from 'mime-types';
 import debugLogger from 'debug';
 import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
+import { apexMiddleware } from './apexMiddleware';
+import { Connection } from '@salesforce/core';
 
 const PUBLIC_DIR = 'public';
 
@@ -66,7 +68,11 @@ function getRootApp(app: any, basePath: string) {
     return app;
 }
 
-export async function createServer(options: object, apiConfig: any = {}) {
+export async function createServer(
+    options: object,
+    apiConfig: any = {},
+    connection?: Connection
+) {
     const { templateDir, outputDir, basePath, srcDir } = await startContext(
         options
     );
@@ -158,6 +164,14 @@ export async function createServer(options: object, apiConfig: any = {}) {
     // Serve static files from the template public dir
     app.use(staticMiddleware());
 
+    if (connection) {
+        app.use(
+            apexMiddleware({
+                instanceUrl: connection.instanceUrl,
+                accessToken: connection.accessToken
+            })
+        );
+    }
     // Proxy, record and replay API calls
     app.use(apiMiddleware(apiConfig));
 
