@@ -6,7 +6,7 @@ import CRUDPage from './crudPage';
 import { QueryResult } from 'jsforce';
 
 // currently disabled for windows until we get the Auth working
-const testfn = process.platform === 'win32' ? it.skip : it;
+const testfn = it; //process.platform === 'win32' ? it.skip : it;
 describe('Lightning data service CRUD proxies to the org', () => {
     testfn(
         'Create, ~Read~, Edit, Delete an Account object via LDS',

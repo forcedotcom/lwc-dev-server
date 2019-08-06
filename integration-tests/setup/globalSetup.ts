@@ -1,5 +1,6 @@
 import { ChildProcess } from 'child_process';
 import selenium from 'selenium-standalone';
+import { KeychainConfig } from '@salesforce/core/lib/config/keychainConfig';
 
 declare global {
     namespace NodeJS {
@@ -10,6 +11,20 @@ declare global {
 }
 
 module.exports = async () => {
+    debugger;
+    // If windows, setup our key.json file
+    if (process.platform === 'win32' && process.env.SFDC_KEY) {
+        let newKeyChain = await KeychainConfig.create(
+            KeychainConfig.getDefaultOptions()
+        );
+        let keychainPath = newKeyChain.getPath();
+        newKeyChain.write({
+            service: 'sfdx',
+            account: 'local',
+            key: process.env.SFDC_KEY
+        });
+    }
+
     // Install Selenium if required.
     const seleniumOptions: any = {
         version: '3.9.1',
