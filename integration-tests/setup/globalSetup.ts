@@ -18,7 +18,7 @@ module.exports = async () => {
             KeychainConfig.getDefaultOptions()
         );
         let keychainPath = newKeyChain.getPath();
-        newKeyChain.write({
+        await newKeyChain.write({
             service: 'sfdx',
             account: 'local',
             key: process.env.SFDC_KEY
