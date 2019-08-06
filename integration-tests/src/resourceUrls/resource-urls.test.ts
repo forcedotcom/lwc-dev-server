@@ -1,5 +1,5 @@
 /**
- * @jest-environment ./environment/CliEnvironment.js
+ * @jest-environment ./environment/AuthenticatedEnvironment.js
  */
 
 // disabled: if authed locally this will work, but for real usage need to find a
