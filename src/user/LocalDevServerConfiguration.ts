@@ -29,6 +29,7 @@ export default class LocalDevServerConfiguration {
                     console.error(
                         `Loading JSON in '${configFilePath}' failed with the error ${e.message}`
                     );
+                    this.configFromJson = {};
                 }
             } else {
                 this.configFromJson = {};

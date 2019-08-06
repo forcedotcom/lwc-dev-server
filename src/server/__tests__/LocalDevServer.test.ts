@@ -5,6 +5,7 @@ import * as fileUtils from '../../common/fileUtils';
 import * as talonServer from '../talonServerCopy';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 import cpx from 'cpx';
+import os from 'os';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -148,7 +149,12 @@ describe('LocalDevServer', () => {
 
             // without further configuration, LGC expects the SLDS icons dir to
             // be directly under 'assets' at the web root
-            const expectedDest = `${projectPath}/${defaultOutputDirectory}/public/assets`;
+            const expectedDest = path.join(
+                projectPath,
+                defaultOutputDirectory,
+                'public',
+                'assets'
+            );
 
             expect(fileUtils.copyFiles).toBeCalledWith(
                 expectedSource,
@@ -264,12 +270,12 @@ describe('LocalDevServer', () => {
             }
         }
 
-        it('copies assests and "watches" them', async () => {
+        it('copies assets and "watches" them', async () => {
             const server = new CopyAssetsExposedLocalDevServer();
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });
             // @ts-ignore
-            project.staticResourcesDirectory = '/tmp';
+            project.staticResourcesDirectory = os.tmpdir(); // FIXME use mock-fs
 
             await server.copyAssets(project, 'wat');
             expect(cpx.copy).toBeCalledTimes(1);

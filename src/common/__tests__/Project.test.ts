@@ -1,5 +1,6 @@
 import Project from '../Project';
 import mock from 'mock-fs';
+import path from 'path';
 
 describe('project', () => {
     // Stop mocking 'fs' after each test
@@ -18,21 +19,22 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
 
-            expect(project.directory).toEqual('my-project/');
+            expect(project.directory).toEqual('my-project');
         });
 
-        test('when a project is specified as an existing relative directory without a backslash, then we return that directory without a backslash', () => {
+        test('when a project is specified as an existing relative directory ending with a slash, then we return that directory with a slash', () => {
             mock({
                 'my-project': {
                     'package.json': '{}'
                 }
             });
 
-            const project = new Project('my-project');
+            const expected = path.normalize('my-project/');
+            const project = new Project(expected);
 
-            expect(project.directory).toEqual('my-project');
+            expect(project.directory).toEqual(expected);
         });
 
         test('when searching the current directory, the package.json file is found.', () => {
@@ -62,29 +64,29 @@ describe('project', () => {
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json':
-                        '{"modulesSourceDirectory": "modulesSrc/"}'
+                        '{"modulesSourceDirectory": "modulesSrc"}'
                 }
             });
 
-            const project = new Project('my-project/');
-
-            expect(project.modulesSourceDirectory).toBe(
-                'my-project/modulesSrc/'
-            );
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'modulesSrc');
+            expect(project.modulesSourceDirectory).toBe(expected);
         });
 
         test('handles an absolute modulesSourceDirectory specified in the json config', () => {
+            const modulesSourceDirectory = path.normalize('/foo/modulesSrc/');
             mock({
                 'my-project': {
                     'package.json': '{}',
-                    'localdevserver.config.json':
-                        '{"modulesSourceDirectory": "/foo/modulesSrc/"}'
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory
+                    })
                 }
             });
 
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
 
-            expect(project.modulesSourceDirectory).toBe('/foo/modulesSrc/');
+            expect(project.modulesSourceDirectory).toBe(modulesSourceDirectory);
         });
 
         test('uses a fallback when modulesSourceDirectory is not specified in the json config', () => {
@@ -95,9 +97,10 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'src');
 
-            expect(project.modulesSourceDirectory).toBe('my-project/src');
+            expect(project.modulesSourceDirectory).toBe(expected);
         });
 
         test('throws an exception when referencing a project without package.json or sfdx-project.json', () => {
@@ -111,10 +114,10 @@ describe('project', () => {
                 }
             });
             try {
-                new Project('invalid-project/');
+                new Project('invalid-project');
             } catch (e) {
                 expect(e.message).toBe(
-                    "Directory specified 'invalid-project/' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it."
+                    "Directory specified 'invalid-project' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it."
                 );
             }
         });
@@ -124,10 +127,10 @@ describe('project', () => {
                 'invalid-project': {}
             });
             try {
-                new Project('invalid-project-DOES-NOT-EXIST/');
+                new Project('invalid-project-DOES-NOT-EXIST');
             } catch (e) {
                 expect(e.message).toBe(
-                    "Directory specified 'invalid-project-DOES-NOT-EXIST/' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it."
+                    "Directory specified 'invalid-project-DOES-NOT-EXIST' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it."
                 );
             }
         });
@@ -139,7 +142,7 @@ describe('project', () => {
                 }
             });
 
-            expect(new Project('valid-project/').isSfdx).toBe(true);
+            expect(new Project('valid-project').isSfdx).toBe(true);
         });
     });
 
@@ -152,9 +155,9 @@ describe('project', () => {
                     'package.json': '{}'
                 }
             });
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
 
-            expect(project.directory).toBe('my-project/');
+            expect(project.directory).toBe('my-project');
         });
 
         test('then use the packageDirectories to resolve the module directory', () => {
@@ -173,9 +176,9 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
-
-            expect(project.modulesSourceDirectory).toBe('my-project/force-app');
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'force-app');
+            expect(project.modulesSourceDirectory).toBe(expected);
         });
 
         test('then use the packageDirectories to resolve the static resources directory', () => {
@@ -194,11 +197,15 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
-
-            expect(project.staticResourcesDirectory).toBe(
-                'my-project/force-app/main/default/staticresources'
+            const project = new Project('my-project');
+            const expected = path.join(
+                'my-project',
+                'force-app',
+                'main',
+                'default',
+                'staticresources'
             );
+            expect(project.staticResourcesDirectory).toBe(expected);
         });
 
         test('then configure the port from the configuration', () => {
@@ -210,7 +217,7 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
             project.configuration.port = 123456;
 
             expect(project.configuration.port).toBe(123456);
@@ -225,7 +232,7 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
             project.configuration.namespace = 'my-project-namespace';
 
             expect(project.configuration.namespace).toBe(
@@ -247,11 +254,16 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
-
-            expect(project.staticResourcesDirectory).toBe(
-                'my-project/force-app/main/default/staticresources'
+            const project = new Project('my-project');
+            const expected = path.join(
+                'my-project',
+                'force-app',
+                'main',
+                'default',
+                'staticresources'
             );
+
+            expect(project.staticResourcesDirectory).toBe(expected);
         });
 
         test('then detect the modules source directory from sfdx-project.json', () => {
@@ -268,9 +280,10 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'force-app');
 
-            expect(project.modulesSourceDirectory).toBe('my-project/force-app');
+            expect(project.modulesSourceDirectory).toBe(expected);
         });
     });
 
@@ -287,16 +300,22 @@ describe('project', () => {
                         ]
                     }),
                     'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory: 'specified/directory/'
+                        modulesSourceDirectory: path.normalize(
+                            'specified/directory/'
+                        )
                     })
                 }
             });
 
             const project = new Project('my-project/');
-
-            expect(project.modulesSourceDirectory).toBe(
-                'my-project/specified/directory/'
+            const expected = path.join(
+                'my-project',
+                'specified',
+                'directory',
+                '/'
             );
+
+            expect(project.modulesSourceDirectory).toBe(expected);
         });
 
         test('when staticResourcesDirectory is specified in the config json file, it takes precedence over sfdx-project.json', () => {
@@ -311,16 +330,23 @@ describe('project', () => {
                         ]
                     }),
                     'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectory: 'specified/directory/assets/'
+                        staticResourcesDirectory: path.normalize(
+                            'specified/directory/assets/'
+                        )
                     })
                 }
             });
 
-            const project = new Project('my-project/');
-
-            expect(project.staticResourcesDirectory).toBe(
-                'my-project/specified/directory/assets/'
+            const project = new Project('my-project');
+            const expected = path.join(
+                'my-project',
+                'specified',
+                'directory',
+                'assets',
+                '/'
             );
+
+            expect(project.staticResourcesDirectory).toBe(expected);
         });
 
         test('when staticResourcesDirectory is specified as empty in the config json file, staticResourcesDirectory property returns null', () => {
@@ -333,7 +359,7 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project/');
+            const project = new Project('my-project');
 
             expect(project.staticResourcesDirectory).toBeNull();
         });

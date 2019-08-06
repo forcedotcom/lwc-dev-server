@@ -1,7 +1,7 @@
 module.exports = {
     displayName: 'Integration Tests',
     preset: 'ts-jest',
-    testMatch: ['<rootDir>/**/?(*.)test.ts'],
+    testMatch: ['<rootDir>/**/*(*.)@(spec|test).[tj]s?(x)'],
     testEnvironment: '<rootDir>/environment/DefaultEnvironment.js',
     setupFilesAfterEnv: ['<rootDir>/setup/setupFiles.ts'],
     globalSetup: '<rootDir>/setup/globalSetup.ts',
