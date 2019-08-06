@@ -56,7 +56,7 @@
     "test:ci": "yarn test --ci",
     "test:e2e": "HEADLESS=false yarn jest --runInBand --config integration-tests/jest.config.integration-test.js",
     "test:e2e-debug": "HEADLESS=false node --inspect-brk node_modules/.bin/jest --runInBand --config integration-tests/jest.config.integration-test.js",
-    "test:e2e-ci": "yarn jest --runInBand --config integration-tests/jest.config.integration-test.js",
+    "test:e2e-ci": "yarn jest --runInBand --force-exit --config integration-tests/jest.config.integration-test.js",
     "format": "prettier --write \"src/**/*.ts\"",
     "link-talon": "yarn link @talon/common @talon/framework @talon/compiler",
     "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
