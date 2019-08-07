@@ -1,1 +1,0 @@
-export { baseNavigation } from './baseNavigation';
