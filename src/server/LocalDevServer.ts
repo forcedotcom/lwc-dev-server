@@ -7,7 +7,10 @@ import ComponentIndex from '../common/ComponentIndex';
 import { talonConfig, views, labels, theme, routes } from './talonConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
-import { precompileDir, precompiled } from './config/rollup-plugin-precompiled';
+import {
+    PRECOMPILED_PREFIX,
+    precompiled
+} from './config/rollup-plugin-precompiled';
 import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { Server } from 'http';
@@ -68,14 +71,14 @@ export default class LocalDevServer {
             );
         }
 
-        talonConfig.rollup.plugins.push(precompiled());
+        talonConfig.rollup.plugins.push(precompiled({ apiVersion: version }));
         talonConfig.lwcOptions = {
             exclude: [
                 '/**/*.mjs',
                 // Salesforce scoped modules (schema, apex, etc.) do not
                 // need to go through the LWC rollup plugin
                 /@salesforce\/.*/,
-                `${precompileDir}/**`
+                `${PRECOMPILED_PREFIX}**`
             ]
         };
         debugger;

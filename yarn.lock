@@ -1969,6 +1969,13 @@
   resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.2.tgz#a321866dcb7c9c4c57a1d794d54ec52e3f07ff0b"
   integrity sha512-ZRRPNf/e44QnFI8VEsPxzrM/+Y5vx/HGsMI8qE4JvBHDkSfoFWAdZ93uW6Oh3sHmcoShexcoTH9gufihTgYBLQ==
 
+"@types/jszip@^3.1.6":
+  version "3.1.6"
+  resolved "http://npm.lwcjs.org/@types/jszip/-/jszip-3.1.6/0512574a2b35f3194b41769c56e4b35065e67000.tgz#0512574a2b35f3194b41769c56e4b35065e67000"
+  integrity sha512-m8uFcI+O2EupCfbEVQWsBM/4nhbegjOHL7cQgBpM95FeF98kdFJXzy9/8yhx4b3lCRl/gMBhcvyh30Qt3X+XPQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/keygrip@*":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/keygrip/-/keygrip-1.0.1.tgz#ff540462d2fb4d0a88441ceaf27d287b01c3d878"
@@ -5591,6 +5598,11 @@ ignore@^4.0.6:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
 
+immediate@~3.0.5:
+  version "3.0.6"
+  resolved "http://npm.lwcjs.org/immediate/-/immediate-3.0.6/9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
+  integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
+
 import-fresh@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-2.0.0.tgz#d81355c15612d386c61f9ddd3922d4304822a546"
@@ -6708,6 +6720,16 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jszip@^3.2.2:
+  version "3.2.2"
+  resolved "http://npm.lwcjs.org/jszip/-/jszip-3.2.2/b143816df7e106a9597a94c77493385adca5bd1d.tgz#b143816df7e106a9597a94c77493385adca5bd1d"
+  integrity sha512-NmKajvAFQpbg3taXQXr/ccS2wcucR1AZ+NtyWp2Nq7HHVsXhcJFR8p0Baf32C2yVvBylFWVeKf+WI2AnvlPhpA==
+  dependencies:
+    lie "~3.3.0"
+    pako "~1.0.2"
+    readable-stream "~2.3.6"
+    set-immediate-shim "~1.0.1"
+
 just-extend@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-4.0.2.tgz#f3f47f7dfca0f989c55410a7ebc8854b07108afc"
@@ -6802,6 +6824,13 @@ levn@^0.3.0, levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
+
+lie@~3.3.0:
+  version "3.3.0"
+  resolved "http://npm.lwcjs.org/lie/-/lie-3.3.0/dcf82dee545f46074daf200c7c1c5a08e0f40f6a.tgz#dcf82dee545f46074daf200c7c1c5a08e0f40f6a"
+  integrity sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==
+  dependencies:
+    immediate "~3.0.5"
 
 line-column@^1.0.2:
   version "1.0.2"
@@ -7125,10 +7154,10 @@ lru-queue@0.1:
   dependencies:
     es5-ext "~0.10.2"
 
-lwc-dev-server-runtime-lib@^1.0.2:
-  version "1.0.2"
-  resolved "http://npm.lwcjs.org/lwc-dev-server-runtime-lib/-/lwc-dev-server-runtime-lib-1.0.2/4ff345e92e5464d723147a620d4f080b87657cd9.tgz#4ff345e92e5464d723147a620d4f080b87657cd9"
-  integrity sha512-KFZYd8yrAXcCyxadeQwfFlTb/bzl1FQrK1/jioLR7IYR//rgrZe3u2Zzg+eYoHfTb7/5mVKbfoXp+AQbETVlHw==
+lwc-dev-server-runtime-lib@^1.0.3:
+  version "1.0.3"
+  resolved "http://npm.lwcjs.org/lwc-dev-server-runtime-lib/-/lwc-dev-server-runtime-lib-1.0.3/46e2266ad5bdee2363710af41239e57ca552aeb5.tgz#46e2266ad5bdee2363710af41239e57ca552aeb5"
+  integrity sha512-MzWslJL1Gg7nSqehgr0E7rJX3QRP9zOBaKC0qbyHacD9Bg83x2Ea6taJ7pmPv6uXCnrvpMjdRkCWUX0psj4hVg==
 
 magic-string@^0.25.2, magic-string@~0.25.1:
   version "0.25.3"
@@ -7929,6 +7958,11 @@ pako@~0.2.0:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/pako/-/pako-0.2.9.tgz#f3f7522f4ef782348da8161bad9ecfd51bf83a75"
   integrity sha1-8/dSL073gjSNqBYbrZ7P1Rv4OnU=
+
+pako@~1.0.2:
+  version "1.0.10"
+  resolved "http://npm.lwcjs.org/pako/-/pako-1.0.10/4328badb5086a426aa90f541977d4955da5c9732.tgz#4328badb5086a426aa90f541977d4955da5c9732"
+  integrity sha512-0DTvPVU3ed8+HNXOu5Bs+o//Mbdj9VNQMUOe9oKCwh8l0GNwpTDMKCWbRjgtD291AWnkAgkqA/LOnQS8AmS1tw==
 
 parent-module@^1.0.0:
   version "1.0.1"
@@ -9274,6 +9308,11 @@ set-blocking@^2.0.0, set-blocking@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
   integrity sha1-BF+XgtARrppoA93TgrJDkrPYkPc=
+
+set-immediate-shim@~1.0.1:
+  version "1.0.1"
+  resolved "http://npm.lwcjs.org/set-immediate-shim/-/set-immediate-shim-1.0.1/4b2b1b27eb808a9f8dcc481a58e5e56f599f3f61.tgz#4b2b1b27eb808a9f8dcc481a58e5e56f599f3f61"
+  integrity sha1-SysbJ+uAip+NzEgaWOXlb1mfP2E=
 
 set-value@^2.0.0, set-value@^2.0.1:
   version "2.0.1"
