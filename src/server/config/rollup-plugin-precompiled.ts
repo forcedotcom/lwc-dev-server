@@ -132,7 +132,6 @@ export function precompiled({
         load(id: string) {
             if (id.startsWith(PRECOMPILED_PREFIX)) {
                 const entry = id.substring(PRECOMPILED_PREFIX.length);
-                debugger;
                 debug(`Loading precompiled: ${id}`);
                 //TODO: PATH OVERRIDES ISNT WORKING, NO NEED RIGHT NOW
                 // const entryOverride = pathOverrides[entry];

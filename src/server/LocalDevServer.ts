@@ -81,7 +81,6 @@ export default class LocalDevServer {
                 `${PRECOMPILED_PREFIX}**`
             ]
         };
-        debugger;
         const config = {
             templateDir: directory,
             talonConfig,
