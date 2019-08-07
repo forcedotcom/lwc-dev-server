@@ -82,6 +82,7 @@ export default class LocalDevServer {
             isPreview: false,
             modulePaths,
             runInBand: true,
+            liveReload: configuration.liveReload,
             modes: ['dev']
         };
 
@@ -116,11 +117,7 @@ export default class LocalDevServer {
                 const modules = tmp.getModules();
                 res.json(modules);
             });
-            this.server = await startServer(
-                server,
-                '',
-                project.configuration.port
-            );
+            this.server = await startServer(server, '', configuration.port);
         } catch (e) {
             throw new Error(`Unable to start LocalDevServer: ${e}`);
         }
