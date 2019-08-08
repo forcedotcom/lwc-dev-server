@@ -146,6 +146,7 @@ export function precompiled({
                 // no override, maybe its a direct reference
                 return zip.file(entry).async('text');
             }
+            return null;
         },
         resolveId(id: string) {
             const modulePath = modules[apiVersion][id];
