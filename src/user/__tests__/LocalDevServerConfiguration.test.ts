@@ -24,7 +24,7 @@ describe('LocalDevServerConfiguration', () => {
 
         // @ts-ignore
         expect(console.warn.mock.calls[0][0]).toBe(
-            'Specified configuration file invalid.json does not exist.'
+            'Warning: Specified configuration file invalid.json does not exist.'
         );
     });
 
