@@ -14,7 +14,9 @@ const packages = {
     '@talon/metadata-schema': 'latest',
     '@talon/common': 'latest',
     '@talon/framework': 'latest',
-    '@talon/compiler': 'latest'
+    '@talon/compiler': 'latest',
+    '@lbf/utils': '0.1.15',
+    '@lbf/interactions': '0.1.6'
 };
 
 const registry =

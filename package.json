@@ -121,6 +121,8 @@
   "dependencies": {
     "@babel/core": "^7.5.4",
     "@babel/runtime": "^7.5.4",
+    "@lbf/interactions": "file:lib/unpacked/lbf-interactions-0.1.6",
+    "@lbf/utils": "file:lib/unpacked/lbf-utils-0.1.15",
     "@lwc/compiler": "1.0.1",
     "@lwc/engine": "1.0.1",
     "@lwc/module-resolver": "1.0.1",

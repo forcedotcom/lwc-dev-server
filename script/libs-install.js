@@ -121,11 +121,7 @@ function getPackageData(dirs) {
             const previous = packages[pkgJson.name];
             if (previous !== undefined) {
                 throw new Error(
-                    `package '${
-                        pkgJson.name
-                    }' is specified by duplicate sources '${
-                        previous.dir
-                    }' and '${dir}'`
+                    `package '${pkgJson.name}' is specified by duplicate sources '${previous.dir}' and '${dir}'`
                 );
             }
 

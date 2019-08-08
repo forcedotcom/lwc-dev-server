@@ -1268,15 +1268,11 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^12.0.9"
 
-"@lbf/interactions@0.1.6":
+"@lbf/interactions@file:lib/unpacked/lbf-interactions-0.1.6":
   version "0.1.6"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lbf/interactions/-/interactions-0.1.6.tgz#62a0d42673c3793360416b8a775e34ca3f151bcd"
-  integrity sha512-u45h3fiX8UQa+MYclnJfZ33r886AAXx/EaYOW3ZuCTXFuXFzwQ3UlBTOYQtTlbCUAY7HCPpxQeUOHZhgYoxSoQ==
 
-"@lbf/utils@^0.1.6":
+"@lbf/utils@file:lib/unpacked/lbf-utils-0.1.15":
   version "0.1.15"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lbf/utils/-/utils-0.1.15.tgz#3c9b56252e0d1e075a30e90973473d26a0a0e837"
-  integrity sha512-G0KdogYOHA+TCCCKA795evNai4g+1rQ0/kR9V82Oi2NliFXZ8rvinOAz7KU5VseU6PdRVXpwd14oTQ7ZS5jlCA==
   dependencies:
     "@lwc/wire-service" "1.0.2-222.12"
 
@@ -1926,9 +1922,6 @@
 
 "@talon/framework@file:lib/unpacked/talon-framework-0.18.4":
   version "0.18.4"
-  dependencies:
-    "@lbf/interactions" "0.1.6"
-    "@lbf/utils" "^0.1.6"
 
 "@talon/metadata-schema@file:lib/unpacked/talon-metadata-schema-0.0.17":
   version "0.0.17"
