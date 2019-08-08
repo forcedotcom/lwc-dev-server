@@ -7,8 +7,10 @@ const path = require('path');
 const shell = require('shelljs');
 
 const packages = {
-    'lwc-components-lightning': 'main',
-    '@talon/force-modules': 'latest',
+    // NOTICE: the next two are precompiled
+    // 'lwc-components-lightning': 'main',
+    // '@talon/force-modules': 'latest',
+    '@talon/navigation': 'latest',
     '@talon/metadata-schema': 'latest',
     '@talon/common': 'latest',
     '@talon/framework': 'latest',
@@ -29,8 +31,8 @@ fs.mkdirSync(dest);
 const mapping = {};
 
 Object.keys(packages).forEach(pkg => {
-    console.log(`\ndownloading ${pkg}`);
     const tag = packages[pkg];
+    console.log(`\ndownloading ${pkg}@${tag}`);
     const { stdout } = shell.exec(
         `cd ${dest} && npm pack ${pkg}@${tag} --registry ${registry}`
     );
