@@ -46,10 +46,7 @@ export default class LocalDevServer {
                 : 0;
 
         // vendor deps that we override, like LGC, LDS, etc
-        const extraDependencies = path.resolve(
-            // TODO FIXME! 220 LDS does not appear to work with aggregate-ui
-            path.join(packageRoot, 'vendors', 'dependencies-218') // `dependencies-${version}`)
-        );
+        const extraDependencies: any = [];
 
         // our own lwc modules to host the local app
         const localDependencies = packageRoot;
@@ -71,7 +68,10 @@ export default class LocalDevServer {
             );
         }
 
-        talonConfig.rollup.plugins.push(precompiled({ apiVersion: version }));
+        const precompiledLoaderPlugin = await precompiled({
+            apiVersion: version
+        });
+        talonConfig.rollup.plugins.push(precompiledLoaderPlugin);
         talonConfig.lwcOptions = {
             exclude: [
                 '/**/*.mjs',
@@ -101,7 +101,7 @@ export default class LocalDevServer {
         };
 
         debug('Running Universal Container with config:');
-        debug(config);
+        debug(JSON.stringify(config, null, 4));
 
         // fixme: clear outputDir for now because of a caching issue
         // with talon (maybe we need to force a recompile of the views?)

@@ -19,17 +19,18 @@ const files = (p: string) =>
         .filter(f => fs.statSync(path.join(p, f)).isFile())
         .map(f => p + '/' + f);
 
-const modules: any = {};
-const pathOverrides: any = {};
-// const moduleList = () => Object.keys(modules);
-const precompileDir = path.dirname(
-    require.resolve('lwc-dev-server-runtime-lib')
-);
 const FOLDER = false;
 
 let zip: jszip;
 
 async function init() {
+    const modules: any = {};
+    const pathOverrides: any = {};
+    // const moduleList = () => Object.keys(modules);
+    const precompileDir = path.dirname(
+        require.resolve('lwc-dev-server-runtime-lib')
+    );
+
     if (FOLDER) {
         // TODO this is out of date, it needs to process multiple versions
         // and also add the 'precompiled:' prefix to the paths
@@ -118,14 +119,28 @@ async function init() {
             }
         }
     }
+    return modules;
 }
 
 export const PRECOMPILED_PREFIX = '/PRECOMPILED/';
-export function precompiled({
+export async function precompiled({
     apiVersion
 }: {
     apiVersion: string | number;
-}): Plugin {
+}): Promise<Plugin> {
+    const modules = await init();
+    if (!modules[apiVersion]) {
+        console.warn(
+            `WARNING! precompiled libraries for apiVersion ${apiVersion} do not exist!`
+        );
+    }
+    const intVersion = parseInt(apiVersion as string);
+    if (intVersion < 220) {
+        apiVersion = '220';
+        console.warn(
+            `WARNING! Mapping requested API version: ${intVersion}->220`
+        );
+    }
     return {
         name: 'rollup-plugin-precompiled',
 
@@ -149,10 +164,11 @@ export function precompiled({
             return null;
         },
         resolveId(id: string) {
-            const modulePath = modules[apiVersion][id];
-            return modulePath;
+            const versionOverrides = modules[apiVersion];
+            if (versionOverrides) {
+                return versionOverrides[id];
+            }
+            return null;
         }
     };
 }
-
-init();
