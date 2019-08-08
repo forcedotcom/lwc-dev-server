@@ -1,4 +1,4 @@
-import Start from '../Start';
+import Start from '../start';
 import * as Config from '@oclif/config';
 import { JsonMap } from '@salesforce/ts-types';
 import LocalDevServer from '../../../../../../server/LocalDevServer';
