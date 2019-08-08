@@ -20,6 +20,7 @@ lib/unpacked/
 reports
 errorShots
 coverage
+autoreloadtestingcopy
 
 # Stores custom attributes of its containing folder, such as the position of icons or the choice of a background image
 .DS_Store

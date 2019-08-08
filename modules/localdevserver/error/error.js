@@ -1,5 +1,4 @@
 import { LightningElement, api, track } from 'lwc';
-import { createElement } from 'talon/componentService';
 
 export default class Error extends LightningElement {
     @track
@@ -34,9 +33,7 @@ export default class Error extends LightningElement {
         this._error = newError;
         if (this.error && this.error.filename) {
             if (this.error.location) {
-                this.errorLocation = `${this.error.filename}:${
-                    this.error.location.line
-                }:${this.error.location.column}`;
+                this.errorLocation = `${this.error.filename}:${this.error.location.line}:${this.error.location.column}`;
                 this.errorLine = this.error.location.line;
             } else {
                 this.errorLocation = `${this.error.filename}`;

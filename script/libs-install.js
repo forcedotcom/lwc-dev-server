@@ -176,13 +176,16 @@ function fixReferences(packages) {
 }
 
 function addPackages(packages) {
-    const execpath = process.env.npm_execpath || 'yarn';
+    // const execpath = process.env.npm_execpath || 'yarn';
+    const execpath = 'yarn';
+
     Object.keys(packages).forEach(pkg => {
         const dir = packages[pkg].dir;
         const command = `${execpath} add file:${dir}`;
         console.log(command);
-        const { stderr } = shell.exec(`IS_LIBS_INSTALL=1 ${command}`, {
-            silent: true
+        const { stderr } = shell.exec(`${command}`, {
+            silent: true,
+            env: Object.assign({ IS_LIBS_INSTALL: '1' }, process.env)
         });
         if (stderr) {
             console.error(stderr);

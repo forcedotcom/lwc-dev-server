@@ -3,6 +3,7 @@ import fs from 'fs';
 export const defaultPort = 3333;
 export default class LocalDevServerConfiguration {
     private _onProxyReq: Function = function() {};
+    private _liveReload: boolean = true;
     private entryPoint: string = '';
     private readonly configFromJson: any;
 
@@ -29,12 +30,16 @@ export default class LocalDevServerConfiguration {
                     console.error(
                         `Loading JSON in '${configFilePath}' failed with the error ${e.message}`
                     );
+                    this.configFromJson = {};
                 }
             } else {
                 this.configFromJson = {};
             }
         } else {
             this.configFromJson = {};
+        }
+        if (this.configFromJson.hasOwnProperty('liveReload')) {
+            this._liveReload = !!this.configFromJson.liveReload;
         }
     }
 
@@ -160,6 +165,14 @@ export default class LocalDevServerConfiguration {
 
     public set onProxyReq(onProxyReq: Function) {
         this._onProxyReq = onProxyReq;
+    }
+
+    public get liveReload(): boolean {
+        return this._liveReload;
+    }
+
+    public set liveReload(liveReload: boolean) {
+        this._liveReload = liveReload;
     }
 
     /**

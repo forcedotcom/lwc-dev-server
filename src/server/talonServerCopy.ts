@@ -6,19 +6,21 @@
  *
  */
 import {
-    templateMiddleware,
-    resourceMiddleware,
     apiMiddleware,
-    compileErrorMiddleware
+    compileErrorMiddleware,
+    endContext,
+    resourceMiddleware,
+    startContext,
+    staticMiddleware,
+    templateMiddleware
 } from '@talon/compiler';
-import { startContext, endContext, staticMiddleware } from '@talon/compiler';
 import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import uuidv4 from 'uuidv4';
 import colors from 'colors';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { Parser } from 'xml2js';
 import mimeTypes from 'mime-types';
 import debugLogger from 'debug';
@@ -26,6 +28,9 @@ import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
 import { apexMiddleware } from './apexMiddleware';
 import { Connection } from '@salesforce/core';
+import reload from 'reload';
+import watch from 'watch';
+import getPort from 'get-port';
 
 const PUBLIC_DIR = 'public';
 
@@ -36,6 +41,9 @@ const FRAMEWORK_RESOURCE_JSON = require.resolve(
     '@talon/framework/dist/resources.json'
 );
 const FRAMEWORK_OUTPUT_DIR = path.dirname(FRAMEWORK_RESOURCE_JSON);
+
+const _WATCHTREE_FOLDERS: Array<string> = [];
+let _RELOAD_RETURNED = { reload: () => {}, closeServer: async () => {} };
 
 /**
  * The path to the directory containing Talon framework static files.
@@ -69,7 +77,7 @@ function getRootApp(app: any, basePath: string) {
 }
 
 export async function createServer(
-    options: object,
+    options: any,
     apiConfig: any = {},
     connection?: Connection
 ) {
@@ -172,6 +180,58 @@ export async function createServer(
             })
         );
     }
+
+    if (options.liveReload) {
+        // reload - auto reloading of the page
+        let reloading: { [key: string]: boolean } = {};
+        const liveReloadPort = await getPort();
+        debug('live reload port: ' + liveReloadPort);
+        reload(app, {
+            port: liveReloadPort,
+            verbose: debugLogger.enabled('localdevserver')
+        }).then((reloadReturned: any) => {
+            _RELOAD_RETURNED = reloadReturned;
+            _WATCHTREE_FOLDERS.push(sourceDir);
+            debug('watching: ' + sourceDir);
+            const ignoreDirectoryPattern = new RegExp(outputDir + '.*');
+            const watchCallback = function(file: any, curr: any, prev: any) {
+                if (typeof file === 'string') {
+                    const fileName: string = file.toString();
+                    debug('file changed: ' + fileName);
+                    if (!reloading[fileName]) {
+                        reloading[fileName] = true;
+                        _RELOAD_RETURNED.reload();
+                        setTimeout(() => {
+                            reloading[fileName] = false;
+                        }, 500);
+                    }
+                    if (
+                        fs.existsSync(fileName) &&
+                        fs.lstatSync(fileName).isDirectory()
+                    ) {
+                        debug('new folder, now watching: ' + fileName);
+                        watch.watchTree(
+                            fileName,
+                            { ignoreDirectoryPattern },
+                            watchCallback
+                        );
+                        _WATCHTREE_FOLDERS.push(fileName);
+                    } else if (_WATCHTREE_FOLDERS.indexOf(fileName) !== -1) {
+                        _WATCHTREE_FOLDERS.splice(
+                            _WATCHTREE_FOLDERS.indexOf(fileName),
+                            1
+                        );
+                    }
+                }
+            };
+            watch.watchTree(
+                sourceDir,
+                { ignoreDirectoryPattern },
+                watchCallback
+            );
+        });
+    }
+
     // Proxy, record and replay API calls
     app.use(apiMiddleware(apiConfig));
 
@@ -206,11 +266,13 @@ export async function startServer(app: any, basePath: string, port = 3000) {
         );
     });
 
-    server.on('close', () => {
+    server.on('close', async () => {
         endContext();
+        await _RELOAD_RETURNED.closeServer();
+        _WATCHTREE_FOLDERS.forEach(watch.unwatchTree);
     });
 
-    process.on('SIGINT', () => {
+    process.on('SIGINT', async () => {
         server.close();
         process.exit();
     });

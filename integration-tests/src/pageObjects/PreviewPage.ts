@@ -2,7 +2,7 @@ import Page from './Page';
 import decamelize from 'decamelize';
 
 export default class PreviewPage implements Page {
-    private container: WebdriverIO.Element | undefined;
+    private _container: WebdriverIO.Element | undefined;
     private namespace: string;
     private name: string;
 
@@ -19,23 +19,26 @@ export default class PreviewPage implements Page {
 
     public async open() {
         await browser.url(
-            `http://localhost:${global.serverPort}/lwc/preview/${
-                this.namespace
-            }/${this.name}`
+            `http://localhost:${global.serverPort}/lwc/preview/${this.namespace}/${this.name}`
         );
+
+        return this.container;
+    }
+
+    public get container() {
         return browser
             .$('talon-app')
             .then(el => el.shadow$('localdevserver-layout'))
             .then(el => el.$('talon-router-container'))
             .then(el => el.shadow$('localdevserver-preview'))
-            .then(el => (this.container = el));
+            .then(el => (this._container = el));
     }
 
     public get testComponent() {
-        if (this.container) {
+        if (this._container) {
             const webComponentName = decamelize(this.name, '-');
             return Promise.resolve(
-                this.container.shadow$(`${this.namespace}-${webComponentName}`)
+                this._container.shadow$(`${this.namespace}-${webComponentName}`)
             );
         }
         throw new Error('container not initialized first, call open() first');
