@@ -17,7 +17,7 @@ SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REG
 git clone git@github.com:trailheadapps/lwc-recipes.git
 cd lwc-recipes
 sfdx force:auth:web:login -d -a myhuborg
-sfdx force:lightning:lwc:dev
+sfdx force:lightning:lwc:start
 ```
 Now your local server should be started -> http://localhost:3333/
 
@@ -66,7 +66,7 @@ At the moment the plugin **must be run within an SFDX project**, such as [LWC Re
 Start the server:
 
 ```sh
-sfdx force:lightning:lwc:dev
+sfdx force:lightning:lwc:start
 ```
 
 Once it's started, visit [http://localhost:3333](http://localhost:3333) in your browser.
@@ -114,9 +114,9 @@ sfdx plugins:unlink
 ## Troubleshooting
 
 ```sh-session
-$ sfdx force:lightning:lwc:dev
+$ sfdx force:lightning:lwc:start
 (node:78804) [ENOENT] Error: spawn lwc-dev-server ENOENT
-ERROR running force:lightning:lwc:dev:  Must pass a username and/or OAuth options when creating an AuthInfo instance.
+ERROR running force:lightning:lwc:start:  Must pass a username and/or OAuth options when creating an AuthInfo instance.
 ```
 
 You need to ensure you authenticate to your devhub via SFDX and create a scratch org.

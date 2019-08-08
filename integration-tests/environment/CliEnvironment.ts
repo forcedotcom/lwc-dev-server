@@ -27,7 +27,7 @@ const log = debug('localdevserver');
  *
  * Other options:
  *
- * - `@command force:lightning:lwc:dev`
+ * - `@command force:lightning:lwc:start`
  * - `@command-args --port=3339 --open=c:hello`
  *
  * This environment makes the following global values available:
@@ -50,7 +50,7 @@ export default class CliEnvironment extends BaseEnvironment {
         this.execPath = path.join(__dirname, '..', '..', 'bin/run');
         this.startupTimeoutMillis = 20000;
 
-        let command = 'force:lightning:lwc:dev';
+        let command = 'force:lightning:lwc:start';
         if (params['command']) {
             const commandValue = params['command'];
             if (Array.isArray(commandValue)) {

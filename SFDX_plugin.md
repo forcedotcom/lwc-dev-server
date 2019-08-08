@@ -21,11 +21,11 @@ USAGE
 ```
 <!-- usagestop -->
 <!-- commands -->
-* `sfdx force:lightning:lwc:dev [--open <lwc file name>] [--port <integer>] [--stop] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+* `sfdx force:lightning:lwc:start [--open <lwc file name>] [--port <integer>] [--stop] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 ```
 USAGE
-  $ sfdx force:lightning:lwc:dev [--open <lwc file name>] [--port <integer>] [--stop] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx force:lightning:lwc:start [--open <lwc file name>] [--port <integer>] [--stop] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -39,10 +39,10 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)   [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx force:lightning:lwc:dev -o myLWCexample
+  $ sfdx force:lightning:lwc:start -o myLWCexample
      <browser window will launch to myLWCexample>
   
-  $ sfdx force:lightning:lwc:dev -s
+  $ sfdx force:lightning:lwc:start -s
      Stopping dev server on port 8080
 ```
 
@@ -51,17 +51,17 @@ EXAMPLES
 # Debugging your plugin
 We recommend using the Visual Studio Code (VS Code) IDE for your plugin development. Included in the `.vscode` directory of this plugin is a `launch.json` config file, which allows you to attach a debugger to the node process when running your commands.
 
-To debug the `force:lightning:lwc:dev` command:
+To debug the `force:lightning:lwc:start` command:
 1. Start the inspector
   
 If you linked your plugin to the sfdx cli, call your command with the `dev-suspend` switch: 
 ```sh-session
-$ sfdx force:lightning:lwc:dev --dev-suspend
+$ sfdx force:lightning:lwc:start --dev-suspend
 ```
   
 Alternatively, to call your command using the `bin/run` script, set the `NODE_OPTIONS` environment variable to `--inspect-brk` when starting the debugger:
 ```sh-session
-$ NODE_OPTIONS=--inspect-brk bin/run force:lightning:lwc:dev
+$ NODE_OPTIONS=--inspect-brk bin/run force:lightning:lwc:start
 ```
 
 2. Set some breakpoints in your command code
