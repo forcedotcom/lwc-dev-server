@@ -81,47 +81,6 @@ describe('LocalDevServer', () => {
             );
         });
 
-        it('configures the modulePaths with the localdevserver modules', async () => {
-            const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({ projectPath });
-            const mockConn: any = {};
-
-            const server = new LocalDevServer();
-            await server.start(project, mockConn);
-
-            const expected = path.resolve(__dirname, '../../../');
-
-            expect(talonServer.createServer).toBeCalledWith(
-                expect.objectContaining({
-                    modulePaths: expect.arrayContaining([expected])
-                }),
-                expect.anything(),
-                mockConn
-            );
-        });
-
-        it('configures the modulePaths with the matching version resources directory', async () => {
-            const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({ projectPath, version: '45.0' });
-            const mockConn: any = {};
-
-            const server = new LocalDevServer();
-            await server.start(project, mockConn);
-
-            const expected = path.resolve(
-                __dirname,
-                '../../../vendors/dependencies-218'
-            );
-
-            expect(talonServer.createServer).toBeCalledWith(
-                expect.objectContaining({
-                    modulePaths: expect.arrayContaining([expected])
-                }),
-                expect.anything(),
-                mockConn
-            );
-        });
-
         it('clears the outputDirectory', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });
