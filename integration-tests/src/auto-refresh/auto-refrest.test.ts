@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import PreviewPage from '../pageObjects/PreviewPage';
+import rimraf from 'rimraf';
 
 describe('Auto Reload', () => {
     const lwcFolder = path.join(
@@ -15,8 +16,8 @@ describe('Auto Reload', () => {
             testingTargetDir,
             'autoreloadtestingcopy.html'
         );
-        if (fs.existsSync(testingTargetHtml)) {
-            fs.removeSync(testingTargetHtml);
+        if (fs.existsSync(testingTargetDir)) {
+            rimraf.sync(testingTargetDir);
         } else if (!fs.existsSync(testingTargetDir)) {
             fs.mkdirSync(testingTargetDir);
         }
