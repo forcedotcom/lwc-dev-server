@@ -46,6 +46,19 @@ describe('Auto Reload', () => {
             path.join(lwcFolder, 'autoreload', 'autoreload2.html'),
             testingTargetHtml
         );
+
+        console.warn(
+            'autoreload2 content',
+            fs.readFileSync(
+                path.join(lwcFolder, 'autoreload', 'autoreload2.html')
+            )
+        );
+
+        console.warn(
+            'autoreload2 content after',
+            fs.readFileSync(testingTargetHtml)
+        );
+
         // verify new content appears
         let newText = '';
         const start = Date.now();
