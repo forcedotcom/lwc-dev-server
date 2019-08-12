@@ -7271,10 +7271,10 @@ lru-queue@0.1:
   dependencies:
     es5-ext "~0.10.2"
 
-lwc-dev-server-runtime-lib@^1.0.3:
-  version "1.0.3"
-  resolved "http://npm.lwcjs.org/lwc-dev-server-runtime-lib/-/lwc-dev-server-runtime-lib-1.0.3/46e2266ad5bdee2363710af41239e57ca552aeb5.tgz#46e2266ad5bdee2363710af41239e57ca552aeb5"
-  integrity sha512-MzWslJL1Gg7nSqehgr0E7rJX3QRP9zOBaKC0qbyHacD9Bg83x2Ea6taJ7pmPv6uXCnrvpMjdRkCWUX0psj4hVg==
+lwc-dev-server-runtime-lib@^1.0.20:
+  version "1.0.20"
+  resolved "http://npm.lwcjs.org/lwc-dev-server-runtime-lib/-/lwc-dev-server-runtime-lib-1.0.20/ccd3c282a2501629982d77de8272903f9a054d03.tgz#ccd3c282a2501629982d77de8272903f9a054d03"
+  integrity sha512-/CMMolbe7XksYtIK+JfDjabQbOsZubg5Jkpe5RDeekua6QmppIg/cJiQU5mw06TUw690nMMyyRh+bwOXXNAU8A==
 
 magic-string@^0.25.2, magic-string@~0.25.1:
   version "0.25.3"

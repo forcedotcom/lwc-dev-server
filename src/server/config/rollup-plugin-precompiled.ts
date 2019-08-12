@@ -135,10 +135,10 @@ export async function precompiled({
         );
     }
     const intVersion = parseInt(apiVersion as string);
-    if (intVersion < 220) {
-        apiVersion = '220';
+    if (intVersion < 218) {
+        apiVersion = '218';
         console.warn(
-            `WARNING! Mapping requested API version: ${intVersion}->220`
+            `WARNING! Mapping requested API version: ${intVersion}->218`
         );
     }
     return {
@@ -146,6 +146,11 @@ export async function precompiled({
 
         load(id: string) {
             if (id.startsWith(PRECOMPILED_PREFIX)) {
+                // TODO: map LDS/220 to LDS/218
+                if (id === '/PRECOMPILED/dependencies-220/prod/force/lds.js') {
+                    console.log('WARNING: Mapping lds.js from 220 to 218!');
+                    id = '/PRECOMPILED/dependencies-218/prod/force/lds.js';
+                }
                 const entry = id.substring(PRECOMPILED_PREFIX.length);
                 debug(`Loading precompiled: ${id}`);
                 //TODO: PATH OVERRIDES ISNT WORKING, NO NEED RIGHT NOW

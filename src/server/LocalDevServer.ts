@@ -40,11 +40,13 @@ export default class LocalDevServer {
 
         // Salesforce internal version == Salesforce API Version * 2 + 128
         // 45 * 2 + 128 = 218
-        const version =
+        let version =
             configuration.api_version !== undefined
                 ? parseInt(configuration.api_version, 10) * 2 + 128
                 : 0;
-
+        debug(
+            `API Version ${configuration.api_version}, internal version ${version}`
+        );
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies: any = [];
 

@@ -228,9 +228,9 @@ export async function createServer(
             }
         });
         debug('Waiting for watcher');
-        await new Promise(resolve => {
-            watcher.on('ready', resolve);
-        });
+        // await new Promise(resolve => {
+        //     watcher.on('ready', resolve);
+        // });
         debug('Watcher is ready');
     }
 

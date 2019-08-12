@@ -160,7 +160,7 @@
     "helmet": "^3.18.0",
     "jsdom": "^15.1.1",
     "jszip": "^3.2.2",
-    "lwc-dev-server-runtime-lib": "^1.0.3",
+    "lwc-dev-server-runtime-lib": "^1.0.20",
     "mime-types": "^2.1.24",
     "path": "^0.12.7",
     "reload": "^3.0.1",
