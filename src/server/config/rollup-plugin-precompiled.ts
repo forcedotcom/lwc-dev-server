@@ -131,7 +131,7 @@ export async function precompiled({
     const modules = await init();
     if (!modules[apiVersion]) {
         console.warn(
-            `WARNING! precompiled libraries for apiVersion ${apiVersion} do not exist!`
+            `WARNING! Precompiled libraries for apiVersion ${apiVersion} do not exist!`
         );
     }
     const intVersion = parseInt(apiVersion as string);

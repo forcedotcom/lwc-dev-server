@@ -40,14 +40,12 @@ describe('Auto Reload', () => {
             '.content'
         )).getText();
         expect(originalText).toBe('Initial Content');
-
         console.error('copying autoreload2.html to autoreloadtestingcopy.html');
         // edit autoreloadtesting
-        fs.copyFileSync(
+        await fs.copyFile(
             path.join(lwcFolder, 'autoreload', 'autoreload2.html'),
             testingTargetHtml
         );
-
         // verify new content appears
         let newText = '';
         await browser.waitUntil(async () => {

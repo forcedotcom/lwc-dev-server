@@ -2229,13 +2229,6 @@
   resolved "http://npm.lwcjs.org/@types/uuidv4/-/uuidv4-2.0.0/9579daf4812281a40c93028012635eed08d7210d.tgz#9579daf4812281a40c93028012635eed08d7210d"
   integrity sha512-qMAfgZE8tjisI2/4/rkGvtSYpuI+t/6Q+wa38X3v6RfeaqI1ZM6W6Aye93d1WNPT2SgeFeHVbO+7uEJmIVbiwA==
 
-"@types/watch@^1.0.1":
-  version "1.0.1"
-  resolved "http://npm.lwcjs.org/@types/watch/-/watch-1.0.1/958340cfdbe3cfca85410e238beb05183947fd19.tgz#958340cfdbe3cfca85410e238beb05183947fd19"
-  integrity sha512-hN+2AA4LpM9So7z1ChhOiQ7SNZiKhrjKVDgxERT9nXTSb+ve1aNap4OExhNG4J/RAumJuZsg1kOeGlyYumVGew==
-  dependencies:
-    "@types/node" "*"
-
 "@types/xml2js@^0.4.4":
   version "0.4.4"
   resolved "http://npm.lwcjs.org/@types/xml2js/-/xml2js-0.4.4/2093d94359a201806d997dccefc80153db311c66.tgz#2093d94359a201806d997dccefc80153db311c66"
@@ -3386,7 +3379,7 @@ chokidar@^1.6.0:
   optionalDependencies:
     fsevents "^1.0.0"
 
-chokidar@^3.0.0:
+chokidar@^3.0.0, chokidar@^3.0.2:
   version "3.0.2"
   resolved "http://npm.lwcjs.org/chokidar/-/chokidar-3.0.2/0d1cd6d04eb2df0327446188cd13736a3367d681.tgz#0d1cd6d04eb2df0327446188cd13736a3367d681"
   integrity sha512-c4PR2egjNjI1um6bamCQ6bUNPDiyofNQruHvKgHQ4gDUP/ITSVSzNsiI5OWtHOsX323i5ha/kk4YmOZ1Ktg7KA==
@@ -4633,13 +4626,6 @@ events@1.1.1:
   version "1.1.1"
   resolved "http://npm.lwcjs.org/events/-/events-1.1.1/9ebdb7635ad099c70dcc4c2a1f5004288e8bd924.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
   integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
-
-exec-sh@^0.2.0:
-  version "0.2.2"
-  resolved "http://npm.lwcjs.org/exec-sh/-/exec-sh-0.2.2/2a5e7ffcbd7d0ba2755bdecb16e5a427dfbdec36.tgz#2a5e7ffcbd7d0ba2755bdecb16e5a427dfbdec36"
-  integrity sha512-FIUCJz1RbuS0FKTdaAafAByGS0CPvU3R0MeHxgtl+djzCc//F8HakL8GzmVNZanasTbTAY/3DRFA0KpVqj/eAw==
-  dependencies:
-    merge "^1.2.0"
 
 exec-sh@^0.3.2:
   version "0.3.2"
@@ -7412,11 +7398,6 @@ merge2@^1.2.3:
   version "1.2.4"
   resolved "http://npm.lwcjs.org/merge2/-/merge2-1.2.4/c9269589e6885a60cf80605d9522d4b67ca646e3.tgz#c9269589e6885a60cf80605d9522d4b67ca646e3"
   integrity sha512-FYE8xI+6pjFOhokZu0We3S5NKCirLbCzSh2Usf3qEyr4X8U+0jNg9P8RZ4qz+V2UoECLVwSyzU3LxXBaLGtD3A==
-
-merge@^1.2.0:
-  version "1.2.1"
-  resolved "http://npm.lwcjs.org/merge/-/merge-1.2.1/38bebf80c3220a8a487b6fcfb3941bb11720c145.tgz#38bebf80c3220a8a487b6fcfb3941bb11720c145"
-  integrity sha512-VjFo4P5Whtj4vsLzsYBu5ayHhoHJ0UqNm7ibvShmbmoz7tGi0vXaoJbGdB+GmDMLUdg8DpQXEIeVDAe8MaABvQ==
 
 methods@~1.1.2:
   version "1.1.2"
@@ -10602,14 +10583,6 @@ walker@^1.0.7, walker@~1.0.5:
   integrity sha1-L3+bj9ENZ3JisYqITijRlhjgKPs=
   dependencies:
     makeerror "1.0.x"
-
-watch@^1.0.2:
-  version "1.0.2"
-  resolved "http://npm.lwcjs.org/watch/-/watch-1.0.2/340a717bde765726fa0aa07d721e0147a551df0c.tgz#340a717bde765726fa0aa07d721e0147a551df0c"
-  integrity sha1-NApxe952Vyb6CqB9ch4BR6VR3ww=
-  dependencies:
-    exec-sh "^0.2.0"
-    minimist "^1.2.0"
 
 webdriver@^5.11.13:
   version "5.11.13"
