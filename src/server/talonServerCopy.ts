@@ -15,7 +15,7 @@ import {
     templateMiddleware
 } from '@talon/compiler';
 import compression from 'compression';
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import uuidv4 from 'uuidv4';
@@ -29,8 +29,9 @@ import cookieParser from 'cookie-parser';
 import { apexMiddleware } from './apexMiddleware';
 import { Connection } from '@salesforce/core';
 import reload from 'reload';
-import watch from 'watch';
+import chokidar from 'chokidar';
 import getPort from 'get-port';
+import EventEmitter from 'events';
 
 const PUBLIC_DIR = 'public';
 
@@ -42,7 +43,7 @@ const FRAMEWORK_RESOURCE_JSON = require.resolve(
 );
 const FRAMEWORK_OUTPUT_DIR = path.dirname(FRAMEWORK_RESOURCE_JSON);
 
-const _WATCHTREE_FOLDERS: Array<string> = [];
+let watcher: chokidar.FSWatcher;
 let _RELOAD_RETURNED = { reload: () => {}, closeServer: async () => {} };
 
 /**
@@ -114,6 +115,9 @@ export async function createServer(
     app.use(cookieParser());
     app.use(csurf({ cookie: true }));
 
+    const emitter = new EventEmitter();
+    app.use(resourceEmiter(emitter));
+
     // 2. resource middleware, compile component or views if needed and redirect to the generated resource
     app.use(resourceMiddleware());
 
@@ -182,54 +186,52 @@ export async function createServer(
     }
 
     if (options.liveReload) {
+        debug('Setting up filewatcher');
+
         // reload - auto reloading of the page
         let reloading: { [key: string]: boolean } = {};
         const liveReloadPort = await getPort();
         debug('live reload port: ' + liveReloadPort);
-        reload(app, {
+        const reloadReturned = await reload(app, {
             port: liveReloadPort,
             verbose: debugLogger.enabled('localdevserver')
-        }).then((reloadReturned: any) => {
-            _RELOAD_RETURNED = reloadReturned;
-            _WATCHTREE_FOLDERS.push(sourceDir);
-            debug('watching: ' + sourceDir);
-            const ignoreDirectoryPattern = new RegExp(outputDir + '.*');
-            const watchCallback = function(file: any, curr: any, prev: any) {
-                if (typeof file === 'string') {
-                    const fileName: string = file.toString();
-                    debug('file changed: ' + fileName);
-                    if (!reloading[fileName]) {
-                        reloading[fileName] = true;
-                        _RELOAD_RETURNED.reload();
-                        setTimeout(() => {
-                            reloading[fileName] = false;
-                        }, 500);
-                    }
-                    if (
-                        fs.existsSync(fileName) &&
-                        fs.lstatSync(fileName).isDirectory()
-                    ) {
-                        debug('new folder, now watching: ' + fileName);
-                        watch.watchTree(
-                            fileName,
-                            { ignoreDirectoryPattern },
-                            watchCallback
-                        );
-                        _WATCHTREE_FOLDERS.push(fileName);
-                    } else if (_WATCHTREE_FOLDERS.indexOf(fileName) !== -1) {
-                        _WATCHTREE_FOLDERS.splice(
-                            _WATCHTREE_FOLDERS.indexOf(fileName),
-                            1
-                        );
-                    }
-                }
-            };
-            watch.watchTree(
-                sourceDir,
-                { ignoreDirectoryPattern },
-                watchCallback
-            );
         });
+        _RELOAD_RETURNED = reloadReturned;
+        debug('watching: ' + sourceDir);
+        const ignored = outputDir + '/**';
+        watcher = chokidar.watch(sourceDir, {
+            ignored
+        });
+        watcher.on('change', fileName => {
+            const name = path.parse(fileName).name;
+            debug(`file changed: ${name}`);
+            if (!reloading[name]) {
+                reloading[name] = true;
+
+                debug(`reloading ${name}...`);
+                _RELOAD_RETURNED.reload();
+                let reloadLoop = setTimeout(() => {
+                    debug(`retrying reload ${name}...`);
+                    _RELOAD_RETURNED.reload();
+                }, 500);
+                // wait until we get back a resource request
+
+                const ackListener = (args: string) => {
+                    if (args.indexOf(name) != -1) {
+                        debug(`Reload complete ${name}`);
+                        reloading[name] = false;
+                        emitter.off('resourceUrl', ackListener);
+                        clearTimeout(reloadLoop);
+                    }
+                };
+                emitter.on('resourceUrl', ackListener);
+            }
+        });
+        debug('Waiting for watcher');
+        await new Promise(resolve => {
+            watcher.on('ready', resolve);
+        });
+        debug('Watcher is ready');
     }
 
     // Proxy, record and replay API calls
@@ -246,6 +248,13 @@ export async function createServer(
     });
 
     return app;
+}
+
+export function resourceEmiter(emitter: EventEmitter) {
+    return async function(req: Request, res: Response, next: NextFunction) {
+        emitter.emit('resourceUrl', req.url);
+        next();
+    };
 }
 
 export async function startServer(app: any, basePath: string, port = 3000) {
@@ -269,7 +278,7 @@ export async function startServer(app: any, basePath: string, port = 3000) {
     server.on('close', async () => {
         endContext();
         await _RELOAD_RETURNED.closeServer();
-        _WATCHTREE_FOLDERS.forEach(watch.unwatchTree);
+        watcher.close();
     });
 
     process.on('SIGINT', async () => {
