@@ -39,50 +39,26 @@ describe('Auto Reload', () => {
         const originalText = await (await pageContainer.shadow$(
             '.content'
         )).getText();
+
         expect(originalText).toBe('Initial Content');
 
-        console.error('copying autoreload2.html to autoreloadtestingcopy.html');
         // edit autoreloadtesting
         await fs.copyFile(
             path.join(lwcFolder, 'autoreload', 'autoreload2.html'),
             testingTargetHtml
         );
 
-        console.warn(
-            'autoreload2 content',
-            fs.readFileSync(
-                path.join(lwcFolder, 'autoreload', 'autoreload2.html'),
-                'UTF-8'
-            )
-        );
-
-        console.warn(
-            'autoreload2 content after',
-            fs.readFileSync(testingTargetHtml, 'UTF-8')
-        );
-
         // verify new content appears
         let newText = '';
-        const start = Date.now();
-        console.error('Starting at', start);
-
         await browser.waitUntil(
             async () => {
                 newText = await pageContainer.getText();
-                console.error(
-                    'Trace',
-                    newText,
-                    originalText,
-                    Date.now() - start
-                );
                 return originalText !== newText;
             },
-            50000,
+            20000,
             'Timeout waiting for page to autoreload',
             100
         );
-
-        console.error('Duration', Date.now() - start);
 
         expect(newText).toBe('New Content');
     });
