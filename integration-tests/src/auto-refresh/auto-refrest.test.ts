@@ -57,8 +57,7 @@ describe('Auto Reload', () => {
 
         console.warn(
             'autoreload2 content after',
-            fs.readFileSync(testingTargetHtml),
-            'UTF-8'
+            fs.readFileSync(testingTargetHtml, 'UTF-8')
         );
 
         // verify new content appears
