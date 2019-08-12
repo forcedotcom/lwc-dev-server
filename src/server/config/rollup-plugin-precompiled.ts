@@ -153,6 +153,7 @@ export async function precompiled({
                 }
                 const entry = id.substring(PRECOMPILED_PREFIX.length);
                 debug(`Loading precompiled: ${id}`);
+
                 //TODO: PATH OVERRIDES ISNT WORKING, NO NEED RIGHT NOW
                 // const entryOverride = pathOverrides[entry];
                 // if (entryOverride) {
