@@ -50,13 +50,15 @@ describe('Auto Reload', () => {
         console.warn(
             'autoreload2 content',
             fs.readFileSync(
-                path.join(lwcFolder, 'autoreload', 'autoreload2.html')
+                path.join(lwcFolder, 'autoreload', 'autoreload2.html'),
+                'UTF-8'
             )
         );
 
         console.warn(
             'autoreload2 content after',
-            fs.readFileSync(testingTargetHtml)
+            fs.readFileSync(testingTargetHtml),
+            'UTF-8'
         );
 
         // verify new content appears
