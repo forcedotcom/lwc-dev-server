@@ -56,10 +56,10 @@ export default class Server extends Command {
             `Starting the local dev server in directory: ${project.directory} with component: ${main}`
         );
 
-        this.startServer(project, main);
+        await this.startServer(project, main);
     }
 
-    private startServer(project: Project, main: string) {
+    private async startServer(project: Project, main: string) {
         //import localDevServer from './dist/LocalDevServer.js';
 
         // We're about to do something.
@@ -75,9 +75,9 @@ export default class Server extends Command {
         const localDevServer = new LocalDevServer();
 
         // Start the server
-        localDevServer.start(project);
+        await localDevServer.start(project);
 
         // Yay! We did it.
-        console.log('Done running local dev tools.');
+        console.log('Done starting local dev tools.');
     }
 }

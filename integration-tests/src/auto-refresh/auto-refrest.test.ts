@@ -55,6 +55,9 @@ describe('Auto Reload', () => {
                 newText = await (await pageContainer.shadow$(
                     '.content'
                 )).getText();
+
+                console.warn('newText', newText);
+
                 return originalText !== newText;
             },
             20000,
