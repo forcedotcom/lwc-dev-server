@@ -65,9 +65,8 @@ describe('Auto Reload', () => {
         const start = Date.now();
         console.error('Starting at', start);
 
-        setTimeout(function() {
-            browser.refresh();
-        }, 10000);
+        await browser.refresh();
+
         await browser.waitUntil(
             async () => {
                 newText = await pageContainer.getText();
