@@ -52,7 +52,9 @@ describe('Auto Reload', () => {
         let newText = '';
         await browser.waitUntil(
             async () => {
-                newText = await pageContainer.getText();
+                newText = await (await pageContainer.shadow$(
+                    '.content'
+                )).getText();
                 return originalText !== newText;
             },
             20000,
