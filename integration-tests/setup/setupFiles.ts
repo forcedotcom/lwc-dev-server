@@ -32,7 +32,8 @@ beforeEach(async () => {
                               '--window-size=1280,800'
                           ]
             }
-        }
+        },
+        logLevel: 'warn'
     });
     global.browser = browser;
     global.$ = browser.$;
