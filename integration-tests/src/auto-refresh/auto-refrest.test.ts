@@ -15,8 +15,8 @@ describe('Auto Reload', () => {
             testingTargetDir,
             'autoreloadtestingcopy.html'
         );
-        if (fs.existsSync(testingTargetHtml)) {
-            fs.removeSync(testingTargetHtml);
+        if (fs.existsSync(testingTargetDir)) {
+            fs.removeSync(testingTargetDir);
         } else if (!fs.existsSync(testingTargetDir)) {
             fs.mkdirSync(testingTargetDir);
         }
