@@ -40,6 +40,7 @@ describe('Auto Reload', () => {
             '.content'
         )).getText();
         expect(originalText).toBe('Initial Content');
+
         console.error('copying autoreload2.html to autoreloadtestingcopy.html');
         // edit autoreloadtesting
         await fs.copyFile(
@@ -65,8 +66,6 @@ describe('Auto Reload', () => {
         const start = Date.now();
         console.error('Starting at', start);
 
-        await browser.refresh();
-
         await browser.waitUntil(
             async () => {
                 newText = await pageContainer.getText();
@@ -77,11 +76,6 @@ describe('Auto Reload', () => {
                     Date.now() - start
                 );
                 return originalText !== newText;
-                // return Promise.resolve(pageContainer.getText()).then(text => {
-
-                //     newText = text;
-                //     return originalText !== text;
-                // });
             },
             50000,
             'Timeout waiting for page to autoreload',
