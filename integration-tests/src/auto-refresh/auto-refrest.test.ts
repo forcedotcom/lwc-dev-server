@@ -56,7 +56,7 @@ describe('Auto Reload', () => {
                     '.content'
                 )).getText();
 
-                console.warn('newText', newText);
+                console.warn('newText', newText, originalText);
 
                 return originalText !== newText;
             },
