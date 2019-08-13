@@ -61,7 +61,7 @@
     "link-talon": "yarn link @talon/common @talon/framework @talon/compiler",
     "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
     "precommit": "lint-staged",
-    "prepush": "yarn prepare && yarn lint && yarn test",
+    "prepush": "yarn lint && yarn test",
     "preinstall": "node script/libs-prepare.js",
     "postinstall": "node script/libs-install.js && node script/postinstall-build.js",
     "prepack": "oclif-dev manifest",
