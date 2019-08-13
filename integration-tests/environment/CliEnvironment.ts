@@ -85,7 +85,11 @@ export default class CliEnvironment extends BaseEnvironment {
         }
 
         const serverStartup = new Promise<void>(async (resolve, reject) => {
-            log('spawning new server');
+            console.log('spawning new server');
+            console.log(this.execPath, this.command, ...this.commandArgs, {
+                cwd: this.projectPath,
+                shell: process.platform === 'win32'
+            });
             const serverProcess = spawn(
                 this.execPath,
                 [this.command, ...this.commandArgs],
