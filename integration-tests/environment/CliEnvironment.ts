@@ -97,34 +97,36 @@ export default class CliEnvironment extends BaseEnvironment {
                     cwd: this.projectPath
                 }
             );
-
-            serverProcess.stdout.on('data', data => {
-                const stdout = data.toString('utf8');
-                log(stdout);
-                if (/server up/i.test(stdout)) {
-                    log('server up');
-                    const match = stdout.match(/:([0-9]+)/);
-                    if (match === null) {
-                        reject(new Error('unable to determine server port'));
+            if (serverProcess && serverProcess.stdout && serverProcess.stderr) {
+                serverProcess.stdout.on('data', data => {
+                    const stdout = data.toString('utf8');
+                    log(stdout);
+                    if (/server up/i.test(stdout)) {
+                        log('server up');
+                        const match = stdout.match(/:([0-9]+)/);
+                        if (match === null) {
+                            reject(
+                                new Error('unable to determine server port')
+                            );
+                        }
+                        const port = match[1];
+                        this.global.serverPort = port;
+                        resolve();
                     }
-                    const port = match[1];
-                    this.global.serverPort = port;
-                    resolve();
-                }
-            });
+                });
 
-            serverProcess.stderr.on('data', data => {
-                const stderr = data.toString('utf8');
-                console.error(stderr);
-                // too much stuff is printing logs to stderr
-                // reject(new Error(stderr));
-            });
+                serverProcess.stderr.on('data', data => {
+                    const stderr = data.toString('utf8');
+                    console.error(stderr);
+                    // too much stuff is printing logs to stderr
+                    // reject(new Error(stderr));
+                });
 
-            serverProcess.on('error', err => {
-                log('failed to start/run server');
-                reject(err);
-            });
-
+                serverProcess.on('error', err => {
+                    log('failed to start/run server');
+                    reject(err);
+                });
+            }
             this.serverProcess = serverProcess;
         });
 
