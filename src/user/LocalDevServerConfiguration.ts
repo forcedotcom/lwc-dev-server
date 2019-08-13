@@ -19,8 +19,8 @@ export default class LocalDevServerConfiguration {
                     );
                 }
             } else {
-                console.warn(
-                    `Warning: Specified configuration file ${configFilePath} does not exist.`
+                console.log(
+                    `Specified configuration file ${configFilePath} does not exist.`
                 );
             }
             if (jsonFileContents !== null && jsonFileContents !== '') {

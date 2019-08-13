@@ -23,7 +23,9 @@ describe('LocalDevServerConfiguration', () => {
         );
 
         // @ts-ignore
-        expect(console.log.mock.calls[0][0]).toBe(
+        const logMessage: string = console.log.mock.calls[0][0];
+
+        expect(logMessage).toBe(
             'Specified configuration file invalid.json does not exist.'
         );
     });
