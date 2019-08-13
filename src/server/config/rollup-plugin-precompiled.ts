@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import { Plugin } from 'rollup';
 import { resolveLwcNpmModules } from '@lwc/module-resolver';
 import jszip from 'jszip';
+import escape from 'escape-string-regexp';
 
 const debug = debugLogger('localdevserver');
 
@@ -99,7 +100,7 @@ async function init() {
                     fileSegments[fileSegments.length - 2] +
                     '/' +
                     fileSegments[fileSegments.length - 1].slice(0, -3);
-                mods[moduleName] = PRECOMPILED_PREFIX + f.name;
+                mods[moduleName] = PRECOMPILED_PREFIX + path.normalize(f.name);
             }
             modules[version] = mods;
         }
@@ -121,16 +122,16 @@ async function init() {
     }
     return modules;
 }
-const LDS_220_ID = '/PRECOMPILED/dependencies-220/prod/force/lds.js'.replace(
-    new RegExp('/', 'g'),
-    path.sep
-);
-const LDS_218_ID = '/PRECOMPILED/dependencies-220/prod/force/lds.js'.replace(
-    new RegExp('/', 'g'),
-    path.sep
-);
 
-export const PRECOMPILED_PREFIX = '/PRECOMPILED/'.replace(
+const isWin = process.platform === 'win32';
+export const PRECOMPILED_PREFIX =
+    (isWin ? 'C:' : '') +
+    '/PRECOMPILED/'.replace(new RegExp('/', 'g'), path.sep);
+const LDS_220_ID = `${PRECOMPILED_PREFIX}dependencies-220/prod/force/lds.js`.replace(
+    new RegExp('/', 'g'),
+    path.sep
+);
+const LDS_218_ID = `${PRECOMPILED_PREFIX}dependencies-220/prod/force/lds.js`.replace(
     new RegExp('/', 'g'),
     path.sep
 );
@@ -155,7 +156,7 @@ export async function precompiled({
     return {
         name: 'rollup-plugin-precompiled',
 
-        load(id: string) {
+        async load(id: string) {
             if (id.startsWith(PRECOMPILED_PREFIX)) {
                 // TODO: map LDS/220 to LDS/218
                 if (id === LDS_220_ID) {
@@ -164,7 +165,7 @@ export async function precompiled({
                 }
                 const entry = id
                     .substring(PRECOMPILED_PREFIX.length)
-                    .replace(new RegExp(path.sep, 'g'), '/');
+                    .replace(new RegExp(escape(path.sep), 'g'), '/');
                 debug(`Loading precompiled: ${id} (${entry})`);
 
                 //TODO: PATH OVERRIDES ISNT WORKING, NO NEED RIGHT NOW

@@ -15,6 +15,7 @@ import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { Server } from 'http';
 import { Connection } from '@salesforce/core';
+import escape from 'escape-string-regexp';
 
 const debug = debugLogger('localdevserver');
 const packageRoot = path.join(__dirname, '..', '..');
@@ -80,7 +81,10 @@ export default class LocalDevServer {
                 // Salesforce scoped modules (schema, apex, etc.) do not
                 // need to go through the LWC rollup plugin
                 /@salesforce\/.*/,
-                `${PRECOMPILED_PREFIX}**`
+                `${PRECOMPILED_PREFIX}**`.replace(
+                    new RegExp(escape(path.sep), 'g'),
+                    '/'
+                )
             ]
         };
         const config = {

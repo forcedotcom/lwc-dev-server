@@ -217,12 +217,15 @@ export async function createServer(
                 // wait until we get back a resource request
 
                 const ackListener = (args: string) => {
-                    if (args.indexOf(name) != -1) {
-                        debug(`Reload complete ${name}`);
-                        reloading[name] = false;
-                        emitter.off('resourceUrl', ackListener);
-                        clearTimeout(reloadLoop);
-                    }
+                    // can't listen for the name of the file that was changed, since
+                    // it might be bundled into another high level component, so
+                    // just listen for any request
+                    // if (args.indexOf(name) != -1) {
+                    debug(`Reload complete ${name}`);
+                    reloading[name] = false;
+                    emitter.off('resourceUrl', ackListener);
+                    clearTimeout(reloadLoop);
+                    // }
                 };
                 emitter.on('resourceUrl', ackListener);
             }
