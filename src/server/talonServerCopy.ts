@@ -203,7 +203,6 @@ export async function createServer(
             ignored
         });
         watcher.on('change', fileName => {
-            console.error('trace watcher.onchange');
             const name = path.parse(fileName).name;
             debug(`file changed: ${name}`);
             if (!reloading[name]) {
@@ -213,7 +212,6 @@ export async function createServer(
                 _RELOAD_RETURNED.reload();
                 let reloadLoop = setTimeout(() => {
                     debug(`retrying reload ${name}...`);
-                    console.warn(`retrying reload ${name}...`);
                     _RELOAD_RETURNED.reload();
                 }, 500);
                 // wait until we get back a resource request
