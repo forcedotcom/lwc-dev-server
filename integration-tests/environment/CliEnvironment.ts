@@ -1,9 +1,10 @@
 import path from 'path';
 import debug from 'debug';
 import BaseEnvironment from './BaseEnvironment';
-import { spawn, ChildProcess } from 'child_process';
+import { ChildProcess } from 'child_process';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
+import spawn from 'cross-spawn';
 
 const log = debug('localdevserver');
 
@@ -87,15 +88,13 @@ export default class CliEnvironment extends BaseEnvironment {
         const serverStartup = new Promise<void>(async (resolve, reject) => {
             console.log('spawning new server');
             console.log(this.execPath, this.command, ...this.commandArgs, {
-                cwd: this.projectPath,
-                shell: process.platform === 'win32'
+                cwd: this.projectPath
             });
             const serverProcess = spawn(
                 this.execPath,
                 [this.command, ...this.commandArgs],
                 {
-                    cwd: this.projectPath,
-                    shell: process.platform === 'win32'
+                    cwd: this.projectPath
                 }
             );
 

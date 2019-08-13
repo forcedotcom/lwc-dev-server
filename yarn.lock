@@ -1926,6 +1926,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/cross-spawn@^6.0.0":
+  version "6.0.0"
+  resolved "http://npm.lwcjs.org/@types/cross-spawn/-/cross-spawn-6.0.0/320aaf1d1a12979f1b84fe7a5590a7e860bf3a80.tgz#320aaf1d1a12979f1b84fe7a5590a7e860bf3a80"
+  integrity sha512-evp2ZGsFw9YKprDbg8ySgC9NA15g3YgiI8ANkGmKKvvi0P2aDGYLPxQIC5qfeKNUOe3TjABVGuah6omPRpIYhg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/csurf@^1.9.35":
   version "1.9.35"
   resolved "http://npm.lwcjs.org/@types/csurf/-/csurf-1.9.35/cecf3a9c09a9eb235d368ddf70b7c80588f29f72.tgz#cecf3a9c09a9eb235d368ddf70b7c80588f29f72"
