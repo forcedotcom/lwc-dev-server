@@ -17,14 +17,14 @@ describe('LocalDevServerConfiguration', () => {
             'my-project': ''
         });
 
-        console.warn = jest.fn();
+        console.log = jest.fn();
         const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
             'invalid.json'
         );
 
         // @ts-ignore
-        expect(console.warn.mock.calls[0][0]).toBe(
-            'Warning: Specified configuration file invalid.json does not exist.'
+        expect(console.log.mock.calls[0][0]).toBe(
+            'Specified configuration file invalid.json does not exist.'
         );
     });
 
