@@ -47,7 +47,7 @@ export default class CliEnvironment extends BaseEnvironment {
 
         const params = context.docblockPragmas || {};
 
-        this.execPath = path.join(__dirname, '..', '..', 'bin/run');
+        this.execPath = path.join(__dirname, '..', '..', 'bin', 'run');
         this.startupTimeoutMillis = 20000;
 
         let command = 'force:lightning:lwc:dev';
