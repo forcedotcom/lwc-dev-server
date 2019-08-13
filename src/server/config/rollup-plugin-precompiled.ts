@@ -131,7 +131,7 @@ const LDS_220_ID = `${PRECOMPILED_PREFIX}dependencies-220/prod/force/lds.js`.rep
     new RegExp('/', 'g'),
     path.sep
 );
-const LDS_218_ID = `${PRECOMPILED_PREFIX}dependencies-220/prod/force/lds.js`.replace(
+const LDS_218_ID = `${PRECOMPILED_PREFIX}dependencies-218/prod/force/lds.js`.replace(
     new RegExp('/', 'g'),
     path.sep
 );
