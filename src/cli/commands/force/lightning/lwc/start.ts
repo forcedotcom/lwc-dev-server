@@ -104,7 +104,7 @@ export default class Start extends SfdxCommand {
         debug(JSON.stringify(retValue));
 
         // Start local dev server
-        new LocalDevServer().start(project);
+        new LocalDevServer().start(project, conn);
 
         return retValue;
     }
