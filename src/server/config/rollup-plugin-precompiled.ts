@@ -121,8 +121,19 @@ async function init() {
     }
     return modules;
 }
+const LDS_220_ID = '/PRECOMPILED/dependencies-220/prod/force/lds.js'.replace(
+    new RegExp('/', 'g'),
+    path.sep
+);
+const LDS_218_ID = '/PRECOMPILED/dependencies-220/prod/force/lds.js'.replace(
+    new RegExp('/', 'g'),
+    path.sep
+);
 
-export const PRECOMPILED_PREFIX = '/PRECOMPILED/';
+export const PRECOMPILED_PREFIX = '/PRECOMPILED/'.replace(
+    new RegExp('/', 'g'),
+    path.sep
+);
 export async function precompiled({
     apiVersion
 }: {
@@ -147,12 +158,14 @@ export async function precompiled({
         load(id: string) {
             if (id.startsWith(PRECOMPILED_PREFIX)) {
                 // TODO: map LDS/220 to LDS/218
-                if (id === '/PRECOMPILED/dependencies-220/prod/force/lds.js') {
+                if (id === LDS_220_ID) {
                     console.log('WARNING: Mapping lds.js from 220 to 218!');
-                    id = '/PRECOMPILED/dependencies-218/prod/force/lds.js';
+                    id = LDS_218_ID;
                 }
-                const entry = id.substring(PRECOMPILED_PREFIX.length);
-                debug(`Loading precompiled: ${id}`);
+                const entry = id
+                    .substring(PRECOMPILED_PREFIX.length)
+                    .replace(new RegExp(path.sep, 'g'), '/');
+                debug(`Loading precompiled: ${id} (${entry})`);
 
                 //TODO: PATH OVERRIDES ISNT WORKING, NO NEED RIGHT NOW
                 // const entryOverride = pathOverrides[entry];
