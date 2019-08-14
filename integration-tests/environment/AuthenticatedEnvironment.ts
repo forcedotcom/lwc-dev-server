@@ -23,7 +23,7 @@ const log = debug('localdevserver');
  *
  * Other options:
  *
- * - `@command force:lightning:lwc:dev`
+ * - `@command force:lightning:lwc:start`
  * - `@command-args --port=3339 --open=c:hello`
  * - `@command-token <authorization token>`
  *

@@ -1,4 +1,4 @@
-import Dev from '../dev';
+import Start from '../start';
 import * as Config from '@oclif/config';
 import { JsonMap } from '@salesforce/ts-types';
 import LocalDevServer from '../../../../../../server/LocalDevServer';
@@ -9,13 +9,13 @@ import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerCo
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
 
-describe('dev', () => {
-    let dev: Dev;
+describe('start', () => {
+    let start: Start;
 
     afterEach(() => {});
 
     beforeEach(() => {
-        dev = new Dev([], new Config.Config(<Config.Options>{}));
+        start = new Start([], new Config.Config(<Config.Options>{}));
     });
 
     function setupAllDev() {
@@ -26,7 +26,7 @@ describe('dev', () => {
     }
 
     function setupUX() {
-        Object.defineProperty(dev, 'ux', {
+        Object.defineProperty(start, 'ux', {
             get: () => {
                 return { log: console.log };
             }
@@ -34,7 +34,7 @@ describe('dev', () => {
     }
 
     function setupFlags() {
-        Object.defineProperty(dev, 'flags', {
+        Object.defineProperty(start, 'flags', {
             get: () => {
                 return {};
             }
@@ -42,7 +42,7 @@ describe('dev', () => {
     }
 
     function setupOrg(version = '99.0') {
-        Object.defineProperty(dev, 'org', {
+        Object.defineProperty(start, 'org', {
             get: () => {
                 return {
                     getConnection: () => {
@@ -61,7 +61,7 @@ describe('dev', () => {
     }
 
     function setupProject() {
-        Object.defineProperty(dev, 'project', {
+        Object.defineProperty(start, 'project', {
             get: () => {
                 return {
                     getPath: () => 'C:\\sfdx\\project',
@@ -97,7 +97,7 @@ describe('dev', () => {
                 }
             });
 
-            let result: JsonMap = (await dev.run()) as JsonMap;
+            let result: JsonMap = (await start.run()) as JsonMap;
             if (result) {
                 expect(result['endpoint']).toEqual('http://test.instance.url');
                 expect(result['orgId']).toEqual('testingOrgIDX');
@@ -113,7 +113,7 @@ describe('dev', () => {
         test('run will return if org not defined', async () => {
             setupUX();
             setupFlags();
-            let result = await dev.run();
+            let result = await start.run();
             if (result) {
                 expect((<JsonMap>result)['org']).toEqual('undefined');
                 expect((<JsonMap>result).hasOwnProperty('org')).toBeTruthy();
@@ -126,7 +126,7 @@ describe('dev', () => {
             setupUX();
             setupFlags();
             setupOrg();
-            let result = await dev.run();
+            let result = await start.run();
             if (result) {
                 expect((<JsonMap>result)['project']).toEqual('undefined');
                 expect(
@@ -154,7 +154,7 @@ describe('dev', () => {
                     return _configuration;
                 }
             });
-            let result = await dev.run();
+            let result = await start.run();
             _configuration.onProxyReq(request, null, null);
 
             expect(header).toBe('Authorization: Bearer testingAccessToken');
@@ -165,7 +165,7 @@ describe('dev', () => {
             setupOrg();
             setupProject();
 
-            Object.defineProperty(dev, 'flags', {
+            Object.defineProperty(start, 'flags', {
                 get: () => {
                     return { port: '5151' };
                 }
@@ -181,7 +181,7 @@ describe('dev', () => {
                 };
             });
 
-            await dev.run();
+            await start.run();
 
             expect(configuredPort).toBe(5151);
         });

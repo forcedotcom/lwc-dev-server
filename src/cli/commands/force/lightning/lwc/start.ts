@@ -13,17 +13,17 @@ Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = Messages.loadMessages('lwc-dev-server', 'dev');
+const messages = Messages.loadMessages('lwc-dev-server', 'start');
 
-export default class Dev extends SfdxCommand {
+export default class Start extends SfdxCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
-        `$ sfdx force:lighting:lwc:dev`,
-        `$ sfdx force:lighting:lwc:dev --port 3000`
+        `$ sfdx force:lighting:lwc:start`,
+        `$ sfdx force:lighting:lwc:start --port 3000`
     ];
 
-    public static args = [{ open: 'file', name: 'lwc-dev' }];
+    public static args = [];
 
     protected static flagsConfig = {
         port: flags.integer({

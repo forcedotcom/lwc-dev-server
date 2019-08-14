@@ -19,7 +19,7 @@ export default class LocalDevServerConfiguration {
                     );
                 }
             } else {
-                console.warn(
+                console.log(
                     `Specified configuration file ${configFilePath} does not exist.`
                 );
             }
