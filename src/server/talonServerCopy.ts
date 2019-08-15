@@ -139,7 +139,7 @@ export async function createServer(
                 const result = xmlParser.parse(data);
                 // Parse the xml into json
                 if (result) {
-                    const contentType = result.StaticResource.contentType[0];
+                    const contentType = result.StaticResource.contentType;
                     const fileExt = mimeTypes.extension(contentType);
                     // Tack on the file extension and send it through
                     req.url = req.url + '.' + fileExt;
