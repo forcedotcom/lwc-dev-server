@@ -21,7 +21,7 @@ import path from 'path';
 import uuidv4 from 'uuidv4';
 import colors from 'colors';
 import fs from 'fs-extra';
-import { Parser } from 'xml2js';
+import xmlParser from 'fast-xml-parser';
 import mimeTypes from 'mime-types';
 import debugLogger from 'debug';
 import csurf from 'csurf';
@@ -134,20 +134,17 @@ export async function createServer(
             const xmlFileName =
                 '.localdevserver/public' + req.url + '.resource-meta.xml';
             // Let's try to grab the file extension from the metadata.xml file
-            const parser = new Parser();
             if (fs.existsSync(xmlFileName)) {
-                const data = fs.readFileSync(xmlFileName);
-                parser.parseString(data, function(err: any, result: any) {
-                    // Parse the xml into json
-                    if (result) {
-                        const contentType =
-                            result.StaticResource.contentType[0];
-                        const fileExt = mimeTypes.extension(contentType);
-                        // Tack on the file extension and send it through
-                        req.url = req.url + '.' + fileExt;
-                        next('route');
-                    }
-                });
+                const data = fs.readFileSync(xmlFileName, 'utf8');
+                const result = xmlParser.parse(data);
+                // Parse the xml into json
+                if (result) {
+                    const contentType = result.StaticResource.contentType;
+                    const fileExt = mimeTypes.extension(contentType);
+                    // Tack on the file extension and send it through
+                    req.url = req.url + '.' + fileExt;
+                    next('route');
+                }
             } else {
                 // No metadata file, send along the request and pray
                 next();

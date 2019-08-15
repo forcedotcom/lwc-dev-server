@@ -124,6 +124,20 @@ export default class LocalDevServerConfiguration {
     }
 
     /**
+     * To specify in json file, use
+     * {
+     *  "customLabelsFile": "..."
+     * }
+     */
+    public get customLabelsFile(): string {
+        return this.configFromJson.customLabelsFile || '';
+    }
+
+    public set customLabelsFile(file: string) {
+        this.configFromJson.customLabelsFile = file;
+    }
+
+    /**
      * The address port for your local server. Defaults to 3333
      * To specify in json file, use
      * {

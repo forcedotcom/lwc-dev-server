@@ -27,8 +27,6 @@ export const routes = [
     }
 ];
 
-export const labels = {};
-
 export const theme = {
     name: 'duck',
     label: 'Duck Burrito',

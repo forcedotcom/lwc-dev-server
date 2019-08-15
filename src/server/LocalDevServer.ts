@@ -4,9 +4,10 @@ import cpx from 'cpx';
 import { createServer, startServer } from './talonServerCopy';
 import Project from '../common/Project';
 import ComponentIndex from '../common/ComponentIndex';
-import { talonConfig, views, labels, theme, routes } from './talonConfig';
+import { talonConfig, views, theme, routes } from './talonConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
+import labelResolver from './labelResolver';
 import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { Server } from 'http';
@@ -66,6 +67,11 @@ export default class LocalDevServer {
                 )
             );
         }
+
+        const resolver = labelResolver({
+            customLabelsPath: project.customLabelsPath
+        });
+        const labels = resolver.createProxiedObject();
 
         const config = {
             templateDir: directory,
