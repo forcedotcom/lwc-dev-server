@@ -146,6 +146,47 @@ describe('project', () => {
         });
     });
 
+    describe('when retrieving the custom labels path', () => {
+        test('handles a relative customLabelsPath specified in the json config', () => {
+            const customLabelsFile = path.join(
+                'labels',
+                'CustomLabels.labels-meta.xml'
+            );
+
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory: 'modulesSrc',
+                        customLabelsFile
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+            const expected = path.join('my-project', customLabelsFile);
+            expect(project.customLabelsPath).toBe(expected);
+        });
+
+        test('handles an absolute customLabelsPath specified in the json config', () => {
+            const customLabelsFile = path.normalize(
+                '/foo/labels/CustomLabels.labels-meta.xml'
+            );
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory: 'modulesSrc',
+                        customLabelsFile
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+            expect(project.customLabelsPath).toBe(customLabelsFile);
+        });
+    });
+
     describe('when creating with sfdx-project.json', () => {
         test('then resolve to the sfdx-project directory', () => {
             mock({
@@ -208,7 +249,37 @@ describe('project', () => {
             expect(project.staticResourcesDirectory).toBe(expected);
         });
 
-        test('then use the packageDirectories to resolve the custom labels file', () => {
+        test('configures the custom labels file if it exists', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
+                },
+                'my-project/force-app/main/default/labels/CustomLabels.labels-meta.xml': `<?xml version="1.0" encoding="UTF-8"?>
+                    <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata"></CustomLabels>`
+            });
+
+            const project = new Project('my-project');
+            const expected = path.join(
+                'my-project',
+                'force-app',
+                'main',
+                'default',
+                'labels',
+                'CustomLabels.labels-meta.xml'
+            );
+            expect(project.customLabelsPath).toBe(expected);
+        });
+
+        test('does not configure the custom labels file if its not present', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify({
@@ -225,15 +296,7 @@ describe('project', () => {
             });
 
             const project = new Project('my-project');
-            const expected = path.join(
-                'my-project',
-                'force-app',
-                'main',
-                'default',
-                'labels',
-                'CustomLabels.labels-meta.xml'
-            );
-            expect(project.customLabelsPath).toBe(expected);
+            expect(project.customLabelsPath).toBeUndefined();
         });
 
         test('then configure the port from the configuration', () => {

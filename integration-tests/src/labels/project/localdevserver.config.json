@@ -1,0 +1,4 @@
+{
+  "modulesSourceDirectory": "src/test",
+  "customLabelsFile": "labels/CustomLabels.labels-meta.xml"
+}

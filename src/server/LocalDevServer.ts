@@ -7,7 +7,7 @@ import ComponentIndex from '../common/ComponentIndex';
 import { talonConfig, views, theme, routes } from './talonConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
-import labelsResolver from './labelsResolver';
+import labelResolver from './labelResolver';
 import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { Server } from 'http';
@@ -68,7 +68,7 @@ export default class LocalDevServer {
             );
         }
 
-        const resolver = await labelsResolver({
+        const resolver = labelResolver({
             customLabelsPath: project.customLabelsPath
         });
 

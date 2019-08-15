@@ -205,7 +205,9 @@ export default class Project {
                     packageDirectories[0],
                     'main/default/labels/CustomLabels.labels-meta.xml'
                 );
-                this.configuration.customLabelsFile = labelsPath;
+                if (fs.existsSync(path.join(this.rootDirectory, labelsPath))) {
+                    this.configuration.customLabelsFile = labelsPath;
+                }
             }
         }
     }

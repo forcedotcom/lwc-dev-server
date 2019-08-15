@@ -5,9 +5,9 @@ import debugLogger from 'debug';
 const debug = debugLogger('localdevserver:labelsresolver');
 
 /**
- * Contains a map of namespaces/sections to label data.
+ * Contains a map of namespaces/sections to label key-value pairs.
  */
-interface LabelNamespaces {
+interface LabelMap {
     [namespace: string]: LabelValues;
 }
 
@@ -19,25 +19,25 @@ interface LabelValues {
 }
 
 /**
- * Resolves labels from the local files.
+ * Resolves label values for `@salesforce/label` imports.
  */
-interface LabelsResolver {
+interface LabelResolver {
     /**
      * Creates an object representing the labels data.
      *
      * The object is mapped from label namespace to the corresponding label
      * key-value pairs. Custom labels are under the `c` namespace.
      *
-     * This proxy will return a placeholder value for any label keys that do not
+     * This proxy will return a placeholder value for label keys that do not
      * exist.
      */
-    createProxiedObject(): Promise<LabelNamespaces>;
+    createProxiedObject(): LabelMap;
 }
 
 /**
  * Options for creating the labels resolver.
  */
-interface LabelsResolverOptions {
+interface LabelResolverOptions {
     /**
      * Absolute path to the custom labels xml file, usually named
      * `CustomLabels.labels-meta.xml`.
@@ -46,20 +46,20 @@ interface LabelsResolverOptions {
 }
 
 /**
- * Creates a new labels resolver for the given labels.
+ * Returns a label resolver for the given label sources.
  */
 // TODO this could be faster if we watch for changes to label files
-// and update object instead of loading labels every time and using a proxy.
-export default async function resolver(
-    options: LabelsResolverOptions
-): Promise<LabelsResolver> {
+// and update object instead of proxy + loading labels every time.
+export default function resolver(
+    options: LabelResolverOptions = {}
+): LabelResolver {
     const { customLabelsPath } = options;
     if (customLabelsPath && !fs.existsSync(customLabelsPath)) {
-        throw new Error(`labels file '${customLabelsPath}' doesn't exist`);
+        throw new Error(`labels file '${customLabelsPath}' does not exist`);
     }
 
     return {
-        async createProxiedObject(): Promise<LabelNamespaces> {
+        createProxiedObject(): LabelMap {
             const customLabelsProxy = new Proxy(
                 {},
                 {
@@ -86,8 +86,8 @@ export default async function resolver(
 function loadCustomLabels(labelsPath: string | undefined): LabelValues {
     debug('loading custom labels');
 
-    if (!labelsPath) {
-        debug('custom labels file not specified');
+    if (!labelsPath || !fs.existsSync(labelsPath)) {
+        debug('custom labels file not specified or does not exist');
         return {};
     }
 
@@ -96,18 +96,23 @@ function loadCustomLabels(labelsPath: string | undefined): LabelValues {
 
     if (!parsedXml.CustomLabels || !parsedXml.CustomLabels.labels) {
         console.warn(
-            `custom labels file '${labelsPath}' did not have expected format, ignoring.`
+            `custom labels file '${labelsPath}' did not have expected format or was empty, ignoring.`
         );
         return {};
     }
 
-    const labels = parsedXml.CustomLabels.labels;
+    let labels = parsedXml.CustomLabels.labels;
+    if (!Array.isArray(labels)) {
+        labels = [labels];
+    }
+
     const processed = labels.reduce((obj: LabelValues, label: any) => {
-        obj[label.fullName] = label.value;
+        if (label.fullName && label.value) {
+            obj[label.fullName] = label.value;
+        }
         return obj;
     }, {});
 
     debug(`found custom labels: ${JSON.stringify(processed, null, 2)}`);
-
     return processed;
 }
