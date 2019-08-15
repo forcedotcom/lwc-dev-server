@@ -143,8 +143,8 @@ The following configuration parameters are available.
     // Where are your static assets.
     "staticResourcesDirectory": "",
 
-    // Path to the custom labels file
-    "customLabelsFile": "src/labels/CustomLabels.labels-meta.xml",
+    // Optional path to the custom labels file
+    "customLabelsFile": "labels/CustomLabels.labels-meta.xml",
 
     // The address port for your local server. Defaults to 3333
     "port": 3333,

@@ -71,8 +71,7 @@ export default class LocalDevServer {
         const resolver = labelResolver({
             customLabelsPath: project.customLabelsPath
         });
-
-        const labels = await resolver.createProxiedObject();
+        const labels = resolver.createProxiedObject();
 
         const config = {
             templateDir: directory,

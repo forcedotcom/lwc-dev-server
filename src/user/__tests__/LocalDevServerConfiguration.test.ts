@@ -163,7 +163,7 @@ describe('LocalDevServerConfiguration', () => {
     test('loading of customLabelsFile from config json', () => {
         mock({
             'config.json': JSON.stringify({
-                customLabelsFile: 'src/labels/custom-labels.xml'
+                customLabelsFile: 'labels/custom-labels.xml'
             })
         });
 
@@ -171,9 +171,7 @@ describe('LocalDevServerConfiguration', () => {
             'config.json'
         );
 
-        expect(configuration.customLabelsFile).toBe(
-            'src/labels/custom-labels.xml'
-        );
+        expect(configuration.customLabelsFile).toBe('labels/custom-labels.xml');
     });
 
     test('loading of port from config json', () => {
