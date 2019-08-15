@@ -85,6 +85,17 @@ export default class Project {
         return null;
     }
 
+    public get customLabelsPath(): string | undefined {
+        if (path.isAbsolute(this.configuration.customLabelsFile)) {
+            return this.configuration.customLabelsFile;
+        }
+        if (this.configuration.customLabelsFile !== '') {
+            return path.join(
+                this.rootDirectory,
+                this.configuration.customLabelsFile
+            );
+        }
+    }
     /**
      * The Root directory of the Project.
      * Where the package.json or the root sfdx-project.json file is located.
@@ -187,6 +198,14 @@ export default class Project {
                     'main/default/staticresources'
                 );
                 this.configuration.staticResourcesDirectory = resourcePath;
+            }
+
+            if (!this.configuration.customLabelsFile) {
+                const labelsPath = path.join(
+                    packageDirectories[0],
+                    'main/default/labels/CustomLabels.labels-meta.xml'
+                );
+                this.configuration.customLabelsFile = labelsPath;
             }
         }
     }

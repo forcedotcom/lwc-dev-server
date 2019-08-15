@@ -160,6 +160,22 @@ describe('LocalDevServerConfiguration', () => {
         );
     });
 
+    test('loading of customLabelsFile from config json', () => {
+        mock({
+            'config.json': JSON.stringify({
+                customLabelsFile: 'src/labels/custom-labels.xml'
+            })
+        });
+
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+
+        expect(configuration.customLabelsFile).toBe(
+            'src/labels/custom-labels.xml'
+        );
+    });
+
     test('loading of port from config json', () => {
         mock({
             'config.json': JSON.stringify({

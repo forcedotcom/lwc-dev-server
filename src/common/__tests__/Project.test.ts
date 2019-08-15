@@ -208,6 +208,34 @@ describe('project', () => {
             expect(project.staticResourcesDirectory).toBe(expected);
         });
 
+        test('then use the packageDirectories to resolve the custom labels file', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
+                }
+            });
+
+            const project = new Project('my-project');
+            const expected = path.join(
+                'my-project',
+                'force-app',
+                'main',
+                'default',
+                'labels',
+                'CustomLabels.labels-meta.xml'
+            );
+            expect(project.customLabelsPath).toBe(expected);
+        });
+
         test('then configure the port from the configuration', () => {
             mock({
                 'my-project': {
