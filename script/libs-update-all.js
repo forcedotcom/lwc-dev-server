@@ -10,11 +10,12 @@ const packages = {
     'lwc-components-lightning': 'main',
     '@lbf/interactions': 'latest', // TODO this is temporary I believe
     '@lbf/utils': 'latest', // TODO this is temporary I believe
-    '@talon/force-modules': 'latest',
+    '@talon/force-modules': '0.0.5', // TODO issue with sldsv3
     '@talon/metadata-schema': '0.0.18',
     '@talon/common': 'latest',
     '@talon/framework': 'latest',
-    '@talon/compiler': 'latest'
+    '@talon/compiler': 'latest',
+    '@talon/navigation': 'latest'
 };
 
 const registry =

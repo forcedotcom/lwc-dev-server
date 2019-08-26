@@ -1147,13 +1147,13 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^12.0.9"
 
-"@lbf/interactions@file:lib/unpacked/lbf-interactions-0.1.28":
-  version "0.1.28"
+"@lbf/interactions@file:lib/unpacked/lbf-interactions-0.1.29":
+  version "0.1.29"
 
-"@lbf/utils@file:lib/unpacked/lbf-utils-0.1.28":
-  version "0.1.28"
+"@lbf/utils@file:lib/unpacked/lbf-utils-0.1.29":
+  version "0.1.29"
   dependencies:
-    "@lwc/wire-service" "1.0.2-222.13"
+    "@lwc/wire-service" "1.0.2-222.17"
 
 "@lwc/babel-plugin-component@0.37.4-220.2":
   version "0.37.4-220.2"
@@ -1164,16 +1164,6 @@
     "@babel/plugin-proposal-class-properties" "7.1.0"
     "@lwc/errors" "0.37.4-220.2"
 
-"@lwc/babel-plugin-component@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@lwc/babel-plugin-component/-/babel-plugin-component-1.0.1.tgz#75ce4adfc9eb28205568f6840763555c135019ae"
-  integrity sha512-1Zl9lixPhjqyoCxozSbiAFOquB0kZW1YHZoAABPGLRSPDjfM1K7E0W4LLikQjRu36f0gFdpYvNSPcffluQcodg==
-  dependencies:
-    "@babel/helper-module-imports" "7.0.0"
-    "@babel/plugin-proposal-class-properties" "7.1.0"
-    "@lwc/errors" "1.0.1"
-    line-column "^1.0.2"
-
 "@lwc/babel-plugin-component@1.0.2-222.12":
   version "1.0.2-222.12"
   resolved "https://registry.yarnpkg.com/@lwc/babel-plugin-component/-/babel-plugin-component-1.0.2-222.12.tgz#abe56e91a71e4cf629ca6d298832d0bd5e8e9f03"
@@ -1182,6 +1172,16 @@
     "@babel/helper-module-imports" "7.0.0"
     "@babel/plugin-proposal-class-properties" "7.1.0"
     "@lwc/errors" "1.0.2-222.12"
+    line-column "^1.0.2"
+
+"@lwc/babel-plugin-component@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lwc/babel-plugin-component/-/babel-plugin-component-1.0.3.tgz#ca881178ec38002abba5734e1f91c651fe8bea71"
+  integrity sha512-iOLp8jMRBa4Iem2FbCtO83llEym8qw3uyVy+U65Y4BsQsH/OLoyAgT54801nj2tKeNsMc+tQLKbh4SEiLsgoJQ==
+  dependencies:
+    "@babel/helper-module-imports" "7.0.0"
+    "@babel/plugin-proposal-class-properties" "7.1.0"
+    "@lwc/errors" "1.0.3"
     line-column "^1.0.2"
 
 "@lwc/compiler@0.37.4-220.2":
@@ -1201,22 +1201,6 @@
     rollup "0.66.2"
     rollup-plugin-replace "^2.0.0"
 
-"@lwc/compiler@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@lwc/compiler/-/compiler-1.0.1.tgz#c0e0c8e2c962ca86d525882169c7ff01015daacc"
-  integrity sha512-hNiUl6/wmlxeSzMxA3XfyPcpYt0BvZXzh1MYZO9NJIRfQcXn/bPodvN3FMQvbs3KF/DCMhxATP/reijz8eJvIg==
-  dependencies:
-    "@babel/core" "7.1.0"
-    "@babel/plugin-proposal-object-rest-spread" "7.0.0"
-    "@lwc/babel-plugin-component" "1.0.1"
-    "@lwc/errors" "1.0.1"
-    "@lwc/style-compiler" "1.0.1"
-    "@lwc/template-compiler" "1.0.1"
-    babel-preset-compat "0.21.5"
-    rollup "^1.7.4"
-    rollup-plugin-replace "^2.1.0"
-    terser "^3.17.0"
-
 "@lwc/compiler@1.0.2-222.12":
   version "1.0.2-222.12"
   resolved "https://registry.yarnpkg.com/@lwc/compiler/-/compiler-1.0.2-222.12.tgz#29469a572b8c3ee8ae8de7a08b8d916c7d9915ca"
@@ -1233,6 +1217,22 @@
     rollup-plugin-replace "^2.1.0"
     terser "^3.17.0"
 
+"@lwc/compiler@^1.0.2-222.17":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lwc/compiler/-/compiler-1.0.3.tgz#8b78d262f79553bab13ff8edd9f01e7d61815d94"
+  integrity sha512-pb+wqNmgnfG6ZULnyTh6CeF4pJNFV/ZocLv50fhOrWsoyESh0yKShyLfKC2oBGX6L1a02n2MzmJuKps95SrZ2g==
+  dependencies:
+    "@babel/core" "7.1.0"
+    "@babel/plugin-proposal-object-rest-spread" "7.0.0"
+    "@lwc/babel-plugin-component" "1.0.3"
+    "@lwc/errors" "1.0.3"
+    "@lwc/style-compiler" "1.0.3"
+    "@lwc/template-compiler" "1.0.3"
+    babel-preset-compat "0.21.5"
+    rollup "^1.7.4"
+    rollup-plugin-replace "^2.1.0"
+    terser "^3.17.0"
+
 "@lwc/engine@0.37.4-220.2":
   version "0.37.4-220.2"
   resolved "https://registry.yarnpkg.com/@lwc/engine/-/engine-0.37.4-220.2.tgz#357f51236a43fe1b3defee6e09e0041b4bca24bf"
@@ -1240,10 +1240,10 @@
   dependencies:
     observable-membrane "0.26.1"
 
-"@lwc/engine@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@lwc/engine/-/engine-1.0.1.tgz#5a27fa9643ef05655c15b1f16f2f1cb2ea393e28"
-  integrity sha512-YKgEYYOK6zstxBwT0/0ESBTUWXKlbDXJO0PSPasz5eR17peSO6WVxY8LzOPq8MhUimuhh6C8V4o2vrVL1Z6LFA==
+"@lwc/engine@^1.0.2-222.17":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lwc/engine/-/engine-1.0.3.tgz#91ac1960bb1d6afea38a4fa28ec49dd322065691"
+  integrity sha512-+K6ldqK/9+omTcMR7WmI8xGFOHqKEO2LTpGgn9rF9s2VvXC3yNCoj3vJRVP3eDfk4q76mhYLX6CU+n9XbZzuQw==
   dependencies:
     observable-membrane "0.26.1"
 
@@ -1252,15 +1252,15 @@
   resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-0.37.4-220.2.tgz#9a29698dea1eed9fbdb5542a4c18a3fe14628884"
   integrity sha512-fIetApE3x/dNo515Or1psyOta0iLQqLfq5frr9bqyorybpyqxWSPY7hyi2NX+NPXJWyjvI0g3V0vQSaKw329Kg==
 
-"@lwc/errors@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-1.0.1.tgz#7ffbcfa7ba84e4241246b4707553de2f5d0b20bb"
-  integrity sha512-T65CFROrui4hcxagTX9YqzRjPeAfv5UT68wOJwX3VYqx19l+7I1RujK8/UgqSipK6tF/uoGpw/CGNhWkc2o6KA==
-
 "@lwc/errors@1.0.2-222.12":
   version "1.0.2-222.12"
   resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-1.0.2-222.12.tgz#b7359415d4c64a79b93d9414596d46fc231b702f"
   integrity sha512-qW4EPiyGCvK5SNLaiEvr/8xM2IQ4+mrfTq1SHVdtPLBi0364rM9SeblkpOvnxDsOlF+jO/HI0hGVt86FJpzhBg==
+
+"@lwc/errors@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-1.0.3.tgz#f7cb35c487d1b89ac67e9a6f640b97a0a2e462e7"
+  integrity sha512-+HU8vw1U/aqbRE6ZgIV7de3prxLtlaz6vENa74CxFznotGaXwT9w7aENUX3aNsfORAR97G0/jNNu2tjLQl4kgg==
 
 "@lwc/errors@~0.41.0":
   version "0.41.0"
@@ -1364,16 +1364,6 @@
     postcss-selector-parser "6.0.2"
     postcss-value-parser "3.3.1"
 
-"@lwc/style-compiler@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@lwc/style-compiler/-/style-compiler-1.0.1.tgz#2ec7ba8877a2bba3ca06b46948fdcfa6fb03b9db"
-  integrity sha512-sBDR0YPbKRWR1xHfQoBEGxLhsLBuLiUOM3l5iGmRVd9qfaewbDeh+AH84/BS2dSg9hXLHS1wiNpsQu9WhcsMiA==
-  dependencies:
-    cssnano "~3.10.0"
-    postcss "~7.0.5"
-    postcss-selector-parser "6.0.2"
-    postcss-value-parser "3.3.1"
-
 "@lwc/style-compiler@1.0.2-222.12":
   version "1.0.2-222.12"
   resolved "https://registry.yarnpkg.com/@lwc/style-compiler/-/style-compiler-1.0.2-222.12.tgz#a59509a6c3b00158cbee189135a8c425676e794b"
@@ -1384,10 +1374,20 @@
     postcss-selector-parser "6.0.2"
     postcss-value-parser "3.3.1"
 
-"@lwc/synthetic-shadow@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@lwc/synthetic-shadow/-/synthetic-shadow-1.0.0.tgz#a9264b9e9fa42ae0a605482d2cecbe539f5148af"
-  integrity sha512-iHyIsR1eghX2QfT5/lNJXU5VqgpOcvBSS/Z2fbShIJHlNQrSj380xqPu6D8QDARAly6QMDZGwH5bjFeb1dbbjw==
+"@lwc/style-compiler@1.0.3", "@lwc/style-compiler@^1.0.2-222.17":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lwc/style-compiler/-/style-compiler-1.0.3.tgz#3acbd000669e4fcc3742dc74f4624de40f08c348"
+  integrity sha512-OMt0GYIcYuncIBxGHKcnXdEQWr8n5DvFVQwsynBxlTqY+52sgePufEO0sOpx3V1voCHbdKyFP0Ii+IbArfgFDw==
+  dependencies:
+    cssnano "~3.10.0"
+    postcss "~7.0.5"
+    postcss-selector-parser "6.0.2"
+    postcss-value-parser "3.3.1"
+
+"@lwc/synthetic-shadow@^1.0.2-222.17":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lwc/synthetic-shadow/-/synthetic-shadow-1.0.3.tgz#ca1c87a75429be6ae140e0b9c327eb7c47f53a24"
+  integrity sha512-+ZRLn1aiVmMHcvBGFQsFBlWciqh69BmgObcj594SJ3/+Rm8btFYTP4+SHSsdLKKJww51cTQV+sp82xomtJ8Bmg==
 
 "@lwc/template-compiler@0.37.4-220.2":
   version "0.37.4-220.2"
@@ -1401,21 +1401,6 @@
     "@babel/types" "~7.1.5"
     "@lwc/errors" "0.37.4-220.2"
     "@lwc/style-compiler" "0.37.4-220.2"
-    camelcase "~5.0.0"
-    he "^1.1.1"
-    parse5-with-errors "^4.0.1"
-
-"@lwc/template-compiler@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@lwc/template-compiler/-/template-compiler-1.0.1.tgz#4735a3543577b0b8827402afcbc1f7c19dec0d84"
-  integrity sha512-5425N+KPZj8iir5zZfr+9nImGjb7bc1DDTP+zuz1rmrPSK0EKrdgSiVHYnqnx7z2NFPcIra9OIUZ/FGlbYc/pA==
-  dependencies:
-    "@babel/generator" "~7.1.5"
-    "@babel/parser" "~7.1.5"
-    "@babel/template" "~7.1.2"
-    "@babel/traverse" "~7.1.5"
-    "@babel/types" "~7.1.5"
-    "@lwc/errors" "1.0.1"
     camelcase "~5.0.0"
     he "^1.1.1"
     parse5-with-errors "^4.0.1"
@@ -1435,6 +1420,21 @@
     he "^1.1.1"
     parse5-with-errors "^4.0.1"
 
+"@lwc/template-compiler@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@lwc/template-compiler/-/template-compiler-1.0.3.tgz#a60649e999c8293b36a769ff4e9500d029e6a6d0"
+  integrity sha512-9bdptWzBpRlwZtU2k97B9YEFA5pLsrWQIKsLVd+AiOC7mrgxdIW8RJg5WxruIHxxtWxvHIY3ZHalDPyjJ4TXGg==
+  dependencies:
+    "@babel/generator" "~7.1.5"
+    "@babel/parser" "~7.1.5"
+    "@babel/template" "~7.1.2"
+    "@babel/traverse" "~7.1.5"
+    "@babel/types" "~7.1.5"
+    "@lwc/errors" "1.0.3"
+    camelcase "~5.0.0"
+    he "^1.1.1"
+    parse5-with-errors "^4.0.1"
+
 "@lwc/test-utils@0.37.4-220.2":
   version "0.37.4-220.2"
   resolved "https://registry.yarnpkg.com/@lwc/test-utils/-/test-utils-0.37.4-220.2.tgz#6aa2bb9712382defc825e4300ff461168b16a2d4"
@@ -1450,10 +1450,10 @@
   resolved "https://registry.yarnpkg.com/@lwc/wire-service/-/wire-service-0.37.4-220.2.tgz#dddf2692ddc1cd4a2367361efc443640efa5720d"
   integrity sha512-WzuV2J+zvE1z480DXy+ohLrp7J6PlXXfhKeT7fqxq/RHeKHnVaoOhYm81RCPpKIV2pgzBPhdopgj8gGNjfPIIQ==
 
-"@lwc/wire-service@1.0.2-222.13":
-  version "1.0.2-222.13"
-  resolved "https://registry.yarnpkg.com/@lwc/wire-service/-/wire-service-1.0.2-222.13.tgz#eed3d989bd74b9a165d42a15a4dc4de5db519e62"
-  integrity sha512-V05BO/SJF05nbxujzFQQoEY2GY3TTCvN4g7igfLa47RoyAiHj7Su5+c0dE1acDWx+fgQjFV3azN/iXSIGK/5IQ==
+"@lwc/wire-service@1.0.2-222.17":
+  version "1.0.2-222.17"
+  resolved "https://registry.yarnpkg.com/@lwc/wire-service/-/wire-service-1.0.2-222.17.tgz#400ad5ef3d5e7da1aa998508371494246b178d3a"
+  integrity sha512-Tje7qjDGdJCCMtLkz1YK7Dhmiy062RT71hDbRokBCVzmNPkAZQ8r7y1imGzkZLNE4yatQsAlb9QmRNkje5HoeQ==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -1794,13 +1794,11 @@
     uuidv4 "^4.0.0"
     yargs "^13.2.2"
 
-"@talon/force-modules@file:lib/unpacked/talon-force-modules-0.0.6":
-  version "0.0.6"
+"@talon/force-modules@file:lib/unpacked/talon-force-modules-0.0.5":
+  version "0.0.5"
 
 "@talon/framework@file:lib/unpacked/talon-framework-0.18.4":
   version "0.18.4"
-  dependencies:
-    "@talon/navigation" "0.18.3"
 
 "@talon/metadata-schema@file:lib/unpacked/talon-metadata-schema-0.0.18":
   version "0.0.18"
@@ -1808,10 +1806,8 @@
     ajv "^6.9.2"
     yamljs "^0.3.0"
 
-"@talon/navigation@0.18.3":
-  version "0.18.3"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@talon/navigation/-/navigation-0.18.3.tgz#ad32bc5b5902015a9299d682aa9a00a107d8d7c3"
-  integrity sha512-i8UO2bVlcfMODxLxQjUoGM2LjMa996l6qA/CLbfQpeaHy2d5buaHI2rvgYa7y6fxuZiJyllfNSoFLW8amAlscA==
+"@talon/navigation@file:lib/unpacked/talon-navigation-0.18.4":
+  version "0.18.4"
 
 "@types/accepts@*":
   version "1.3.5"
