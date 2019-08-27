@@ -66,7 +66,13 @@ const staticOptions = {
     maxAge: 31536000
 };
 
-function getRootApp(app: any, basePath: string) {
+const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
+    '.html': true,
+    '.css': true,
+    '.js': true
+};
+
+export function getRootApp(app: any, basePath: string) {
     if (basePath) {
         const rootApp = express();
         rootApp.use(basePath, app);
@@ -91,26 +97,10 @@ export async function createServer(
     app.use(compression());
 
     // 1. CSP for script-src directive
-    // @ts-ignore
-    app.use((req, res, next) => {
-        res.locals.nonce = uuidv4();
-        next();
-    });
+    app.use(cspNonceMiddleware());
+    app.use(cspPolicyMiddleware());
 
-    app.use(
-        helmet({
-            contentSecurityPolicy: {
-                directives: {
-                    scriptSrc: [
-                        `'self'`,
-                        (req: any, res: any) => `'nonce-${res.locals.nonce}'`
-                    ]
-                }
-            }
-        })
-    );
-
-    // Setup CSRF Token
+    // 2. Setup CSRF Token
     app.use(cookieParser());
     app.use(csurf({ cookie: true }));
 
@@ -120,7 +110,122 @@ export async function createServer(
     // 3. Serve up static files
     // handle Salesforce static resource imported using @salesforce/resourceUrl/<resourceName>
     // remove versionKey from resourceURL and forward the request
-    app.get(`/assets/:versionKey/*`, (req, res, next) => {
+    app.get(`/assets/:versionKey/*`, salesforceStaticAssetsRoute(basePath));
+
+    // Serve static files from Talon framework public dir
+    app.use(express.static(FRAMEWORK_PUBLIC_DIR, staticOptions));
+
+    // Serve static files from the template public dir
+    app.use(staticMiddleware());
+
+    if (connection) {
+        app.use(
+            apexMiddleware({
+                instanceUrl: connection.instanceUrl,
+                accessToken: connection.accessToken
+            })
+        );
+    }
+
+    if (options.liveReload) {
+        await startLiveReload(app, sourceDir, outputDir);
+    }
+
+    // Proxy, record and replay API calls
+    app.use(apiMiddleware(apiConfig));
+
+    // LWC-DEV-SERVER: Show source handler
+    app.use(`/show`, showRoute(sourceDir));
+
+    return app;
+}
+
+export async function startServer(
+    app: any,
+    basePath: string,
+    port = 3000,
+    onClose = () => {}
+) {
+    // If none found, serve up the page for the current route depending on the path
+    app.get(`${basePath}/*`, templateMiddleware());
+
+    // Error handling
+    app.use(compileErrorMiddleware());
+
+    // Start the server
+    const server = getRootApp(app, basePath).listen(port, () => {
+        log(
+            colors.magenta.bold(
+                `Server up on http://localhost:${
+                    server.address().port
+                }${basePath}`
+            )
+        );
+    });
+
+    server.on('close', async () => {
+        endContext();
+        if (_RELOAD_RETURNED) {
+            await _RELOAD_RETURNED.closeServer();
+        }
+        _WATCHTREE_FOLDERS.forEach(watch.unwatchTree);
+        onClose();
+    });
+
+    process.on('SIGINT', async () => {
+        server.close();
+        process.exit();
+    });
+
+    return server;
+}
+
+/**
+ * Create the CSP Nonce Middleware that adds a uuid to every request.
+ * We use this for adding to the CSP policy.
+ *
+ */
+export function cspNonceMiddleware() {
+    return (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        res.locals.nonce = uuidv4();
+        next();
+    };
+}
+
+/**
+ * Generate the CSP policy for the request.
+ * Eventually we'll want this matching what Locker Service provides.
+ */
+export function cspPolicyMiddleware() {
+    return helmet({
+        contentSecurityPolicy: {
+            directives: {
+                scriptSrc: [
+                    `'self'`,
+                    (req: express.Request, res: express.Response) =>
+                        `'nonce-${res.locals.nonce}'`
+                ]
+            }
+        }
+    });
+}
+
+/**
+ * Route handler for /assets/:versionKey/*
+ * This loads handles SLDS and Static Resources in the project
+ *
+ * @param basePath Server root server path to locate the assets.
+ */
+export function salesforceStaticAssetsRoute(basePath: string) {
+    return (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
         // Ignore for our SLDS routes
         debug(req.url);
 
@@ -161,118 +266,89 @@ export async function createServer(
                 next();
             }
         }
-    });
+    };
+}
 
-    // Serve static files from Talon framework public dir
-    app.use(express.static(FRAMEWORK_PUBLIC_DIR, staticOptions));
-
-    // Serve static files from the template public dir
-    app.use(staticMiddleware());
-
-    if (connection) {
-        app.use(
-            apexMiddleware({
-                instanceUrl: connection.instanceUrl,
-                accessToken: connection.accessToken
-            })
-        );
-    }
-
-    if (options.liveReload) {
-        // reload - auto reloading of the page
-        let reloading: { [key: string]: boolean } = {};
-        const liveReloadPort = await getPort();
-        debug('live reload port: ' + liveReloadPort);
-        reload(app, {
-            port: liveReloadPort,
-            verbose: debugLogger.enabled('localdevserver')
-        }).then((reloadReturned: any) => {
-            _RELOAD_RETURNED = reloadReturned;
-            _WATCHTREE_FOLDERS.push(sourceDir);
-            debug('watching: ' + sourceDir);
-            const ignoreDirectoryPattern = new RegExp(outputDir + '.*');
-            const watchCallback = function(file: any, curr: any, prev: any) {
-                if (typeof file === 'string') {
-                    const fileName: string = file.toString();
-                    debug('file changed: ' + fileName);
-                    if (!reloading[fileName]) {
-                        reloading[fileName] = true;
-                        _RELOAD_RETURNED.reload();
-                        setTimeout(() => {
-                            reloading[fileName] = false;
-                        }, 500);
-                    }
-                    if (
-                        fs.existsSync(fileName) &&
-                        fs.lstatSync(fileName).isDirectory()
-                    ) {
-                        debug('new folder, now watching: ' + fileName);
-                        watch.watchTree(
-                            fileName,
-                            { ignoreDirectoryPattern },
-                            watchCallback
-                        );
-                        _WATCHTREE_FOLDERS.push(fileName);
-                    } else if (_WATCHTREE_FOLDERS.indexOf(fileName) !== -1) {
-                        _WATCHTREE_FOLDERS.splice(
-                            _WATCHTREE_FOLDERS.indexOf(fileName),
-                            1
-                        );
-                    }
-                }
-            };
-            watch.watchTree(
-                sourceDir,
-                { ignoreDirectoryPattern },
-                watchCallback
-            );
-        });
-    }
-
-    // Proxy, record and replay API calls
-    app.use(apiMiddleware(apiConfig));
-
-    // LWC-DEV-SERVER: Show source handler
-    app.use(`/show`, (req, res, next) => {
+/**
+ * Return the source code for a specified file.
+ *
+ * @param sourceDir Directory to accept which files to expose.
+ */
+export function showRoute(sourceDir: string) {
+    const normalizedSourceDir = path.normalize(sourceDir);
+    return (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
         const file = req.query.file;
         if (file) {
-            if (file.startsWith(sourceDir)) {
+            const extension = path.extname(file);
+            const normalizedFile = path.normalize(file);
+            if (
+                normalizedFile.startsWith(normalizedSourceDir) &&
+                ALLOWED_SHOW_EXTENSIONS[extension]
+            ) {
                 res.sendFile(file);
             }
         }
-    });
-
-    return app;
+    };
 }
 
-export async function startServer(app: any, basePath: string, port = 3000) {
-    // If none found, serve up the page for the current route depending on the path
-    app.get(`${basePath}/*`, templateMiddleware());
-
-    // Error handling
-    app.use(compileErrorMiddleware());
-
-    // Start the server
-    const server = getRootApp(app, basePath).listen(port, () => {
-        log(
-            colors.magenta.bold(
-                `Server up on http://localhost:${
-                    server.address().port
-                }${basePath}`
-            )
-        );
+/**
+ * Starts watching for changes to files and performs live reloads.
+ *
+ * @param app Express application
+ * @param sourceDir Directory to listen for changes
+ * @param outputDir We ignore changes to the output directory. Otherwise we could ge tin a loop.
+ */
+export async function startLiveReload(
+    app: express.Application,
+    sourceDir: string,
+    outputDir: string
+) {
+    // reload - auto reloading of the page
+    const reloading: { [key: string]: boolean } = {};
+    const liveReloadPort = await getPort();
+    debug('live reload port: ' + liveReloadPort);
+    reload(app, {
+        port: liveReloadPort,
+        verbose: debugLogger.enabled('localdevserver')
+    }).then((reloadReturned: any) => {
+        _RELOAD_RETURNED = reloadReturned;
+        _WATCHTREE_FOLDERS.push(sourceDir);
+        debug('watching: ' + sourceDir);
+        const ignoreDirectoryPattern = new RegExp(outputDir + '.*');
+        const watchCallback = function(file: any, curr: any, prev: any) {
+            if (typeof file === 'string') {
+                const fileName: string = file.toString();
+                debug('file changed: ' + fileName);
+                if (!reloading[fileName]) {
+                    reloading[fileName] = true;
+                    _RELOAD_RETURNED.reload();
+                    setTimeout(() => {
+                        reloading[fileName] = false;
+                    }, 500);
+                }
+                if (
+                    fs.existsSync(fileName) &&
+                    fs.lstatSync(fileName).isDirectory()
+                ) {
+                    debug('new folder, now watching: ' + fileName);
+                    watch.watchTree(
+                        fileName,
+                        { ignoreDirectoryPattern },
+                        watchCallback
+                    );
+                    _WATCHTREE_FOLDERS.push(fileName);
+                } else if (_WATCHTREE_FOLDERS.indexOf(fileName) !== -1) {
+                    _WATCHTREE_FOLDERS.splice(
+                        _WATCHTREE_FOLDERS.indexOf(fileName),
+                        1
+                    );
+                }
+            }
+        };
+        watch.watchTree(sourceDir, { ignoreDirectoryPattern }, watchCallback);
     });
-
-    server.on('close', async () => {
-        endContext();
-        await _RELOAD_RETURNED.closeServer();
-        _WATCHTREE_FOLDERS.forEach(watch.unwatchTree);
-    });
-
-    process.on('SIGINT', async () => {
-        server.close();
-        process.exit();
-    });
-
-    return server;
 }
