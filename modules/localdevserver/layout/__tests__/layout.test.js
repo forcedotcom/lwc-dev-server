@@ -10,7 +10,7 @@ function createComponentUnderTest(props) {
     return el;
 }
 
-describe('localdevserver-error-stacks', () => {
+describe('localdevserver-layout', () => {
     it('renders', () => {
         const componentElement = createComponentUnderTest();
         expect(componentElement).toMatchSnapshot();

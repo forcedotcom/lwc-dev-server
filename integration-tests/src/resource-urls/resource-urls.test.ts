@@ -2,8 +2,6 @@
  * @jest-environment ./environment/AuthenticatedEnvironment.js
  */
 
-// disabled: if authed locally this will work, but for real usage need to find a
-// way to mock or configure the auth.
 import PreviewPage from '../pageObjects/PreviewPage';
 
 describe('Static Resources', () => {

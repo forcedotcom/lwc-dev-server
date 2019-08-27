@@ -5,7 +5,7 @@ import { flushPromises } from '../../../__tests__/testutils';
 jest.useFakeTimers();
 
 function createComponentUnderTest(props) {
-    const el = createElement('localdevserver-error-home', {
+    const el = createElement('localdevserver-home', {
         is: Home
     });
     Object.assign(el, props);
