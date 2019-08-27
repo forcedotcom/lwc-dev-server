@@ -44,8 +44,12 @@ export default class LocalDevServer {
 
         // vendor deps that we override, like LGC, LDS, etc
         const extraDependencies = path.resolve(
-            // TODO FIXME! 220 LDS does not appear to work with aggregate-ui
-            path.join(packageRoot, 'vendors', 'dependencies-218') // `dependencies-${version}`)
+            // 220 LDS does not appear to work with aggregate-ui
+            path.join(
+                packageRoot,
+                'vendors',
+                version != 220 ? `dependencies-${version}` : 'dependencies-218'
+            )
         );
 
         // our own lwc modules to host the local app
