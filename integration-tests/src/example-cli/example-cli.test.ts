@@ -1,6 +1,6 @@
 /**
  * @jest-environment ./environment/CliEnvironment.js
- * @command server
+ * @command force:lightning:lwc:start
  */
 
 describe('CLI Example', () => {
