@@ -4,23 +4,19 @@
             <div class="slds-col slds-size_3-of-4">
                 <h1 class="slds-text-heading_large slds-p-bottom_xx-large">Lightning Web Components Local Server</h1>
                 <div class="slds-grid slds-gutters">
-                    <a href="https://developer.salesforce.com/docs/component-library"
-                        class="slds-text-link_reset slds-col">
+                    <a href="https://developer.salesforce.com/docs/component-library" class="slds-text-link_reset slds-col">
                         <lightning-card title="Component Library" icon-name="standard:apps">
-                            <p class="slds-p-horizontal_small">The Component Library is the Lightning components
-                                developer reference. Rapidly develop apps with our building blocks.</p>
+                            <p class="slds-p-horizontal_small">The Component Library is the Lightning components developer reference. Rapidly develop apps with our building blocks.</p>
                         </lightning-card>
                     </a>
                     <a href="https://forcedotcom.github.io/salesforcedx-vscode/" class="slds-text-link_reset slds-col">
                         <lightning-card title="VS Code Extensions" icon-name="standard:code_playground">
-                            <p class="slds-p-horizontal_small">This extension pack includes tools for developing on the
-                                Salesforce platform in the lightweight, extensible VS Code editor.</p>
+                            <p class="slds-p-horizontal_small">This extension pack includes tools for developing on the Salesforce platform in the lightweight, extensible VS Code editor.</p>
                         </lightning-card>
                     </a>
                     <a href="https://github.com/forcedotcom/lwc-dev-server" class="slds-text-link_reset slds-col">
                         <lightning-card title="Open Source" icon-name="custom:custom12">
-                            <p class="slds-p-horizontal_small">Salesforce uses and contributes to tons of Open Source
-                                projects. Learn more about the projects available for developers.</p>
+                            <p class="slds-p-horizontal_small">Salesforce uses and contributes to tons of Open Source projects. Learn more about the projects available for developers.</p>
                         </lightning-card>
                     </a>
                 </div>
@@ -46,8 +42,7 @@
                 <div class="slds-box">
                     <ul class="component-list">
                         <template for:each={components} for:item="item" for:index="index">
-                            <li class="slds-m-horizontal_xx-small slds-m-bottom_x-small slds-truncate" key={item.url}><a
-                                    href={item.url} title={item.title}>{item.title}</a></li>
+                            <li class="slds-m-horizontal_xx-small slds-m-bottom_x-small slds-truncate" key={item.url}><a href={item.url} title={item.title}>{item.title}</a></li>
                         </template>
                     </ul>
                 </div>
