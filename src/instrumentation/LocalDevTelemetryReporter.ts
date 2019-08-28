@@ -1,5 +1,4 @@
 import LocalDevTelemetryOptions from './LocalDevTelemetryOptions';
-//import TelemetryReporter from '@salesforce/telemetry';
 import { TelemetryReporter } from '@salesforce/telemetry/lib/telemetryReporter';
 
 export default class LocalDevTelemetryReporter {

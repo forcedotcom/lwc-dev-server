@@ -172,6 +172,7 @@
   },
   "resolutions": {
     "js-yaml": "^3.13.1",
-    "braces": "^3.0.2"
+    "braces": "^3.0.2",
+    "eslint-utils": "^1.4.2"
   }
 }
