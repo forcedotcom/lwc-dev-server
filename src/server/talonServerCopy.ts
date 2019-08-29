@@ -122,7 +122,7 @@ export async function createServer(
     }
 
     if (options.liveReload) {
-        startLiveReload(app, sourceDir, outputDir);
+        await startLiveReload(app, sourceDir, outputDir);
     }
 
     // Proxy, record and replay API calls
