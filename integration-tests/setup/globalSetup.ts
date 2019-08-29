@@ -56,5 +56,5 @@ module.exports = async () => {
 
     // Disable Instrumentation sending actual log lines during test runs
     global._SFDX_DISABLE_INSIGHTS = process.env.SFDX_DISABLE_INSIGHTS;
-    process.env.SFDX_DISABLE_INSIGHTS = 'false';
+    process.env.SFDX_DISABLE_INSIGHTS = 'true';
 };

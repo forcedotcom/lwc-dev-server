@@ -11,5 +11,5 @@ declare global {
 
 module.exports = async () => {
     global.seleniumProcess.kill();
-    process.env.SFDX_DISABLE_INSIGHTS = global._SFDX_DISABLE_INSIGHTS || 'true';
+    process.env.SFDX_DISABLE_INSIGHTS = global._SFDX_DISABLE_INSIGHTS;
 };
