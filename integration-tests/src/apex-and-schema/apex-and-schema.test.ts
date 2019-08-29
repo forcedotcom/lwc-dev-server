@@ -31,7 +31,7 @@ describe('apex and schema', () => {
                         const content = await el.$$('.contacts p');
                         return content.length > 0;
                     },
-                    10000,
+                    30000,
                     'wire data did not update within timeout'
                 );
                 return el.$$('.contacts p');
@@ -60,7 +60,7 @@ describe('apex and schema', () => {
                         const contact = await el.$('.contact');
                         return await contact.isExisting();
                     },
-                    10000,
+                    30000,
                     'wire data did not update within timeout'
                 );
                 return el;
