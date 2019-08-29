@@ -67,6 +67,7 @@ describe('LocalDevServer', () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });
             const mockConn: any = {};
+            const onClose = () => {};
 
             const server = new LocalDevServer();
             await server.start(project, mockConn);
@@ -78,7 +79,9 @@ describe('LocalDevServer', () => {
                     outputDir: expected
                 }),
                 expect.anything(),
-                mockConn
+                mockConn,
+                undefined,
+                onClose
             );
         });
 

@@ -245,7 +245,12 @@ export async function createServer(
     return app;
 }
 
-export async function startServer(app: any, basePath: string, port = 3000) {
+export async function startServer(
+    app: any,
+    basePath: string,
+    port = 3000,
+    onClose = () => {}
+) {
     // If none found, serve up the page for the current route depending on the path
     app.get(`${basePath}/*`, templateMiddleware());
 
@@ -267,6 +272,7 @@ export async function startServer(app: any, basePath: string, port = 3000) {
         endContext();
         await _RELOAD_RETURNED.closeServer();
         _WATCHTREE_FOLDERS.forEach(watch.unwatchTree);
+        onClose();
     });
 
     process.on('SIGINT', async () => {

@@ -12,6 +12,8 @@ import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { Server } from 'http';
 import { Connection } from '@salesforce/core';
+import { performance } from 'perf_hooks';
+import LocalDevTelemetryReporter from '../instrumentation/LocalDevTelemetryReporter';
 
 const debug = debugLogger('localdevserver');
 const packageRoot = path.join(__dirname, '..', '..');
@@ -23,6 +25,8 @@ export default class LocalDevServer {
     private server?: Server;
 
     public async start(project: Project, connection?: Connection) {
+        const startTime = performance.now();
+
         const configuration: LocalDevServerConfiguration =
             project.configuration;
 
@@ -55,6 +59,9 @@ export default class LocalDevServer {
         // our own lwc modules to host the local app
         const localDependencies = packageRoot;
 
+        // Reporter for instrumentation
+        const reporter = await LocalDevTelemetryReporter.getInstance();
+
         // all the deps, filtered by existing
         let modulePaths = [
             extraDependencies,
@@ -62,60 +69,60 @@ export default class LocalDevServer {
             ...nodePaths
         ].filter(fs.existsSync);
 
-        if (project.isSfdx) {
-            talonConfig.rollup.plugins.push(
-                customComponentPlugin(
-                    configuration.namespace,
-                    'lwc',
-                    project.directory
-                )
-            );
-        }
-
-        const resolver = labelResolver({
-            customLabelsPath: project.customLabelsPath
-        });
-        const labels = resolver.createProxiedObject();
-
-        const config = {
-            templateDir: directory,
-            talonConfig,
-            srcDir: project.modulesSourceDirectory,
-            views,
-            indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
-            routes,
-            labels,
-            theme,
-            outputDir: path.join(directory, defaultOutputDirectory),
-            locale: 'en_US',
-            basePath: '',
-            isPreview: false,
-            modulePaths,
-            runInBand: true,
-            liveReload: configuration.liveReload,
-            modes: ['dev']
-        };
-
-        debug('Running Universal Container with config:');
-        debug(config);
-
-        // fixme: clear outputDir for now because of a caching issue
-        // with talon (maybe we need to force a recompile of the views?)
-        removeFile(config.outputDir);
-        debug('cleared outputDirectory');
-
-        await this.copyAssets(project, config.outputDir);
-
-        const proxyConfig = {
-            apiEndpoint: configuration.endpoint,
-            recordApiCalls: false,
-            onProxyReq: configuration.onProxyReq,
-            pathRewrite: this.pathRewrite(
-                configuration.api_version || DEFAULT_API_VERSION
-            )
-        };
-
         try {
+            if (project.isSfdx) {
+                talonConfig.rollup.plugins.push(
+                    customComponentPlugin(
+                        configuration.namespace,
+                        'lwc',
+                        project.directory
+                    )
+                );
+            }
+
+            const resolver = labelResolver({
+                customLabelsPath: project.customLabelsPath
+            });
+            const labels = resolver.createProxiedObject();
+
+            const config = {
+                templateDir: directory,
+                talonConfig,
+                srcDir: project.modulesSourceDirectory,
+                views,
+                indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
+                routes,
+                labels,
+                theme,
+                outputDir: path.join(directory, defaultOutputDirectory),
+                locale: 'en_US',
+                basePath: '',
+                isPreview: false,
+                modulePaths,
+                runInBand: true,
+                liveReload: configuration.liveReload,
+                modes: ['dev']
+            };
+
+            debug('Running Universal Container with config:');
+            debug(config);
+
+            // fixme: clear outputDir for now because of a caching issue
+            // with talon (maybe we need to force a recompile of the views?)
+            removeFile(config.outputDir);
+            debug('cleared outputDirectory');
+
+            await this.copyAssets(project, config.outputDir);
+
+            const proxyConfig = {
+                apiEndpoint: configuration.endpoint,
+                recordApiCalls: false,
+                onProxyReq: configuration.onProxyReq,
+                pathRewrite: this.pathRewrite(
+                    configuration.api_version || DEFAULT_API_VERSION
+                )
+            };
+
             // Start the talon site.
             const server = await createServer(config, proxyConfig, connection);
             server.use('/componentList', function(
@@ -127,8 +134,28 @@ export default class LocalDevServer {
                 const modules = tmp.getModules();
                 res.json(modules);
             });
-            this.server = await startServer(server, '', configuration.port);
+            this.server = await startServer(
+                server,
+                '',
+                configuration.port,
+                () => {
+                    const runtimeDuration = performance.now() - startTime;
+                    // After the application has ended.
+                    // Report how long the server was opened.
+                    reporter.trackApplicationEnd(runtimeDuration);
+                }
+            );
+
+            const startDuration = performance.now() - startTime;
+
+            reporter.trackApplicationStart(
+                startDuration,
+                false,
+                version.toString()
+            );
         } catch (e) {
+            reporter.trackApplicationStartException(e);
+
             throw new Error(`Unable to start LocalDevServer: ${e}`);
         }
     }

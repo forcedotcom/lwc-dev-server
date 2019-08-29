@@ -108,4 +108,8 @@ export default class Start extends SfdxCommand {
 
         return retValue;
     }
+
+    //public async catch() {
+    // trackApplicationStartNoAuth
+    //}
 }
