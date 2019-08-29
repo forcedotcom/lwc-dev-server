@@ -4,7 +4,7 @@ describe('LocalDevTelemetryOptions', () => {
     test('uses proper project name', () => {
         const options = new LocalDevTelemetryOptions();
 
-        expect(options.project).toBe('local-dev-server');
+        expect(options.project).toBe('lwc-dev-server');
     });
 
     test('uses local dev server telemetry key', () => {

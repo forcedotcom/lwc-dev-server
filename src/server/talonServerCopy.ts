@@ -91,26 +91,10 @@ export async function createServer(
     app.use(compression());
 
     // 1. CSP for script-src directive
-    // @ts-ignore
-    app.use((req, res, next) => {
-        res.locals.nonce = uuidv4();
-        next();
-    });
+    app.use(cspNonceMiddleware());
+    app.use(cspPolicyMiddleware());
 
-    app.use(
-        helmet({
-            contentSecurityPolicy: {
-                directives: {
-                    scriptSrc: [
-                        `'self'`,
-                        (req: any, res: any) => `'nonce-${res.locals.nonce}'`
-                    ]
-                }
-            }
-        })
-    );
-
-    // Setup CSRF Token
+    // 2. Setup CSRF Token
     app.use(cookieParser());
     app.use(csurf({ cookie: true }));
 
@@ -120,48 +104,7 @@ export async function createServer(
     // 3. Serve up static files
     // handle Salesforce static resource imported using @salesforce/resourceUrl/<resourceName>
     // remove versionKey from resourceURL and forward the request
-    app.get(`/assets/:versionKey/*`, (req, res, next) => {
-        // Ignore for our SLDS routes
-        debug(req.url);
-
-        // Weird edge case where file extension isn't included for staticresource resolution
-        // except when the resource is part of an application/zip. Examples from lwc-recipes:
-        // libsD3 - resolution works properly because its metadata contentType is <contentType>application/zip</contentType>
-        // libsChartjs - resolution fails because its metadata contentType is <contentType>application/javascript</contentType>
-        if (req.url.indexOf('.') === -1) {
-            // TODO make this work on windows
-            req.url = `${basePath}/assets/${req.params[0]}`;
-            const xmlFileName =
-                '.localdevserver/public' + req.url + '.resource-meta.xml';
-            // Let's try to grab the file extension from the metadata.xml file
-            if (fs.existsSync(xmlFileName)) {
-                const data = fs.readFileSync(xmlFileName, 'utf8');
-                const result = xmlParser.parse(data);
-                // Parse the xml into json
-                if (result) {
-                    const contentType = result.StaticResource.contentType;
-                    const fileExt = mimeTypes.extension(contentType);
-                    // Tack on the file extension and send it through
-                    req.url = req.url + '.' + fileExt;
-                    next('route');
-                }
-            } else {
-                // No metadata file, send along the request and pray
-                next();
-            }
-        } else {
-            if (
-                req.url.indexOf('/assets/styles/') === -1 &&
-                req.url.indexOf('/assets/fonts/') === -1 &&
-                req.url.indexOf('/assets/icons/') === -1
-            ) {
-                req.url = `${basePath}/assets/${req.params[0]}`;
-                next('route');
-            } else {
-                next();
-            }
-        }
-    });
+    app.get(`/assets/:versionKey/*`, salesforceStaticAssetsRoute(basePath));
 
     // Serve static files from Talon framework public dir
     app.use(express.static(FRAMEWORK_PUBLIC_DIR, staticOptions));
@@ -179,68 +122,14 @@ export async function createServer(
     }
 
     if (options.liveReload) {
-        // reload - auto reloading of the page
-        let reloading: { [key: string]: boolean } = {};
-        const liveReloadPort = await getPort();
-        debug('live reload port: ' + liveReloadPort);
-        reload(app, {
-            port: liveReloadPort,
-            verbose: debugLogger.enabled('localdevserver')
-        }).then((reloadReturned: any) => {
-            _RELOAD_RETURNED = reloadReturned;
-            _WATCHTREE_FOLDERS.push(sourceDir);
-            debug('watching: ' + sourceDir);
-            const ignoreDirectoryPattern = new RegExp(outputDir + '.*');
-            const watchCallback = function(file: any, curr: any, prev: any) {
-                if (typeof file === 'string') {
-                    const fileName: string = file.toString();
-                    debug('file changed: ' + fileName);
-                    if (!reloading[fileName]) {
-                        reloading[fileName] = true;
-                        _RELOAD_RETURNED.reload();
-                        setTimeout(() => {
-                            reloading[fileName] = false;
-                        }, 500);
-                    }
-                    if (
-                        fs.existsSync(fileName) &&
-                        fs.lstatSync(fileName).isDirectory()
-                    ) {
-                        debug('new folder, now watching: ' + fileName);
-                        watch.watchTree(
-                            fileName,
-                            { ignoreDirectoryPattern },
-                            watchCallback
-                        );
-                        _WATCHTREE_FOLDERS.push(fileName);
-                    } else if (_WATCHTREE_FOLDERS.indexOf(fileName) !== -1) {
-                        _WATCHTREE_FOLDERS.splice(
-                            _WATCHTREE_FOLDERS.indexOf(fileName),
-                            1
-                        );
-                    }
-                }
-            };
-            watch.watchTree(
-                sourceDir,
-                { ignoreDirectoryPattern },
-                watchCallback
-            );
-        });
+        startLiveReload(app, sourceDir, outputDir);
     }
 
     // Proxy, record and replay API calls
     app.use(apiMiddleware(apiConfig));
 
     // LWC-DEV-SERVER: Show source handler
-    app.use(`/show`, (req, res, next) => {
-        const file = req.query.file;
-        if (file) {
-            if (file.startsWith(sourceDir)) {
-                res.sendFile(file);
-            }
-        }
-    });
+    app.use(`/show`, showRoute(sourceDir));
 
     return app;
 }
@@ -281,4 +170,144 @@ export async function startServer(
     });
 
     return server;
+}
+
+function cspNonceMiddleware() {
+    return (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        res.locals.nonce = uuidv4();
+        next();
+    };
+}
+
+function cspPolicyMiddleware() {
+    return helmet({
+        contentSecurityPolicy: {
+            directives: {
+                scriptSrc: [
+                    `'self'`,
+                    (req: express.Request, res: express.Response) =>
+                        `'nonce-${res.locals.nonce}'`
+                ]
+            }
+        }
+    });
+}
+
+function salesforceStaticAssetsRoute(basePath: string) {
+    return (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        // Ignore for our SLDS routes
+        debug(req.url);
+
+        // Weird edge case where file extension isn't included for staticresource resolution
+        // except when the resource is part of an application/zip. Examples from lwc-recipes:
+        // libsD3 - resolution works properly because its metadata contentType is <contentType>application/zip</contentType>
+        // libsChartjs - resolution fails because its metadata contentType is <contentType>application/javascript</contentType>
+        if (req.url.indexOf('.') === -1) {
+            // TODO make this work on windows
+            req.url = `${basePath}/assets/${req.params[0]}`;
+            const xmlFileName =
+                '.localdevserver/public' + req.url + '.resource-meta.xml';
+            // Let's try to grab the file extension from the metadata.xml file
+            if (fs.existsSync(xmlFileName)) {
+                const data = fs.readFileSync(xmlFileName, 'utf8');
+                const result = xmlParser.parse(data);
+                // Parse the xml into json
+                if (result) {
+                    const contentType = result.StaticResource.contentType;
+                    const fileExt = mimeTypes.extension(contentType);
+                    // Tack on the file extension and send it through
+                    req.url = req.url + '.' + fileExt;
+                    next('route');
+                }
+            } else {
+                // No metadata file, send along the request and pray
+                next();
+            }
+        } else {
+            if (
+                req.url.indexOf('/assets/styles/') === -1 &&
+                req.url.indexOf('/assets/fonts/') === -1 &&
+                req.url.indexOf('/assets/icons/') === -1
+            ) {
+                req.url = `${basePath}/assets/${req.params[0]}`;
+                next('route');
+            } else {
+                next();
+            }
+        }
+    };
+}
+
+function showRoute(sourceDir: string) {
+    return (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        const file = req.query.file;
+        if (file) {
+            if (file.startsWith(sourceDir)) {
+                res.sendFile(file);
+            }
+        }
+    };
+}
+
+async function startLiveReload(
+    app: express.Application,
+    sourceDir: string,
+    outputDir: string
+) {
+    // reload - auto reloading of the page
+    let reloading: { [key: string]: boolean } = {};
+    const liveReloadPort = await getPort();
+    debug('live reload port: ' + liveReloadPort);
+    reload(app, {
+        port: liveReloadPort,
+        verbose: debugLogger.enabled('localdevserver')
+    }).then((reloadReturned: any) => {
+        _RELOAD_RETURNED = reloadReturned;
+        _WATCHTREE_FOLDERS.push(sourceDir);
+        debug('watching: ' + sourceDir);
+        const ignoreDirectoryPattern = new RegExp(outputDir + '.*');
+        const watchCallback = function(file: any, curr: any, prev: any) {
+            if (typeof file === 'string') {
+                const fileName: string = file.toString();
+                debug('file changed: ' + fileName);
+                if (!reloading[fileName]) {
+                    reloading[fileName] = true;
+                    _RELOAD_RETURNED.reload();
+                    setTimeout(() => {
+                        reloading[fileName] = false;
+                    }, 500);
+                }
+                if (
+                    fs.existsSync(fileName) &&
+                    fs.lstatSync(fileName).isDirectory()
+                ) {
+                    debug('new folder, now watching: ' + fileName);
+                    watch.watchTree(
+                        fileName,
+                        { ignoreDirectoryPattern },
+                        watchCallback
+                    );
+                    _WATCHTREE_FOLDERS.push(fileName);
+                } else if (_WATCHTREE_FOLDERS.indexOf(fileName) !== -1) {
+                    _WATCHTREE_FOLDERS.splice(
+                        _WATCHTREE_FOLDERS.indexOf(fileName),
+                        1
+                    );
+                }
+            }
+        };
+        watch.watchTree(sourceDir, { ignoreDirectoryPattern }, watchCallback);
+    });
 }
