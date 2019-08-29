@@ -5,9 +5,6 @@
 import path from 'path';
 import { upload } from '../../utils/upload-metadata';
 import ApexPage from './ApexPage';
-import debug from 'debug';
-
-const log = debug('localdevserver:test');
 
 beforeAll(async () => {
     const packagePath = path.join(__dirname, 'project/force-app/main/default');
@@ -23,13 +20,12 @@ describe('apex and schema', () => {
         const page = new ApexPage('c', 'wireToProp');
         await page.open();
 
-        await page.allContacts.then(async contacts => {
-            const contactNames = await Promise.all(
-                contacts.map(contact => contact.getText())
-            );
+        const allContacts = await page.allContacts;
+        const contactNames = await Promise.all(
+            allContacts.map(contact => contact.getText())
+        );
 
-            expect(contactNames).toHaveLength(10);
-        });
+        expect(contactNames).toHaveLength(10);
     });
 
     it('wires to the property with params', async () => {
@@ -39,27 +35,31 @@ describe('apex and schema', () => {
         const input = await page.input;
         await input.addValue('Rose Gonzalez');
 
-        await page.allContacts.then(async contacts => {
-            expect(contacts).toHaveLength(1);
-            const name = await contacts[0].getText();
-            expect(name).toBe('Rose Gonzalez');
-        });
+        // wait for page to update
+        await page.updateMarker;
+
+        const allContacts = await page.allContacts;
+        const contactNames = await Promise.all(
+            allContacts.map(contact => contact.getText())
+        );
+
+        expect(contactNames).toHaveLength(1);
+        expect(contactNames[0]).toBe('Rose Gonzalez');
     });
 
-    it.only('calls apex imperatively', async () => {
+    it('calls apex imperatively', async () => {
         const page = new ApexPage('c', 'apexImperative');
         await page.open();
 
         const button = await page.actionButton;
         await button.click();
 
-        await page.allContacts.then(async contacts => {
-            const contactNames = await Promise.all(
-                contacts.map(contact => contact.getText())
-            );
+        const allContacts = await page.allContacts;
+        const contactNames = await Promise.all(
+            allContacts.map(contact => contact.getText())
+        );
 
-            expect(contactNames).toHaveLength(10);
-        });
+        expect(contactNames).toHaveLength(10);
     });
 
     it('imported schema fields work with wired apex data', async () => {
@@ -75,10 +75,6 @@ describe('apex and schema', () => {
 
             const email = await page.emailField(contact);
             const emailText = await email.getText();
-
-            log(`schema - name: ${nameText}`);
-            log(`schema - title: ${titleText}`);
-            log(`schema - email: ${emailText}`);
 
             expect(nameText).not.toBeFalsy();
             expect(titleText).not.toBeFalsy();
