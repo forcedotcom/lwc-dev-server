@@ -4,10 +4,12 @@ declare global {
     namespace NodeJS {
         interface Global {
             seleniumProcess: ChildProcess;
+            _SFDX_DISABLE_INSIGHTS: string | undefined;
         }
     }
 }
 
 module.exports = async () => {
     global.seleniumProcess.kill();
+    process.env.SFDX_DISABLE_INSIGHTS = global._SFDX_DISABLE_INSIGHTS || 'true';
 };

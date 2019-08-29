@@ -79,9 +79,7 @@ describe('LocalDevServer', () => {
                     outputDir: expected
                 }),
                 expect.anything(),
-                mockConn,
-                undefined,
-                onClose
+                mockConn
             );
         });
 
@@ -191,7 +189,8 @@ describe('LocalDevServer', () => {
             expect(talonServer.startServer).toBeCalledWith(
                 expect.anything(),
                 expect.anything(),
-                port
+                port,
+                expect.any(Function)
             );
         });
 
