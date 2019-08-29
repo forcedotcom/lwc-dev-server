@@ -172,6 +172,10 @@ export async function startServer(
     return server;
 }
 
+/**
+ * Create the CSP Nonce Middleware that adds a uuid to every request.
+ * We use this for adding to the CSP policy.
+ */
 function cspNonceMiddleware() {
     return (
         req: express.Request,
@@ -183,6 +187,10 @@ function cspNonceMiddleware() {
     };
 }
 
+/**
+ * Generate the CSP policy for the request.
+ * Eventually we'll want this matching what Locker Service provides.
+ */
 function cspPolicyMiddleware() {
     return helmet({
         contentSecurityPolicy: {
@@ -197,6 +205,12 @@ function cspPolicyMiddleware() {
     });
 }
 
+/**
+ * Route handler for /assets/:versionKey/*
+ * This loads handles SLDS and Static Resources in the project
+ *
+ * @param basePath Server root server path to locate the assets.
+ */
 function salesforceStaticAssetsRoute(basePath: string) {
     return (
         req: express.Request,
@@ -246,6 +260,11 @@ function salesforceStaticAssetsRoute(basePath: string) {
     };
 }
 
+/**
+ * Return the source code for a specified file.
+ *
+ * @param sourceDir
+ */
 function showRoute(sourceDir: string) {
     return (
         req: express.Request,
@@ -254,7 +273,7 @@ function showRoute(sourceDir: string) {
     ) => {
         const file = req.query.file;
         if (file) {
-            if (file.startsWith(sourceDir)) {
+            if (file.startsWith(sourceDir) && !file.includes('..')) {
                 res.sendFile(file);
             }
         }
@@ -267,7 +286,7 @@ async function startLiveReload(
     outputDir: string
 ) {
     // reload - auto reloading of the page
-    let reloading: { [key: string]: boolean } = {};
+    const reloading: { [key: string]: boolean } = {};
     const liveReloadPort = await getPort();
     debug('live reload port: ' + liveReloadPort);
     reload(app, {
