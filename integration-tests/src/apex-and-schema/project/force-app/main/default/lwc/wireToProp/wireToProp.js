@@ -8,6 +8,5 @@ export default class Component extends LightningElement {
         if (this.contacts.error) {
             return JSON.stringify(this.contacts.error);
         }
-        return '';
     }
 }

@@ -4,15 +4,15 @@
 
 import path from 'path';
 import { upload } from '../../utils/upload-metadata';
-import PreviewPage from '../pageObjects/PreviewPage';
+import ApexPage from './ApexPage';
 import debug from 'debug';
 
 const log = debug('localdevserver:test');
 
 beforeAll(async () => {
-    const pkgPath = path.join(__dirname, 'project/force-app/main/default');
+    const packagePath = path.join(__dirname, 'project/force-app/main/default');
     await upload({
-        packagePath: pkgPath,
+        packagePath,
         connection: global.jsforceConnection,
         apex: true
     });
@@ -20,70 +20,69 @@ beforeAll(async () => {
 
 describe('apex and schema', () => {
     it('wires to the property', async () => {
-        const page = new PreviewPage('c', 'wireToProp');
+        const page = new ApexPage('c', 'wireToProp');
         await page.open();
 
-        await page.testComponent
-            .then(el => el.shadow$('lightning-card'))
-            .then(async el => {
-                await browser.waitUntil(
-                    async () => {
-                        const content = await el.$$('.contacts p');
-                        return content.length > 0;
-                    },
-                    30000,
-                    'wire data did not update within timeout'
-                );
-                return el.$$('.contacts p');
-            })
-            .then(async contacts => {
-                await Promise.all(
-                    contacts.map(async contact => contact.getText())
-                ).then(contacts => {
-                    contacts.forEach(contact => {
-                        log(`contact: ${contact}`);
-                    });
-                });
-                expect(contacts).toHaveLength(10);
-            });
+        await page.allContacts.then(async contacts => {
+            const contactNames = await Promise.all(
+                contacts.map(contact => contact.getText())
+            );
+
+            expect(contactNames).toHaveLength(10);
+        });
+    });
+
+    it('wires to the property with params', async () => {
+        const page = new ApexPage('c', 'wireToPropParams');
+        await page.open();
+
+        const input = await page.input;
+        await input.addValue('Rose Gonzalez');
+
+        await page.allContacts.then(async contacts => {
+            expect(contacts).toHaveLength(1);
+            const name = await contacts[0].getText();
+            expect(name).toBe('Rose Gonzalez');
+        });
+    });
+
+    it.only('calls apex imperatively', async () => {
+        const page = new ApexPage('c', 'apexImperative');
+        await page.open();
+
+        const button = await page.actionButton;
+        await button.click();
+
+        await page.allContacts.then(async contacts => {
+            const contactNames = await Promise.all(
+                contacts.map(contact => contact.getText())
+            );
+
+            expect(contactNames).toHaveLength(10);
+        });
     });
 
     it('imported schema fields work with wired apex data', async () => {
-        const page = new PreviewPage('c', 'apexSchema');
+        const page = new ApexPage('c', 'apexSchema');
         await page.open();
 
-        await page.testComponent
-            .then(el => el.shadow$('lightning-card'))
-            .then(async el => {
-                await browser.waitUntil(
-                    async () => {
-                        const contact = await el.$('.contact');
-                        return await contact.isExisting();
-                    },
-                    30000,
-                    'wire data did not update within timeout'
-                );
-                return el;
-            })
-            .then(async el => {
-                const name = await Promise.resolve(el.$('.contact .name')).then(
-                    el => el.getText()
-                );
-                const title = await Promise.resolve(
-                    el.$('.contact .title')
-                ).then(el => el.getText());
+        await page.singleContact.then(async contact => {
+            const name = await page.nameField(contact);
+            const nameText = await name.getText();
 
-                const email = await Promise.resolve(
-                    el.$('.contact lightning-formatted-email')
-                ).then(el => el.getText());
+            const title = await page.titleField(contact);
+            const titleText = await title.getText();
 
-                log(`name: ${name}`);
-                log(`title: ${title}`);
-                log(`email: ${email}`);
+            const email = await page.emailField(contact);
+            const emailText = await email.getText();
 
-                expect(name).not.toBeFalsy();
-                expect(title).not.toBeFalsy();
-                expect(email).not.toBeFalsy();
-            });
+            log(`schema - name: ${nameText}`);
+            log(`schema - title: ${titleText}`);
+            log(`schema - email: ${emailText}`);
+
+            expect(nameText).not.toBeFalsy();
+            expect(titleText).not.toBeFalsy();
+            expect(emailText).not.toBeFalsy();
+        });
     });
 });

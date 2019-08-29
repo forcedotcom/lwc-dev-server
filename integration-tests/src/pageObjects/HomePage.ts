@@ -14,7 +14,7 @@ class HomePage implements Page {
             .then(el => (self.container = el));
     }
 
-    public get containerList(): Promise<WebdriverIO.Element> {
+    public get componentList(): Promise<WebdriverIO.Element> {
         if (this.container) {
             return Promise.resolve(this.container.shadow$('.component-list'));
         }

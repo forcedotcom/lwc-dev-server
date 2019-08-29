@@ -1,17 +1,14 @@
 <template>
-    <lightning-card
-        title="ApexWireMethodToProperty"
-        icon-name="custom:custom63"
-    >
-        <div class="slds-m-around_medium contacts">
-            <template if:true={contacts.data}>
+    <lightning-card title="ApexWireMethodToProperty" icon-name="custom:custom63">
+        <template if:true={contacts.data}>
+            <div class="slds-m-around_medium contacts">
                 <template for:each={contacts.data} for:item="contact">
-                    <p key={contact.Id}>{contact.Name}</p>
+                    <p key={contact.Id} class="contact">{contact.Name}</p>
                 </template>
-            </template>
-            <template if:true={error}>
-                <div class='error'>{error}</div>
-            </template>
-        </div>
+            </div>
+        </template>
+        <template if:true={error}>
+            <div class='error'>{error}</div>
+        </template>
     </lightning-card>
 </template>

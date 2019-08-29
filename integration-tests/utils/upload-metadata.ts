@@ -17,7 +17,7 @@ interface UploadOptions {
      */
     all?: boolean;
     /**
-     * Include the `classes` directory.
+     * Include the `classes` directory from the package directory.
      */
     apex?: boolean;
 }
@@ -57,9 +57,6 @@ export async function upload(options: UploadOptions) {
         }
     }
     archive.finalize();
-
-    // connection.metadata.pollTimeout = 60*1000; // timeout in 60 sec by default
-    // connection.metadata.pollInterval = 5*1000; // polling interval to 5 sec by default
 
     await options.connection.metadata
         .deploy(archive, {
