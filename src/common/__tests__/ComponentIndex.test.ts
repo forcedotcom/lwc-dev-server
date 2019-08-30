@@ -1,17 +1,17 @@
 import fs from 'fs';
-import mockFs from 'mock-fs';
+import mock from 'mock-fs';
 import { ls } from 'shelljs';
 import ComponentIndex from '../ComponentIndex';
 import Project from '../Project';
 
 describe('ComponentIndex', () => {
-    afterEach(mockFs.restore);
+    afterEach(mock.restore);
 
     describe('getModules()', () => {
-        afterEach(mockFs.restore);
+        afterEach(mock.restore);
 
         it('when using sfdx, returns modules in lwc directory', () => {
-            mockFs({
+            mock({
                 'my-project': {
                     'package.json': '{}',
                     'sfdx-project.json': '{}',
@@ -53,7 +53,7 @@ describe('ComponentIndex', () => {
     });
 
     it('when not sfdx, returns modules modulesSourceDirectory', () => {
-        mockFs({
+        mock({
             'my-project': {
                 'package.json': '{}',
                 'localdevserver.config.json': JSON.stringify({
