@@ -52,24 +52,34 @@ afterEach(async () => {
     const test = global.failedTest;
     if (test) {
         console.log('attempting to save screenshot for test failure');
-        const screenshot = await global.browser.takeScreenshot();
-        let screenshotName = test.name;
-        let parent: Circus.DescribeBlock | null | undefined = test.parent;
-        while (parent) {
-            const parentName = parent.name;
-            if (parentName !== 'ROOT_DESCRIBE_BLOCK') {
-                screenshotName = `${parentName} - ${screenshotName}`;
+
+        try {
+            const screenshot = await global.browser.takeScreenshot();
+            let screenshotName = test.name;
+            let parent: Circus.DescribeBlock | null | undefined = test.parent;
+            while (parent) {
+                const parentName = parent.name;
+                if (parentName !== 'ROOT_DESCRIBE_BLOCK') {
+                    screenshotName = `${parentName} - ${screenshotName}`;
+                }
+                parent = parent.parent;
             }
-            parent = parent.parent;
+            screenshotName = `${screenshotName} - ${new Date().getTime()}.png`;
+
+            const screenshotsPath = path.join(
+                __dirname,
+                '..',
+                '..',
+                'errorShots'
+            );
+            const screenshotPath = path.join(screenshotsPath, screenshotName);
+
+            shell.mkdir('-p', screenshotsPath);
+            fs.writeFileSync(screenshotPath, screenshot, 'base64');
+            console.log(`screenshot saved at ${screenshotPath}`);
+        } catch (e) {
+            console.error(`unable to take screenshot: ${e}`);
         }
-        screenshotName = `${screenshotName} - ${new Date().getTime()}.png`;
-
-        const screenshotsPath = path.join(__dirname, '..', '..', 'errorShots');
-        const screenshotPath = path.join(screenshotsPath, screenshotName);
-
-        shell.mkdir('-p', screenshotsPath);
-        fs.writeFileSync(screenshotPath, screenshot, 'base64');
-        console.log(`screenshot saved at ${screenshotPath}`);
     }
 
     await global.browser.deleteSession();

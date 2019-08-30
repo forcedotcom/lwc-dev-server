@@ -70,15 +70,15 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
                 try {
                     cachedConfig = await getConfig(connectionParams);
                 } catch (e) {
-                    console.log(e.message);
+                    console.error(e);
                     res.status(500).send(e.message);
                     return;
                 }
             }
             const auraconfig = cachedConfig;
             if (!auraconfig) {
-                console.log('error retrieving aura config');
-                res.status(500).send('error retrieving aura config');
+                console.error('error retrieving aura config: not set');
+                res.status(500).send('error retrieving aura config: not set');
                 return;
             }
 
@@ -197,6 +197,7 @@ async function getConfig(connectionParams: ConnectionParams) {
         } catch (ignore) {}
         await sleep(1000);
     }
+    log('retrieved aura configuration');
     return config;
 }
 
