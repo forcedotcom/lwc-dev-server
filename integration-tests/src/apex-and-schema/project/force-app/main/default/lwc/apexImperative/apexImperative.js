@@ -12,7 +12,7 @@ export default class ApexImperativeMethod extends LightningElement {
                 this.error = undefined;
             })
             .catch(error => {
-                this.error = error;
+                this.error = JSON.stringify(error, null, 2);
                 this.contacts = undefined;
             });
     }

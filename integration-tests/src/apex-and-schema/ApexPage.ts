@@ -9,7 +9,11 @@ export default class ApexPage extends PreviewPage {
         return this.testComponent
             .then(el => el.shadow$('.contacts'))
             .then(async el => {
-                await el.waitForDisplayed(30000);
+                await el.waitForDisplayed(
+                    30000,
+                    false,
+                    "The element '.contacts' was not displayed on the page within the given timeout."
+                );
                 return el;
             });
     }
@@ -22,7 +26,11 @@ export default class ApexPage extends PreviewPage {
         return this.testComponent
             .then(el => el.shadow$('.contact'))
             .then(async el => {
-                await el.waitForDisplayed(30000);
+                await el.waitForDisplayed(
+                    30000,
+                    false,
+                    "The element '.contact' was not displayed on the page within the given timeout."
+                );
                 return el;
             });
     }
@@ -61,7 +69,11 @@ export default class ApexPage extends PreviewPage {
         return this.testComponent
             .then(el => el.shadow$('.update-marker'))
             .then(async el => {
-                await el.waitForDisplayed(30000);
+                await el.waitForDisplayed(
+                    30000,
+                    false,
+                    "The element '.update-marker' was not displayed on the page within the given timeout."
+                );
                 return el;
             });
     }
