@@ -15,8 +15,8 @@ beforeAll(async () => {
     });
 });
 
-describe('apex and schema', () => {
-    it('wires to the property', async () => {
+describe('apex', () => {
+    it('can wire data to a property', async () => {
         const page = new ApexPage('c', 'wireToProp');
         await page.open();
 
@@ -25,10 +25,10 @@ describe('apex and schema', () => {
             allContacts.map(contact => contact.getText())
         );
 
-        expect(contactNames).toHaveLength(10);
+        expect(contactNames).toHaveLength(11);
     });
 
-    it('wires to the property with params', async () => {
+    it('can wire data to the property with params', async () => {
         const page = new ApexPage('c', 'wireToPropParams');
         await page.open();
 
@@ -47,7 +47,7 @@ describe('apex and schema', () => {
         expect(contactNames[0]).toBe('Rose Gonzalez');
     });
 
-    it('calls apex imperatively', async () => {
+    it('can be called imperatively', async () => {
         const page = new ApexPage('c', 'apexImperative');
         await page.open();
 
@@ -59,10 +59,10 @@ describe('apex and schema', () => {
             allContacts.map(contact => contact.getText())
         );
 
-        expect(contactNames).toHaveLength(10);
+        expect(contactNames).toHaveLength(11);
     });
 
-    it('imported schema fields work with wired apex data', async () => {
+    it('wired data can be used with imported @salesforce/schema values', async () => {
         const page = new ApexPage('c', 'apexSchema');
         await page.open();
 

@@ -12,7 +12,7 @@ export default class ApexPage extends PreviewPage {
                 await el.waitForDisplayed(
                     30000,
                     false,
-                    "The element '.contacts' was not displayed on the page within the given timeout."
+                    "The element '.contacts' was not displayed or found on the page within the given timeout."
                 );
                 return el;
             });
@@ -29,7 +29,7 @@ export default class ApexPage extends PreviewPage {
                 await el.waitForDisplayed(
                     30000,
                     false,
-                    "The element '.contact' was not displayed on the page within the given timeout."
+                    "The element '.contact' was not displayed or found on the page within the given timeout."
                 );
                 return el;
             });
@@ -72,7 +72,7 @@ export default class ApexPage extends PreviewPage {
                 await el.waitForDisplayed(
                     30000,
                     false,
-                    "The element '.update-marker' was not displayed on the page within the given timeout."
+                    "The element '.update-marker' was not displayed or found on the page within the given timeout."
                 );
                 return el;
             });

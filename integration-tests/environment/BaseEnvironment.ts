@@ -12,6 +12,7 @@ declare global {
         interface Global {
             serverPort?: number;
             browser: BrowserObject;
+            failedTest?: Circus.TestEntry;
         }
     }
 }
@@ -49,34 +50,8 @@ export default class BaseEnvironment extends NodeEnvironment {
     }
 
     async handleTestEvent(event: Circus.Event, state: Circus.State) {
-        // screenshot errors
         if (event.name === 'test_fn_failure') {
-            console.log('attempting to save screenshot for test failure');
-            const screenshot = await this.global.browser.takeScreenshot();
-
-            let screenshotName = event.test.name;
-            let parent: Circus.DescribeBlock | null | undefined =
-                event.test.parent;
-            while (parent) {
-                const parentName = parent.name;
-                if (parentName !== 'ROOT_DESCRIBE_BLOCK') {
-                    screenshotName = `${parentName} - ${screenshotName}`;
-                }
-                parent = parent.parent;
-            }
-            screenshotName = `${screenshotName} - ${new Date().getTime()}.png`;
-
-            const screenshotsPath = path.join(
-                __dirname,
-                '..',
-                '..',
-                'errorShots'
-            );
-            const screenshotPath = path.join(screenshotsPath, screenshotName);
-
-            shell.mkdir('-p', screenshotsPath);
-            fs.writeFileSync(screenshotPath, screenshot, 'base64');
-            console.log(`screenshot saved at ${screenshotPath}`);
+            this.global.failedTest = event.test;
         }
     }
 }
