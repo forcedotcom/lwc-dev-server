@@ -59,7 +59,7 @@ describe('apex', () => {
             allContacts.map(contact => contact.getText())
         );
 
-        expect(contactNames).toHaveLength(11);
+        expect(contactNames).toHaveLength(10);
     });
 
     it('wired data can be used with imported @salesforce/schema values', async () => {
