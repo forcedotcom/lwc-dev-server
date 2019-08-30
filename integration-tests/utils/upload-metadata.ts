@@ -75,6 +75,6 @@ export async function upload(options: UploadOptions) {
             console.log('done uploading metadata.');
         })
         .catch((e: Error) => {
-            console.log(`error uploading metadata: ${e.message}`);
+            console.error(`error uploading metadata: ${e.message}`);
         });
 }
