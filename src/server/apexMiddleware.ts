@@ -171,11 +171,9 @@ function getOrgRequest({ accessToken, instanceUrl }: ConnectionParams) {
 async function getConfig(connectionParams: ConnectionParams) {
     log('Getting aura configuration');
     const orgRequest = getOrgRequest(connectionParams);
-    const response = await orgRequest
-        .get({
-            url: ONE_APP_URL
-        })
-        .promise();
+    const response = await orgRequest.get({
+        url: ONE_APP_URL
+    });
     log(response);
     if (response.indexOf('window.location.replace(') != -1) {
         throw new Error('error retrieving aura config: unauthenticated');
