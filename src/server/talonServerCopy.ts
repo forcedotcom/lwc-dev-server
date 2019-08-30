@@ -66,6 +66,12 @@ const staticOptions = {
     maxAge: 31536000
 };
 
+const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
+    '.html': true,
+    '.css': true,
+    '.js': true
+};
+
 function getRootApp(app: any, basePath: string) {
     if (basePath) {
         const rootApp = express();
@@ -175,8 +181,9 @@ export async function startServer(
 /**
  * Create the CSP Nonce Middleware that adds a uuid to every request.
  * We use this for adding to the CSP policy.
+ *
  */
-function cspNonceMiddleware() {
+export function cspNonceMiddleware() {
     return (
         req: express.Request,
         res: express.Response,
@@ -191,7 +198,7 @@ function cspNonceMiddleware() {
  * Generate the CSP policy for the request.
  * Eventually we'll want this matching what Locker Service provides.
  */
-function cspPolicyMiddleware() {
+export function cspPolicyMiddleware() {
     return helmet({
         contentSecurityPolicy: {
             directives: {
@@ -211,7 +218,7 @@ function cspPolicyMiddleware() {
  *
  * @param basePath Server root server path to locate the assets.
  */
-function salesforceStaticAssetsRoute(basePath: string) {
+export function salesforceStaticAssetsRoute(basePath: string) {
     return (
         req: express.Request,
         res: express.Response,
@@ -263,9 +270,9 @@ function salesforceStaticAssetsRoute(basePath: string) {
 /**
  * Return the source code for a specified file.
  *
- * @param sourceDir
+ * @param sourceDir Directory to accept which files to expose.
  */
-function showRoute(sourceDir: string) {
+export function showRoute(sourceDir: string) {
     return (
         req: express.Request,
         res: express.Response,
@@ -273,14 +280,26 @@ function showRoute(sourceDir: string) {
     ) => {
         const file = req.query.file;
         if (file) {
-            if (file.startsWith(sourceDir) && !file.includes('..')) {
+            const extension = path.extname(file);
+            if (
+                file.startsWith(sourceDir) &&
+                !file.includes('..') &&
+                ALLOWED_SHOW_EXTENSIONS[extension]
+            ) {
                 res.sendFile(file);
             }
         }
     };
 }
 
-async function startLiveReload(
+/**
+ * Starts watching for changes to files and performs live reloads.
+ *
+ * @param app Express application
+ * @param sourceDir Directory to listen for changes
+ * @param outputDir We ignore changes to the output directory. Otherwise we could ge tin a loop.
+ */
+export async function startLiveReload(
     app: express.Application,
     sourceDir: string,
     outputDir: string
