@@ -8,6 +8,8 @@ describe('ComponentIndex', () => {
     afterEach(mockFs.restore);
 
     describe('getModules()', () => {
+        afterEach(mockFs.restore);
+
         it('when using sfdx, returns modules in lwc directory', () => {
             mockFs({
                 'my-project': {
