@@ -402,7 +402,7 @@ describe('apexMiddleware', () => {
 
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.send).toHaveBeenLastCalledWith(
-            'error retrieving aura config'
+            'error retrieving aura config: not set'
         );
         expect(next).not.toBeCalled();
     });
