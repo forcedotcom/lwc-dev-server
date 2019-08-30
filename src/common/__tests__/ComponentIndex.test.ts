@@ -7,6 +7,11 @@ import Project from '../Project';
 describe('ComponentIndex getModules()', () => {
     afterEach(mock.restore);
 
+    // usages of these functions during mocking the filesystem cause exceptions
+    console.log = jest.fn();
+    console.warn = jest.fn();
+    console.error = jest.fn();
+
     test('when not sfdx, returns modules modulesSourceDirectory', () => {
         mock({
             'my-project': {
