@@ -5,13 +5,13 @@ import NodeEnvironment from 'jest-environment-node';
 import { defaultOutputDirectory } from '../../src/server/LocalDevServer';
 import { EnvironmentContext } from '@jest/environment';
 import { Config, Circus } from '@jest/types';
-import { remote, BrowserObject } from 'webdriverio';
+import { BrowserObject } from 'webdriverio';
 
 declare global {
     namespace NodeJS {
         interface Global {
             serverPort?: number;
-            browser: typeof browser;
+            browser: BrowserObject;
         }
     }
 }
@@ -49,25 +49,34 @@ export default class BaseEnvironment extends NodeEnvironment {
     }
 
     async handleTestEvent(event: Circus.Event, state: Circus.State) {
-        console.dir(event.name);
+        // screenshot errors
         if (event.name === 'test_fn_failure') {
+            console.log('attempting to save screenshot for test failure');
             const screenshot = await this.global.browser.takeScreenshot();
+
+            let screenshotName = event.test.name;
+            let parent: Circus.DescribeBlock | null | undefined =
+                event.test.parent;
+            while (parent) {
+                const parentName = parent.name;
+                if (parentName !== 'ROOT_DESCRIBE_BLOCK') {
+                    screenshotName = `${parentName} - ${screenshotName}`;
+                }
+                parent = parent.parent;
+            }
+            screenshotName = `${screenshotName} - ${new Date().getTime()}.png`;
+
             const screenshotsPath = path.join(
                 __dirname,
                 '..',
                 '..',
                 'errorShots'
             );
+            const screenshotPath = path.join(screenshotsPath, screenshotName);
+
             shell.mkdir('-p', screenshotsPath);
-
-            let x = event.test;
-
-            let filename = event.test.name.replace(/ /g, '-');
-            filename += `-` + new Date().getTime() + '.png';
-            filename = path.join(screenshotsPath, filename);
-
-            fs.writeFileSync(filename, screenshot, 'base64');
-            console.dir(event.test);
+            fs.writeFileSync(screenshotPath, screenshot, 'base64');
+            console.log(`screenshot saved at ${screenshotPath}`);
         }
     }
 }
