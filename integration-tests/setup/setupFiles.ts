@@ -78,7 +78,7 @@ afterEach(async () => {
             fs.writeFileSync(screenshotPath, screenshot, 'base64');
             console.log(`screenshot saved at ${screenshotPath}`);
         } catch (e) {
-            console.error(`unable to take screenshot: ${e}`);
+            console.error(`error taking screenshot: ${e}`);
         }
     }
 

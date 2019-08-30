@@ -185,6 +185,7 @@ async function getConfig(connectionParams: ConnectionParams) {
         referrer: connectionParams.instanceUrl + ONE_APP_URL
     });
     let config;
+    let error;
     for (let i = 0; i < MAX_RETRIES; i++) {
         try {
             const window = oneApp.window;
@@ -193,9 +194,16 @@ async function getConfig(connectionParams: ConnectionParams) {
             if (aura) {
                 config = aura.initConfig;
                 break;
+            } else {
+                error = 'window.Aura not found';
             }
-        } catch (ignore) {}
+        } catch (e) {
+            error = e;
+        }
         await sleep(1000);
+    }
+    if (config === undefined) {
+        throw new Error(`error parsing or finding aura config: ${error}`);
     }
     log('retrieved aura configuration');
     return config;

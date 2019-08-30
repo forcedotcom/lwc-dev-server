@@ -62,7 +62,7 @@ describe('apex', () => {
         expect(contactNames).toHaveLength(10);
     });
 
-    it('wired data can be used with imported @salesforce/schema values', async () => {
+    it('wired data can be used with imported schema fields', async () => {
         const page = new ApexPage('c', 'apexSchema');
         await page.open();
 
