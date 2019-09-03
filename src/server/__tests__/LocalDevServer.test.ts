@@ -7,6 +7,7 @@ import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration'
 import cpx from 'cpx';
 import os from 'os';
 import ComponentIndex from '../../common/ComponentIndex';
+import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -285,8 +286,7 @@ describe('LocalDevServer', () => {
             await server.start(project);
 
             const result = (talonServer.createServer as any).mock.results[0];
-            const use = result.value.use;
-            const routeHandler = use.mock.calls[0][1];
+            const routeHandler = result.value.use.mock.calls[0][1];
             const response = {
                 json: jest.fn()
             };
@@ -298,6 +298,67 @@ describe('LocalDevServer', () => {
             routeHandler(jest.fn(), response, jest.fn());
 
             expect(response.json.mock.calls[0][0]).toEqual(modulesList);
+        });
+
+        describe('telemetry', () => {
+            it('reports on application start', async () => {
+                const reporter = await LocalDevTelemetryReporter.getInstance();
+                reporter.trackApplicationStart = jest.fn();
+
+                const projectPath = '/Users/arya/dev/myproject';
+                const project = mockProject({
+                    projectPath
+                });
+
+                const server = new LocalDevServer();
+                await server.start(project);
+
+                expect(reporter.trackApplicationStart).toBeCalledWith(
+                    expect.any(Number),
+                    expect.any(Boolean),
+                    expect.any(String)
+                );
+            });
+
+            it('reports on application end', async () => {
+                const projectPath = '/Users/arya/dev/myproject';
+                const project = mockProject({ projectPath });
+                const reporter = await LocalDevTelemetryReporter.getInstance();
+                reporter.trackApplicationEnd = jest.fn();
+
+                const server = new LocalDevServer();
+                await server.start(project);
+
+                const onEnd = (talonServer.startServer as any).mock.calls[0][3];
+                onEnd();
+
+                expect(reporter.trackApplicationEnd).toBeCalledWith(
+                    expect.any(Number)
+                );
+            });
+
+            it('reports when exception is thrown durning application start', async () => {
+                const projectPath = '/Users/arya/dev/myproject';
+                const project = mockProject({ projectPath });
+                const reporter = await LocalDevTelemetryReporter.getInstance();
+                // Throw an exception during LocalDevServer start
+                reporter.trackApplicationStart = jest
+                    .fn()
+                    .mockImplementationOnce(() => {
+                        throw new Error('expected error');
+                    });
+                reporter.trackApplicationStartException = jest.fn();
+
+                // Will throw an exception
+                try {
+                    const server = new LocalDevServer();
+                    await server.start(project);
+                } catch (e) {}
+
+                expect(reporter.trackApplicationStartException).toBeCalledWith(
+                    expect.any(Error)
+                );
+            });
         });
     });
 
