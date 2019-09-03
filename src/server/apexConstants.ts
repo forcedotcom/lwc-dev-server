@@ -1,1 +1,1 @@
-export const MAX_RETRIES = 60;
+export const MAX_RETRIES = 300;
