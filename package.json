@@ -60,8 +60,6 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "link-talon": "yarn link @talon/common @talon/framework @talon/compiler",
     "unlink-talon": "yarn unlink @talon/common @talon/framework @talon/compiler",
-    "precommit": "lint-staged",
-    "prepush": "yarn lint && yarn test",
     "preinstall": "node script/libs-prepare.js",
     "postinstall": "node script/libs-install.js && node script/postinstall-build.js",
     "prepack": "oclif-dev manifest",
@@ -177,5 +175,11 @@
     "js-yaml": "^3.13.1",
     "braces": "^3.0.2",
     "eslint-utils": "^1.4.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn lint && yarn test"
+    }
   }
 }
