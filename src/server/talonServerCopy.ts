@@ -72,7 +72,7 @@ const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
     '.js': true
 };
 
-function getRootApp(app: any, basePath: string) {
+export function getRootApp(app: any, basePath: string) {
     if (basePath) {
         const rootApp = express();
         rootApp.use(basePath, app);
