@@ -6,11 +6,21 @@ import * as talonServer from '../talonServerCopy';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 import cpx from 'cpx';
 import os from 'os';
+import ComponentIndex from '../../common/ComponentIndex';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
 jest.mock('../talonServerCopy');
 jest.mock('cpx');
+// jest.mock('../../common/ComponentIndex', () => {
+//     return {
+//         __esModule: true,
+//         default: jest.fn(() => {
+//             getModules: jest.fn(() => ['ui:module']);
+//         })
+//     };
+// });
+jest.mock('../../common/ComponentIndex');
 
 function mockProject({
     projectPath,
@@ -207,6 +217,87 @@ describe('LocalDevServer', () => {
             await expect(server.start(project)).rejects.toThrow(
                 'Unable to start LocalDevServer: test error'
             );
+        });
+
+        it('uses default apiVersion when apiVersion is not specified', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const port = 1337;
+            const project = mockProject({
+                projectPath,
+                port,
+                version: undefined
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const call = (talonServer.createServer as any).mock.calls[0];
+            const proxyConfig = call[1];
+
+            expect(proxyConfig.pathRewrite('/api/v100.0/')).toBe('/v45.0/');
+        });
+
+        it('adds custom components plugin when project is sfdx', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+            Object.defineProperty(project, 'isSfdx', {
+                get: () => {
+                    return true;
+                }
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const call = (talonServer.createServer as any).mock.calls[0];
+            const config = call[0];
+
+            expect(config.talonConfig.rollup.plugins[0].name).toBe(
+                'rollup-plugin-custom-components'
+            );
+        });
+
+        it('adds componentList route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const use = result.value.use;
+
+            expect(use.mock.calls[0][0]).toBe('/componentList');
+        });
+
+        it('adds componentList route that returns list of modules', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+            const modulesList = ['ui:module'];
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const use = result.value.use;
+            const routeHandler = use.mock.calls[0][1];
+            const response = {
+                json: jest.fn()
+            };
+            // @ts-ignore
+            ComponentIndex.mockImplementation(() => {
+                return { getModules: jest.fn(() => ['ui:module']) };
+            });
+
+            routeHandler(jest.fn(), response, jest.fn());
+
+            expect(response.json.mock.calls[0][0]).toEqual(modulesList);
         });
     });
 
