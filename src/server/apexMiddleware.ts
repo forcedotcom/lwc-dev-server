@@ -6,7 +6,7 @@ import { MAX_RETRIES } from './apexConstants';
 import { Cookie } from 'request';
 import parse from 'co-body';
 
-const log = debug('localdevserver');
+const log = debug('localdevserver:apex');
 const ONE_APP_URL = '/one/one.app';
 
 let cachedConfig: any = null;
@@ -27,7 +27,7 @@ export class ApexResourceLoader extends ResourceLoader {
             const res = await this.orgRequest.get(opts);
             return Promise.resolve(Buffer.from(res));
         } catch (e) {
-            log(e);
+            log(`error fetching external resource: ${e.message}`);
         }
         return Promise.resolve(Buffer.from(''));
     }
@@ -174,7 +174,6 @@ async function getConfig(connectionParams: ConnectionParams) {
     const response = await orgRequest.get({
         url: ONE_APP_URL
     });
-    log(response);
     if (response.indexOf('window.location.replace(') != -1) {
         throw new Error('error retrieving aura config: unauthenticated');
     }
