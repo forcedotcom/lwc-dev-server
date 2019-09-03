@@ -186,6 +186,7 @@ async function getConfig(connectionParams: ConnectionParams) {
     });
     let config;
     let error;
+    // need to wait for external scripts to load...
     for (let i = 0; i < MAX_RETRIES; i++) {
         try {
             const window = oneApp.window;
