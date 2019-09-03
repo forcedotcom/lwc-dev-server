@@ -6,9 +6,20 @@ const DELAY = 300;
 
 export default class ApexWireMethodWithParams extends LightningElement {
     @track searchKey = '';
+    @track contacts;
+    @track error;
 
     @wire(findContacts, { searchKey: '$searchKey' })
-    contacts;
+    wiredContacts({ error, data }) {
+        if (data) {
+            this.contacts = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.contacts = undefined;
+        }
+        this.updated = true;
+    }
 
     handleKeyChange(event) {
         // Debouncing this method: Do not update the reactive property as long as this function is
@@ -18,11 +29,5 @@ export default class ApexWireMethodWithParams extends LightningElement {
         this.delayTimeout = setTimeout(() => {
             this.searchKey = searchKey;
         }, DELAY);
-    }
-
-    get error() {
-        if (this.contacts.error) {
-            return JSON.stringify(this.contacts.error);
-        }
     }
 }

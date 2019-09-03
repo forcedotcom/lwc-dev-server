@@ -8,9 +8,9 @@
                 label="Search"
                 value={searchKey}
             ></lightning-input>
-            <template if:true={contacts.data}>
+            <template if:true={contacts}>
                 <div class="contacts">
-                    <template for:each={contacts.data} for:item="contact">
+                    <template for:each={contacts} for:item="contact">
                         <p key={contact.Id} class="contact">{contact.Name}</p>
                     </template>
                 </div>
@@ -20,7 +20,4 @@
             </template>
         </div>
     </lightning-card>
-    <template if:true={searchKey}>
-        <div class='update-marker'>update-marker</div>
-    </template>
 </template>

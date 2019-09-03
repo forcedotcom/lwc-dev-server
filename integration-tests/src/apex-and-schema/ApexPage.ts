@@ -64,17 +64,4 @@ export default class ApexPage extends PreviewPage {
             .then(el => el.shadow$('lightning-button.action'))
             .then(el => el.shadow$('button'));
     }
-
-    public get updateMarker(): Promise<WebdriverIO.Element> {
-        return this.testComponent
-            .then(el => el.shadow$('.update-marker'))
-            .then(async el => {
-                await el.waitForDisplayed(
-                    30000,
-                    false,
-                    "The element '.update-marker' was not displayed or found on the page within the given timeout."
-                );
-                return el;
-            });
-    }
 }

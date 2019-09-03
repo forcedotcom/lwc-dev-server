@@ -28,23 +28,27 @@ describe('apex', () => {
         expect(contactNames).toHaveLength(10);
     });
 
-    it('can wire data to the property with params', async () => {
-        const page = new ApexPage('c', 'wireToPropParams');
+    it('can wire data to a function with params', async () => {
+        const page = new ApexPage('c', 'wireToFunctionWithParams');
         await page.open();
 
         const input = await page.input;
         await input.addValue('Rose Gonzalez');
 
         // wait for page to update
-        await page.updateMarker;
-
-        const allContacts = await page.allContacts;
-        const contactNames = await Promise.all(
-            allContacts.map(contact => contact.getText())
+        await browser.waitUntil(
+            async () => {
+                const allContacts = await page.allContacts;
+                return allContacts.length === 1; // just Rose Gonzalez
+            },
+            20000,
+            'Expected the page to update matching the seach query.'
         );
 
-        expect(contactNames).toHaveLength(1);
-        expect(contactNames[0]).toBe('Rose Gonzalez');
+        const allContacts = await page.allContacts;
+        const contactName = await allContacts[0].getText();
+
+        expect(contactName).toBe('Rose Gonzalez');
     });
 
     it('can be called imperatively', async () => {
