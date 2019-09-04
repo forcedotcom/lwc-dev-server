@@ -282,6 +282,7 @@ export function showRoute(sourceDir: string) {
         if (file) {
             const extension = path.extname(file);
             const normalizedFile = path.normalize(file);
+            console.log('showRoute', file, normalizedFile);
             if (
                 normalizedFile.startsWith(sourceDir) &&
                 ALLOWED_SHOW_EXTENSIONS[extension]
