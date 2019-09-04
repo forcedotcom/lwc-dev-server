@@ -273,6 +273,7 @@ export function salesforceStaticAssetsRoute(basePath: string) {
  * @param sourceDir Directory to accept which files to expose.
  */
 export function showRoute(sourceDir: string) {
+    const normalizedSourceDir = path.normalize(sourceDir);
     return (
         req: express.Request,
         res: express.Response,
@@ -282,9 +283,8 @@ export function showRoute(sourceDir: string) {
         if (file) {
             const extension = path.extname(file);
             const normalizedFile = path.normalize(file);
-            console.log('showRoute', file, normalizedFile);
             if (
-                normalizedFile.startsWith(sourceDir) &&
+                normalizedFile.startsWith(normalizedSourceDir) &&
                 ALLOWED_SHOW_EXTENSIONS[extension]
             ) {
                 res.sendFile(file);
