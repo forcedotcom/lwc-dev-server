@@ -168,6 +168,7 @@ async function getConfig(connectionParams: ConnectionParams) {
     const response = await orgRequest.get({
         url: ONE_APP_URL
     });
+    log(response);
     if (response.indexOf('window.location.replace(') != -1) {
         throw new Error('error retrieving aura config: unauthenticated');
     }
@@ -190,6 +191,7 @@ async function getConfig(connectionParams: ConnectionParams) {
                 if (aura.initConfig) {
                     config = aura.initConfig;
                 } else {
+                    log(`aura: ${JSON.stringify(aura, null, 2)}`);
                     error = 'window.Aura missing initConfig property';
                 }
                 break;
