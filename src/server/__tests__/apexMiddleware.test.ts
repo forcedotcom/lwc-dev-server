@@ -64,7 +64,6 @@ describe('apexMiddleware', () => {
         expect(res).not.toBeCalled();
         expect(next).toBeCalledTimes(1);
     });
-
     it('apex call has sid cookie', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -105,7 +104,6 @@ describe('apexMiddleware', () => {
             request.jar.mock.results[0].value.setCookie
         ).toHaveBeenCalledWith(cookie, 'http://url/');
     });
-
     it('unauthenticated aura config response', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -153,7 +151,6 @@ describe('apexMiddleware', () => {
         );
         expect(next).not.toBeCalled();
     });
-
     it('apex call without params', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -223,7 +220,6 @@ describe('apexMiddleware', () => {
         expect(res.type).toHaveBeenLastCalledWith('json');
         expect(next).not.toBeCalled();
     });
-
     it('apex call without params - caching config', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -294,7 +290,6 @@ describe('apexMiddleware', () => {
         expect(res.type).toHaveBeenLastCalledWith('json');
         expect(next).not.toBeCalled();
     });
-
     it('apex call with params', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -365,7 +360,6 @@ describe('apexMiddleware', () => {
         expect(res.type).toHaveBeenLastCalledWith('json');
         expect(next).not.toBeCalled();
     });
-
     it('no auraconfig sends 500', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -412,66 +406,6 @@ describe('apexMiddleware', () => {
         );
         expect(next).not.toBeCalled();
     });
-
-    it('sends 500 if window.Aura does not contain a initConfig property', async () => {
-        const mockConnection = {
-            instanceUrl: 'http://url',
-            accessToken: 'XXX'
-        };
-        jest.doMock('../apexConstants', () => {
-            return { MAX_RETRIES: 1 };
-        });
-        const middleware = getMiddleware(mockConnection);
-        const req: any = {
-            url: '/api/apex/execute',
-            body: {
-                classname: 'classname',
-                method: 'method',
-                namespace: 'namespace',
-                cacheable: false
-            }
-        };
-        const res: any = {
-            type: jest.fn(() => res),
-            send: jest.fn(() => res),
-            status: jest.fn(() => res)
-        };
-        const next: any = jest.fn();
-
-        const request = getRequest();
-        //@ts-ignore
-        request.get.mockImplementationOnce(() => {
-            return Promise.resolve(`<html><body>
-            <script>
-            window.Aura = {};
-            window.Aura.changeConfig = {};
-            window.Aura.changeConfig.token = 'TOKEN';
-            window.Aura.changeConfig.context = {};
-            window.Aura.changeConfig.context = {
-                mode: 'MODE',
-                fwuid: 'FWUID',
-                app: 'APP',
-                dn: [],
-                globals: {},
-                uad: 1
-            };
-            </script>
-            </body></html>`);
-        });
-        //@ts-ignore
-        request.post.mockImplementationOnce(
-            () => `{"actions": [{"returnValue": {"mockReturn":{}}}] }`
-        );
-
-        await middleware(req, res, next);
-
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenLastCalledWith(
-            'error parsing or finding aura config: window.Aura missing initConfig property'
-        );
-        expect(next).not.toBeCalled();
-    });
-
     it('auraconfig defaults', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -562,7 +496,6 @@ describe('apexMiddleware', () => {
         expect(res.send).toHaveBeenCalledWith('classname must be specified');
         expect(next).not.toBeCalled();
     });
-
     it('apex call missing method', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -590,7 +523,6 @@ describe('apexMiddleware', () => {
         expect(res.send).toHaveBeenCalledWith('method must be specified');
         expect(next).not.toBeCalled();
     });
-
     it('apex call missing namespace', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -618,7 +550,6 @@ describe('apexMiddleware', () => {
         expect(res.send).toHaveBeenCalledWith('namespace must be specified');
         expect(next).not.toBeCalled();
     });
-
     it('apex call missing cacheable', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
