@@ -5,31 +5,50 @@ import debug from 'debug';
 import { MAX_RETRIES } from './apexConstants';
 import { Cookie } from 'request';
 import parse from 'co-body';
+import { URL } from 'url';
 
 const log = debug('localdevserver:apex');
 const ONE_APP_URL = '/one/one.app';
 
 let cachedConfig: any = null;
 
+/**
+ * FIXME: for GA we need to make Apex calls in a more robust/maintainable manner.
+ */
 export class ApexResourceLoader extends ResourceLoader {
-    constructor(private readonly orgRequest: RequestPromiseAPI) {
+    constructor(
+        private readonly orgRequest: RequestPromiseAPI,
+        private readonly instanceUrl: string
+    ) {
         super();
     }
-    async fetch(url: string, options: FetchOptions) {
-        const opts: { url: string; baseUrl?: string } = {
-            url
-        };
-        if (url.indexOf('//') === 0 || url.indexOf('://') !== -1) {
-            // unset baseUrl if url has scheme
-            opts.baseUrl = '';
+
+    fetch(url: string, options: FetchOptions): Promise<Buffer> | null {
+        // only load inline.js, which if present will contain the
+        // Aura.initConfig data.
+        const parsedUrl = new URL(url, this.instanceUrl);
+        if (
+            parsedUrl.origin === this.instanceUrl &&
+            parsedUrl.pathname.endsWith('/inline.js')
+        ) {
+            log(`loading external url: ${url}`);
+
+            return new Promise(resolve => {
+                this.orgRequest
+                    .get({
+                        url: `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+                    })
+                    .then(res => {
+                        resolve(Buffer.from(res));
+                    })
+                    .catch(e => {
+                        log(`error fetching external resource: ${e.message}`);
+                    });
+            });
         }
-        try {
-            const res = await this.orgRequest.get(opts);
-            return Promise.resolve(Buffer.from(res));
-        } catch (e) {
-            log(`error fetching external resource: ${e.message}`);
-        }
-        return Promise.resolve(Buffer.from(''));
+
+        log(`skipped external url: ${url}`);
+        return null;
     }
 }
 
@@ -90,7 +109,13 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
                 apexRequest
             );
 
-            res.type('json').send(JSON.parse(response).actions[0].returnValue);
+            try {
+                const parsed = JSON.parse(response);
+                res.type('json').send(parsed.actions[0].returnValue);
+            } catch (e) {
+                log(`invalid apex response: ${response}`);
+                res.status(500).send(e.message);
+            }
             return;
         }
         next();
@@ -171,7 +196,10 @@ async function getConfig(connectionParams: ConnectionParams) {
     if (response.indexOf('window.location.replace(') != -1) {
         throw new Error('error retrieving aura config: unauthenticated');
     }
-    const resourceLoader = new ApexResourceLoader(orgRequest);
+    const resourceLoader = new ApexResourceLoader(
+        orgRequest,
+        connectionParams.instanceUrl
+    );
     const oneApp = new JSDOM(response, {
         resources: resourceLoader,
         runScripts: 'dangerously',
