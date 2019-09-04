@@ -75,12 +75,6 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
                     return;
                 }
             }
-            const auraconfig = cachedConfig;
-            if (!auraconfig) {
-                console.error('error retrieving aura config: not set');
-                res.status(500).send('error retrieving aura config: not set');
-                return;
-            }
 
             const apexRequest: ApexRequest = {
                 namespace,
@@ -92,7 +86,7 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
 
             const response = await callAuraApexRequest(
                 connectionParams,
-                auraconfig,
+                cachedConfig,
                 apexRequest
             );
 
@@ -193,7 +187,11 @@ async function getConfig(connectionParams: ConnectionParams) {
             // @ts-ignore
             const aura = window.Aura;
             if (aura) {
-                config = aura.initConfig;
+                if (aura.initConfig) {
+                    config = aura.initConfig;
+                } else {
+                    error = 'window.Aura missing initConfig property';
+                }
                 break;
             } else {
                 error = 'window.Aura not found';
