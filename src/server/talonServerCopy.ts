@@ -281,9 +281,9 @@ export function showRoute(sourceDir: string) {
         const file = req.query.file;
         if (file) {
             const extension = path.extname(file);
+            const normalizedFile = path.normalize(file);
             if (
-                file.startsWith(sourceDir) &&
-                !file.includes('..') &&
+                normalizedFile.startsWith(sourceDir) &&
                 ALLOWED_SHOW_EXTENSIONS[extension]
             ) {
                 res.sendFile(file);

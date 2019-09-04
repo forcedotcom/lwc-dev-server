@@ -140,7 +140,7 @@ describe('talonServerCopy', () => {
             expect(response.sendFile).not.toBeCalled();
         });
 
-        test('file not sent when filepath contains relative path signifiers', () => {
+        test('file not sent when filepath contains relative path signifiers out of the root directory', () => {
             const request = {
                 query: {
                     file: '/rootDir/../fileName.js'
@@ -239,6 +239,44 @@ describe('talonServerCopy', () => {
             const request = {
                 query: {
                     file: '/rootDir/fileName.txt'
+                }
+            };
+
+            const response = {
+                sendFile: jest.fn()
+            };
+
+            const route = talonServer.showRoute('/rootDir');
+
+            // @ts-ignore
+            route(request, response, null);
+
+            expect(response.sendFile).not.toBeCalled();
+        });
+
+        test('showRoute filters excludes file without extension', () => {
+            const request = {
+                query: {
+                    file: '/rootDir/fileName'
+                }
+            };
+
+            const response = {
+                sendFile: jest.fn()
+            };
+
+            const route = talonServer.showRoute('/rootDir');
+
+            // @ts-ignore
+            route(request, response, null);
+
+            expect(response.sendFile).not.toBeCalled();
+        });
+
+        test('showRoute filters excludes hidden files', () => {
+            const request = {
+                query: {
+                    file: '/rootDir/.fileName'
                 }
             };
 
