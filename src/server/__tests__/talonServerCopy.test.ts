@@ -1,4 +1,5 @@
 import * as talonServer from '../talonServerCopy';
+import mockFs from 'mock-fs';
 
 jest.mock('compression', () => {
     const compressionMock = jest.fn();
@@ -17,7 +18,9 @@ jest.mock('@talon/compiler', () => {
         resourceMiddleware: jest.fn(),
         staticMiddleware: jest.fn(),
         templateMiddleware: jest.fn(),
-        apiMiddleware: jest.fn()
+        apiMiddleware: jest.fn(),
+        compileErrorMiddleware: jest.fn(),
+        endContext: jest.fn()
     };
 });
 jest.mock('express', () => {
@@ -35,10 +38,17 @@ jest.mock('express', () => {
     });
     return express;
 });
+jest.mock('reload', () => {
+    return jest.fn(() => Promise.resolve());
+});
+jest.mock('watch', () => {
+    return {
+        watchTree: jest.fn(),
+        unwatchTree: jest.fn()
+    };
+});
 
 describe('talonServerCopy', () => {
-    //afterEach(jest.resetAllMocks);
-
     describe('getRootApp', () => {
         test('wraps application with basePath when provided', async () => {
             const app = require('express')();
@@ -61,9 +71,53 @@ describe('talonServerCopy', () => {
 
             expect(app.use.mock.calls[0][0]).toBe(compressionMiddleware);
         });
+
+        test('starts live reload when options enabled it', async () => {
+            const reload = require('reload');
+            (reload as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+
+            expect(reload).toBeCalledTimes(1);
+        });
+
+        test('live reload calls watch tree', async () => {
+            const watch = require('watch');
+            (watch.watchTree as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+            const watchCallback = watch.watchTree.mock.calls[0][2];
+            watchCallback(null);
+
+            expect(watch.watchTree).toBeCalledTimes(1);
+        });
+    });
+
+    describe('startServer', () => {
+        test('onClose called on server close', async () => {
+            const server = { on: jest.fn() };
+            const app = require('express')();
+            app.listen = jest.fn(() => server);
+            const onClose = jest.fn();
+
+            await talonServer.startServer(app, '', 3000, onClose);
+
+            const onServerClose = server.on.mock.calls[0][1];
+            await onServerClose();
+
+            expect(onClose).toBeCalledTimes(1);
+        });
     });
 
     describe('salesforceStaticAssetsRoute', () => {
+        afterEach(() => {
+            mockFs.restore();
+        });
+
         test('allows slds assets', async () => {
             const basePath = '/basePath';
             const request = {
@@ -98,6 +152,33 @@ describe('talonServerCopy', () => {
             expect(next).toHaveBeenCalledTimes(1);
             expect(next).toHaveBeenCalledWith('route');
             expect(request.url).toBe('/basePath/assets/file.ico');
+        });
+
+        test('routes static resources to resource-meta.xml', async () => {
+            const basePath = '/basePath';
+            const request = {
+                url: '/my/module',
+                params: ['asset1']
+            } as any;
+            const response = jest.fn() as any;
+            const next = jest.fn();
+            mockFs({
+                '.localdevserver/public/basePath/assets/asset1.resource-meta.xml': `
+                        <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+                            <cacheControl>Private</cacheControl>
+                            <contentType>application/javascript</contentType>
+                        </StaticResource>
+                    `
+            });
+
+            const middleware = talonServer.salesforceStaticAssetsRoute(
+                basePath
+            );
+            middleware(request, response, next);
+
+            expect(next).toHaveBeenCalledTimes(1);
+            expect(next).toHaveBeenCalledWith('route');
+            expect(request.url).toBe('/basePath/assets/asset1.js');
         });
     });
 

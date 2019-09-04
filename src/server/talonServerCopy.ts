@@ -165,7 +165,9 @@ export async function startServer(
 
     server.on('close', async () => {
         endContext();
-        await _RELOAD_RETURNED.closeServer();
+        if (_RELOAD_RETURNED) {
+            await _RELOAD_RETURNED.closeServer();
+        }
         _WATCHTREE_FOLDERS.forEach(watch.unwatchTree);
         onClose();
     });
