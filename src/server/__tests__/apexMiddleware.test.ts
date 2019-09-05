@@ -383,7 +383,8 @@ describe('apexMiddleware', () => {
         };
         const res: any = {
             type: jest.fn(() => res),
-            send: jest.fn(() => res)
+            send: jest.fn(() => res),
+            status: jest.fn(() => res)
         };
         const next: any = jest.fn();
 
@@ -429,7 +430,9 @@ describe('apexMiddleware', () => {
             }
         };
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenLastCalledWith('invalid apex response');
+        expect(res.send).toHaveBeenLastCalledWith(
+            'error parsing apex response: Unexpected token * in JSON at position 0'
+        );
         expect(next).not.toBeCalled();
     });
 
@@ -825,8 +828,9 @@ describe('apexResourceLoader', () => {
             'https://na132.salesforce.com'
         );
 
-        const response = await loader.fetch('/inline.js', {});
-        console.log('foo');
+        expect(loader.fetch('/inline.js', {})).rejects.toEqual(
+            new Error('test error')
+        );
 
         expect(request.get).toBeCalledWith({
             url: '/inline.js'
