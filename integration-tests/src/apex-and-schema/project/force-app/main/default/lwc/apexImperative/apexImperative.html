@@ -1,0 +1,23 @@
+<template>
+    <lightning-card title="ApexImperativeMethod" icon-name="custom:custom63">
+        <div class="slds-m-around_medium">
+            <p class="slds-m-bottom_small">
+                <lightning-button
+                    label="Load Contacts"
+                    onclick={handleLoad}
+                    class="action"
+                ></lightning-button>
+            </p>
+            <template if:true={contacts}>
+                <div class="contacts">
+                    <template for:each={contacts} for:item="contact">
+                        <p key={contact.Id} class="contact">{contact.Name}</p>
+                    </template>
+                </div>
+            </template>
+            <template if:true={error}>
+                <div class='error'>{error}</div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

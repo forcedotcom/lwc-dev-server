@@ -186,5 +186,5 @@ It will leave the browser open and you can REPL in the terminal (e.g., use `$` t
 
 ```sh
 DEBUG=true yarn test:e2e test-file
-DEBUG=localdevserver yarn test:e2e test-file
+DEBUG=localdevserver* yarn test:e2e test-file
 ```

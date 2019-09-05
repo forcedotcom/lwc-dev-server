@@ -1,5 +1,6 @@
 module.exports = {
     displayName: 'Integration Tests',
+    testRunner: 'jest-circus/runner',
     preset: 'ts-jest',
     testMatch: ['<rootDir>/**/*(*.)@(spec|test).[tj]s?(x)'],
     testEnvironment: '<rootDir>/environment/DefaultEnvironment.js',

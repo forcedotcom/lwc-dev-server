@@ -4,12 +4,15 @@ import shell from 'shelljs';
 import NodeEnvironment from 'jest-environment-node';
 import { defaultOutputDirectory } from '../../src/server/LocalDevServer';
 import { EnvironmentContext } from '@jest/environment';
-import { Config } from '@jest/types';
+import { Config, Circus } from '@jest/types';
+import { BrowserObject } from 'webdriverio';
 
 declare global {
     namespace NodeJS {
         interface Global {
             serverPort?: number;
+            browser: BrowserObject;
+            failedTest?: Circus.TestEntry;
         }
     }
 }
@@ -44,5 +47,11 @@ export default class BaseEnvironment extends NodeEnvironment {
         // remove outputDirectory in project if it's there...
         const outputDir = path.join(this.projectPath, defaultOutputDirectory);
         shell.rm('-rf', outputDir);
+    }
+
+    async handleTestEvent(event: Circus.Event, state: Circus.State) {
+        if (event.name === 'test_fn_failure') {
+            this.global.failedTest = event.test;
+        }
     }
 }

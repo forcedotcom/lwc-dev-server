@@ -15,17 +15,13 @@ describe('Auto Reload', () => {
             testingTargetDir,
             'autoreloadtestingcopy.html'
         );
-        if (fs.existsSync(testingTargetDir)) {
-            fs.removeSync(testingTargetDir);
-        } else {
-            fs.mkdirSync(testingTargetDir);
-        }
-
-        fs.copyFileSync(
+        await fs.remove(testingTargetDir);
+        await fs.ensureDir(testingTargetDir);
+        await fs.copy(
             path.join(lwcFolder, 'autoreload', 'autoreload.html'),
             path.join(testingTargetDir, 'autoreloadtestingcopy.html')
         );
-        fs.copyFileSync(
+        await fs.copy(
             path.join(lwcFolder, 'autoreload', 'autoreload.js'),
             path.join(testingTargetDir, 'autoreloadtestingcopy.js')
         );
@@ -43,10 +39,12 @@ describe('Auto Reload', () => {
 
         console.error('copying autoreload2.html to autoreloadtestingcopy.html');
         // edit autoreloadtesting
-        fs.copyFileSync(
-            path.join(lwcFolder, 'autoreload', 'autoreload2.html'),
-            testingTargetHtml
-        );
+        const newFile = path.join(lwcFolder, 'autoreload', 'autoreload2.html');
+        await fs.copy(newFile, testingTargetHtml);
+
+        // 'touch' the file to make sure it picks up the update
+        const time = new Date();
+        await fs.utimes(newFile, time, time);
 
         // verify new content appears
         let newText = '';
