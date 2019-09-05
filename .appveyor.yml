@@ -27,3 +27,7 @@ test_script:
     - yarn --version
     - yarn test:ci
     - yarn test:e2e-ci
+
+artifacts:
+  - path: errorShots\**\*.png
+    name: Error Shots
