@@ -53,7 +53,7 @@ export default class DefaultEnvironment extends BaseEnvironment {
 
     async teardown() {
         if (this.server) {
-            this.server.stop();
+            await this.server.stop();
             log('stopped server');
         }
         await super.teardown();
