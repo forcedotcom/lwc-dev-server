@@ -1,11 +1,61 @@
 <template>
-    <lightning-input label="Name" class="slds-m-bottom_x-small name-input" ></lightning-input>
-    <br/>
-    <lightning-button label="Create" variant="brand" class="create-btn" onclick={create} ></lightning-button>
-    <br/>
-    <p>id: <span class="recordId">{readId}</span> value: <span class="data">{readData}</span></p>
-    <lightning-input label="Value" class="slds-m-bottom_x-small value-input" value={readData}></lightning-input>
-    <lightning-button label="Read" variant="brand" class="read-btn" onclick={read} ></lightning-button>
-    <lightning-button label="Edit" variant="brand" class="edit-btn" onclick={edit} ></lightning-button>
-    <lightning-button label="Delete" variant="brand" class="delete-btn" onclick={delet} ></lightning-button>
+    <lightning-card title="Create New Record" icon-name="custom:custom63">
+        <div class="slds-m-around_medium">
+            <lightning-input label="Name" class="slds-m-bottom_x-small create-input">
+            </lightning-input>
+            <lightning-button label="Create" variant="brand" class="create-btn" onclick={create}>
+            </lightning-button>
+
+            <dl class="slds-dl_inline created-record slds-m-vertical_medium">
+                <dt class="slds-dl_inline__label">Id:</dt>
+                <dd class="slds-dl_inline__detail record-id">{recordId}</dd>
+                <dt class="slds-dl_inline__label">Name:</dt>
+                <dd class="slds-dl_inline__detail record-name">{recordName}</dd>
+            </dl>
+        </div>
+    </lightning-card>
+
+    <lightning-card title="Wired Record Data" icon-name="custom:custom63" class="slds-m-top_large">
+        <template if:true={wiredRecord}>
+            <dl class="slds-dl_inline slds-m-around_medium">
+                <dt class="slds-dl_inline__label">Wired Name:</dt>
+                <dd class="slds-dl_inline__detail wired-name">{wiredName}</dd>
+            </dl>
+        </template>
+    </lightning-card>
+
+    <lightning-card title="Edit Record" icon-name="custom:custom63" class="slds-m-top_large">
+        <div class="slds-m-around_medium">
+            <lightning-input
+                label="New Name"
+                class="slds-m-bottom_x-small edit-input"
+                value={recordName}>
+            </lightning-input>
+            <lightning-button label="Edit" variant="brand" class="edit-btn" onclick={edit}>
+            </lightning-button>
+
+            <template if:true={lastEdit}>
+                <p class="slds-m-top_medium last-edit">
+                    last edit: {lastEdit}
+                </p>
+            </template>
+        </div>
+    </lightning-card>
+
+    <lightning-card title="Delete Record" icon-name="custom:custom63" class="slds-m-top_large">
+        <div class="slds-m-around_medium">
+            <lightning-button label="Delete" variant="brand" class="delete-btn" onclick={delet}>
+            </lightning-button>
+
+            <template if:true={lastDelete}>
+                <p class="slds-m-top_medium last-delete">
+                    last delete: {lastDelete}
+                </p>
+            </template>
+        </div>
+    </lightning-card>
+
+    <template if:true={error}>
+        <div class='error slds-m-top_large'>{error}</div>
+    </template>
 </template>
