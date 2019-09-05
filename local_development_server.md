@@ -11,10 +11,10 @@ The Local Development server is an SFDX CLI plugin that configures and runs a Li
 - Most recent stable version of Safari, Chrome, Firefox, or Edge web browser 
 - Windows—Windows 7 (64-bit and 32-bit) or later
 - Mac—macOS 10.11 or later
-- Linux—Ubuntu 14.0.4
+- Linux—Ubuntu 14.0.4 or later
 - Salesforce CLI
 
-You can use any code editor, including [Salesforce Extensions for VS Code](https://developer.salesforce.com/tools/extension_vscode), a set of Visual Studio Code extensions that is designed for development on the Lightning Platform.
+To develop Lightning web components, use your favorite code editor. We recommend using Visual Studio Code because its [Salesforce Extensions for VS Code](https://developer.salesforce.com/tools/extension_vscode) provide powerful features for development on Lightning Platform.
 
 ## Installation
 
@@ -40,17 +40,32 @@ git clone git@github.com:trailheadapps/lwc-recipes.git
 ```sh
 cd lwc-recipes
 ```
-5. Authorize a Developer Hub (Dev Hub) by following the steps in [Enable Dev Hub In Your Org](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_enable_devhub.htm) in the *Salesforce DX Developer Guide*. A Dev Hub is the main Salesforce org that you and your team use to create and manage your scratch orgs, temporary environments for developing on the Salesforce platform. You need the Dev Hub to create a scratch org in a later step.
 
-6. Following the instructions in the *Salesforce DX Developer Guide*, log in using your Dev Hub credentials. Running the following command spawns a login window in your browser.
+5. Add the `.localdevserver` folder in your SFDX project to your `.gitignore` file. Do not modify files inside of this folder.
+
+6. Authorize a Developer Hub (Dev Hub) by following the steps in [Enable Dev Hub In Your Org](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_enable_devhub.htm) in the *Salesforce DX Developer Guide*. A Dev Hub is the main Salesforce org that you and your team use to create and manage your scratch orgs, temporary environments for developing on the Salesforce platform. You need the Dev Hub to create a scratch org in a later step.
+
+7. Following the instructions in the *Salesforce DX Developer Guide*, log in using your Dev Hub credentials. Running the following command spawns a login window in your browser.
 
 ```sh
 sfdx force:auth:web:login -d -a <myhuborg>
 ```
 
-7. In local development, requests to Lightning Data Service and Apex go to scratch orgs, similar to how they go to your production org. Create a scratch org by following the instructions for [Create Scratch Orgs](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_create.htm) in the *Salesforce DX Developer Guide*.
+8. In local development, requests to Lightning Data Service and Apex go to scratch orgs, similar to how they go to your production org. To create a scratch org, run this command from the command line.
 
-6. Start the server.
+```sh
+sfdx force:org:create -s -f config/project-scratch-def.json -a "LWC"
+```
+
+“LWC” is an alias for the scratch org that you can use in other Salesforce CLI commands.
+
+To create a scratch org, specify a scratch org definition file. This example uses the default scratch org definition file, project-scratch-def.json.
+
+If you're using VS Code, you can also create a scratch org by pressing Command + Shift P. Enter `sfdx` and select **SFDX: Create a Default Scratch Org**.
+
+For more information, see the instructions for [Create Scratch Orgs](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_create.htm) in the *Salesforce DX Developer Guide*.
+
+9. Start the server.
 
 ```sh
 sfdx force:lightning:lwc:start
@@ -58,7 +73,7 @@ sfdx force:lightning:lwc:start
 
 For more information on this command, view Help for the Local Development Server by running `sfdx force:lightning:lwc:start --help`.
 
-7. View the server at [http://localhost:3333/](http://localhost:3333/). 
+10. View the server at [http://localhost:3333/](http://localhost:3333/). 
 
 ## Troubleshooting
 
@@ -95,10 +110,6 @@ Here's an example that shows the available configuration parameters.
 
     // The address port for your local server. Defaults to 3333
     "port": 3333,
-
-    "api_version": 47,
-
-    "endpoint": "..."
 
     // Optional path to the custom labels file
     "customLabelsFile": "labels/CustomLabels.labels-meta.xml",
