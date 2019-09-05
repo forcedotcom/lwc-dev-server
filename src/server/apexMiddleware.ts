@@ -13,7 +13,7 @@ const ONE_APP_URL = '/one/one.app';
 let cachedConfig: any = null;
 
 /**
- * FIXME: for GA we need to make Apex calls in a more robust/maintainable manner.
+ * FIXME: better implementation for GA
  */
 export class ApexResourceLoader extends ResourceLoader {
     constructor(
@@ -24,27 +24,22 @@ export class ApexResourceLoader extends ResourceLoader {
     }
 
     fetch(url: string, options: FetchOptions): Promise<Buffer> | null {
-        // only load inline.js, which if present will contain the
-        // Aura.initConfig data.
+        // only load inline.js from the same origin. this is a hack of hacks
+        // because by not loading aura framework js we ensure
+        // window.Aura.initConfig is always set.
         const parsedUrl = new URL(url, this.instanceUrl);
         if (
             parsedUrl.origin === this.instanceUrl &&
             parsedUrl.pathname.endsWith('/inline.js')
         ) {
             log(`loading external url: ${url}`);
-
-            return new Promise(resolve => {
-                this.orgRequest
-                    .get({
-                        url: `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
-                    })
-                    .then(res => {
-                        resolve(Buffer.from(res));
-                    })
-                    .catch(e => {
-                        log(`error fetching external resource: ${e.message}`);
-                    });
-            });
+            return this.orgRequest
+                .get({
+                    url: `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+                })
+                .then(res => {
+                    return Buffer.from(res);
+                });
         }
 
         log(`skipped external url: ${url}`);
