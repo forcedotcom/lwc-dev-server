@@ -59,11 +59,7 @@ sfdx force:org:create -s -f config/project-scratch-def.json -a "LWC"
 
 “LWC” is an alias for the scratch org that you can use in other Salesforce CLI commands.
 
-To create a scratch org, specify a scratch org definition file. This example uses the default scratch org definition file, project-scratch-def.json.
-
-If you're using VS Code, you can also create a scratch org by pressing Command + Shift P. Enter `sfdx` and select **SFDX: Create a Default Scratch Org**.
-
-For more information, see the instructions for [Create Scratch Orgs](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_create.htm) in the *Salesforce DX Developer Guide*.
+To create a scratch org, specify a scratch org definition file. This example uses the scratch org definition file, project-scratch-def.json that is included in `lwc-recipes`. For other projects, create your own. For more information, see the instructions for [Create Scratch Orgs](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_create.htm) in the *Salesforce DX Developer Guide*.
 
 9. Start the server.
 
