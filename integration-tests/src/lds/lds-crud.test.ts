@@ -4,63 +4,63 @@
 
 import CRUDPage from './crudPage';
 import { QueryResult } from 'jsforce';
+import debug from 'debug';
+
+const log = debug('localdevserver:test');
 
 describe('Lightning data service CRUD proxies to the org', () => {
-    it('Create, ~Read~, Edit, Delete an Account object via LDS', async () => {
+    it('Create, Read, Edit, Delete an Account object via LDS', async () => {
         await CRUDPage.open();
+
+        const conn = global.jsforceConnection;
+
+        // test create
         let name = `CRUDTest ${Date.now()}`;
         await CRUDPage.setValue(name);
-        const recordId = await CRUDPage.createRecord();
 
-        console.log(`recordId is ${recordId}`);
-        return new Promise((resolve, reject) => {
-            global.jsforceConnection.query(
-                `select Name from Account where Id='${recordId}'`,
-                {},
-                (err: Error, result: QueryResult<any>) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(result.records[0].Name).toBe(name);
-                        resolve();
-                    }
-                }
+        const recordId = await CRUDPage.createRecord();
+        log(`recordId is ${recordId}`);
+        try {
+            const result: QueryResult<any> = await conn.query(
+                `select Name from Account where Id='${recordId}'`
             );
-        })
-            .then(async () => {
-                name = `edited ${name}`;
-                await CRUDPage.editItem(name);
-                return new Promise((resolve, reject) => {
-                    global.jsforceConnection.query(
-                        `select Name from Account where Id='${recordId}'`,
-                        {},
-                        (err: Error, result: QueryResult<any>) => {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                expect(result.records[0].Name).toBe(name);
-                                resolve();
-                            }
-                        }
-                    );
-                });
-            })
-            .then(async () => {
-                await CRUDPage.deleteItem();
-                return new Promise((resolve, reject) => {
-                    global.jsforceConnection.query(
-                        `select Name from Account where Id='${recordId}'`,
-                        {},
-                        (err: Error, result: QueryResult<any>) => {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                expect(result.records.length).toBe(0);
-                                resolve();
-                            }
-                        }
-                    );
-                });
-            });
+            expect(result.records[0].Name).toBe(name);
+        } catch (e) {
+            throw new Error(
+                `Reading data after create resulted in an error: ${e}`
+            );
+        }
+
+        // test edit
+        name = `edited ${name}`;
+        await CRUDPage.editItem(name);
+        try {
+            const result: QueryResult<any> = await conn.query(
+                `select Name from Account where Id='${recordId}'`
+            );
+            expect(result.records[0].Name).toBe(name);
+        } catch (e) {
+            throw new Error(
+                `Reading data after edit resulted in an error: ${e}`
+            );
+        }
+
+        // test read (wired getRecord)
+        const wiredNameEl = await CRUDPage.wiredName;
+        const wiredName = await wiredNameEl.getText();
+        expect(wiredName).toBe(name);
+
+        // test delete
+        await CRUDPage.deleteItem();
+        try {
+            const result: QueryResult<any> = await conn.query(
+                `select Name from Account where Id='${recordId}'`
+            );
+            expect(result.records.length).toBe(0);
+        } catch (e) {
+            throw new Error(
+                `Reading data after delete resulted in an error: ${e}`
+            );
+        }
     });
 });

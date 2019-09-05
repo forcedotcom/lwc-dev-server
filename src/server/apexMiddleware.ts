@@ -7,7 +7,7 @@ import { Cookie } from 'request';
 import parse from 'co-body';
 import { URL } from 'url';
 
-const log = debug('localdevserver:apex');
+const log = debug('localdevserver:test');
 const ONE_APP_URL = '/one/one.app';
 
 let cachedConfig: any = null;
