@@ -46,9 +46,15 @@ describe('Lightning data service CRUD proxies to the org', () => {
         }
 
         // test read (wired getRecord)
-        const wiredNameEl = await CRUDPage.wiredName;
-        const wiredName = await wiredNameEl.getText();
-        expect(wiredName).toBe(name);
+        await browser.waitUntil(
+            async () => {
+                const wiredNameEl = await CRUDPage.wiredName;
+                const wiredName = await wiredNameEl.getText();
+                return wiredName === name;
+            },
+            10000,
+            'Timed out waiting for the wiredName to matched the updated value'
+        );
 
         // test delete
         await CRUDPage.deleteItem();
