@@ -12,24 +12,6 @@ describe('LocalDevServerConfiguration', () => {
         expect(configuration.containerType).toBe('component');
     });
 
-    test('when you pass an invalid file to the constructor, it notifies you that the file was not valid.', () => {
-        mock({
-            'my-project': ''
-        });
-
-        console.log = jest.fn();
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'invalid.json'
-        );
-
-        // @ts-ignore
-        const logMessage: string = console.log.mock.calls[0][0];
-
-        expect(logMessage).toBe(
-            'Specified configuration file invalid.json does not exist.'
-        );
-    });
-
     test('when it cannot read the json file, it notifies you that an error occured.', () => {
         mock({
             'config.json': {}

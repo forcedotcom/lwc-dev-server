@@ -19,16 +19,28 @@ describe('start', () => {
     });
 
     function setupAllDev() {
+        setupConfigAggregator();
         setupUX();
         setupFlags();
         setupOrg();
         setupProject();
     }
 
+    function setupConfigAggregator() {
+        Object.defineProperty(start, 'configAggregator', {
+            get: () => {
+                return { getPropertyValue: jest.fn() };
+            }
+        });
+    }
+
     function setupUX() {
         Object.defineProperty(start, 'ux', {
             get: () => {
-                return { log: console.log, error: console.error };
+                return {
+                    log: jest.spyOn(console, 'log'),
+                    error: jest.spyOn(console, 'error')
+                };
             }
         });
     }
@@ -54,7 +66,9 @@ describe('start', () => {
                     },
                     getOrgId: () => {
                         return 'testingOrgIDX';
-                    }
+                    },
+                    getUsername: jest.fn(),
+                    refreshAuth: jest.fn()
                 };
             }
         });
@@ -113,6 +127,7 @@ describe('start', () => {
         test('run will return if org not defined', async () => {
             setupUX();
             setupFlags();
+            setupConfigAggregator();
             let result = await start.run();
             if (result) {
                 expect((<JsonMap>result)['org']).toEqual('undefined');
@@ -126,6 +141,7 @@ describe('start', () => {
             setupUX();
             setupFlags();
             setupOrg();
+            setupConfigAggregator();
             let result = await start.run();
             if (result) {
                 expect((<JsonMap>result)['project']).toEqual('undefined');
@@ -164,6 +180,7 @@ describe('start', () => {
             setupUX();
             setupOrg();
             setupProject();
+            setupConfigAggregator();
 
             Object.defineProperty(start, 'flags', {
                 get: () => {

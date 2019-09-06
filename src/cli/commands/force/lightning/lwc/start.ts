@@ -112,7 +112,7 @@ export default class Start extends SfdxCommand {
                 ),
                 colors.green(api_version)
             );
-            return {};
+            return { error: err };
         }
 
         // Whitespace is important for this block, make sure you don't indent it all.
