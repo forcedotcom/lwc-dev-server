@@ -1,5 +1,5 @@
 import { flags, SfdxCommand } from '@salesforce/command';
-import { Messages, Org, SfdxError } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import * as http from 'http';
 import Project from '../../../../../common/Project';
@@ -33,10 +33,10 @@ export default class Start extends SfdxCommand {
         })
     };
 
-    // Comment this out if your command does not require an org username
+    // Comment this out if your command does not support specifying an org username
     protected static supportsUsername = true;
 
-    // Comment this out if your command does not support a hub org username
+    // Comment this out if your command does not support a dev hub org username
     protected static supportsDevhubUsername = true;
 
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
@@ -52,11 +52,6 @@ export default class Start extends SfdxCommand {
             port = this.flags.port;
         } else {
             port = 3333;
-        }
-
-        if (!this.hubOrg) {
-            // You don't need this.
-            // As long as you have a scratch org we are fine.
         }
 
         if (!this.org) {
