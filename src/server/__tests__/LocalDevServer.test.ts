@@ -368,7 +368,9 @@ describe('LocalDevServer', () => {
             const project = mockProject({ projectPath });
 
             const mockServer = {
-                close: jest.fn()
+                close: jest.fn().mockImplementation(cb => {
+                    cb();
+                })
             };
             jest.spyOn(talonServer, 'startServer').mockResolvedValueOnce(
                 mockServer
