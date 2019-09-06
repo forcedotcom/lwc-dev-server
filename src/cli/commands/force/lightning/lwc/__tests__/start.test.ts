@@ -28,7 +28,7 @@ describe('start', () => {
     function setupUX() {
         Object.defineProperty(start, 'ux', {
             get: () => {
-                return { log: console.log };
+                return { log: console.log, error: console.error };
             }
         });
     }

@@ -5,7 +5,6 @@ import * as http from 'http';
 import Project from '../../../../../common/Project';
 import LocalDevServer from '../../../../../server/LocalDevServer';
 import debugLogger from 'debug';
-import CLIErrorResolver from '../../../../CLIErrorResolver';
 import colors from 'colors';
 
 const debug = debugLogger('localdevserver');
@@ -43,10 +42,11 @@ export default class Start extends SfdxCommand {
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
     protected static requiresProject = true;
 
-    private errorResolver: CLIErrorResolver | undefined;
-
     public async run(): Promise<AnyJson> {
-        debugger;
+        const defaultdevhubusername = this.configAggregator.getPropertyValue(
+            'defaultdevhubusername'
+        ) as string;
+
         let port: number;
         if (this.flags.port !== undefined && this.flags.port !== null) {
             port = this.flags.port;
@@ -62,20 +62,40 @@ export default class Start extends SfdxCommand {
         if (!this.org) {
             // This you DO need.
             // We require this right now for proxying and api version.
-            // We should disable the proxying and then allow specification of the version
-            // if you don't authenticate.
+            // If we do not have an org, we can still function.
+            //  - We should disable the proxying and then allow specification of the version
+            //    if you don't authenticate.
             //
 
-            //
-            // Currently if you don't have an org, we should report that you need a username specified.
-            //
-            this.ux.error('org was undefined, an org is required.');
+            // this.flags.targetusername
+            const targetusername = this.flags.targetusername;
+            if (targetusername) {
+                this.reportStatus(
+                    colors.green(defaultdevhubusername),
+                    colors.red(
+                        `${targetusername} - Could not locate an active scratch org with this username / alias.`
+                    )
+                );
+            } else {
+                const configuredusername = this.configAggregator.getPropertyValue(
+                    'defaultusername'
+                );
+                this.reportStatus(
+                    colors.green(defaultdevhubusername),
+                    colors.red(
+                        `${configuredusername} - An active scratch org is required at this time. Please create one and make sure you either specify it as the default scratch org, or provide the user when you run the start command.`
+                    )
+                );
+            }
+
             return { org: typeof this.org };
         }
 
+        // Sfdx validates this before we have a chance to, this appears to be
+        // a "just in case" condition so reporting the same error they do.
         if (!this.project) {
             this.ux.error(
-                'project is undefined. this must be run from a sfdx worksapce'
+                'RequiresProjectError: This command is required to run from within an SFDX project.'
             );
             return { project: typeof this.project };
         }
@@ -83,24 +103,30 @@ export default class Start extends SfdxCommand {
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
         const conn = this.org.getConnection();
 
-        // Used to later resolve friendly errors to the user
-        this.errorResolver = new CLIErrorResolver(
-            this.org,
-            this.configAggregator
-        );
-
         // Highest level API is always last
         const api_version = await conn.retrieveMaxApiVersion();
-        const defaultdevhubusername = this.configAggregator.getPropertyValue(
-            'defaultdevhubusername'
-        ) as string;
+
+        const orgusername = this.org.getUsername() || '';
+        try {
+            await this.org.refreshAuth();
+        } catch (err) {
+            this.reportStatus(
+                colors.green(defaultdevhubusername),
+                colors.red(
+                    `${orgusername} - Error authenticating to your scratch org. Check that it is still Active.`
+                ),
+                colors.green(api_version)
+            );
+            return {};
+        }
+
         // Whitespace is important for this block, make sure you don't indent it all.
-        this.ux.log(`\
-Starting LWC Local Development.
-    Dev Hub Org: ${colors.green(defaultdevhubusername)}
-    Scratch Org: ${colors.green(this.org.getUsername() || '')}
-    Api Version: ${colors.green(api_version)}\
-        `);
+
+        this.reportStatus(
+            colors.green(defaultdevhubusername),
+            colors.green(orgusername),
+            colors.green(api_version)
+        );
 
         const accessToken = conn.accessToken;
         // custom onProxyReq function to inject into Talon's proxy
@@ -111,7 +137,6 @@ Starting LWC Local Development.
             res: http.ServerResponse
         ) {
             proxyReq.setHeader('Authorization', `Bearer ${accessToken}`);
-            // req.headers.Cookie = `sid=${sid_cookie}`;
         };
 
         const project = new Project(this.project.getPath());
@@ -140,13 +165,24 @@ Starting LWC Local Development.
         return retValue;
     }
 
-    protected async catch(err: SfdxError): Promise<any> {
-        debugger;
-        const friendlyMessage = this.errorResolver
-            ? this.errorResolver.parse(err)
-            : err + '';
-        this.ux.error(colors.red(friendlyMessage));
-
-        return;
+    private reportStatus(
+        devHubOrg: string,
+        scratchOrg: string,
+        apiVersion?: string
+    ) {
+        if (apiVersion) {
+            this.ux.log(`\
+Starting LWC Local Development.
+    Dev Hub Org: ${devHubOrg}
+    Scratch Org: ${scratchOrg}
+    Api Version: ${apiVersion}\
+`);
+        } else {
+            this.ux.log(`\
+Starting LWC Local Development.
+    Dev Hub Org: ${devHubOrg}
+    Scratch Org: ${scratchOrg}}\
+`);
+        }
     }
 }
