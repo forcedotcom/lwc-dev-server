@@ -29,4 +29,4 @@ test_script:
     - yarn test:e2e-ci
 
 on_finish:
-  - ps: Get-ChildItem .\errorShots\*.png -Recurse | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+  - ps: Get-ChildItem .\*errorShots\*.png -Recurse | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
