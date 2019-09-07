@@ -10,6 +10,6 @@ describe('LocalDevTelemetryOptions', () => {
     test('uses local dev server telemetry key', () => {
         const options = new LocalDevTelemetryOptions();
 
-        expect(options.key).toBe('0661613d-a529-4a9c-8309-e4f42d94856d');
+        expect(options.key).toBe('f132481a-8211-46a8-9df1-c15d05ac3507');
     });
 });
