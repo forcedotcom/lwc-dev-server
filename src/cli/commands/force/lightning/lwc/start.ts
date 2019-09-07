@@ -176,7 +176,7 @@ Starting LWC Local Development.
             this.ux.log(`\
 Starting LWC Local Development.
     Dev Hub Org: ${devHubOrg}
-    Scratch Org: ${scratchOrg}}\
+    Scratch Org: ${scratchOrg}\
 `);
         }
     }

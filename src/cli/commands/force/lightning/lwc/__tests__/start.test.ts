@@ -5,6 +5,7 @@ import LocalDevServer from '../../../../../../server/LocalDevServer';
 import Project from '../../../../../../common/Project';
 import { SfdxError } from '@salesforce/core';
 import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerConfiguration';
+import colors from 'colors';
 
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
@@ -16,10 +17,10 @@ describe('start', () => {
 
     beforeEach(() => {
         start = new Start([], new Config.Config(<Config.Options>{}));
+        setupConfigAggregator();
     });
 
     function setupAllDev() {
-        setupConfigAggregator();
         setupUX();
         setupFlags();
         setupOrg();
@@ -27,11 +28,13 @@ describe('start', () => {
     }
 
     function setupConfigAggregator() {
+        const configAggregator = { getPropertyValue: jest.fn() };
         Object.defineProperty(start, 'configAggregator', {
             get: () => {
-                return { getPropertyValue: jest.fn() };
+                return configAggregator;
             }
         });
+        return configAggregator;
     }
 
     function setupUX() {
@@ -54,24 +57,26 @@ describe('start', () => {
     }
 
     function setupOrg(version = '99.0') {
+        const org = {
+            getConnection: () => {
+                return {
+                    retrieveMaxApiVersion: () => version,
+                    accessToken: 'testingAccessToken',
+                    instanceUrl: 'http://test.instance.url'
+                };
+            },
+            getOrgId: () => {
+                return 'testingOrgIDX';
+            },
+            getUsername: jest.fn(),
+            refreshAuth: jest.fn()
+        };
         Object.defineProperty(start, 'org', {
             get: () => {
-                return {
-                    getConnection: () => {
-                        return {
-                            retrieveMaxApiVersion: () => version,
-                            accessToken: 'testingAccessToken',
-                            instanceUrl: 'http://test.instance.url'
-                        };
-                    },
-                    getOrgId: () => {
-                        return 'testingOrgIDX';
-                    },
-                    getUsername: jest.fn(),
-                    refreshAuth: jest.fn()
-                };
+                return org;
             }
         });
+        return org;
     }
 
     function setupProject() {
@@ -127,7 +132,6 @@ describe('start', () => {
         test('run will return if org not defined', async () => {
             setupUX();
             setupFlags();
-            setupConfigAggregator();
             let result = await start.run();
             if (result) {
                 expect((<JsonMap>result)['org']).toEqual('undefined');
@@ -141,7 +145,6 @@ describe('start', () => {
             setupUX();
             setupFlags();
             setupOrg();
-            setupConfigAggregator();
             let result = await start.run();
             if (result) {
                 expect((<JsonMap>result)['project']).toEqual('undefined');
@@ -180,7 +183,6 @@ describe('start', () => {
             setupUX();
             setupOrg();
             setupProject();
-            setupConfigAggregator();
 
             Object.defineProperty(start, 'flags', {
                 get: () => {
@@ -201,6 +203,129 @@ describe('start', () => {
             await start.run();
 
             expect(configuredPort).toBe(5151);
+        });
+    });
+
+    describe('reportStatus()', () => {
+        beforeEach(() => {
+            setupProject();
+        });
+
+        test('no org with specified targetusername reports invalid scratch org', async () => {
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'flags', {
+                get: () => {
+                    return { targetusername: 'user@org.com' };
+                }
+            });
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                }
+            });
+            const expected = `\
+Starting LWC Local Development.
+    Dev Hub Org: ${colors.green('undefined')}
+    Scratch Org: ${colors.red(
+        'user@org.com - Could not locate an active scratch org with this username / alias.'
+    )}
+`;
+
+            await start.run();
+
+            expect(log.mock.calls[0][0]).toEqual(expected);
+        });
+
+        test('no org reports scratch org required', async () => {
+            setupFlags();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                }
+            });
+            const expected = `\
+Starting LWC Local Development.
+    Dev Hub Org: ${colors.green('undefined')}
+    Scratch Org: ${colors.red(
+        'undefined - An active scratch org is required at this time. Please create one and make sure you either specify it as the default scratch org, or provide the user when you run the start command.'
+    )}
+`;
+
+            await start.run();
+
+            expect(log.mock.calls[0][0]).toEqual(expected);
+        });
+
+        test('authenticating to inactive scratch org reports scratch org is inactive', async () => {
+            setupFlags();
+            const org = setupOrg();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                }
+            });
+            org.refreshAuth.mockImplementation(() => {
+                throw 'expected';
+            });
+            org.getUsername.mockReturnValue('user@test.org');
+
+            const expected = `\
+Starting LWC Local Development.
+    Dev Hub Org: ${colors.green('undefined')}
+    Scratch Org: ${colors.red(
+        'user@test.org - Error authenticating to your scratch org. Check that it is still Active.'
+    )}
+    Api Version: ${colors.green('99.0')}
+`;
+
+            await start.run();
+
+            expect(log.mock.calls[0][0]).toEqual(expected);
+        });
+
+        test('startup reports devhuborg, scratchorg and api version', async () => {
+            setupFlags();
+            const org = setupOrg();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                }
+            });
+            // @ts-ignore
+            start.configAggregator.getPropertyValue.mockReturnValue(
+                'admin@devhub.org'
+            );
+            org.getUsername.mockReturnValue('user@test.org');
+
+            const expected = `\
+Starting LWC Local Development.
+    Dev Hub Org: ${colors.green('admin@devhub.org')}
+    Scratch Org: ${colors.green('user@test.org')}
+    Api Version: ${colors.green('99.0')}
+`;
+
+            await start.run();
+
+            expect(log.mock.calls[0][0]).toEqual(expected);
         });
     });
 });
