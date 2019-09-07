@@ -232,7 +232,7 @@ Starting LWC Local Development.
     Dev Hub Org: ${colors.green('undefined')}
     Scratch Org: ${colors.red(
         'user@org.com - Could not locate an active scratch org with this username / alias.'
-    )}
+    )}\
 `;
 
             await start.run();
@@ -257,7 +257,7 @@ Starting LWC Local Development.
     Dev Hub Org: ${colors.green('undefined')}
     Scratch Org: ${colors.red(
         'undefined - An active scratch org is required at this time. Please create one and make sure you either specify it as the default scratch org, or provide the user when you run the start command.'
-    )}
+    )}\
 `;
 
             await start.run();
@@ -289,7 +289,7 @@ Starting LWC Local Development.
     Scratch Org: ${colors.red(
         'user@test.org - Error authenticating to your scratch org. Check that it is still Active.'
     )}
-    Api Version: ${colors.green('99.0')}
+    Api Version: ${colors.green('99.0')}\
 `;
 
             await start.run();
@@ -320,7 +320,7 @@ Starting LWC Local Development.
 Starting LWC Local Development.
     Dev Hub Org: ${colors.green('admin@devhub.org')}
     Scratch Org: ${colors.green('user@test.org')}
-    Api Version: ${colors.green('99.0')}
+    Api Version: ${colors.green('99.0')}\
 `;
 
             await start.run();
