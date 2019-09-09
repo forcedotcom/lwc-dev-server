@@ -1,6 +1,7 @@
 import { customComponentPlugin } from '../rollup-plugin-custom-components';
 
 import glob from 'fast-glob';
+import path from 'path';
 
 jest.mock('fast-glob', () => {
     return {
@@ -32,7 +33,9 @@ describe('customComponentPlugin', () => {
             ).resolveId('namespace/name');
 
             expect(mapped).toBe(
-                '/src/random/folders/mappedNamespace/name/name.js'
+                path.normalize(
+                    '/src/random/folders/mappedNamespace/name/name.js'
+                )
             );
             expect(glob.sync).toHaveBeenCalledTimes(1);
             expect(globPath).toBe('**/mappedNamespace/name/name.*');
@@ -58,14 +61,22 @@ describe('customComponentPlugin', () => {
             const mappedCss = plugin.resolveId('./name.css');
             const mappedMeta = plugin.resolveId('./name.js-meta.xml');
 
+            // path.normalize is important as the LWC module-resolver uses
+            // path.sep, which means on windows the paths should use '\'s.
             expect(mappedHtml).toBe(
-                '/src/random/folders/mappedNamespace/name/name.html'
+                path.normalize(
+                    '/src/random/folders/mappedNamespace/name/name.html'
+                )
             );
             expect(mappedCss).toBe(
-                '/src/random/folders/mappedNamespace/name/name.css'
+                path.normalize(
+                    '/src/random/folders/mappedNamespace/name/name.css'
+                )
             );
             expect(mappedMeta).toBe(
-                '/src/random/folders/mappedNamespace/name/name.js-meta.xml'
+                path.normalize(
+                    '/src/random/folders/mappedNamespace/name/name.js-meta.xml'
+                )
             );
         });
 

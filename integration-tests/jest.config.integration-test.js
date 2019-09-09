@@ -7,6 +7,7 @@ module.exports = {
     setupFilesAfterEnv: ['<rootDir>/setup/setupFiles.ts'],
     globalSetup: '<rootDir>/setup/globalSetup.ts',
     globalTeardown: '<rootDir>/setup/globalTeardown.ts',
+    testPathIgnorePatterns: ['<rootDir>/src/.+/project/.+/__tests__/'],
     globals: {
         'ts-jest': {
             tsConfig: '<rootDir>/tsconfig.json'

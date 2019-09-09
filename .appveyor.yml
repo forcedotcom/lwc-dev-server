@@ -15,7 +15,7 @@ platform: x64
 
 install:
     - ps: Install-Product node 10.15.3 x64
-    - choco install googlechrome --ignore-checksums
+    - choco install googlechrome
     #  - npm install sfdx-cli --global
     #  - sfdx --version
     - appveyor-retry yarn install
@@ -26,5 +26,7 @@ test_script:
     - node --version
     - yarn --version
     - yarn test:ci
-# Failing, we need to fix the flapper and re-enable.
-#  - yarn test:e2e-ci
+    - yarn test:e2e-ci
+
+on_finish:
+  - ps: Get-ChildItem .\*errorShots\*.png -Recurse | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }

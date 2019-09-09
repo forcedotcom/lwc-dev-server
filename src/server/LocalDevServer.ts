@@ -161,9 +161,19 @@ export default class LocalDevServer {
     }
 
     public async stop() {
-        if (this.server) {
-            this.server.close();
-        }
+        return new Promise((resolve, reject) => {
+            if (this.server) {
+                this.server.close(err => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
     }
 
     public get port() {
