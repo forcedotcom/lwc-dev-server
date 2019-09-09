@@ -143,7 +143,6 @@ export default class LocalDevServer {
                     // After the application has ended.
                     // Report how long the server was opened.
                     reporter.trackApplicationEnd(runtimeDuration);
-                    debug('LocalDevServer: on close callback');
                 }
             );
 
@@ -154,7 +153,6 @@ export default class LocalDevServer {
                 false,
                 version.toString()
             );
-            debug('talon server close callback');
         } catch (e) {
             reporter.trackApplicationStartException(e);
 
@@ -165,9 +163,7 @@ export default class LocalDevServer {
     public async stop() {
         return new Promise((resolve, reject) => {
             if (this.server) {
-                debug('LocalDevServer: stop called');
                 this.server.close(err => {
-                    debug('LocalDevServer: close callback');
                     if (err) {
                         reject(err);
                         return;

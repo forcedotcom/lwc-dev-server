@@ -54,7 +54,9 @@ export function customComponentPlugin(
                             _index: number,
                             _array: EntryItem[]
                         ) => {
-                            const fileName = value.toString();
+                            // the module resolver in LWC resolves the namespace/name
+                            // based on path.sep, so normalize for windows
+                            const fileName = path.normalize(value.toString());
                             let extension = path.extname(fileName);
                             if (extension === '.js') {
                                 jsFileName = fileName;

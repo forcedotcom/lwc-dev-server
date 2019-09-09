@@ -382,6 +382,33 @@ describe('LocalDevServer', () => {
 
             expect(mockServer.close).toBeCalledTimes(1);
         });
+
+        it('returns a rejected promise if server.close invokes the callback with an error', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath });
+
+            const mockServer = {
+                close: jest.fn().mockImplementation(cb => {
+                    cb(new Error('test'));
+                })
+            };
+
+            jest.spyOn(talonServer, 'startServer').mockResolvedValueOnce(
+                mockServer
+            );
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            expect(server.stop()).rejects.toEqual(new Error('test'));
+            expect(mockServer.close).toBeCalledTimes(1);
+        });
+
+        it('does nothing if the server wasnt started', async () => {
+            const server = new LocalDevServer();
+            await server.stop();
+            // no errors
+        });
     });
 
     describe('port()', () => {
