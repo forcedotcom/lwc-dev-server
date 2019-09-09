@@ -1880,7 +1880,7 @@
     yargs "^13.2.2"
 
 "@talon/force-modules@file:lib/unpacked/talon-force-modules-0.0.5":
-  version "0.0.5"
+  version "0.0.0"
 
 "@talon/framework@file:lib/unpacked/talon-framework-0.18.4":
   version "0.18.4"
@@ -7639,10 +7639,10 @@ lru-queue@0.1:
     es5-ext "~0.10.2"
 
 "lwc-components-lightning@file:lib/unpacked/lwc-components-lightning-1.2.4-alpha":
-  version "1.2.4-alpha"
+  version "0.0.0"
 
-"lwc-dev-server-runtime-lib@file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.27":
-  version "1.0.27"
+"lwc-dev-server-runtime-lib@file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.29":
+  version "1.0.29"
 
 magic-string@^0.25.2, magic-string@~0.25.1:
   version "0.25.3"

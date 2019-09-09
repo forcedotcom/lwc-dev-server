@@ -47,14 +47,19 @@ export default class LocalDevServer {
                 : 0;
 
         // vendor deps that we override, like LGC, LDS, etc
-        const extraDependencies = path.resolve(
-            // 220 LDS does not appear to work with aggregate-ui
+        const vendors = path.resolve(
             path.join(
-                packageRoot,
+                require.resolve('lwc-dev-server-runtime-lib'),
+                '..',
                 'vendors',
-                version != 220 ? `dependencies-${version}` : 'dependencies-218'
+                `dependencies-${version}`
             )
         );
+
+        const extraDependencies = [
+            path.join(vendors, 'force-pkg'),
+            path.join(vendors, 'lightning-pkg')
+        ];
 
         // our own lwc modules to host the local app
         const localDependencies = packageRoot;
@@ -64,7 +69,7 @@ export default class LocalDevServer {
 
         // all the deps, filtered by existing
         let modulePaths = [
-            extraDependencies,
+            ...extraDependencies,
             localDependencies,
             ...nodePaths
         ].filter(fs.existsSync);
