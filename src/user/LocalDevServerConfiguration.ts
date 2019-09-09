@@ -18,10 +18,6 @@ export default class LocalDevServerConfiguration {
                         `Loading file ${configFilePath} failed with error: ${e}`
                     );
                 }
-            } else {
-                console.log(
-                    `Specified configuration file ${configFilePath} does not exist.`
-                );
             }
             if (jsonFileContents !== null && jsonFileContents !== '') {
                 try {
