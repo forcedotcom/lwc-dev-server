@@ -2,7 +2,7 @@ import { TelemetryOptions } from '@salesforce/telemetry/lib/telemetryReporter';
 
 export default class LocalDevTelemetryOptions implements TelemetryOptions {
     project = 'lwc-dev-server';
-    key = '0661613d-a529-4a9c-8309-e4f42d94856d';
+    key = 'f132481a-8211-46a8-9df1-c15d05ac3507';
 
     constructor() {}
 }
