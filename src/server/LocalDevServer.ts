@@ -50,16 +50,11 @@ export default class LocalDevServer {
         const vendors = path.resolve(
             path.join(
                 require.resolve('lwc-dev-server-runtime-lib'),
-                '..',
+                '..', // above resolve includes index.js
                 'vendors',
                 `dependencies-${version}`
             )
         );
-
-        const extraDependencies = [
-            path.join(vendors, 'force-pkg'),
-            path.join(vendors, 'lightning-pkg')
-        ];
 
         // our own lwc modules to host the local app
         const localDependencies = packageRoot;
@@ -68,11 +63,9 @@ export default class LocalDevServer {
         const reporter = await LocalDevTelemetryReporter.getInstance();
 
         // all the deps, filtered by existing
-        let modulePaths = [
-            ...extraDependencies,
-            localDependencies,
-            ...nodePaths
-        ].filter(fs.existsSync);
+        let modulePaths = [vendors, localDependencies, ...nodePaths].filter(
+            fs.existsSync
+        );
 
         try {
             if (project.isSfdx) {

@@ -8,6 +8,8 @@ import cpx from 'cpx';
 import os from 'os';
 import ComponentIndex from '../../common/ComponentIndex';
 import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
+//import { mockFs } from 'mock-fs';
+import fs from 'fs';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -110,12 +112,19 @@ describe('LocalDevServer', () => {
             const project = mockProject({ projectPath, version: '45.0' });
             const mockConn: any = {};
 
+            //require.resolve
+            jest.spyOn(require, 'resolve').mockImplementation(
+                () => 'node_modules/lwc-dev-server-runtime-lib/index.js'
+            );
+
+            jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
             const server = new LocalDevServer();
             await server.start(project, mockConn);
-
+            // require.resolve('lwc-dev-server-runtime-lib')
             const expected = path.resolve(
                 __dirname,
-                '../../../vendors/dependencies-218'
+                '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-218'
             );
 
             expect(talonServer.createServer).toBeCalledWith(
@@ -125,6 +134,8 @@ describe('LocalDevServer', () => {
                 expect.anything(),
                 mockConn
             );
+
+            jest.restoreAllMocks();
         });
 
         it('clears the outputDirectory', async () => {
