@@ -56,11 +56,6 @@ export default class LocalDevServer {
             )
         );
 
-        const extraDependencies = [
-            path.join(vendors, 'force-pkg'),
-            path.join(vendors, 'lightning-pkg')
-        ];
-
         // our own lwc modules to host the local app
         const localDependencies = packageRoot;
 
