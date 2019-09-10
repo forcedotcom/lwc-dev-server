@@ -85,7 +85,7 @@ export default class CliEnvironment extends BaseEnvironment {
             log('spawning new server');
             const serverProcess = spawn(
                 this.execPath,
-                [this.command, ...this.commandArgs],
+                ['DEBUG=localdevserver*', this.command, ...this.commandArgs],
                 {
                     cwd: this.projectPath,
                     shell: process.platform === 'win32'
