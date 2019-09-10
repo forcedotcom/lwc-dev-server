@@ -3,7 +3,7 @@
     "portFlagDescription": "port to run local dev server on, defaults to 3333",
     "tokenFlagDescription": "salesforce rest API authorized token, defaults to SFDX provided authentication",
 
-    "legal:cliusage": "Use of this plugin is subject to the Salesforce.com Program Agreement. By installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> and acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.",
+    "legal:cliusage": "Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n",
 
     "error:invalidscratchorgusername": "Could not locate an active scratch org with this username / alias.",
     "error:noscratchorg": "An active scratch org is required at this time. Please create one and make sure you either specify it as the default scratch org, or provide the user when you run the start command.",

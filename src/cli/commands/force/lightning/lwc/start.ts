@@ -95,8 +95,8 @@ export default class Start extends SfdxCommand {
             this.ux.error(messages.getMessage('error:noproject'));
             return { project: typeof this.project };
         }
-        debugger;
-        this.ux.log(messages.getMessage('legal:cliusage'));
+
+        this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));
 
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
         const conn = this.org.getConnection();
