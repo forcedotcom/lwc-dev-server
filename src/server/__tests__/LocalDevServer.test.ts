@@ -13,14 +13,6 @@ jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
 jest.mock('../talonServerCopy');
 jest.mock('cpx');
-// jest.mock('../../common/ComponentIndex', () => {
-//     return {
-//         __esModule: true,
-//         default: jest.fn(() => {
-//             getModules: jest.fn(() => ['ui:module']);
-//         })
-//     };
-// });
 jest.mock('../../common/ComponentIndex');
 
 function mockProject({

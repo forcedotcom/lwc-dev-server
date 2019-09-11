@@ -44,7 +44,9 @@ describe('start', () => {
                     log: jest.spyOn(console, 'log'),
                     error: jest.spyOn(console, 'error')
                 };
-            }
+            },
+            configurable: true,
+            enumerable: true
         });
     }
 
@@ -204,6 +206,30 @@ describe('start', () => {
 
             expect(configuredPort).toBe(5151);
         });
+
+        test('outputs legal message', async () => {
+            setupAllDev();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                },
+                configurable: true,
+                enumerable: true
+            });
+
+            const expected = colors.gray(
+                'Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n'
+            );
+
+            await start.run();
+
+            expect(log.mock.calls[0][0]).toEqual(expected);
+        });
     });
 
     describe('reportStatus()', () => {
@@ -225,7 +251,9 @@ describe('start', () => {
                         log,
                         error
                     };
-                }
+                },
+                configurable: true,
+                enumerable: true
             });
             const expected = `\
 Starting LWC Local Development.
@@ -250,7 +278,9 @@ Starting LWC Local Development.
                         log,
                         error
                     };
-                }
+                },
+                configurable: true,
+                enumerable: true
             });
             const expected = `\
 Starting LWC Local Development.
@@ -276,7 +306,9 @@ Starting LWC Local Development.
                         log,
                         error
                     };
-                }
+                },
+                configurable: true,
+                enumerable: true
             });
             org.refreshAuth.mockImplementation(() => {
                 throw 'expected';
@@ -294,7 +326,7 @@ Starting LWC Local Development.
 
             await start.run();
 
-            expect(log.mock.calls[0][0]).toEqual(expected);
+            expect(log.mock.calls[1][0]).toEqual(expected);
         });
 
         test('startup reports devhuborg, scratchorg and api version', async () => {
@@ -308,7 +340,9 @@ Starting LWC Local Development.
                         log,
                         error
                     };
-                }
+                },
+                configurable: true,
+                enumerable: true
             });
             // @ts-ignore
             start.configAggregator.getPropertyValue.mockReturnValue(
@@ -325,7 +359,7 @@ Starting LWC Local Development.
 
             await start.run();
 
-            expect(log.mock.calls[0][0]).toEqual(expected);
+            expect(log.mock.calls[1][0]).toEqual(expected);
         });
     });
 });
