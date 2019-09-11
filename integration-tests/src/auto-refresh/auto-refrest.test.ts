@@ -30,6 +30,7 @@ describe('Auto Reload', () => {
             'c',
             'autoreloadtestingcopy'
         );
+
         await previewPage.open();
         let pageContainer = await previewPage.testComponent;
         const originalText = await (await pageContainer.shadow$(
@@ -37,7 +38,6 @@ describe('Auto Reload', () => {
         )).getText();
         expect(originalText).toBe('Initial Content');
 
-        console.error('copying autoreload2.html to autoreloadtestingcopy.html');
         // edit autoreloadtesting
         const newFile = path.join(lwcFolder, 'autoreload', 'autoreload2.html');
         await fs.copy(newFile, testingTargetHtml);

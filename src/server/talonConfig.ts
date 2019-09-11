@@ -4,7 +4,7 @@ export const talonConfig: {
         plugins: object[];
     };
 } = {
-    includeLwcModules: ['force/lds', 'force/salesforceScopedModuleResolver'],
+    includeLwcModules: ['force/lds'],
     rollup: {
         plugins: []
     }

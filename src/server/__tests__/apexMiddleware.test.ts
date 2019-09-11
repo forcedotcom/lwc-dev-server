@@ -1,8 +1,6 @@
 import { ConnectionParams, ApexResourceLoader } from '../apexMiddleware';
 import { MAX_RETRIES } from '../apexConstants';
 
-jest.setTimeout(1000000);
-
 function mockRequestFactory() {
     const original = require.requireActual('request-promise-native');
     const mockRequest: any = {
