@@ -62,13 +62,14 @@ export default class Start extends SfdxCommand {
             //    if you don't authenticate.
             //
 
-            // this.flags.targetusername
             const targetusername = this.flags.targetusername;
             if (targetusername) {
                 this.reportStatus(
                     colors.green(defaultdevhubusername),
                     colors.red(
-                        `${targetusername} - Could not locate an active scratch org with this username / alias.`
+                        `${targetusername} - ${messages.getMessage(
+                            'error:invalidscratchorgusername'
+                        )}`
                     )
                 );
             } else {
@@ -78,7 +79,9 @@ export default class Start extends SfdxCommand {
                 this.reportStatus(
                     colors.green(defaultdevhubusername),
                     colors.red(
-                        `${configuredusername} - An active scratch org is required at this time. Please create one and make sure you either specify it as the default scratch org, or provide the user when you run the start command.`
+                        `${configuredusername} - ${messages.getMessage(
+                            'error:noscratchorg'
+                        )}`
                     )
                 );
             }
@@ -89,11 +92,11 @@ export default class Start extends SfdxCommand {
         // Sfdx validates this before we have a chance to, this appears to be
         // a "just in case" condition so reporting the same error they do.
         if (!this.project) {
-            this.ux.error(
-                'RequiresProjectError: This command is required to run from within an SFDX project.'
-            );
+            this.ux.error(messages.getMessage('error:noproject'));
             return { project: typeof this.project };
         }
+
+        this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));
 
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
         const conn = this.org.getConnection();
@@ -108,14 +111,14 @@ export default class Start extends SfdxCommand {
             this.reportStatus(
                 colors.green(defaultdevhubusername),
                 colors.red(
-                    `${orgusername} - Error authenticating to your scratch org. Check that it is still Active.`
+                    `${orgusername} - ${messages.getMessage(
+                        'error:inactivescratchorg'
+                    )}`
                 ),
                 colors.green(api_version)
             );
             return { error: err };
         }
-
-        // Whitespace is important for this block, make sure you don't indent it all.
 
         this.reportStatus(
             colors.green(defaultdevhubusername),
@@ -124,6 +127,7 @@ export default class Start extends SfdxCommand {
         );
 
         const accessToken = conn.accessToken;
+
         // custom onProxyReq function to inject into Talon's proxy
         // this will insert the Authorization header to have the requests be authenticated
         const onProxyReq = function(
