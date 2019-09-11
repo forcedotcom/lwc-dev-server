@@ -27,8 +27,12 @@ export class ApexResourceLoader extends ResourceLoader {
         // only load inline.js from the same origin. this is a hack of hacks
         // because by not loading aura framework js we ensure
         // window.Aura.initConfig is always set.
+        const instanceUrl = new URL(this.instanceUrl);
         const parsedUrl = new URL(url, this.instanceUrl);
-        if (parsedUrl.pathname.endsWith('/inline.js')) {
+        if (
+            instanceUrl.origin == parsedUrl.origin &&
+            parsedUrl.pathname.endsWith('/inline.js')
+        ) {
             log(
                 `loading external url: ${url} as ${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
             );
@@ -82,6 +86,12 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
             if (!cachedConfig) {
                 try {
                     cachedConfig = await getConfig(connectionParams);
+                    if (cachedConfig == null) {
+                        res.status(500).send(
+                            'error parsing or finding aura config: window.Aura not found'
+                        );
+                        return;
+                    }
                 } catch (e) {
                     console.error(e);
                     res.status(500).send(e.message);
@@ -197,7 +207,7 @@ async function getConfig(connectionParams: ConnectionParams) {
         connectionParams.instanceUrl
     );
 
-    let config: any = false;
+    let config: any = null;
     let waitForResolve = function() {};
     let waitForReject = function() {};
     const waitForInitConfig = new Promise((resolve, reject) => {
@@ -211,6 +221,11 @@ async function getConfig(connectionParams: ConnectionParams) {
         url: connectionParams.instanceUrl + ONE_APP_URL,
         referrer: connectionParams.instanceUrl + ONE_APP_URL,
         beforeParse: window => {
+            Object.defineProperty(window, 'Aura', {
+                get: () => Aura,
+                set: () => {},
+                enumerable: true
+            });
             Object.defineProperty(Aura, 'frameworkJsReady', {
                 get: () => false,
                 set: () => {},
@@ -241,6 +256,9 @@ async function getConfig(connectionParams: ConnectionParams) {
         clearTimeout(timerid);
         log(`initConfig Contents = ${JSON.stringify(config)}`);
     } catch (e) {
+        if (timerid) {
+            clearTimeout(timerid);
+        }
         log(`Error waiting for initConfig: ${e}`);
     }
 

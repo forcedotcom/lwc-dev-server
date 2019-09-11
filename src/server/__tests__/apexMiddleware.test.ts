@@ -1,6 +1,8 @@
 import { ConnectionParams, ApexResourceLoader } from '../apexMiddleware';
 import { MAX_RETRIES } from '../apexConstants';
 
+jest.setTimeout(1000000);
+
 function mockRequestFactory() {
     const original = require.requireActual('request-promise-native');
     const mockRequest: any = {
@@ -181,17 +183,17 @@ describe('apexMiddleware', () => {
             if (params.url.endsWith('inline.js')) {
                 return Promise.resolve(`
                 window.Aura = {};
-                window.Aura.initConfig = {};
-                window.Aura.initConfig.token = 'TOKEN';
-                window.Aura.initConfig.context = {};
-                window.Aura.initConfig.context = {
-                    mode: 'MODE',
-                    fwuid: 'FWUID',
-                    app: 'APP',
-                    dn: [],
-                    globals: {},
-                    uad: 1
-                };
+                window.Aura.initConfig = ${JSON.stringify({
+                    token: 'TOKEN',
+                    context: {
+                        mode: 'MODE',
+                        fwuid: 'FWUID',
+                        app: 'APP',
+                        dn: [],
+                        globals: {},
+                        uad: 1
+                    }
+                })};
                 `);
             }
             // using a two phase loader will excersize async + resource loader
@@ -537,7 +539,7 @@ describe('apexMiddleware', () => {
 
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.send).toHaveBeenLastCalledWith(
-            'error parsing or finding aura config: window.Aura missing initConfig property'
+            'error parsing or finding aura config: window.Aura not found'
         );
         expect(next).not.toBeCalled();
     });
