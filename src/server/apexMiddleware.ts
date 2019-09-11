@@ -28,11 +28,10 @@ export class ApexResourceLoader extends ResourceLoader {
         // because by not loading aura framework js we ensure
         // window.Aura.initConfig is always set.
         const parsedUrl = new URL(url, this.instanceUrl);
-        if (
-            parsedUrl.origin === this.instanceUrl &&
-            parsedUrl.pathname.endsWith('/inline.js')
-        ) {
-            log(`loading external url: ${url}`);
+        if (parsedUrl.pathname.endsWith('/inline.js')) {
+            log(
+                `loading external url: ${url} as ${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+            );
             return this.orgRequest
                 .get({
                     url: `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
@@ -197,44 +196,53 @@ async function getConfig(connectionParams: ConnectionParams) {
         orgRequest,
         connectionParams.instanceUrl
     );
+
+    let config: any = false;
+    let waitForResolve = function() {};
+    let waitForReject = function() {};
+    const waitForInitConfig = new Promise((resolve, reject) => {
+        waitForResolve = resolve;
+        waitForReject = reject;
+    });
+    const Aura = {};
     const oneApp = new JSDOM(response, {
         resources: resourceLoader,
         runScripts: 'dangerously',
         url: connectionParams.instanceUrl + ONE_APP_URL,
-        referrer: connectionParams.instanceUrl + ONE_APP_URL
-    });
-    let config;
-    let error;
-    // need to wait for external scripts to load...
-    for (let i = 0; i < MAX_RETRIES; i++) {
-        try {
-            const window = oneApp.window;
+        referrer: connectionParams.instanceUrl + ONE_APP_URL,
+        beforeParse: window => {
+            Object.defineProperty(Aura, 'frameworkJsReady', {
+                get: () => false,
+                set: () => {},
+                enumerable: true
+            });
+            Object.defineProperty(Aura, 'initConfig', {
+                get: () => {
+                    return config;
+                },
+                set: newConfig => {
+                    log(`Recieved initConfig ${newConfig}`);
+                    config = newConfig;
+                    waitForResolve();
+                },
+                enumerable: true
+            });
             // @ts-ignore
-            const aura = window.Aura;
-            if (aura) {
-                if (aura.initConfig) {
-                    config = aura.initConfig;
-                } else {
-                    log(`window.Aura = ${JSON.stringify(aura, null, 2)}`);
-                    error = 'window.Aura missing initConfig property';
-                }
-                break;
-            } else {
-                error = 'window.Aura not found';
-            }
-        } catch (e) {
-            error = e;
+            window.Aura = Aura;
         }
-        await sleep(1000);
-    }
-    if (config === undefined) {
-        log(`response for one.app: ${response}`);
-        throw new Error(`error parsing or finding aura config: ${error}`);
-    }
-    log('retrieved aura configuration');
-    return config;
-}
+    });
 
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    const timerid = setTimeout(() => {
+        waitForReject();
+    }, MAX_RETRIES * 1000);
+
+    try {
+        await waitForInitConfig;
+        clearTimeout(timerid);
+        log(`initConfig Contents = ${JSON.stringify(config)}`);
+    } catch (e) {
+        log(`Error waiting for initConfig: ${e}`);
+    }
+
+    return config;
 }
