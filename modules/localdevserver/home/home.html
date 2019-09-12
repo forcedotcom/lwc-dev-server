@@ -2,68 +2,14 @@
     <main>
         <localdevserver-layout-section main-content="true">
             <div class="slds-grid slds-gutters slds-gutters_x-small slds-wrap">
-                <lightning-card title="Hello" class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
-                    <lightning-button label="New" slot="actions"></lightning-button>
-                    <p class="slds-p-horizontal_small">Card Body (custom component)</p>
-                    <p slot="footer">Card Footer</p>
-                </lightning-card>
-                <lightning-card title="Hello" class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
-                    <lightning-button label="New" slot="actions"></lightning-button>
-                    <p class="slds-p-horizontal_small">Card Body (custom component)</p>
-                    <p slot="footer">Card Footer</p>
-                </lightning-card>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
+                    <localdevserver-components-panel></localdevserver-components-panel>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <localdevserver-resources-panel></localdevserver-resources-panel>
+                </div>
             </div>
         </localdevserver-layout-section>
     </main>
-
-    <!-- <div class="container slds-p-around_x-large">
-        <div class="slds-grid slds-gutters">
-            <div class="slds-col slds-size_3-of-4">
-                <h1 class="slds-text-heading_large slds-p-bottom_xx-large">Lightning Web Components Local Server</h1>
-                <div class="slds-grid slds-gutters">
-                    <a href="https://developer.salesforce.com/docs/component-library" class="slds-text-link_reset slds-col">
-                        <lightning-card title="Component Library" icon-name="standard:apps">
-                            <p class="slds-p-horizontal_small">The Component Library is the Lightning components developer reference. Rapidly develop apps with our building blocks.</p>
-                        </lightning-card>
-                    </a>
-                    <a href="https://forcedotcom.github.io/salesforcedx-vscode/" class="slds-text-link_reset slds-col">
-                        <lightning-card title="VS Code Extensions" icon-name="standard:code_playground">
-                            <p class="slds-p-horizontal_small">This extension pack includes tools for developing on the Salesforce platform in the lightweight, extensible VS Code editor.</p>
-                        </lightning-card>
-                    </a>
-                    <a href="https://github.com/forcedotcom/lwc-dev-server" class="slds-text-link_reset slds-col">
-                        <lightning-card title="Open Source" icon-name="custom:custom12">
-                            <p class="slds-p-horizontal_small">Salesforce uses and contributes to tons of Open Source projects. Learn more about the projects available for developers.</p>
-                        </lightning-card>
-                    </a>
-                </div>
-
-                <h2 class="slds-text-heading_medium slds-p-top_large">Server Configuration</h2>
-                <p class="slds-p-vertical_x-small">
-                    The local development server can be configured by modifying
-                    the .localdevserver.config.json file. For more information on this
-                    file see the documentation.
-                </p>
-
-                <div class="slds-box">
-                    <code><pre>{configuration}</pre></code>
-                </div>
-                <p class="slds-m-top_x-large slds-p-top_x-large">
-                    Submit issues and feedback to <a href="https://github.com/forcedotcom/lwc-dev-server">Github</a>
-                </p>
-            </div>
-            <div class="slds-col slds-size_1-of-4">
-                <h2 class="slds-text-heading_medium">Components</h2>
-                <input type="search" name="component-filter" placeholder="Filter"
-                    class="slds-input slds-m-vertical_small" onchange={onSearchChange} onkeyup={onSearchChange} />
-                <div class="slds-box">
-                    <ul class="component-list">
-                        <template for:each={components} for:item="item" for:index="index">
-                            <li class="slds-m-horizontal_xx-small slds-m-bottom_x-small slds-truncate" key={item.url}><a href={item.url} title={item.title}>{item.title}</a></li>
-                        </template>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div> -->
 </template>

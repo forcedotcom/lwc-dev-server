@@ -1,0 +1,57 @@
+.header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 	1px solid #dddbda;
+}
+
+.project-name-text {
+    font-weight: bold;
+}
+
+.flexi-space {
+    min-width: .75rem;
+    max-width: 5rem;
+}
+
+.search-input {
+    height: 40px;
+    font-size: 1rem;
+    padding-left: 3.5rem;
+}
+
+.search-input::-ms-input-placeholder {
+    font-size: 1rem;
+}
+
+.search-input::placeholder {
+    font-size: 1rem;
+    color: #706e6b;
+}
+
+.search-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0;
+    top: 9px;
+    left: 1rem;
+}
+
+
+
+.packages-list {
+    background-color: #fafafb;
+    max-width: 300px;
+    min-height: 300px;
+}
+
+.components-list {
+    max-height: 60vh; /* TODO */
+}
+
+.components-list .list-item + .list-item {
+    margin-top: .75rem;
+}
+
+.components-list-label {
+    color: #3e3e3c;
+    font-size: .75rem;
+}

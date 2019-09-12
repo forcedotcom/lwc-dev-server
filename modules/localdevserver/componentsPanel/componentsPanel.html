@@ -1,0 +1,106 @@
+<template>
+    <section class="components-panel slds-card">
+        <!-- header -->
+        <div
+            class="header slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
+        >
+            <header class="project-name">
+                <h2
+                    class="project-name-text slds-card__header-title slds-truncate slds-text-heading_medium"
+                    title={projectName}
+                >
+                    {projectName}
+                </h2>
+            </header>
+            <div class="flexi-space slds-grow"></div>
+            <div class="search slds-grow">
+                <div class="slds-form-element">
+                    <label
+                        for="input"
+                        class="slds-form-element__label slds-no-flex slds-assistive-text"
+                    >
+                        Search for a component
+                    </label>
+                    <div
+                        class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right"
+                    >
+                        <svg
+                            class="search-icon slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default slds-icon_medium"
+                            aria-hidden="true"
+                        >
+                            <use
+                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#search"
+                            ></use>
+                        </svg>
+
+                        <input
+                            id="input"
+                            type="search"
+                            placeholder="Search for a component..."
+                            class="slds-input search-input"
+                            onchange={onSearchChange}
+                            onkeyup={onSearchChange}
+                        />
+
+                        <template if:true={isSearching}>
+                            <button
+                                class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                title="Clear"
+                                onclick={clearInput}
+                            >
+                                <svg
+                                    class="slds-button__icon slds-icon-text-light"
+                                    aria-hidden="true"
+                                >
+                                    <use
+                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#clear"
+                                    ></use>
+                                </svg>
+                                <span class="slds-assistive-text">Clear</span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- body -->
+        <div class="components-body slds-grid">
+            <div class="packages-list slds-grow">
+                <lightning-vertical-navigation
+                    shaded="true"
+                    selected-item={selectedPackage}
+                >
+                    <lightning-vertical-navigation-section label="Packages">
+                        <lightning-vertical-navigation-item-icon
+                            label="Package Name"
+                            name="package1"
+                            icon-name="utility:open_folder"
+                        ></lightning-vertical-navigation-item-icon>
+                    </lightning-vertical-navigation-section>
+                </lightning-vertical-navigation>
+            </div>
+
+            <div
+                class="components-list slds-scrollable_y slds-grow slds-p-left_x-large slds-p-right_small"
+            >
+                <h3 class="components-list-label slds-m-vertical_small">
+                    {componentsListLabel}
+                </h3>
+                <ul class="slds-m-vertical_small">
+                    <template
+                        for:each={components}
+                        for:item="item"
+                        for:index="index"
+                    >
+                        <li class="list-item slds-truncate" key={item.url}>
+                            <a href={item.url} title={item.title}>
+                                {item.title}
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </section>
+</template>
