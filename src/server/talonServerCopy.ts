@@ -260,7 +260,8 @@ export function salesforceStaticAssetsRoute(basePath: string) {
             if (
                 req.url.indexOf('/assets/styles/') === -1 &&
                 req.url.indexOf('/assets/fonts/') === -1 &&
-                req.url.indexOf('/assets/icons/') === -1
+                req.url.indexOf('/assets/icons/') === -1 &&
+                req.url.indexOf('/assets/images/')
             ) {
                 req.url = `${basePath}/assets/${req.params[0]}`;
                 next('route');

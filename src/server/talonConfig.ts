@@ -40,15 +40,6 @@ export const theme = {
 };
 
 export const views = {
-    home: {
-        name: 'home',
-        label: 'Home',
-        themeLayoutType: 'main',
-        component: {
-            name: 'localdevserver/home',
-            regions: []
-        }
-    },
     mainLayout: {
         name: 'mainLayout',
         label: 'Default Layout',
@@ -58,7 +49,11 @@ export const views = {
                 {
                     name: 'header',
                     label: 'Header',
-                    components: []
+                    components: [
+                        {
+                            name: 'localdevserver/header'
+                        }
+                    ]
                 },
                 {
                     name: 'footer',
@@ -66,6 +61,15 @@ export const views = {
                     components: []
                 }
             ]
+        }
+    },
+    home: {
+        name: 'home',
+        label: 'Home',
+        themeLayoutType: 'main',
+        component: {
+            name: 'localdevserver/home',
+            regions: []
         }
     },
     preview: {
@@ -76,7 +80,8 @@ export const views = {
             name: 'localdevserver/preview',
             attributes: {
                 cmp: '{!cmp}'
-            }
+            },
+            regions: []
         }
     }
 };

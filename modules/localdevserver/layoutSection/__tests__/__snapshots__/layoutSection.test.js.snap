@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-layout-section renders 1`] = `
+<localdevserver-layout-section>
+  #shadow-root(open)
+    <slot />
+</localdevserver-layout-section>
+`;
+
+exports[`localdevserver-layout-section renders when specifying mainContent as true 1`] = `
+<localdevserver-layout-section
+  class="main-content"
+>
+  #shadow-root(open)
+    <slot />
+</localdevserver-layout-section>
+`;

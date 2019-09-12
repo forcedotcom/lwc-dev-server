@@ -24,7 +24,7 @@ exports[`localdevserver-error-stacks renders - no error 1`] = `
           >
             <img
               class="error-image"
-              src="/assets/Buggy.svg"
+              src="/assets/images/buggy.svg"
             />
           </h2>
         </header>

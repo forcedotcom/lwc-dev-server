@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-header renders 1`] = `
+<localdevserver-header>
+  #shadow-root(open)
+    <localdevserver-layout-section>
+      #shadow-root(open)
+        <slot />
+      <div
+        class="container slds-grid slds-grid_vertical-align-center"
+      >
+        <img
+          alt="Salesforce Logo"
+          class="logo"
+          height="44"
+          src="/assets/images/logo.svg"
+          width="142"
+        />
+        <h1>
+          Welcome to the Local Development Server
+        </h1>
+      </div>
+    </localdevserver-layout-section>
+</localdevserver-header>
+`;

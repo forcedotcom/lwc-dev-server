@@ -1,5 +1,22 @@
 <template>
-    <div class="container slds-p-around_x-large">
+    <main>
+        <localdevserver-layout-section main-content="true">
+            <div class="slds-grid slds-gutters slds-gutters_x-small slds-wrap">
+                <lightning-card title="Hello" class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
+                    <lightning-button label="New" slot="actions"></lightning-button>
+                    <p class="slds-p-horizontal_small">Card Body (custom component)</p>
+                    <p slot="footer">Card Footer</p>
+                </lightning-card>
+                <lightning-card title="Hello" class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <lightning-button label="New" slot="actions"></lightning-button>
+                    <p class="slds-p-horizontal_small">Card Body (custom component)</p>
+                    <p slot="footer">Card Footer</p>
+                </lightning-card>
+            </div>
+        </localdevserver-layout-section>
+    </main>
+
+    <!-- <div class="container slds-p-around_x-large">
         <div class="slds-grid slds-gutters">
             <div class="slds-col slds-size_3-of-4">
                 <h1 class="slds-text-heading_large slds-p-bottom_xx-large">Lightning Web Components Local Server</h1>
@@ -48,5 +65,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
