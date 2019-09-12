@@ -115,7 +115,14 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
 
             try {
                 const parsed = JSON.parse(response);
-                res.type('json').send(parsed.actions[0].returnValue);
+                const actionResult = parsed.actions[0];
+                if (actionResult.state === 'ERROR') {
+                    res.status(500)
+                        .type('json')
+                        .send({ error: actionResult.error });
+                } else {
+                    res.type('json').send(actionResult.returnValue);
+                }
             } catch (e) {
                 log(`invalid apex response: ${response}`);
                 res.status(500).send(
