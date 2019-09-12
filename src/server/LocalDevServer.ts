@@ -17,7 +17,7 @@ import LocalDevTelemetryReporter from '../instrumentation/LocalDevTelemetryRepor
 
 const debug = debugLogger('localdevserver');
 const packageRoot = path.join(__dirname, '..', '..');
-const DEFAULT_API_VERSION = '45.0';
+const DEFAULT_API_VERSION = '46.0';
 
 export const defaultOutputDirectory = '.localdevserver';
 

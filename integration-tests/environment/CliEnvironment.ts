@@ -83,7 +83,7 @@ export default class CliEnvironment extends BaseEnvironment {
 
         const serverStartup = new Promise<void>(async (resolve, reject) => {
             log('spawning new server');
-            process.env.DEBUG = 'localdevserver*';
+            // process.env.DEBUG = 'localdevserver*';
             const serverProcess = spawn(
                 this.execPath,
                 [this.command, ...this.commandArgs],
