@@ -251,17 +251,17 @@ describe('apexMiddleware', () => {
             return Promise.resolve(`<html><body>
             <script>
             window.Aura = {};
-            window.Aura.initConfig = {};
-            window.Aura.initConfig.token = 'TOKEN';
-            window.Aura.initConfig.context = {};
-            window.Aura.initConfig.context = {
-                mode: 'MODE',
-                fwuid: 'FWUID',
-                app: 'APP',
-                dn: [],
-                globals: {},
-                uad: 1
-            };
+            window.Aura.initConfig = ${JSON.stringify({
+                token: 'TOKEN',
+                context: {
+                    mode: 'MODE',
+                    fwuid: 'FWUID',
+                    app: 'APP',
+                    dn: [],
+                    globals: {},
+                    uad: 1
+                }
+            })};
             </script>
             </body></html>`);
         });
@@ -327,17 +327,17 @@ describe('apexMiddleware', () => {
             return Promise.resolve(`<html><body>
             <script>
             window.Aura = {};
-            window.Aura.initConfig = {};
-            window.Aura.initConfig.token = 'TOKEN';
-            window.Aura.initConfig.context = {};
-            window.Aura.initConfig.context = {
-                mode: 'MODE',
-                fwuid: 'FWUID',
-                app: 'APP',
-                dn: [],
-                globals: {},
-                uad: 1
-            };
+            window.Aura.initConfig = ${JSON.stringify({
+                token: 'TOKEN',
+                context: {
+                    mode: 'MODE',
+                    fwuid: 'FWUID',
+                    app: 'APP',
+                    dn: [],
+                    globals: {},
+                    uad: 1
+                }
+            })};
             </script>
             </body></html>`);
         });
@@ -394,17 +394,17 @@ describe('apexMiddleware', () => {
             if (params.url.endsWith('inline.js')) {
                 return Promise.resolve(`
                 window.Aura = {};
-                window.Aura.initConfig = {};
-                window.Aura.initConfig.token = 'TOKEN';
-                window.Aura.initConfig.context = {};
-                window.Aura.initConfig.context = {
-                    mode: 'MODE',
-                    fwuid: 'FWUID',
-                    app: 'APP',
-                    dn: [],
-                    globals: {},
-                    uad: 1
-                };
+                window.Aura.initConfig = ${JSON.stringify({
+                    token: 'TOKEN',
+                    context: {
+                        mode: 'MODE',
+                        fwuid: 'FWUID',
+                        app: 'APP',
+                        dn: [],
+                        globals: {},
+                        uad: 1
+                    }
+                })};
                 `);
             }
             // using a two phase loader will excersize async + resource loader
@@ -514,17 +514,17 @@ describe('apexMiddleware', () => {
             return Promise.resolve(`<html><body>
             <script>
             window.Aura = {};
-            window.Aura.changeConfig = {};
-            window.Aura.changeConfig.token = 'TOKEN';
-            window.Aura.changeConfig.context = {};
-            window.Aura.changeConfig.context = {
-                mode: 'MODE',
-                fwuid: 'FWUID',
-                app: 'APP',
-                dn: [],
-                globals: {},
-                uad: 1
-            };
+            window.Aura.changeConfig = ${JSON.stringify({
+                token: 'TOKEN',
+                context: {
+                    mode: 'MODE',
+                    fwuid: 'FWUID',
+                    app: 'APP',
+                    dn: [],
+                    globals: {},
+                    uad: 1
+                }
+            })};
             </script>
             </body></html>`);
         });
@@ -569,14 +569,17 @@ describe('apexMiddleware', () => {
             return Promise.resolve(`<html><body>
             <script>
             window.Aura = {};
-            window.Aura.initConfig = {};
-            window.Aura.initConfig.token = 'TOKEN';
-            window.Aura.initConfig.context = {};
-            window.Aura.initConfig.context = {
-                mode: 'MODE',
-                fwuid: 'FWUID',
-                app: 'APP',
-            };
+            window.Aura.initConfig = ${JSON.stringify({
+                token: 'TOKEN',
+                context: {
+                    mode: 'MODE',
+                    fwuid: 'FWUID',
+                    app: 'APP',
+                    dn: [],
+                    globals: {},
+                    uad: true
+                }
+            })};
             </script>
             </body></html>`);
         });
@@ -596,6 +599,76 @@ describe('apexMiddleware', () => {
                 'aura.context':
                     '{"mode":"MODE","fwuid":"FWUID","app":"APP","dn":[],"globals":{},"uad":true}',
                 'aura.token': 'TOKEN'
+            }
+        };
+
+        expect(request.post).toHaveBeenCalledWith(expectedArgument);
+        expect(res.send).toHaveBeenCalledWith({ mockReturn: {} });
+        expect(res.type).toHaveBeenLastCalledWith('json');
+        expect(next).not.toBeCalled();
+    });
+
+    it('initConfig called after frameworkJsReady set to true', async () => {
+        const mockConnection = {
+            instanceUrl: 'http://url',
+            accessToken: 'XXX'
+        };
+        const middleware = getMiddleware(mockConnection);
+        const req: any = {
+            url: '/api/apex/execute',
+            body: {
+                classname: 'classname',
+                method: 'method',
+                namespace: 'namespace',
+                cacheable: false
+            }
+        };
+        const res: any = {
+            type: jest.fn(() => res),
+            send: jest.fn(() => res)
+        };
+        const next: any = jest.fn();
+
+        const request = getRequest();
+        //@ts-ignore
+        request.get.mockImplementationOnce(() => {
+            return Promise.resolve(`<html><body>
+            <script>
+            window.Aura = {};
+            window.Aura.frameworkJsReady = true;
+            const initConfig = ${JSON.stringify({
+                token: 'TOKEN',
+                context: {
+                    mode: 'MODE',
+                    fwuid: 'FWUID',
+                    app: 'APP',
+                    dn: [],
+                    globals: {},
+                    uad: true
+                }
+            })};
+            // Trace that this was false still
+            initConfig.token += ':' + window.Aura.frameworkJsReady;
+            window.Aura.initConfig = initConfig;
+            </script>
+            </body></html>`);
+        });
+        //@ts-ignore
+        request.post.mockImplementationOnce(
+            () => `{"actions": [{"returnValue": {"mockReturn":{}}}] }`
+        );
+
+        await middleware(req, res, next);
+        //@ts-ignore
+        const expectedArgument = {
+            url: '/aura?aura.ApexAction.execute=1',
+            form: {
+                message:
+                    '{"actions":[{"id":"0","descriptor":"aura://ApexActionController/ACTION$execute","callingDescriptor":"UNKNOWN","params":{"namespace":"namespace","classname":"classname","method":"method","cacheable":false,"isContinuation":false}}]}',
+                'aura.pageURI': '/lightning/n/Apex',
+                'aura.context':
+                    '{"mode":"MODE","fwuid":"FWUID","app":"APP","dn":[],"globals":{},"uad":true}',
+                'aura.token': 'TOKEN:false'
             }
         };
 
