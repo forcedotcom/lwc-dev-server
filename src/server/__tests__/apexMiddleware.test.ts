@@ -436,6 +436,80 @@ describe('apexMiddleware', () => {
         expect(next).not.toBeCalled();
     });
 
+    it('sends returns error message from action response', async () => {
+        const mockConnection = {
+            instanceUrl: 'http://url',
+            accessToken: 'XXX'
+        };
+        const middleware = getMiddleware(mockConnection);
+        const req: any = {
+            url: '/api/apex/execute',
+            body: {
+                classname: 'classname',
+                method: 'method',
+                namespace: 'namespace',
+                cacheable: false
+            }
+        };
+        const res: any = {
+            type: jest.fn(() => res),
+            send: jest.fn(() => res),
+            status: jest.fn(() => res)
+        };
+        const next: any = jest.fn();
+
+        const request = getRequest();
+        //@ts-ignore
+        request.get.mockImplementation((params: any) => {
+            if (params.url.endsWith('inline.js')) {
+                return Promise.resolve(`
+                window.Aura = {};
+                window.Aura.initConfig = ${JSON.stringify({
+                    token: 'TOKEN',
+                    context: {
+                        mode: 'MODE',
+                        fwuid: 'FWUID',
+                        app: 'APP',
+                        dn: [],
+                        globals: {},
+                        uad: 1
+                    }
+                })};
+                `);
+            }
+            // using a two phase loader will excersize async + resource loader
+            return Promise.resolve(
+                `<html><body><script src="/inline.js"></script></body></html>`
+            );
+        });
+        //@ts-ignore
+        request.post.mockImplementationOnce(() =>
+            JSON.stringify({
+                actions: [{ state: 'ERROR', error: [{ message: 'expected' }] }]
+            })
+        );
+
+        await middleware(req, res, next);
+
+        //@ts-ignore
+        const expectedArgument = {
+            url: '/aura?aura.ApexAction.execute=1',
+            form: {
+                message:
+                    '{"actions":[{"id":"0","descriptor":"aura://ApexActionController/ACTION$execute","callingDescriptor":"UNKNOWN","params":{"namespace":"namespace","classname":"classname","method":"method","cacheable":false,"isContinuation":false}}]}',
+                'aura.pageURI': '/lightning/n/Apex',
+                'aura.context':
+                    '{"mode":"MODE","fwuid":"FWUID","app":"APP","dn":[],"globals":{},"uad":1}',
+                'aura.token': 'TOKEN'
+            }
+        };
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenLastCalledWith(
+            JSON.parse('{"error":[{"message":"expected"}]}')
+        );
+        expect(next).not.toBeCalled();
+    });
+
     it('no auraconfig sends 500', async () => {
         const mockConnection = {
             instanceUrl: 'http://url',
@@ -669,6 +743,73 @@ describe('apexMiddleware', () => {
                 'aura.context':
                     '{"mode":"MODE","fwuid":"FWUID","app":"APP","dn":[],"globals":{},"uad":true}',
                 'aura.token': 'TOKEN:false'
+            }
+        };
+
+        expect(request.post).toHaveBeenCalledWith(expectedArgument);
+        expect(res.send).toHaveBeenCalledWith({ mockReturn: {} });
+        expect(res.type).toHaveBeenLastCalledWith('json');
+        expect(next).not.toBeCalled();
+    });
+
+    it('accessing init config returns the initConfig object', async () => {
+        const mockConnection = {
+            instanceUrl: 'http://url',
+            accessToken: 'XXX'
+        };
+        const middleware = getMiddleware(mockConnection);
+        const req: any = {
+            url: '/api/apex/execute',
+            body: {
+                classname: 'classname',
+                method: 'method',
+                namespace: 'namespace',
+                cacheable: false
+            }
+        };
+        const res: any = {
+            type: jest.fn(() => res),
+            send: jest.fn(() => res)
+        };
+        const next: any = jest.fn();
+
+        const request = getRequest();
+        //@ts-ignore
+        request.get.mockImplementationOnce(() => {
+            return Promise.resolve(`<html><body>
+            <script>
+            window.Aura = {};
+            window.Aura.initConfig = ${JSON.stringify({
+                token: 'TOKEN',
+                context: {
+                    mode: 'MODE',
+                    fwuid: 'FWUID',
+                    app: 'APP',
+                    dn: [],
+                    globals: {},
+                    uad: true
+                }
+            })};
+            window.Aura.initConfig = window.Aura.initConfig;
+            </script>
+            </body></html>`);
+        });
+        //@ts-ignore
+        request.post.mockImplementationOnce(
+            () => `{"actions": [{"returnValue": {"mockReturn":{}}}] }`
+        );
+
+        await middleware(req, res, next);
+        //@ts-ignore
+        const expectedArgument = {
+            url: '/aura?aura.ApexAction.execute=1',
+            form: {
+                message:
+                    '{"actions":[{"id":"0","descriptor":"aura://ApexActionController/ACTION$execute","callingDescriptor":"UNKNOWN","params":{"namespace":"namespace","classname":"classname","method":"method","cacheable":false,"isContinuation":false}}]}',
+                'aura.pageURI': '/lightning/n/Apex',
+                'aura.context':
+                    '{"mode":"MODE","fwuid":"FWUID","app":"APP","dn":[],"globals":{},"uad":true}',
+                'aura.token': 'TOKEN'
             }
         };
 

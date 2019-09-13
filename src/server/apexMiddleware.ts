@@ -214,60 +214,55 @@ async function getConfig(connectionParams: ConnectionParams) {
         connectionParams.instanceUrl
     );
 
-    let config: any = null;
-    let waitForResolve = function() {};
-    let waitForReject = function() {};
     const waitForInitConfig = new Promise((resolve, reject) => {
-        waitForResolve = resolve;
-        waitForReject = reject;
-    });
-    const Aura = {};
-    const oneApp = new JSDOM(response, {
-        resources: resourceLoader,
-        runScripts: 'dangerously',
-        url: connectionParams.instanceUrl + ONE_APP_URL,
-        referrer: connectionParams.instanceUrl + ONE_APP_URL,
-        beforeParse: window => {
-            Object.defineProperty(window, 'Aura', {
-                get: () => Aura,
-                set: () => {},
-                enumerable: true
-            });
-            Object.defineProperty(Aura, 'frameworkJsReady', {
-                get: () => false,
-                set: () => {},
-                enumerable: true
-            });
-            Object.defineProperty(Aura, 'initConfig', {
-                get: () => {
-                    return config;
-                },
-                set: newConfig => {
-                    log(`Recieved initConfig ${newConfig}`);
-                    config = newConfig;
-                    waitForResolve();
-                },
-                enumerable: true
-            });
-            // @ts-ignore
-            window.Aura = Aura;
-        }
-    });
+        const timerid = setTimeout(() => {
+            reject('Timed out waiting for initConfig');
+        }, MAX_RETRIES * 1000);
 
-    const timerid = setTimeout(() => {
-        waitForReject();
-    }, MAX_RETRIES * 1000);
+        let config: any = null;
+        const Aura = {};
+        const oneApp = new JSDOM(response, {
+            resources: resourceLoader,
+            runScripts: 'dangerously',
+            url: connectionParams.instanceUrl + ONE_APP_URL,
+            referrer: connectionParams.instanceUrl + ONE_APP_URL,
+            beforeParse: window => {
+                Object.defineProperty(window, 'Aura', {
+                    get: () => Aura,
+                    set: () => {},
+                    enumerable: true
+                });
+                Object.defineProperty(Aura, 'frameworkJsReady', {
+                    get: () => false,
+                    set: () => {},
+                    enumerable: true
+                });
+                Object.defineProperty(Aura, 'initConfig', {
+                    get: () => {
+                        return config;
+                    },
+                    set: newConfig => {
+                        log(`Recieved initConfig ${newConfig}`);
+                        config = newConfig;
+                        if (timerid) {
+                            clearTimeout(timerid);
+                        }
+                        resolve(config);
+                    },
+                    enumerable: true
+                });
+                // @ts-ignore
+                window.Aura = Aura;
+            }
+        });
+    });
 
     try {
-        await waitForInitConfig;
-        clearTimeout(timerid);
+        const config = await waitForInitConfig;
         log(`initConfig Contents = ${JSON.stringify(config)}`);
+        return config;
     } catch (e) {
-        if (timerid) {
-            clearTimeout(timerid);
-        }
         log(`Error waiting for initConfig: ${e}`);
     }
-
-    return config;
+    return null;
 }
