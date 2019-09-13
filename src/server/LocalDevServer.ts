@@ -63,9 +63,24 @@ export default class LocalDevServer {
         const reporter = await LocalDevTelemetryReporter.getInstance();
 
         // all the deps, filtered by existing
-        let modulePaths = [vendors, localDependencies, ...nodePaths].filter(
-            fs.existsSync
-        );
+        let modulePaths = [vendors, localDependencies, ...nodePaths];
+
+        if (version === 220) {
+            // Use 218 version of LDS temporarily
+            // Its the only thing in this 218 directory, so the rest will come from 220 dependencies
+            modulePaths.unshift(
+                path.resolve(
+                    path.join(
+                        require.resolve('lwc-dev-server-runtime-lib'),
+                        '..', // above resolve includes index.js
+                        'vendors',
+                        `dependencies-218`
+                    )
+                )
+            );
+        }
+
+        modulePaths = modulePaths.filter(fs.existsSync);
 
         try {
             if (project.isSfdx) {
