@@ -19,7 +19,7 @@ const packages = {
 };
 
 const registry =
-    'https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/';
+    'https://nexus-proxy-prd.soma.salesforce.com/nexus/content/groups/npm-all/';
 
 // clear previous versions
 const dest = path.join(__dirname, '../lib');
