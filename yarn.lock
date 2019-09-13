@@ -7340,8 +7340,8 @@ lru-queue@0.1:
 "lwc-components-lightning@file:lib/unpacked/lwc-components-lightning-1.2.4-alpha":
   version "0.0.0"
 
-"lwc-dev-server-runtime-lib@file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.35":
-  version "1.0.35"
+"lwc-dev-server-runtime-lib@file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.36":
+  version "1.0.36"
 
 magic-string@^0.25.2, magic-string@~0.25.1:
   version "0.25.3"

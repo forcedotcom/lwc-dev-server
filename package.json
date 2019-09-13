@@ -160,7 +160,7 @@
         "helmet": "^3.18.0",
         "jsdom": "^15.1.1",
         "lwc-components-lightning": "file:lib/unpacked/lwc-components-lightning-1.2.4-alpha",
-        "lwc-dev-server-runtime-lib": "file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.35",
+        "lwc-dev-server-runtime-lib": "file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.36",
         "mime-types": "^2.1.24",
         "path": "^0.12.7",
         "reload": "^3.0.1",
