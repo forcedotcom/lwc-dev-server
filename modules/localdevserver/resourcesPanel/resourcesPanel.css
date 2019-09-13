@@ -1,0 +1,26 @@
+.header {
+    border-bottom: 1px solid #dddbda;
+}
+
+.heading-text {
+    /*
+        line-height should normally be unit-less, but in this case we want the
+        spacing with the components panel to line up via standard slds spacing
+        classes.
+    */
+    line-height: 1rem;
+    font-weight: bold;
+}
+
+.resource-heading {
+    font-weight: bold;
+}
+
+.resource-heading::before {
+    content: '';
+    display: block;
+    height: 0;
+    width: 0;
+    /* crop top part of line-height, 1.5 = line-height */
+    margin-top: calc((1 - 1.5) * 0.5em);
+}

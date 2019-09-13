@@ -13,7 +13,10 @@ export default class ComponentsPanel extends LightningElement {
     @api
     get components() {
         if (this.componentsFilter) {
-            const normalizedFilter = this.componentsFilter.replace(/-/g, '');
+            const normalizedFilter = this.componentsFilter
+                .replace(/^c-/, '')
+                .replace(/-/g, '');
+
             return this._components.filter(item => {
                 return item.title.toLowerCase().includes(normalizedFilter);
             });
