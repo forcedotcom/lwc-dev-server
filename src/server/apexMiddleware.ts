@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import request, { RequestPromiseAPI } from 'request-promise-native';
 import { JSDOM, ResourceLoader, FetchOptions } from 'jsdom';
 import debug from 'debug';
-import { MAX_RETRIES } from './apexConstants';
+import { WAIT_FOR_ONE_APP_LOAD } from './apexConstants';
 import { Cookie } from 'request';
 import parse from 'co-body';
 import { URL } from 'url';
@@ -215,10 +215,6 @@ async function getConfig(connectionParams: ConnectionParams) {
     );
 
     const waitForInitConfig = new Promise((resolve, reject) => {
-        const timerid = setTimeout(() => {
-            reject('Timed out waiting for initConfig');
-        }, MAX_RETRIES * 1000);
-
         let config: any = null;
         const Aura = {};
         const oneApp = new JSDOM(response, {
@@ -244,9 +240,6 @@ async function getConfig(connectionParams: ConnectionParams) {
                     set: newConfig => {
                         log(`Recieved initConfig ${newConfig}`);
                         config = newConfig;
-                        if (timerid) {
-                            clearTimeout(timerid);
-                        }
                         resolve(config);
                     },
                     enumerable: true
@@ -257,8 +250,17 @@ async function getConfig(connectionParams: ConnectionParams) {
         });
     });
 
+    const waitForInitConfigTimeout = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject('Timed out waiting for initConfig');
+        }, WAIT_FOR_ONE_APP_LOAD);
+    });
+
     try {
-        const config = await waitForInitConfig;
+        const config = await Promise.race([
+            waitForInitConfig,
+            waitForInitConfigTimeout
+        ]);
         log(`initConfig Contents = ${JSON.stringify(config)}`);
         return config;
     } catch (e) {
