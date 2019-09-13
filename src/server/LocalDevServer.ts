@@ -7,6 +7,7 @@ import ComponentIndex from '../common/ComponentIndex';
 import { talonConfig, views, theme, routes } from './talonConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
+import salesforceApexWireResolver from './config/rollup-plugin-salesforce-apex';
 import labelResolver from './labelResolver';
 import debugLogger from 'debug';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
@@ -92,6 +93,8 @@ export default class LocalDevServer {
                     )
                 );
             }
+
+            talonConfig.rollup.plugins.push(salesforceApexWireResolver());
 
             const resolver = labelResolver({
                 customLabelsPath: project.customLabelsPath
