@@ -1,13 +1,40 @@
 <template>
-    <div class="preview slds-p-around_large">
-        <lightning-breadcrumbs class="slds-m-around_small">
-            <lightning-breadcrumb label="home" href="/"></lightning-breadcrumb>
-            <lightning-breadcrumb label={cmp} href={href}></lightning-breadcrumb>
-        </lightning-breadcrumbs>
-        <div lwc:dom="manual" class="container slds-m-around_small"></div>
+    <localdevserver-layout-section main-content>
+        <article class="slds-card">
+            <div
+                class="header slds-grid slds-grid_vertical-align-center slds-p-vertical_medium slds-p-horizontal_large"
+            >
+                <header class="">
+                    <lightning-breadcrumbs class="">
+                        <lightning-breadcrumb
+                            label="home"
+                            href="/"
+                        ></lightning-breadcrumb>
+                        <lightning-breadcrumb
+                            label={cmp}
+                            href={href}
+                        ></lightning-breadcrumb>
+                    </lightning-breadcrumbs>
 
-        <template if:true={error}>
-            <localdevserver-error error={error}></localdevserver-error>
-        </template>
-    </div>
+                    <h2
+                        class="component-name slds-card__header-title slds-truncate slds-text-heading_medium slds-m-top_small"
+                        title={cmp}
+                    >
+                        {cmp}
+                    </h2>
+                </header>
+            </div>
+
+            <div class="preview-content">
+                <div
+                    lwc:dom="manual"
+                    class="container slds-grid slds-grid_vertical-align-center slds-grid_align-center slds-p-around_large"
+                ></div>
+
+                <template if:true={error}>
+                    <localdevserver-error error={error}></localdevserver-error>
+                </template>
+            </div>
+        </article>
+    </localdevserver-layout-section>
 </template>

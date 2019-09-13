@@ -1,10 +1,16 @@
-:host {
-    background: white;
+.header {
+    border-bottom: 	1px solid #dddbda;
 }
 
-.preview {
-    background: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.preview-content {
+    background-color: #F3F2F2;
+}
+
+.container {
+    /* TODO remove */
+    min-height: 500px;
+}
+
+.component-name {
+    font-weight: bold;
 }
