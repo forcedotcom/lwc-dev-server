@@ -8,7 +8,6 @@
 import {
     apiMiddleware,
     compileErrorMiddleware,
-    endContext,
     resourceMiddleware,
     contextService,
     staticMiddleware,
@@ -92,7 +91,7 @@ export async function createServer(
         outputDir,
         basePath,
         srcDir
-    } = await startTalonContext(options);
+    } = await contextService.startContext(options);
     const sourceDir = path.resolve(srcDir);
     const app = express();
 
@@ -167,7 +166,7 @@ export async function startServer(
     });
 
     server.on('close', async () => {
-        endContext();
+        contextService.endContext();
         if (_RELOAD_RETURNED) {
             await _RELOAD_RETURNED.closeServer();
         }
@@ -354,12 +353,4 @@ export async function startLiveReload(
         };
         watch.watchTree(sourceDir, { ignoreDirectoryPattern }, watchCallback);
     });
-}
-
-async function startTalonContext(options: any) {
-    if (contextService.isEstablished()) {
-        return contextService.getContext();
-    } else {
-        return await contextService.startContext(options);
-    }
 }
