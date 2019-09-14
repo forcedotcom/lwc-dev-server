@@ -1,7 +1,7 @@
-import { MAX_RETRIES } from '../apexConstants';
+import { WAIT_FOR_ONE_APP_LOAD } from '../apexConstants';
 
 describe('apexConstants', () => {
-    it('MAX_RETRIES is a positive number', () => {
-        expect(MAX_RETRIES).toBeGreaterThan(0);
+    it('WAIT_FOR_ONE_APP_LOAD is a positive number', () => {
+        expect(WAIT_FOR_ONE_APP_LOAD).toBeGreaterThan(0);
     });
 });

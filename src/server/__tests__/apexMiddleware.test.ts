@@ -1,5 +1,4 @@
 import { ConnectionParams, ApexResourceLoader } from '../apexMiddleware';
-import { MAX_RETRIES } from '../apexConstants';
 
 function mockRequestFactory() {
     const original = require.requireActual('request-promise-native');
@@ -70,9 +69,6 @@ describe('apexMiddleware', () => {
             instanceUrl: 'http://url',
             accessToken: 'XXX'
         };
-        jest.doMock('../apexConstants', () => {
-            return { MAX_RETRIES: 1 };
-        });
         const middleware = getMiddleware(mockConnection);
         const req: any = {
             url: '/api/apex/execute',
@@ -515,9 +511,6 @@ describe('apexMiddleware', () => {
             instanceUrl: 'http://url',
             accessToken: 'XXX'
         };
-        jest.doMock('../apexConstants', () => {
-            return { MAX_RETRIES: 1 };
-        });
         const middleware = getMiddleware(mockConnection);
         const req: any = {
             url: '/api/apex/execute',
@@ -562,9 +555,6 @@ describe('apexMiddleware', () => {
             instanceUrl: 'http://url',
             accessToken: 'XXX'
         };
-        jest.doMock('../apexConstants', () => {
-            return { MAX_RETRIES: 1 };
-        });
         const middleware = getMiddleware(mockConnection);
         const req: any = {
             url: '/api/apex/execute',
