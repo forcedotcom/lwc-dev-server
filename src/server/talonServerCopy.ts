@@ -92,7 +92,7 @@ export async function createServer(
         outputDir,
         basePath,
         srcDir
-    } = await contextService.startContext(options);
+    } = await startTalonContext(options);
     const sourceDir = path.resolve(srcDir);
     const app = express();
 
@@ -354,4 +354,12 @@ export async function startLiveReload(
         };
         watch.watchTree(sourceDir, { ignoreDirectoryPattern }, watchCallback);
     });
+}
+
+async function startTalonContext(options: any) {
+    if (contextService.isEstablished()) {
+        return contextService.getContext();
+    } else {
+        return await contextService.startContext(options);
+    }
 }
