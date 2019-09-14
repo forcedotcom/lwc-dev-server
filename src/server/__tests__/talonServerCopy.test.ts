@@ -7,14 +7,16 @@ jest.mock('compression', () => {
 });
 jest.mock('@talon/compiler', () => {
     return {
-        startContext: jest.fn(() => {
-            return {
-                templateDir: '',
-                outputDir: '',
-                basePath: '',
-                srcDir: ''
-            };
-        }),
+        contextService: {
+            startContext: jest.fn(() => {
+                return {
+                    templateDir: '',
+                    outputDir: '',
+                    basePath: '',
+                    srcDir: ''
+                };
+            })
+        },
         resourceMiddleware: jest.fn(),
         staticMiddleware: jest.fn(),
         templateMiddleware: jest.fn(),

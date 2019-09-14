@@ -1969,9 +1969,6 @@
     ajv "^6.9.2"
     yamljs "^0.3.0"
 
-"@talon/navigation@file:lib/unpacked/talon-navigation-0.18.4":
-  version "0.0.0"
-
 "@talon/navigation@file:lib/unpacked/talon-navigation-0.18.5":
   version "0.18.5"
 
@@ -7719,8 +7716,8 @@ lru-queue@0.1:
   dependencies:
     es5-ext "~0.10.2"
 
-"lwc-components-lightning@file:lib/unpacked/lwc-components-lightning-1.4.1-alpha":
-  version "1.4.1-alpha"
+"lwc-components-lightning@file:lib/unpacked/lwc-components-lightning-1.3.0-alpha":
+  version "1.3.0-alpha"
 
 magic-string@^0.25.2, magic-string@~0.25.1:
   version "0.25.3"

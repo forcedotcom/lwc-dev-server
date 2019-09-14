@@ -7,7 +7,7 @@ const path = require('path');
 const shell = require('shelljs');
 
 const packages = {
-    'lwc-components-lightning': 'main',
+    'lwc-components-lightning': '1.3.0-alpha', // Cannot go with latest as it doesn't have scopedImports (labels). Temp bug I'm sure.
     '@lbf/interactions': 'latest', // TODO this is temporary I believe
     '@lbf/utils': 'latest', // TODO this is temporary I believe
     '@talon/force-modules': '0.0.5', // TODO issue with sldsv3

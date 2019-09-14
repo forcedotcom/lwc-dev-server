@@ -10,7 +10,7 @@ import {
     compileErrorMiddleware,
     endContext,
     resourceMiddleware,
-    startContext,
+    contextService,
     staticMiddleware,
     templateMiddleware
 } from '@talon/compiler';
@@ -87,9 +87,12 @@ export async function createServer(
     apiConfig: any = {},
     connection?: Connection
 ) {
-    const { templateDir, outputDir, basePath, srcDir } = await startContext(
-        options
-    );
+    const {
+        templateDir,
+        outputDir,
+        basePath,
+        srcDir
+    } = await contextService.startContext(options);
     const sourceDir = path.resolve(srcDir);
     const app = express();
 

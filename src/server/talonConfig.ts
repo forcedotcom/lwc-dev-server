@@ -12,6 +12,7 @@ export const talonConfig: {
 
 export const routes = [
     {
+        id: 'home',
         name: 'home',
         path: '/',
         isRoot: true,
@@ -19,6 +20,7 @@ export const routes = [
         label: 'Home'
     },
     {
+        id: 'preview',
         name: 'preview',
         path: '/lwc/preview/:cmp*',
         isRoot: false,
