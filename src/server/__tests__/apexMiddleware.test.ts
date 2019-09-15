@@ -1,4 +1,5 @@
 import { ConnectionParams, ApexResourceLoader } from '../apexMiddleware';
+import { WAIT_FOR_ONE_APP_LOAD } from '../apexConstants';
 
 function mockRequestFactory() {
     const original = require.requireActual('request-promise-native');
@@ -69,6 +70,9 @@ describe('apexMiddleware', () => {
             instanceUrl: 'http://url',
             accessToken: 'XXX'
         };
+        jest.doMock('../apexConstants', () => {
+            return { WAIT_FOR_ONE_APP_LOAD: 0 };
+        });
         const middleware = getMiddleware(mockConnection);
         const req: any = {
             url: '/api/apex/execute',
@@ -511,6 +515,9 @@ describe('apexMiddleware', () => {
             instanceUrl: 'http://url',
             accessToken: 'XXX'
         };
+        jest.doMock('../apexConstants', () => {
+            return { WAIT_FOR_ONE_APP_LOAD: 0 };
+        });
         const middleware = getMiddleware(mockConnection);
         const req: any = {
             url: '/api/apex/execute',
@@ -555,6 +562,9 @@ describe('apexMiddleware', () => {
             instanceUrl: 'http://url',
             accessToken: 'XXX'
         };
+        jest.doMock('../apexConstants', () => {
+            return { WAIT_FOR_ONE_APP_LOAD: 0 };
+        });
         const middleware = getMiddleware(mockConnection);
         const req: any = {
             url: '/api/apex/execute',
