@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import request, { RequestPromiseAPI } from 'request-promise-native';
 import { JSDOM, ResourceLoader, FetchOptions } from 'jsdom';
 import debug from 'debug';
-import { MAX_RETRIES } from './apexConstants';
+import { WAIT_FOR_ONE_APP_LOAD } from './apexConstants';
 import { Cookie } from 'request';
 import parse from 'co-body';
 import { URL } from 'url';
@@ -27,12 +27,15 @@ export class ApexResourceLoader extends ResourceLoader {
         // only load inline.js from the same origin. this is a hack of hacks
         // because by not loading aura framework js we ensure
         // window.Aura.initConfig is always set.
+        const instanceUrl = new URL(this.instanceUrl);
         const parsedUrl = new URL(url, this.instanceUrl);
         if (
-            parsedUrl.origin === this.instanceUrl &&
+            instanceUrl.origin == parsedUrl.origin &&
             parsedUrl.pathname.endsWith('/inline.js')
         ) {
-            log(`loading external url: ${url}`);
+            log(
+                `loading external url: ${url} as ${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+            );
             return this.orgRequest
                 .get({
                     url: `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
@@ -83,6 +86,12 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
             if (!cachedConfig) {
                 try {
                     cachedConfig = await getConfig(connectionParams);
+                    if (cachedConfig == null) {
+                        res.status(500).send(
+                            'error parsing or finding aura config: window.Aura not found'
+                        );
+                        return;
+                    }
                 } catch (e) {
                     console.error(e);
                     res.status(500).send(e.message);
@@ -106,7 +115,14 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
 
             try {
                 const parsed = JSON.parse(response);
-                res.type('json').send(parsed.actions[0].returnValue);
+                const actionResult = parsed.actions[0];
+                if (actionResult.state === 'ERROR') {
+                    res.status(500)
+                        .type('json')
+                        .send({ error: actionResult.error });
+                } else {
+                    res.type('json').send(actionResult.returnValue);
+                }
             } catch (e) {
                 log(`invalid apex response: ${response}`);
                 res.status(500).send(
@@ -197,44 +213,58 @@ async function getConfig(connectionParams: ConnectionParams) {
         orgRequest,
         connectionParams.instanceUrl
     );
-    const oneApp = new JSDOM(response, {
-        resources: resourceLoader,
-        runScripts: 'dangerously',
-        url: connectionParams.instanceUrl + ONE_APP_URL,
-        referrer: connectionParams.instanceUrl + ONE_APP_URL
-    });
-    let config;
-    let error;
-    // need to wait for external scripts to load...
-    for (let i = 0; i < MAX_RETRIES; i++) {
-        try {
-            const window = oneApp.window;
-            // @ts-ignore
-            const aura = window.Aura;
-            if (aura) {
-                if (aura.initConfig) {
-                    config = aura.initConfig;
-                } else {
-                    log(`window.Aura = ${JSON.stringify(aura, null, 2)}`);
-                    error = 'window.Aura missing initConfig property';
-                }
-                break;
-            } else {
-                error = 'window.Aura not found';
-            }
-        } catch (e) {
-            error = e;
-        }
-        await sleep(1000);
-    }
-    if (config === undefined) {
-        log(`response for one.app: ${response}`);
-        throw new Error(`error parsing or finding aura config: ${error}`);
-    }
-    log('retrieved aura configuration');
-    return config;
-}
 
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    const waitForInitConfig = new Promise((resolve, reject) => {
+        let config: any = null;
+        const Aura = {};
+        const oneApp = new JSDOM(response, {
+            resources: resourceLoader,
+            runScripts: 'dangerously',
+            url: connectionParams.instanceUrl + ONE_APP_URL,
+            referrer: connectionParams.instanceUrl + ONE_APP_URL,
+            beforeParse: window => {
+                Object.defineProperty(window, 'Aura', {
+                    get: () => Aura,
+                    set: () => {},
+                    enumerable: true
+                });
+                Object.defineProperty(Aura, 'frameworkJsReady', {
+                    get: () => false,
+                    set: () => {},
+                    enumerable: true
+                });
+                Object.defineProperty(Aura, 'initConfig', {
+                    get: () => {
+                        return config;
+                    },
+                    set: newConfig => {
+                        log(`Recieved initConfig ${newConfig}`);
+                        config = newConfig;
+                        resolve(config);
+                    },
+                    enumerable: true
+                });
+                // @ts-ignore
+                window.Aura = Aura;
+            }
+        });
+    });
+
+    const waitForInitConfigTimeout = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject('Timed out waiting for initConfig');
+        }, WAIT_FOR_ONE_APP_LOAD);
+    });
+
+    try {
+        const config = await Promise.race([
+            waitForInitConfig,
+            waitForInitConfigTimeout
+        ]);
+        log(`initConfig Contents = ${JSON.stringify(config)}`);
+        return config;
+    } catch (e) {
+        log(`Error waiting for initConfig: ${e}`);
+    }
+    return null;
 }
