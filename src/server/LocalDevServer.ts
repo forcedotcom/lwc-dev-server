@@ -104,7 +104,8 @@ export default class LocalDevServer {
             const config = {
                 templateDir: directory,
                 talonConfig,
-                srcDir: project.modulesSourceDirectory,
+                //FIXME: dont check this in
+                srcDir: path.join(__dirname, '..', '..', 'modules'), //project.modulesSourceDirectory,
                 views,
                 indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
                 routes,
@@ -147,8 +148,8 @@ export default class LocalDevServer {
                 next: () => void
             ) {
                 const tmp = new ComponentIndex(project);
-                const modules = tmp.getModules();
-                res.json(modules);
+                const metadata = tmp.getProjectMetadata();
+                res.json(metadata);
             });
             this.server = await startServer(
                 server,

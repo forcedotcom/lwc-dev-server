@@ -4,6 +4,11 @@ import { createElement } from 'talon/componentService';
 export default class Preview extends LightningElement {
     @track _cmp;
     @track error;
+    @track isLoading = true;
+
+    get cmp() {
+        return this._cmp;
+    }
 
     @api
     set cmp(c) {
@@ -15,10 +20,10 @@ export default class Preview extends LightningElement {
             })
             .catch(err => {
                 this.error = err;
+            })
+            .finally(() => {
+                this.isLoading = false;
             });
-    }
-    get cmp() {
-        return this._cmp;
     }
 
     get href() {

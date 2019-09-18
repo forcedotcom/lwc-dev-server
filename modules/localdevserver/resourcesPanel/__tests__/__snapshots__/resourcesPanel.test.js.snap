@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-resources-panel renders 1`] = `
+<localdevserver-resources-panel>
+  #shadow-root(open)
+    <section
+      class="resources-panel slds-card"
+    >
+      <div
+        class="header slds-grid slds-p-vertical_x-large slds-p-horizontal_large"
+      >
+        <header>
+          <h2
+            class="heading-text slds-card__header-title slds-truncate slds-text-heading_medium"
+          >
+            Resources
+          </h2>
+        </header>
+      </div>
+      <div
+        class="components-body slds-p-horizontal_large"
+      >
+        <div
+          class="resource slds-m-vertical_x-large slds-grid"
+        >
+          <div
+            class="slds-m-right_large"
+          >
+            <lightning-icon>
+              #shadow-root(open)
+            </lightning-icon>
+          </div>
+          <div>
+            <h3
+              class="resource-heading slds-text-body_regular slds-m-bottom_xx-small"
+            >
+              Component Library
+            </h3>
+            <p
+              class="slds-p-right_medium"
+            >
+              The Component Library is the Lightning Components developer reference. Rapidly develop apps with our building blocks.
+            </p>
+            <a
+              class="slds-button slds-button_neutral resource-button slds-m-top_medium"
+              href="https://developer.salesforce.com/docs/component-library"
+            >
+              More Info
+            </a>
+          </div>
+        </div>
+        <div
+          class="resource slds-m-vertical_x-large slds-grid"
+        >
+          <div
+            class="slds-m-right_large"
+          >
+            <lightning-icon>
+              #shadow-root(open)
+            </lightning-icon>
+          </div>
+          <div>
+            <h3
+              class="resource-heading slds-text-body_regular slds-m-bottom_xx-small"
+            >
+              VS Code Extensions
+            </h3>
+            <p
+              class="slds-p-right_medium"
+            >
+              This extension pack includes tools for development on the Salesforce platform in the lightweight, extensible VS Code editor.
+            </p>
+            <a
+              class="slds-button slds-button_neutral resource-button slds-m-top_medium"
+              href="https://forcedotcom.github.io/salesforcedx-vscode"
+            >
+              More Info
+            </a>
+          </div>
+        </div>
+        <div
+          class="resource slds-m-vertical_x-large slds-grid"
+        >
+          <div
+            class="slds-m-right_large"
+          >
+            <lightning-icon>
+              #shadow-root(open)
+            </lightning-icon>
+          </div>
+          <div>
+            <h3
+              class="resource-heading slds-text-body_regular slds-m-bottom_xx-small"
+            >
+              Issues and Feedback
+            </h3>
+            <p
+              class="slds-p-right_medium"
+            >
+              Visit the Github Repository to submit issues and feedback.
+            </p>
+            <a
+              class="slds-button slds-button_neutral resource-button slds-m-top_medium"
+              href="https://github.com/forcedotcom/lwc-dev-server"
+            >
+              Go to GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+</localdevserver-resources-panel>
+`;

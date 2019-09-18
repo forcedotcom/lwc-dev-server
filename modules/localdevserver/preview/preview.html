@@ -25,12 +25,19 @@
                 </header>
             </div>
 
-            <div class="preview-content">
+            <div
+                class="preview-content slds-grid slds-grid_vertical-align-center slds-grid_align-center"
+            >
                 <div
                     lwc:dom="manual"
-                    class="container slds-grid slds-grid_vertical-align-center slds-grid_align-center slds-p-around_large"
+                    class="container slds-p-around_large"
                 ></div>
-
+                <template if:true={isLoading}>
+                    <lightning-spinner
+                        alternative-text="Loading"
+                        size="large"
+                    ></lightning-spinner>
+                </template>
                 <template if:true={error}>
                     <localdevserver-error error={error}></localdevserver-error>
                 </template>

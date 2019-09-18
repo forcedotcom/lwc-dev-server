@@ -1,6 +1,14 @@
+.components-panel {
+    height: 100%;
+}
+
 .header {
     padding: 1.25rem 1.5rem;
     border-bottom: 	1px solid #dddbda;
+}
+
+.project-name {
+    max-width: 33%; /* TODO */
 }
 
 .project-name-text {
@@ -35,8 +43,6 @@
     left: 1rem;
 }
 
-
-
 .packages-list {
     background-color: #fafafb;
     max-width: 300px;
@@ -44,7 +50,8 @@
 }
 
 .components-list {
-    max-height: 60vh; /* TODO */
+     /* TODO */
+    max-height: 60vh;
 }
 
 .components-list .list-item + .list-item {
