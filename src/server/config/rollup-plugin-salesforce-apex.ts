@@ -1,8 +1,3 @@
-/**
- *
- *
- */
-
 const APEX_REGEX = /^(@salesforce\/apex)(?:\/([A-Za-z0-9]+\.[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)?))?$/;
 
 function matchesApexScopedModule(id: string) {
@@ -44,19 +39,19 @@ export default () => {
                         .map(content => JSON.stringify(content));
 
                     return `
-                    import { getApexInvoker, generateGetApexWireAdapter } from 'force/lds';
-                    import { register } from 'wire-service';
+import { getApexInvoker, generateGetApexWireAdapter } from 'force/lds';
+import { register } from 'wire-service';
 
-                    const apexInvoker = getApexInvoker(${namespace}, ${classname}, ${method}, false);
-                    register(apexInvoker, generateGetApexWireAdapter(${namespace}, ${classname}, ${method}, false));
-                    export default apexInvoker;
-                    `;
+const apexInvoker = getApexInvoker(${namespace}, ${classname}, ${method}, false);
+register(apexInvoker, generateGetApexWireAdapter(${namespace}, ${classname}, ${method}, false));
+export default apexInvoker;
+`;
                 } else if (scope) {
                     // otherwise, handle @salesforce/apex
                     // refreshApex and getSObjectValue special case
                     return `
-                    export { refresh as refreshApex, getSObjectValue } from 'force/lds';
-                    `;
+export { refresh as refreshApex, getSObjectValue } from 'force/lds';
+`;
                 }
             }
             return null;
