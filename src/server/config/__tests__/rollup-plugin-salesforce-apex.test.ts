@@ -7,7 +7,7 @@ describe('salesforceApexWireResolver', () => {
 
     describe('resolveId', () => {
         it('Resolves @salesforce imports', () => {
-            const id = '@salesforce/apex/Conroller';
+            const id = '@salesforce/apex/Conroller.method';
 
             const plugin = salesforceApexWireResolver();
 
@@ -17,7 +17,7 @@ describe('salesforceApexWireResolver', () => {
 
     describe('load', () => {
         it('loads the apex invoker from lds', () => {
-            const id = '@salesforce/apex/Conroller';
+            const id = '@salesforce/apex/Conroller.method';
 
             const plugin = salesforceApexWireResolver();
             const actual = plugin.load(id);
