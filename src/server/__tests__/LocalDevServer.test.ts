@@ -108,6 +108,43 @@ describe('LocalDevServer', () => {
             );
         });
 
+        it('configures the modulePaths with the 218 and 220 depenencies when using 220', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath, version: '46.0' });
+            const mockConn: any = {};
+
+            //require.resolve
+            jest.spyOn(require, 'resolve').mockImplementation(
+                () => 'node_modules/lwc-dev-server-runtime-lib/index.js'
+            );
+
+            jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+            const server = new LocalDevServer();
+            await server.start(project, mockConn);
+            // require.resolve('lwc-dev-server-runtime-lib')
+            const expected = [
+                path.resolve(
+                    __dirname,
+                    '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-218'
+                ),
+                path.resolve(
+                    __dirname,
+                    '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-220'
+                )
+            ];
+
+            expect(talonServer.createServer).toBeCalledWith(
+                expect.objectContaining({
+                    modulePaths: expect.arrayContaining(expected)
+                }),
+                expect.anything(),
+                mockConn
+            );
+
+            jest.restoreAllMocks();
+        });
+
         it('configures the modulePaths with the matching version resources directory', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath, version: '45.0' });
