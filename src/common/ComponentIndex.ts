@@ -184,19 +184,19 @@ export default class ComponentIndex {
     }
 }
 
-interface ProjectMetadata {
+export interface ProjectMetadata {
     projectName: string;
     packages: PackageMetadata[];
 }
 
-interface PackageMetadata {
+export interface PackageMetadata {
     /** unique project identifier-- TODO: are package names guaranteed unique? */
     key: string;
     packageName: string;
     components: PackageComponent[];
 }
 
-interface PackageComponent {
+export interface PackageComponent {
     htmlName: string;
     jsName: string;
     name: string;

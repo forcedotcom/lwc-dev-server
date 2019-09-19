@@ -1,6 +1,5 @@
 import fs from 'fs';
 import mock from 'mock-fs';
-import { ls } from 'shelljs';
 import ComponentIndex from '../ComponentIndex';
 import Project from '../Project';
 
@@ -36,11 +35,17 @@ describe('ComponentIndex getModules()', () => {
 
         const expected: object[] = [
             {
-                title: 'namespace-module',
+                htmlName: 'namespace-module',
+                jsName: 'namespace/module',
+                namespace: 'namespace',
+                name: 'module',
                 url: '/lwc/preview/namespace/module'
             },
             {
-                title: 'namespace-module2',
+                htmlName: 'namespace-module2',
+                jsName: 'namespace/module2',
+                namespace: 'namespace',
+                name: 'module2',
                 url: '/lwc/preview/namespace/module2'
             }
         ];
@@ -77,11 +82,17 @@ describe('ComponentIndex getModules()', () => {
 
         const expected: object[] = [
             {
-                title: 'c-module',
+                htmlName: 'c-module',
+                jsName: 'c/module',
+                namespace: 'c',
+                name: 'module',
                 url: '/lwc/preview/c/module'
             },
             {
-                title: 'c-module2',
+                htmlName: 'c-module2',
+                jsName: 'c/module2',
+                namespace: 'c',
+                name: 'module2',
                 url: '/lwc/preview/c/module2'
             }
         ];

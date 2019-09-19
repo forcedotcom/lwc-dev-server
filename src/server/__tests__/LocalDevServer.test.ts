@@ -6,7 +6,10 @@ import * as talonServer from '../talonServerCopy';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 import cpx from 'cpx';
 import os from 'os';
-import ComponentIndex from '../../common/ComponentIndex';
+import ComponentIndex, {
+    ProjectMetadata,
+    PackageComponent
+} from '../../common/ComponentIndex';
 import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import fs from 'fs';
 import { talonConfig } from '../talonConfig';
@@ -343,8 +346,25 @@ describe('LocalDevServer', () => {
             const project = mockProject({
                 projectPath
             });
-            const modulesList = ['ui:module'];
-
+            const modulesList: PackageComponent[] = [
+                {
+                    htmlName: 'ui-module',
+                    jsName: 'ui/module',
+                    namespace: 'ui',
+                    name: 'module',
+                    url: 'url'
+                }
+            ];
+            const projectData: ProjectMetadata = {
+                projectName: 'test',
+                packages: [
+                    {
+                        key: 'package-1',
+                        packageName: 'LWCRecipes',
+                        components: modulesList
+                    }
+                ]
+            };
             const server = new LocalDevServer();
             await server.start(project);
 
@@ -355,12 +375,15 @@ describe('LocalDevServer', () => {
             };
             // @ts-ignore
             ComponentIndex.mockImplementation(() => {
-                return { getModules: jest.fn(() => ['ui:module']) };
+                return {
+                    getModules: jest.fn(() => modulesList),
+                    getProjectMetadata: jest.fn(() => projectData)
+                };
             });
 
             routeHandler(jest.fn(), response, jest.fn());
 
-            expect(response.json.mock.calls[0][0]).toEqual(modulesList);
+            expect(response.json.mock.calls[0][0]).toEqual(projectData);
         });
 
         describe('telemetry', () => {
