@@ -38,6 +38,10 @@ export default () => {
                         .reverse()
                         .map(content => JSON.stringify(content));
 
+                    // Talon has a similar resolver for @salesforce/apex
+                    // But it now relies on the LDS package (224) to do the register call
+                    // Since that is not present in 220 or 222, we need this rollup plugin
+                    // from Talon's implementation of 222 LDS to call the register method.
                     return `
 import { getApexInvoker, generateGetApexWireAdapter } from 'force/lds';
 import { register } from 'wire-service';

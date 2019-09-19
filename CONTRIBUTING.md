@@ -73,7 +73,7 @@ node_modules/@talon/compiler
 
 ## Updating Talon/Local Dependencies
 
-Non-public dependencies from nexus such as @talon and lwc-components-lightning are temporarily consumed as tarballs checked into this repo. This will be done until those packages are available on public npm.
+Non-public dependencies from nexus such as @talon are temporarily consumed as tarballs checked into this repo. This will be done until those packages are available on public npm.
 
 Update everything to the 'latest' from nexus:
 

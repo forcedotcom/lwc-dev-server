@@ -1880,9 +1880,9 @@
   integrity sha512-6ckxMjBBD8URvjB6J3NcnuAn5Pkl7t3TizAg+xdlzzQGSPSmBcXf8KoIH0ua/i+tio+ZRUHEXp0HEmvaR4kt0w==
 
 "@types/chai@*":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.2.tgz#6b825013863d04868c15624ec8b7fdced88a47c6"
-  integrity sha512-8V2aCcPM3WLuJvJpF6N60uUvdZb7NHjpjQlLk1QmZbTP4XZET/FX0c3TJ3K7qt4L98FS1Pifa8BVofTVuJFWVA==
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.3.tgz#419477a3d5202bad19e14c787940a61dc9ea6407"
+  integrity sha512-VRw2xEGbll3ZiTQ4J02/hUjNqZoue1bMhoo2dgM2LXjDdyaq4q80HgBDHwpI0/VKlo4Eg+BavyQMv/NYgTetzA==
 
 "@types/chokidar@^1.7.5":
   version "1.7.5"
@@ -2679,13 +2679,13 @@ autoprefixer@^6.3.1:
     postcss-value-parser "^3.2.3"
 
 aws-sdk@^2.490.0:
-  version "2.529.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.529.0.tgz#97cc8017fd5d6e3c9270f141cb8efa24796fc9d7"
-  integrity sha512-CtRxgI4ZVZ8cdFCddlIVIy06cEW5gzTJBpyouZ/ySgZ6BiYj+0e77LwoNsnQE2nUNWCbydTLn3dbz4ZZMDpuIg==
+  version "2.531.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.531.0.tgz#953151de58ec2441f405133e26695123ccc28ebc"
+  integrity sha512-suHIJZvDhy0YmU3dZL9Xf0NBTTokLDtW+7EqoiB7Z6Jp41VzudwT8bRiu4VwdUdxa6NdTG9i4daAFftNPIowrg==
   dependencies:
     buffer "4.9.1"
     events "1.1.1"
-    ieee754 "1.1.8"
+    ieee754 "1.1.13"
     jmespath "0.15.0"
     querystring "0.2.0"
     sax "1.2.1"
@@ -4392,9 +4392,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.247:
-  version "1.3.260"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.260.tgz#ffd686b4810bab0e1a428e7af5f08c21fe7c1fa2"
-  integrity sha512-wGt+OivF1C1MPwaSv3LJ96ebNbLAWlx3HndivDDWqwIVSQxmhL17Y/YmwUdEMtS/bPyommELt47Dct0/VZNQBQ==
+  version "1.3.262"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.262.tgz#8022933e46e5a2c7b0fd1565d215872326520a7c"
+  integrity sha512-YFr53qZWr2pWkiTUorWEhAweujdf0ALiUp8VkNa0WGtbMVR+kZ8jNy3VTCemLsA4sT6+srCqehNn8TEAD0Ngrw==
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
@@ -4539,9 +4539,9 @@ eslint-config-prettier@^6.0.0:
     get-stdin "^6.0.0"
 
 eslint-plugin-prettier@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.1.0.tgz#8695188f95daa93b0dc54b249347ca3b79c4686d"
-  integrity sha512-XWX2yVuwVNLOUhQijAkXz+rMPPoCr7WFiAl8ig6I7Xn+pPVhDhzg4DxHpmbeb0iqjO9UronEA3Tb09ChnFVHHA==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.1.1.tgz#507b8562410d02a03f0ddc949c616f877852f2ba"
+  integrity sha512-A+TZuHZ0KU0cnn56/9mfR7/KjUJ9QNVXUhwvRFSR7PGPe0zQR6PTkmyqg1AtUUEOzTqeRsUwyKFh0oVZKVCrtA==
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
@@ -4738,10 +4738,10 @@ event-emitter@^0.3.5:
     d "1"
     es5-ext "~0.10.14"
 
-eventemitter3@^3.0.0:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.2.tgz#2d3d48f9c346698fce83a85d7d664e98535df6e7"
-  integrity sha512-tvtQIeLVHjDkJYnzf2dgVMxfuSGJeM/7UCG17TT4EumTfNtF+0nebF/4zWOIkCreAbtNqhGEboB6BWrwqNaw4Q==
+eventemitter3@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.0.tgz#d65176163887ee59f386d64c82610b696a4a74eb"
+  integrity sha512-qerSRB0p+UDEssxTtm6EDKcE7W4OaoisfIMl4CngyEhjpYglocpNg6UEqCvemdGhosAsg4sO2dXJOdyBifPGCg==
 
 events@1.1.1:
   version "1.1.1"
@@ -5764,11 +5764,11 @@ http-proxy-middleware@^0.19.1:
     micromatch "^3.1.10"
 
 http-proxy@^1.17.0:
-  version "1.17.0"
-  resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.17.0.tgz#7ad38494658f84605e2f6db4436df410f4e5be9a"
-  integrity sha512-Taqn+3nNvYRfJ3bGvKfBSRwy1v6eePlm3oc/aWVxZp57DQr5Eq3xhKJi7Z4hZpS8PC3H4qI+Yly5EmFacGuA/g==
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.18.0.tgz#dbe55f63e75a347db7f3d99974f2692a314a6a3a"
+  integrity sha512-84I2iJM/n1d4Hdgc6y2+qY5mDaz2PUVjlg9znE9byl+q0uC3DeByqBGReQu5tpLK0TAqTIXScRUV+dg7+bUPpQ==
   dependencies:
-    eventemitter3 "^3.0.0"
+    eventemitter3 "^4.0.0"
     follow-redirects "^1.0.0"
     requires-port "^1.0.0"
 
@@ -5810,12 +5810,7 @@ iconv-lite@0.4.24, iconv-lite@^0.4.24, iconv-lite@^0.4.4:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
-ieee754@1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
-  integrity sha1-vjPUCsEO8ZJnAfbwii2G+/0a0+Q=
-
-ieee754@^1.1.4:
+ieee754@1.1.13, ieee754@^1.1.4:
   version "1.1.13"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.13.tgz#ec168558e95aa181fd87d37f55c32bbcb6708b84"
   integrity sha512-4vf7I2LYV/HaWerSo3XmlMkp5eZ83i+/CDluXi/IGTs/O1sejBNhTtnxzmRZfvOUqj7lZjqHkeTvpgSFDlWZTg==
@@ -7382,9 +7377,6 @@ lru-queue@0.1:
   dependencies:
     es5-ext "~0.10.2"
 
-"lwc-components-lightning@file:lib/unpacked/lwc-components-lightning-1.3.0-alpha":
-  version "1.3.0-alpha"
-
 "lwc-dev-server-runtime-lib@file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.36":
   version "0.0.0"
 
@@ -7603,10 +7595,10 @@ minimist@~0.0.1:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
   integrity sha1-3j+YVD2/lggr5IrRoMfNqDYwHc8=
 
-minipass@^2.2.1, minipass@^2.3.5, minipass@^2.6.0:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/minipass/-/minipass-2.6.2.tgz#c3075a22680b3b1479bae5915904cb1eba50f5c0"
-  integrity sha512-38Jwdc8AttUDaQAIRX8Iaw3QoCDWjAwKMGeGDF9JUi9QCPMjH5qAQg/hdO8o1nC7Nmh1/CqzMg5FQPEKuKwznQ==
+minipass@^2.2.1, minipass@^2.6.0, minipass@^2.6.4:
+  version "2.6.5"
+  resolved "https://registry.yarnpkg.com/minipass/-/minipass-2.6.5.tgz#1c245f9f2897f70fd4a219066261ce6c29f80b18"
+  integrity sha512-ewSKOPFH9blOLXx0YSE+mbrNMBFPS+11a2b03QZ+P4LVrUHW/GAlqeYC7DBknDyMWkHzrzTpDhUvy7MUxqyrPA==
   dependencies:
     safe-buffer "^5.1.2"
     yallist "^3.0.0"
@@ -10183,13 +10175,13 @@ tar-stream@^2.0.0, tar-stream@^2.1.0:
     readable-stream "^3.1.1"
 
 tar@^4:
-  version "4.4.10"
-  resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.10.tgz#946b2810b9a5e0b26140cf78bea6b0b0d689eba1"
-  integrity sha512-g2SVs5QIxvo6OLp0GudTqEf05maawKUxXru104iaayWA09551tFCTI8f1Asb4lPfkBr91k07iL4c11XO3/b0tA==
+  version "4.4.11"
+  resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.11.tgz#7ac09801445a3cf74445ed27499136b5240ffb73"
+  integrity sha512-iI4zh3ktLJKaDNZKZc+fUONiQrSn9HkCFzamtb7k8FFmVilHVob7QsLX/VySAW8lAviMzMbFw4QtFb4errwgYA==
   dependencies:
     chownr "^1.1.1"
     fs-minipass "^1.2.5"
-    minipass "^2.3.5"
+    minipass "^2.6.4"
     minizlib "^1.2.1"
     mkdirp "^0.5.0"
     safe-buffer "^5.1.2"
@@ -10765,10 +10757,10 @@ watch@^1.0.2:
     exec-sh "^0.2.0"
     minimist "^1.2.0"
 
-webdriver@^5.13.0:
-  version "5.13.0"
-  resolved "https://registry.yarnpkg.com/webdriver/-/webdriver-5.13.0.tgz#bf11f0c827f9af7c73a952c03508ed4c0a8e27bb"
-  integrity sha512-izg+LjNDW2xls5t+5rZVIh86MU8gnqEvhWct5XwORDkcbsF/L6SCNm+K2Jj2l/OzzOCfENM+q1/C8mekqa0gWw==
+webdriver@^5.13.1:
+  version "5.13.1"
+  resolved "https://registry.yarnpkg.com/webdriver/-/webdriver-5.13.1.tgz#24f2839a9af8bd932057487749aab67efc21e59d"
+  integrity sha512-Gvsf2o8jrfZMgLWIC9C9bcT5T0OZvNHq7WO5PhNSB2pbg3ypSj4kk4zJZSyP331FTgib+qxneRtg7r/3Ea7mLw==
   dependencies:
     "@wdio/config" "^5.13.0-alpha.0"
     "@wdio/logger" "^5.12.1"
@@ -10778,9 +10770,9 @@ webdriver@^5.13.0:
     request "^2.83.0"
 
 webdriverio@^5.11.0:
-  version "5.13.0"
-  resolved "https://registry.yarnpkg.com/webdriverio/-/webdriverio-5.13.0.tgz#41da85abd5ef0832e6219e3c19ab138bc085666a"
-  integrity sha512-CM/+K+F/3YRfTs4YXwPLbluqP2CEe/UdvELJLyB1zouZ7pVvGr9u2N74qSWZGl/XyqcLXyVEVfk1jXndwpm3vw==
+  version "5.13.1"
+  resolved "https://registry.yarnpkg.com/webdriverio/-/webdriverio-5.13.1.tgz#39fe5ca96bd41b46586dc0c14c24d14a1aab39bf"
+  integrity sha512-Orx521tRUPqGGJH5fPbZLZ7ipm6RRpCg9s/puaFkl79cIQoNaO7wcbDCktr6jGNGbihNxwj8f6qaSmDYNE6Ang==
   dependencies:
     "@wdio/config" "^5.13.0-alpha.0"
     "@wdio/logger" "^5.12.1"
@@ -10796,7 +10788,7 @@ webdriverio@^5.11.0:
     resq "^1.6.0"
     rgb2hex "^0.1.0"
     serialize-error "^4.1.0"
-    webdriver "^5.13.0"
+    webdriver "^5.13.1"
 
 webidl-conversions@^4.0.2:
   version "4.0.2"
