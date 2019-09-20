@@ -11,21 +11,21 @@
                             href="/"
                         ></lightning-breadcrumb>
                         <lightning-breadcrumb
-                            label={cmp}
+                            label={componentLabel}
                             href={href}
                         ></lightning-breadcrumb>
                     </lightning-breadcrumbs>
 
                     <h2
                         class="component-name slds-card__header-title slds-truncate slds-text-heading_medium slds-m-top_small"
-                        title={cmp}
+                        title={componentLabel}
                     >
-                        {cmp}
+                        {componentLabel}
                     </h2>
                 </header>
                 <div class="header-buttons">
                     <a class="slds-button slds-button_outline-brand" href="/">Go Back</a>
-                    <a class="slds-button slds-button_brand" href="javascript:void(0)">View in VS Code</a>
+                    <a class="slds-button slds-button_brand" href={vscodeHref}>View in VS Code</a>
                 </div>
             </div>
 

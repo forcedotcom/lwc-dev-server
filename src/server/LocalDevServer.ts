@@ -142,15 +142,27 @@ export default class LocalDevServer {
 
             // Start the talon site.
             const server = await createServer(config, proxyConfig, connection);
-            server.use('/componentList', function(
-                req: any,
-                res: any,
-                next: () => void
-            ) {
-                const tmp = new ComponentIndex(project);
-                const metadata = tmp.getProjectMetadata();
-                res.json(metadata);
-            });
+
+            server.get(
+                '/localdev/localdev.json',
+                (req: any, res: any, next: () => void) => {
+                    const componentIndex = new ComponentIndex(project);
+                    const json = componentIndex.getProjectMetadata();
+                    res.json(json);
+                }
+            );
+            server.get(
+                '/localdev/localdev.js',
+                (req: any, res: any, next: () => void) => {
+                    const componentIndex = new ComponentIndex(project);
+                    const json = componentIndex.getProjectMetadata();
+                    const LocalDev = {
+                        project: json
+                    };
+                    res.type('js');
+                    res.send(`window.LocalDev = ${JSON.stringify(LocalDev)};`);
+                }
+            );
             this.server = await startServer(
                 server,
                 '',

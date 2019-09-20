@@ -1,5 +1,5 @@
 import { LightningElement, track } from 'lwc';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { getProjectMetadata } from 'localdevserver/projectMetadataLib';
 
 export default class ComponentsPanel extends LightningElement {
     @track projectName;
@@ -64,31 +64,11 @@ export default class ComponentsPanel extends LightningElement {
     constructor() {
         super();
 
-        // fetch data from the server
-        // FIXME: this results in a UX flicker that could be improved
-        fetch('/componentList')
-            .then(async response => {
-                if (response.ok) {
-                    return response.json();
-                }
-
-                // we had some kind of error
-                // TODO: does ShowToastEvent work?
-                const text = await response.text();
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error',
-                        message: `Error ${response.status} loading components: ${text}`,
-                        variant: 'error'
-                    })
-                );
-                return [];
-            })
-            .then(data => {
-                this.projectName = data.projectName;
-                this.packages = data.packages;
-                this.selectedPackage = this.packages[0].key;
-            });
+        getProjectMetadata().then(data => {
+            this.projectName = data.projectName;
+            this.packages = data.packages;
+            this.selectedPackage = this.packages[0].key;
+        });
     }
 
     onSearchChange(e) {

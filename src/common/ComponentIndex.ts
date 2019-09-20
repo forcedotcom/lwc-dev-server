@@ -62,7 +62,8 @@ export default class ComponentIndex {
                     htmlName,
                     namespace,
                     name,
-                    url
+                    url,
+                    path: path.normalize(modulePath)
                 });
             }
         }
@@ -177,7 +178,8 @@ export default class ComponentIndex {
         const defaultPackage = {
             key: 'package_1',
             packageName: defaultPackageName,
-            components: []
+            components: [],
+            isDefault: true
         };
         packages.push(defaultPackage);
         return metadata;
@@ -192,6 +194,7 @@ export interface ProjectMetadata {
 export interface PackageMetadata {
     /** unique project identifier-- TODO: are package names guaranteed unique? */
     key: string;
+    isDefault: boolean;
     packageName: string;
     components: PackageComponent[];
 }
@@ -202,4 +205,5 @@ export interface PackageComponent {
     name: string;
     namespace: string;
     url: string;
+    path: string;
 }
