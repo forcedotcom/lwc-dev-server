@@ -1254,6 +1254,10 @@
   resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-0.37.4-220.2.tgz#9a29698dea1eed9fbdb5542a4c18a3fe14628884"
   integrity sha512-fIetApE3x/dNo515Or1psyOta0iLQqLfq5frr9bqyorybpyqxWSPY7hyi2NX+NPXJWyjvI0g3V0vQSaKw329Kg==
 
+"@lwc/errors@1.0.2-222.17":
+  version "1.0.2-222.17"
+  resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-1.0.2-222.17.tgz#036f0c21f7d1dff32bd27a0da932a12d5fc2fb1f"
+  integrity sha512-G4PS1DrmjbmxWCbn9xJ8mY7irXQ/5Xjf8PFaQiGx5kYpazFxQT+9aBBfK+q/9tCJq69YVXuaK103hFzLuivWDw==
 
 "@lwc/errors@1.0.3":
   version "1.0.3"
@@ -1337,6 +1341,10 @@
   dependencies:
     glob "^7.1.2"
 
+"@lwc/module-resolver@1.0.2-222.17":
+  version "1.0.2-222.17"
+  resolved "https://registry.yarnpkg.com/@lwc/module-resolver/-/module-resolver-1.0.2-222.17.tgz#c3c6069a8921835bcd0bdb68882b8b099905f252"
+  integrity sha512-juLaXGKsl4TTYGd9szcJRSWyGNLatV50HVqkzvHPshJ6+NaB+dV81hKoleD2exwtRB2ohkai1BNnXRPZ/KDDdg==
   dependencies:
     fast-glob "~2.2.6"
 
@@ -3449,9 +3457,9 @@ chokidar@^1.6.0:
     fsevents "^1.0.0"
 
 chokidar@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.1.0.tgz#ff23d077682a90eadd209bfa76eb10ed6d359668"
-  integrity sha512-6vZfo+7W0EOlbSo0nhVKMz4yyssrwiPbBZ8wj1lq8/+l4ZhGZ2U4Md7PspvmijXp1a26D3B7AHEBmIB7aVtaOQ==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.1.1.tgz#27e953f3950336efcc455fd03e240c7299062003"
+  integrity sha512-df4o16uZmMHzVQwECZRHwfguOt5ixpuQVaZHjYMvYisgKhE+JXwcj/Tcr3+3bu/XeOJQ9ycYmzu7Mv8XrGxJDQ==
   dependencies:
     anymatch "^3.1.0"
     braces "^3.0.2"
@@ -7369,10 +7377,8 @@ lru-queue@0.1:
   dependencies:
     es5-ext "~0.10.2"
 
-  version "1.2.4-alpha"
-
 "lwc-dev-server-runtime-lib@file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.36":
-  version "0.0.0"
+  version "1.0.36"
 
 magic-string@^0.25.2, magic-string@~0.25.1:
   version "0.25.3"
