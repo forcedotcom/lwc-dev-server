@@ -8,8 +8,8 @@ import cpx from 'cpx';
 import os from 'os';
 import ComponentIndex from '../../common/ComponentIndex';
 import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
-//import { mockFs } from 'mock-fs';
 import fs from 'fs';
+import { talonConfig } from '../talonConfig';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -65,6 +65,7 @@ describe('LocalDevServer', () => {
 
     afterEach(() => {
         jest.resetAllMocks();
+        talonConfig.rollup.plugins.length = 0;
     });
 
     describe('start()', () => {
@@ -297,6 +298,28 @@ describe('LocalDevServer', () => {
 
             expect(config.talonConfig.rollup.plugins[0].name).toBe(
                 'rollup-plugin-custom-components'
+            );
+        });
+
+        it('adds salesforce apex wire resolver', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+            Object.defineProperty(project, 'isSfdx', {
+                get: () => {
+                    return true;
+                }
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const call = (talonServer.createServer as any).mock.calls[0];
+            const config = call[0];
+
+            expect(config.talonConfig.rollup.plugins[1].name).toBe(
+                'rollup-plugin-apex'
             );
         });
 

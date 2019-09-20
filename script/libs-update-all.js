@@ -7,7 +7,6 @@ const path = require('path');
 const shell = require('shelljs');
 
 const packages = {
-    'lwc-components-lightning': 'main',
     '@lbf/interactions': 'latest', // TODO this is temporary I believe
     '@lbf/utils': 'latest', // TODO this is temporary I believe
     '@talon/force-modules': '0.0.5', // TODO issue with sldsv3
@@ -19,7 +18,7 @@ const packages = {
 };
 
 const registry =
-    'https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/';
+    'https://nexus-proxy-prd.soma.salesforce.com/nexus/content/groups/npm-all/';
 
 // clear previous versions
 const dest = path.join(__dirname, '../lib');
