@@ -61,7 +61,8 @@ describe('LocalDevServer', () => {
         jest.spyOn(talonServer, 'createServer').mockImplementation((): any => {
             return {
                 start: jest.fn(),
-                use: jest.fn()
+                use: jest.fn(),
+                get: jest.fn()
             };
         });
     });
@@ -352,13 +353,15 @@ describe('LocalDevServer', () => {
                     jsName: 'ui/module',
                     namespace: 'ui',
                     name: 'module',
-                    url: 'url'
+                    url: 'url',
+                    path: 'path'
                 }
             ];
             const projectData: ProjectMetadata = {
                 projectName: 'test',
                 packages: [
                     {
+                        isDefault: true,
                         key: 'package-1',
                         packageName: 'LWCRecipes',
                         components: modulesList

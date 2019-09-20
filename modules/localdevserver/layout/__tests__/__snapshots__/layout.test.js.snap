@@ -3,18 +3,6 @@
 exports[`localdevserver-layout renders 1`] = `
 <localdevserver-layout>
   #shadow-root(open)
-    <a
-      class="slds-assistive-text slds-assistive-text_focus skip-link"
-      href="#skip-target-nav"
-    >
-      Skip to Navigation
-    </a>
-    <a
-      class="slds-assistive-text slds-assistive-text_focus skip-link"
-      href="#skip-target-content"
-    >
-      Skip to Main Content
-    </a>
     <slot
       name="header"
     />

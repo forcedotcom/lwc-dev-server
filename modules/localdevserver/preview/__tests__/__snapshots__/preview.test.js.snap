@@ -27,9 +27,9 @@ exports[`preview displays errors 1`] = `
             </lightning-breadcrumbs>
             <h2
               class="component-name slds-card__header-title slds-truncate slds-text-heading_medium slds-m-top_small"
-              title="c/foo"
+              title="c-foo"
             >
-              c/foo
+              c-foo
             </h2>
           </header>
           <div
@@ -43,7 +43,7 @@ exports[`preview displays errors 1`] = `
             </a>
             <a
               class="slds-button slds-button_brand"
-              href="javascript:void(0)"
+              href="javascript:void(0);"
             >
               View in VS Code
             </a>
@@ -176,7 +176,7 @@ exports[`preview renders 1`] = `
             </a>
             <a
               class="slds-button slds-button_brand"
-              href="javascript:void(0)"
+              href="javascript:void(0);"
             >
               View in VS Code
             </a>
@@ -224,9 +224,9 @@ exports[`preview renders a component 1`] = `
             </lightning-breadcrumbs>
             <h2
               class="component-name slds-card__header-title slds-truncate slds-text-heading_medium slds-m-top_small"
-              title="c/foo"
+              title="c-foo"
             >
-              c/foo
+              c-foo
             </h2>
           </header>
           <div
@@ -240,7 +240,7 @@ exports[`preview renders a component 1`] = `
             </a>
             <a
               class="slds-button slds-button_brand"
-              href="javascript:void(0)"
+              href="javascript:void(0);"
             >
               View in VS Code
             </a>
