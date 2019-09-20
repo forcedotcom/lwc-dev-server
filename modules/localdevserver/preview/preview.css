@@ -11,3 +11,7 @@
 .component-name {
     font-weight: bold;
 }
+
+.header-buttons .slds-button + .slds-button {
+    margin-left: .75rem;
+}
