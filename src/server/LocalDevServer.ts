@@ -105,7 +105,8 @@ export default class LocalDevServer {
                 templateDir: directory,
                 talonConfig,
                 //FIXME: dont check this in
-                srcDir: path.join(__dirname, '..', '..', 'modules'), //project.modulesSourceDirectory,
+                // srcDir: path.join(__dirname, '..', '..', 'modules'),
+                srcDir: project.modulesSourceDirectory,
                 views,
                 indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
                 routes,

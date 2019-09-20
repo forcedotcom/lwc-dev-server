@@ -21,9 +21,13 @@ export default class ComponentsPanel extends LightningElement {
     get components() {
         if (this.componentsFilter) {
             // TODO: highlight part of search that matches
-            const normalizedFilter = this.componentsFilter.toLowerCase();
+            const normalizedFilter = this.componentsFilter
+                .replace(/-/g, '')
+                .toLowerCase();
             return this._components.filter(item => {
-                const normalizedName = item.htmlName.toLowerCase();
+                const normalizedName = item.htmlName
+                    .replace(/-/g, '')
+                    .toLowerCase();
                 return normalizedName.includes(normalizedFilter);
             });
         }
