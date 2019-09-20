@@ -3,6 +3,7 @@ import path from 'path';
 import Project from './Project';
 import decamelize from 'decamelize';
 
+// TODO clean this up
 export default class ComponentIndex {
     private project: Project;
 
@@ -13,7 +14,6 @@ export default class ComponentIndex {
     public getProjectMetadata(): ProjectMetadata {
         const metadata = this.findProjectMetadata();
 
-        // TODO clean this up
         if (metadata.packages.length > 0) {
             const componentsMetadata = this.getModules();
             metadata.packages[0].components = componentsMetadata;
