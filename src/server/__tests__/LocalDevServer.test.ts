@@ -337,9 +337,9 @@ describe('LocalDevServer', () => {
             await server.start(project);
 
             const result = (talonServer.createServer as any).mock.results[0];
-            const use = result.value.use;
+            const get = result.value.get;
 
-            expect(use.mock.calls[0][0]).toBe('/componentList');
+            expect(get.mock.calls[0][0]).toBe('/localdev/localdev.json');
         });
 
         it('adds componentList route that returns list of modules', async () => {
@@ -372,7 +372,7 @@ describe('LocalDevServer', () => {
             await server.start(project);
 
             const result = (talonServer.createServer as any).mock.results[0];
-            const routeHandler = result.value.use.mock.calls[0][1];
+            const routeHandler = result.value.get.mock.calls[0][1];
             const response = {
                 json: jest.fn()
             };
