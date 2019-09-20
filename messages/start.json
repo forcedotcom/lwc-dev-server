@@ -5,9 +5,9 @@
 
     "legal:cliusage": "Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n",
 
-    "error:invalidscratchorgusername": "Could not locate an active scratch org with this username / alias.",
-    "error:noscratchorg": "An active scratch org is required at this time. Please create one and make sure you either specify it as the default scratch org, or provide the user when you run the start command.",
+    "error:invalidscratchorgusername": "We can't find an active scratch org for this username or alias. You must have a Dev Hub org to create a scratch org.",
+    "error:noscratchorg": "We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide or the Local Development Server Getting Started.",
     "error:noproject": "RequiresProjectError: This command is required to run from within an SFDX project.",
-    "error:inactivescratchorg": "Error authenticating to your scratch org. Check that it is still Active.",
+    "error:inactivescratchorg": "Error authenticating to your scratch org. Make sure that it is still active by running sfdx force:org:list --all.",
     "error:noapilevelsfound": "No API levels found for the org '%s'."
 }
