@@ -44,7 +44,8 @@ export default class ComponentIndex {
             const modulePath = path.join(subdir, basename + '.js');
             if (
                 fs.pathExistsSync(modulePath) &&
-                this.isJSComponent(modulePath)
+                this.isJSComponent(modulePath) &&
+                this.isUIComponent(modulePath)
             ) {
                 const name = basename;
                 let namespace = path.basename(path.dirname(subdir));
@@ -90,6 +91,17 @@ export default class ComponentIndex {
             return false;
         }
         return this.nameFromFile(file) != null;
+    }
+
+    /**
+     * @return true if file content contains 'LightningElement'
+     */
+    private isUIComponent(file: string): boolean {
+        const fileContent = fs.readFileSync(file);
+        if (fileContent.indexOf('LightningElement') > -1) {
+            return true;
+        }
+        return false;
     }
 
     private nameFromFile(file: string) {
