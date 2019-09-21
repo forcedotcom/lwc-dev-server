@@ -259,7 +259,7 @@ describe('start', () => {
 Starting LWC Local Development.
     Dev Hub Org: ${colors.green('undefined')}
     Scratch Org: ${colors.red(
-        'user@org.com - Could not locate an active scratch org with this username / alias.'
+        "user@org.com - We can't find an active scratch org for this username or alias. You must have a Dev Hub org to create a scratch org."
     )}\
 `;
 
@@ -286,7 +286,7 @@ Starting LWC Local Development.
 Starting LWC Local Development.
     Dev Hub Org: ${colors.green('undefined')}
     Scratch Org: ${colors.red(
-        'undefined - An active scratch org is required at this time. Please create one and make sure you either specify it as the default scratch org, or provide the user when you run the start command.'
+        "undefined - We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide (https://sfdc.co/cuuVX4) or the Local Development Server Getting Started."
     )}\
 `;
 
@@ -319,7 +319,7 @@ Starting LWC Local Development.
 Starting LWC Local Development.
     Dev Hub Org: ${colors.green('undefined')}
     Scratch Org: ${colors.red(
-        'user@test.org - Error authenticating to your scratch org. Check that it is still Active.'
+        'user@test.org - Error authenticating to your scratch org. Make sure that it is still active by running sfdx force:org:list --all.'
     )}
     Api Version: ${colors.green('99.0')}\
 `;
