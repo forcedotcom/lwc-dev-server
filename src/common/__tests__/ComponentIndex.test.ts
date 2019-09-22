@@ -1,4 +1,4 @@
-import fs from 'fs';
+import path from 'path';
 import mock from 'mock-fs';
 import ComponentIndex from '../ComponentIndex';
 import Project from '../Project';
@@ -40,7 +40,9 @@ describe('ComponentIndex getModules()', () => {
                 namespace: 'namespace',
                 name: 'module',
                 url: '/lwc/preview/namespace/module',
-                path: 'my-project/src/namespace/module/module.js'
+                path: path.normalize(
+                    'my-project/src/namespace/module/module.js'
+                )
             },
             {
                 htmlName: 'namespace-module2',
@@ -48,7 +50,9 @@ describe('ComponentIndex getModules()', () => {
                 namespace: 'namespace',
                 name: 'module2',
                 url: '/lwc/preview/namespace/module2',
-                path: 'my-project/src/namespace/module2/module2.js'
+                path: path.normalize(
+                    'my-project/src/namespace/module2/module2.js'
+                )
             }
         ];
 
@@ -101,7 +105,9 @@ describe('ComponentIndex getModules()', () => {
                 namespace: 'c',
                 name: 'module',
                 url: '/lwc/preview/c/module',
-                path: 'my-project/force-app/main/default/lwc/module/module.js'
+                path: path.normalize(
+                    'my-project/force-app/main/default/lwc/module/module.js'
+                )
             },
             {
                 htmlName: 'c-module2',
@@ -109,7 +115,9 @@ describe('ComponentIndex getModules()', () => {
                 namespace: 'c',
                 name: 'module2',
                 url: '/lwc/preview/c/module2',
-                path: 'my-project/force-app/main/default/lwc/module2/module2.js'
+                path: path.normalize(
+                    'my-project/force-app/main/default/lwc/module2/module2.js'
+                )
             }
         ];
 
@@ -169,8 +177,9 @@ describe('ComponentIndex getModules()', () => {
                             namespace: 'c',
                             name: 'module',
                             url: '/lwc/preview/c/module',
-                            path:
+                            path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module/module.js'
+                            )
                         },
                         {
                             htmlName: 'c-module2',
@@ -178,8 +187,9 @@ describe('ComponentIndex getModules()', () => {
                             namespace: 'c',
                             name: 'module2',
                             url: '/lwc/preview/c/module2',
-                            path:
+                            path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module2/module2.js'
+                            )
                         }
                     ]
                 }
@@ -264,8 +274,9 @@ describe('ComponentIndex getModules()', () => {
                             namespace: 'c',
                             name: 'module',
                             url: '/lwc/preview/c/module',
-                            path:
+                            path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module/module.js'
+                            )
                         },
                         {
                             htmlName: 'c-module2',
@@ -273,8 +284,9 @@ describe('ComponentIndex getModules()', () => {
                             namespace: 'c',
                             name: 'module2',
                             url: '/lwc/preview/c/module2',
-                            path:
+                            path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module2/module2.js'
+                            )
                         }
                     ]
                 }

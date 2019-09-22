@@ -9,17 +9,13 @@ exports[`localdevserver-header renders 1`] = `
       <div
         class="container slds-grid slds-grid_vertical-align-center"
       >
-        <a
-          href="/"
-        >
-          <img
-            alt="Salesforce Logo"
-            class="logo"
-            height="44"
-            src="/assets/images/logo.svg"
-            width="142"
-          />
-        </a>
+        <img
+          alt="Salesforce Logo"
+          class="logo"
+          height="44"
+          src="/assets/images/logo.svg"
+          width="142"
+        />
         <h1>
           Welcome to the Local Development Server
         </h1>
