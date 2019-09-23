@@ -9,6 +9,12 @@
 }
 
 :host.main-content {
-    margin-top: 3rem;
+    margin-top: 1rem;
     padding-bottom: 3rem;
+}
+
+@media (min-width: 48em) {
+    :host.main-content {
+        margin-top: 3rem;
+    }
 }

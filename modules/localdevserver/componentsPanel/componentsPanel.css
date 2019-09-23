@@ -4,20 +4,39 @@
 
 .header {
     padding: 1.25rem 1.5rem;
-    border-bottom: 	1px solid #dddbda;
+    border-bottom: 1px solid #dddbda;
+    flex-wrap: wrap;
 }
 
 .project-name {
-    flex: 1;
-    max-width: 40%;
+    width: 100%;
 }
 
 .project-name-text {
     font-weight: bold;
 }
 
+@media (min-width: 48em) {
+    .header {
+        flex-wrap: nowrap;
+    }
+
+    .project-name {
+        flex: 1;
+        width: auto;
+        max-width: 40%;
+    }
+}
+
 .search {
     flex: 3.5;
+    margin-top: 1rem;
+}
+
+@media (min-width: 48em) {
+    .search {
+        margin-top: 0;
+    }
 }
 
 .search-input {
@@ -43,15 +62,32 @@
     left: 1rem;
 }
 
-.packages-list {
-    background-color: #fafafb;
-    max-width: 300px;
-    min-height: 300px;
+.components-body {
+    flex-wrap: wrap;
 }
 
-.components-list {
-    min-height: 100%;
-    max-height: 60vh;
+@media (min-width: 48em) {
+    .components-body {
+        flex-wrap: nowrap;
+    }
+}
+
+.packages-list {
+    background-color: #fafafb;
+    padding-bottom: 1rem;
+}
+
+@media (min-width: 48em) {
+    .packages-list {
+        max-width: 300px;
+        min-height: 300px;
+        padding-bottom: 0;
+    }
+
+    .components-list {
+        min-height: 100%;
+        max-height: 60vh;
+    }
 }
 
 .components-list .list-item + .list-item {

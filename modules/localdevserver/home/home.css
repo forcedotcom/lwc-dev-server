@@ -1,0 +1,9 @@
+.slds-col + .slds-col {
+    margin-top: 1rem;
+}
+
+@media (min-width: 48em) {
+    .slds-col + .slds-col {
+        margin-top: 0;
+    }
+}
