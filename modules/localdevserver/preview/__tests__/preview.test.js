@@ -87,4 +87,28 @@ describe('preview', () => {
         await flushPromises();
         expect(componentElement).toMatchSnapshot();
     });
+
+    it('returns the cmp property value', async () => {
+        talonCreateElement.mockImplementation(() => {
+            const el = document.createElement('div');
+            el.appendChild(document.createTextNode('test element'));
+            return Promise.resolve(el);
+        });
+
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve({
+                namespace: 'c',
+                name: 'foo',
+                jsName: 'c/foo',
+                htmlName: 'c-foo',
+                url: 'test/c/foo',
+                path: '/Users/arya/dev/test/src/foo/foo.js'
+            });
+        });
+
+        const componentElement = createComponentUnderTest({
+            cmp: 'c/foo'
+        });
+        expect(componentElement.cmp).toBe('c/foo');
+    });
 });
