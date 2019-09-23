@@ -6,7 +6,10 @@ import * as talonServer from '../talonServerCopy';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 import cpx from 'cpx';
 import os from 'os';
-import ComponentIndex from '../../common/ComponentIndex';
+import ComponentIndex, {
+    ProjectMetadata,
+    PackageComponent
+} from '../../common/ComponentIndex';
 import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import fs from 'fs';
 import { talonConfig } from '../talonConfig';
@@ -58,7 +61,8 @@ describe('LocalDevServer', () => {
         jest.spyOn(talonServer, 'createServer').mockImplementation((): any => {
             return {
                 start: jest.fn(),
-                use: jest.fn()
+                use: jest.fn(),
+                get: jest.fn()
             };
         });
     });
@@ -323,7 +327,7 @@ describe('LocalDevServer', () => {
             );
         });
 
-        it('adds componentList route', async () => {
+        it('adds /localdev/localdev.json route', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({
                 projectPath
@@ -333,34 +337,125 @@ describe('LocalDevServer', () => {
             await server.start(project);
 
             const result = (talonServer.createServer as any).mock.results[0];
-            const use = result.value.use;
+            const get = result.value.get;
 
-            expect(use.mock.calls[0][0]).toBe('/componentList');
+            expect(get.mock.calls[0][0]).toBe('/localdev/localdev.json');
         });
 
-        it('adds componentList route that returns list of modules', async () => {
+        it('adds /localdev/localdev.js route', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({
                 projectPath
             });
-            const modulesList = ['ui:module'];
 
             const server = new LocalDevServer();
             await server.start(project);
 
             const result = (talonServer.createServer as any).mock.results[0];
-            const routeHandler = result.value.use.mock.calls[0][1];
+            const get = result.value.get;
+
+            expect(get.mock.calls[1][0]).toBe('/localdev/localdev.js');
+        });
+
+        it('returns project metadata for localdev.json route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+            const modulesList: PackageComponent[] = [
+                {
+                    htmlName: 'ui-module',
+                    jsName: 'ui/module',
+                    namespace: 'ui',
+                    name: 'module',
+                    url: 'url',
+                    path: 'path'
+                }
+            ];
+            const projectData: ProjectMetadata = {
+                projectName: 'test',
+                packages: [
+                    {
+                        isDefault: true,
+                        key: 'package1',
+                        packageName: 'LWCRecipes',
+                        components: modulesList
+                    }
+                ]
+            };
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const routeHandler = result.value.get.mock.calls[0][1];
             const response = {
                 json: jest.fn()
             };
             // @ts-ignore
             ComponentIndex.mockImplementation(() => {
-                return { getModules: jest.fn(() => ['ui:module']) };
+                return {
+                    getModules: jest.fn(() => modulesList),
+                    getProjectMetadata: jest.fn(() => projectData)
+                };
             });
 
             routeHandler(jest.fn(), response, jest.fn());
 
-            expect(response.json.mock.calls[0][0]).toEqual(modulesList);
+            expect(response.json.mock.calls[0][0]).toEqual(projectData);
+        });
+
+        it('returns project metadata for localdev.js route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+            const modulesList: PackageComponent[] = [
+                {
+                    htmlName: 'ui-module',
+                    jsName: 'ui/module',
+                    namespace: 'ui',
+                    name: 'module',
+                    url: 'url',
+                    path: 'path'
+                }
+            ];
+            const projectData: ProjectMetadata = {
+                projectName: 'test',
+                packages: [
+                    {
+                        isDefault: true,
+                        key: 'package1',
+                        packageName: 'LWCRecipes',
+                        components: modulesList
+                    }
+                ]
+            };
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const routeHandler = result.value.get.mock.calls[1][1];
+            const response = {
+                type: jest.fn(),
+                send: jest.fn()
+            };
+            // @ts-ignore
+            ComponentIndex.mockImplementation(() => {
+                return {
+                    getModules: jest.fn(() => modulesList),
+                    getProjectMetadata: jest.fn(() => projectData)
+                };
+            });
+
+            routeHandler(jest.fn(), response, jest.fn());
+
+            expect(response.type.mock.calls[0][0]).toEqual('js');
+
+            const LocalDev = {
+                project: projectData
+            };
+            const content = `window.LocalDev = ${JSON.stringify(LocalDev)};`;
+            expect(response.send.mock.calls[0][0]).toEqual(content);
         });
 
         describe('telemetry', () => {

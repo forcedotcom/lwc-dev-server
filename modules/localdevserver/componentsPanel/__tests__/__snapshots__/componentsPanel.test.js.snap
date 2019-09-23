@@ -1,0 +1,183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`localdevserver-components-panel render an illustration and message no components are in the package 1`] = `
+<div
+  class="slds-illustration slds-illustration_large"
+>
+  <img
+    alt=""
+    class="slds-illustration__svg"
+    src="/assets/images/empty-state.svg"
+  />
+  <div
+    class="slds-text-longform"
+  >
+    <h3
+      class="slds-text-heading_medium"
+    >
+      No components
+    </h3>
+    <p
+      class="slds-text-body_regular"
+    >
+      After you start creating components,
+      <br />
+      you'll find them here.
+      <br />
+      <a
+        href="https://developer.salesforce.com/docs/component-library/documentation/lwc"
+      >
+        Get to Know Lightning Web Components
+      </a>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`localdevserver-components-panel render an illustration and message when no components match search 1`] = `
+<div
+  class="slds-illustration slds-illustration_large"
+>
+  <img
+    alt=""
+    class="slds-illustration__svg"
+    src="/assets/images/empty-state.svg"
+  />
+  <div
+    class="slds-text-longform"
+  >
+    <h3
+      class="slds-text-heading_medium"
+    >
+      Component not found
+    </h3>
+    <p
+      class="slds-text-body_regular"
+    >
+      No results for "
+      xxx
+      "
+      <br />
+      Check your spelling and try again.
+    </p>
+  </div>
+</div>
+`;
+
+exports[`localdevserver-components-panel renders 1`] = `
+<localdevserver-components-panel>
+  #shadow-root(open)
+    <section
+      class="components-panel slds-card slds-grid slds-grid_vertical"
+    >
+      <div
+        class="header slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
+      >
+        <header
+          class="project-name"
+        >
+          <h2
+            class="project-name-text slds-card__header-title slds-truncate slds-text-heading_medium slds-m-right_x-small"
+            title="test-project"
+          >
+            test-project
+          </h2>
+        </header>
+        <div
+          class="search"
+        >
+          <div
+            class="slds-form-element"
+          >
+            <label
+              class="slds-form-element__label slds-no-flex slds-assistive-text"
+              for="input-1"
+            >
+              Search for a component
+            </label>
+            <div
+              class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right"
+            >
+              <svg
+                aria-hidden="true"
+                class="search-icon slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default slds-icon_medium"
+              >
+                <use
+                  xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#search"
+                />
+              </svg>
+              <input
+                class="slds-input search-input"
+                id="input-1"
+                placeholder="Search for a component..."
+                type="search"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="components-body slds-grid slds-grow"
+      >
+        <div
+          class="packages-list slds-grow"
+        >
+          <lightning-vertical-navigation>
+            #shadow-root(open)
+              <slot />
+            <lightning-vertical-navigation-section>
+              #shadow-root(open)
+                <slot />
+              <lightning-vertical-navigation-item-icon>
+                #shadow-root(open)
+              </lightning-vertical-navigation-item-icon>
+            </lightning-vertical-navigation-section>
+          </lightning-vertical-navigation>
+        </div>
+        <div
+          class="components-list slds-scrollable_y slds-grow slds-p-left_x-large slds-p-right_small"
+        >
+          <h3
+            class="components-list-label slds-text-body_small slds-m-vertical_small"
+          >
+            All Components
+          </h3>
+          <ul
+            class="slds-m-vertical_small"
+          >
+            <li
+              class="list-item slds-truncate"
+            >
+              <a
+                href="test/c/foo"
+                title="c-foo"
+              >
+                c-foo
+              </a>
+            </li>
+            <li
+              class="list-item slds-truncate"
+            >
+              <a
+                href="test/c/fooBar"
+                title="c-foo-bar"
+              >
+                c-foo-bar
+              </a>
+            </li>
+            <li
+              class="list-item slds-truncate"
+            >
+              <a
+                href="test/c/fooBaz"
+                title="c-foo-baz"
+              >
+                c-foo-baz
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+</localdevserver-components-panel>
+`;

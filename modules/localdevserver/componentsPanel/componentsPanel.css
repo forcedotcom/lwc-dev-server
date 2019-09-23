@@ -1,0 +1,99 @@
+.components-panel {
+    height: 100%;
+}
+
+.header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #dddbda;
+    flex-wrap: wrap;
+}
+
+.project-name {
+    width: 100%;
+}
+
+.project-name-text {
+    font-weight: bold;
+}
+
+@media (min-width: 48em) {
+    .header {
+        flex-wrap: nowrap;
+    }
+
+    .project-name {
+        flex: 1;
+        width: auto;
+        max-width: 40%;
+    }
+}
+
+.search {
+    flex: 3.5;
+    margin-top: 1rem;
+}
+
+@media (min-width: 48em) {
+    .search {
+        margin-top: 0;
+    }
+}
+
+.search-input {
+    height: 40px;
+    font-size: 1rem;
+    padding-left: 3.5rem;
+}
+
+.search-input::-ms-input-placeholder {
+    font-size: 1rem;
+}
+
+.search-input::placeholder {
+    font-size: 1rem;
+    color: #706e6b;
+}
+
+.search-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0;
+    top: 9px;
+    left: 1rem;
+}
+
+.components-body {
+    flex-wrap: wrap;
+}
+
+@media (min-width: 48em) {
+    .components-body {
+        flex-wrap: nowrap;
+    }
+}
+
+.packages-list {
+    background-color: #fafafb;
+    padding-bottom: 1rem;
+}
+
+@media (min-width: 48em) {
+    .packages-list {
+        max-width: 300px;
+        min-height: 300px;
+        padding-bottom: 0;
+    }
+
+    .components-list {
+        min-height: 100%;
+        max-height: 60vh;
+    }
+}
+
+.components-list .list-item + .list-item {
+    margin-top: .75rem;
+}
+
+.components-list-label {
+    color: #3e3e3c;
+}

@@ -1,0 +1,40 @@
+:host {
+    display: block;
+    background: #16325c;
+}
+
+.container {
+    height: 80px;
+}
+
+.logo {
+    padding-right: 1rem;
+}
+
+h1 {
+    font-family: 'Neutraface Display';
+    font-size: .75rem;
+    text-transform: uppercase;
+    color: #fff;
+    text-align: center;
+}
+
+@media (min-width: 21rem) {
+    h1 {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 48em) {
+    .logo {
+        padding-right: 20px;
+        margin-right: 20px;
+        border-right: 1px solid #fff;
+        box-sizing: content-box;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+        text-align: left;
+    }
+}

@@ -1,10 +1,33 @@
-:host {
-    background: white;
+.header {
+    border-bottom: 1px solid #dddbda;
+    flex-wrap: wrap;
 }
 
-.preview {
-    background: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.header-buttons {
+    margin-top: .75rem;
+    white-space: nowrap;
+}
+
+.header-buttons .slds-button + .slds-button {
+    margin-left: .75rem;
+}
+
+.component-name {
+    font-weight: bold;
+}
+
+@media (min-width: 48em) {
+    .header {
+        flex-wrap: nowrap;
+    }
+
+    .header-buttons {
+        margin-top: 0;
+    }
+}
+
+.preview-content {
+    background-color: #f3f2f2;
+    min-height: 50vh;
+    position: relative;
 }

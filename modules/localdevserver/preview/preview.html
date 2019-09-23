@@ -1,13 +1,55 @@
 <template>
-    <div class="preview slds-p-around_large">
-        <lightning-breadcrumbs class="slds-m-around_small">
-            <lightning-breadcrumb label="home" href="/"></lightning-breadcrumb>
-            <lightning-breadcrumb label={cmp} href={href}></lightning-breadcrumb>
-        </lightning-breadcrumbs>
-        <div lwc:dom="manual" class="container slds-m-around_small"></div>
+    <localdevserver-layout-section main-content>
+        <article class="slds-card">
+            <div
+                class="header slds-grid slds-grid_vertical-align-center slds-grid_align-spread slds-p-vertical_medium slds-p-horizontal_large"
+            >
+                <header>
+                    <lightning-breadcrumbs>
+                        <lightning-breadcrumb
+                            label="home"
+                            href="/"
+                        ></lightning-breadcrumb>
+                        <lightning-breadcrumb
+                            label={componentLabel}
+                            href={href}
+                        ></lightning-breadcrumb>
+                    </lightning-breadcrumbs>
 
-        <template if:true={error}>
-            <localdevserver-error error={error}></localdevserver-error>
-        </template>
-    </div>
+                    <h2
+                        class="component-name slds-card__header-title slds-truncate slds-text-heading_medium slds-m-top_small"
+                        title={componentLabel}
+                    >
+                        {componentLabel}
+                    </h2>
+                </header>
+                <div class="header-buttons">
+                    <a class="slds-button slds-button_outline-brand" href="/">
+                        Go Back
+                    </a>
+                    <a class="slds-button slds-button_brand" href={vscodeHref}>
+                        View in VS Code
+                    </a>
+                </div>
+            </div>
+
+            <div
+                class="preview-content slds-grid slds-grid_vertical-align-center slds-grid_align-center"
+            >
+                <div
+                    lwc:dom="manual"
+                    class="container slds-p-around_large"
+                ></div>
+                <template if:true={isLoading}>
+                    <lightning-spinner
+                        alternative-text="Loading"
+                        size="large"
+                    ></lightning-spinner>
+                </template>
+                <template if:true={error}>
+                    <localdevserver-error error={error}></localdevserver-error>
+                </template>
+            </div>
+        </article>
+    </localdevserver-layout-section>
 </template>

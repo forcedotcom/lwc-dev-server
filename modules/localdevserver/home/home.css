@@ -1,16 +1,9 @@
-:host {
-    background: white;
+.slds-col + .slds-col {
+    margin-top: 1rem;
 }
 
-.container {
-    background: white;
-    min-height:100vh;
-    width: 100vw;
-    /* Center the content */
-    display: flex;
-    justify-content: center;
-}
-
-.container > .slds-grid {
-    max-width: 1200px;
+@media (min-width: 48em) {
+    .slds-col + .slds-col {
+        margin-top: 0;
+    }
 }

@@ -1,0 +1,10 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background: url('/assets/images/mountain.svg') bottom left no-repeat,
+                radial-gradient(circle, #fbfbfb, #b0cdf3);
+}
+
+.skip-link {
+    color: #fff;
+}

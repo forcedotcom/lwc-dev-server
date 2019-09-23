@@ -1,7 +1,9 @@
 import fs from 'fs-extra';
 import path from 'path';
 import Project from './Project';
+import decamelize from 'decamelize';
 
+// TODO clean this up
 export default class ComponentIndex {
     private project: Project;
 
@@ -9,7 +11,18 @@ export default class ComponentIndex {
         this.project = project;
     }
 
-    public getModules(): object[] {
+    public getProjectMetadata(): ProjectMetadata {
+        const metadata = this.findProjectMetadata();
+
+        if (metadata.packages.length > 0) {
+            const componentsMetadata = this.getModules();
+            metadata.packages[0].components = componentsMetadata;
+        }
+
+        return metadata;
+    }
+
+    public getModules(): PackageComponent[] {
         let temp = this.project.modulesSourceDirectory;
         if (temp !== null) {
             if (this.project.isSfdx) {
@@ -23,8 +36,8 @@ export default class ComponentIndex {
     /**
      * @return list of .js modules inside namespaceRoot folder
      */
-    private findModulesIn(namespaceRoot: string): object[] {
-        const files: object[] = [];
+    private findModulesIn(namespaceRoot: string): PackageComponent[] {
+        const files: PackageComponent[] = [];
         const subdirs = this.findSubdirectories(namespaceRoot);
         for (const subdir of subdirs) {
             const basename = path.basename(subdir);
@@ -33,19 +46,24 @@ export default class ComponentIndex {
                 fs.pathExistsSync(modulePath) &&
                 this.isJSComponent(modulePath)
             ) {
-                const componentName = basename;
+                const name = basename;
                 let namespace = path.basename(path.dirname(subdir));
                 if (this.project.isSfdx) {
                     namespace = this.project.configuration.namespace;
                 }
-                // TODO don't hardcode lwc/preview
-                const cmpUrl =
-                    '/lwc/preview/' + namespace + '/' + componentName;
-                const cmpTitle = namespace + '-' + componentName;
-                // TODO: check contents for: from 'lwc'?
+
+                const jsName = `${namespace}/${name}`;
+                const decamelizedName = decamelize(name, '-');
+                const htmlName = `${namespace}-${decamelizedName}`;
+                const url = `/lwc/preview/${namespace}/${name}`;
+
                 files.push({
-                    url: cmpUrl,
-                    title: cmpTitle
+                    jsName,
+                    htmlName,
+                    namespace,
+                    name,
+                    url,
+                    path: path.normalize(modulePath)
                 });
             }
         }
@@ -95,4 +113,97 @@ export default class ComponentIndex {
         }
         return pathElements;
     }
+
+    // TODO: clean this up and consolidate with Project.ts
+    private findProjectMetadata(): ProjectMetadata {
+        const root = this.project.directory;
+        let projectName = path.basename(root);
+
+        const packageJsonPath = path.join(root, 'package.json');
+        try {
+            const packageJson = JSON.parse(
+                fs.readFileSync(packageJsonPath, 'utf8')
+            );
+            if (packageJson.name) {
+                projectName = packageJson.name;
+            }
+        } catch (e) {
+            console.error(
+                `Loading ${packageJsonPath} failed JSON parsing with error ${e.message}`
+            );
+        }
+
+        const packages: PackageMetadata[] = [];
+        const metadata: ProjectMetadata = {
+            projectName,
+            packages
+        };
+
+        let defaultPackageName = 'Default';
+
+        if (this.project.isSfdx) {
+            const sfdxProjectPath = path.join(root, 'sfdx-project.json');
+            if (fs.existsSync(sfdxProjectPath)) {
+                try {
+                    const sfdxJson = JSON.parse(
+                        fs.readFileSync(sfdxProjectPath, 'utf8')
+                    );
+                    if (sfdxJson.packageDirectories instanceof Array) {
+                        let sfdxDefaultPackage: any;
+                        if (sfdxJson.packageDirectories.length === 1) {
+                            sfdxDefaultPackage = sfdxJson.packageDirectories[0];
+                        } else {
+                            sfdxDefaultPackage = sfdxJson.packageDirectories.find(
+                                (pkg: any) => !!pkg.default
+                            );
+                        }
+                        if (sfdxDefaultPackage) {
+                            if (sfdxDefaultPackage.package) {
+                                defaultPackageName = sfdxDefaultPackage.package;
+                            } else if (sfdxDefaultPackage.path) {
+                                defaultPackageName = path.basename(
+                                    sfdxDefaultPackage.path
+                                );
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error(
+                        `Loading ${sfdxProjectPath} failed JSON parsing with error ${e.message}`
+                    );
+                }
+            }
+        }
+
+        const defaultPackage = {
+            key: 'package_1',
+            packageName: defaultPackageName,
+            components: [],
+            isDefault: true
+        };
+        packages.push(defaultPackage);
+        return metadata;
+    }
+}
+
+export interface ProjectMetadata {
+    projectName: string;
+    packages: PackageMetadata[];
+}
+
+export interface PackageMetadata {
+    /** unique project identifier-- TODO: are package names guaranteed unique? */
+    key: string;
+    isDefault: boolean;
+    packageName: string;
+    components: PackageComponent[];
+}
+
+export interface PackageComponent {
+    htmlName: string;
+    jsName: string;
+    name: string;
+    namespace: string;
+    url: string;
+    path: string;
 }
