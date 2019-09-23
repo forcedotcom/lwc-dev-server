@@ -1,8 +1,7 @@
 {
-    "commandDescription": "Development locally of your Lightning Web Components without uploading to salesforce",
+    "commandDescription": "Develop Lightning Web Component modules and see live changes without publishing your components to an org.",
     "portFlagDescription": "Port to run local dev server on, defaults to 3333",
-    "tokenFlagDescription": "Salesforce rest API authorized token, defaults to SFDX provided authentication",
-
+ 
     "legal:cliusage": "Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n",
 
     "error:invalidscratchorgusername": "We can't find an active scratch org for this username or alias. You must have a Dev Hub org to create a scratch org.",
