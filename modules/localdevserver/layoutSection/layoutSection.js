@@ -1,7 +1,7 @@
 import { LightningElement, api } from 'lwc';
 
 /**
- * Used to enforce a consistent max-width and auto margins for different
+ * Used to enforce a consistent max-width and auto margins for
  * top-level layout sections.
  */
 export default class LayoutSection extends LightningElement {

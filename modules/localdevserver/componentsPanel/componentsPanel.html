@@ -6,14 +6,13 @@
         >
             <header class="project-name">
                 <h2
-                    class="project-name-text slds-card__header-title slds-truncate slds-text-heading_medium"
+                    class="project-name-text slds-card__header-title slds-truncate slds-text-heading_medium slds-m-right_x-small"
                     title={projectName}
                 >
                     {projectName}
                 </h2>
             </header>
-            <div class="flexi-space slds-grow"></div>
-            <div class="search slds-grow">
+            <div class="search">
                 <div class="slds-form-element">
                     <label
                         for="input"
@@ -89,7 +88,7 @@
                 <div
                     class="components-list slds-scrollable_y slds-grow slds-p-left_x-large slds-p-right_small"
                 >
-                    <h3 class="components-list-label slds-m-vertical_small">
+                    <h3 class="components-list-label slds-text-body_small slds-m-vertical_small">
                         {componentsListLabel}
                     </h3>
                     <ul class="slds-m-vertical_small">
@@ -105,7 +104,7 @@
             </template>
             <template if:false={hasVisibleComponents}>
                 <div
-                    class="slds-grow slds-grid slds-grid_vertical-align-center slds-grid_align-center"
+                    class="slds-grid slds-grid_vertical-align-center slds-grid_align-center slds-grow"
                 >
                     <div class="slds-illustration slds-illustration_large">
                         <img

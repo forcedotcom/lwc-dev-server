@@ -64,7 +64,7 @@ describe('localdevserver-error-stacks', () => {
         8 |     /** Whether the tile is draggable. */
      >  9 |     @api draggable;
           |     ^
-       10 | 
+       10 |
        11 |     _product;
        12 |     /** Product__c to display. */
          at File.buildCodeFrameError (/Users/midzelis/git/duck.burrito/talon/packages/talon-compiler/node_modules/@lwc/compiler/node_modules/@babel/core/lib/transformation/file/file.js:261:12)

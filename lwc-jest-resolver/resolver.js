@@ -113,5 +113,24 @@ module.exports = function(modulePath, options) {
             return resolved;
         }
     }
+    // allow overrides of local modules in tests
+    if (modulePath.includes('localdevserver')) {
+        // Use the mock in the sibling __mocks__ directory if it exists
+        const split = modulePath.split(path.sep);
+        if (split.length > 3) {
+            const ns = split[split.length - 3];
+            const name = split[split.length - 1];
+            const mockPath = path.normalize(
+                `${options.basedir}/__mocks__/${ns}/${name}/${name}.js`
+            );
+            if (fs.existsSync(mockPath)) {
+                console.log(
+                    `replacing module '${modulePath}' with __mocks__ version '${mockPath}'`
+                );
+                return lwcResolver(mockPath, options);
+            }
+        }
+    }
+
     return getModule(modulePath, options) || lwcResolver.apply(null, arguments);
 };

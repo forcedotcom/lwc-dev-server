@@ -5,18 +5,10 @@ export default class ComponentsPanel extends LightningElement {
     @track projectName;
     @track _packages = [];
     @track _components = [];
+    @track _selectedPackage;
     @track componentsFilter;
     @track searchInProgress;
     @track searchValue;
-    _selectedPackage;
-
-    get hasComponents() {
-        return this._components && this._components.length > 0;
-    }
-
-    get hasVisibleComponents() {
-        return this.components.length > 0;
-    }
 
     get components() {
         if (this.componentsFilter) {
@@ -24,6 +16,7 @@ export default class ComponentsPanel extends LightningElement {
             const normalizedFilter = this.componentsFilter
                 .replace(/-/g, '')
                 .toLowerCase();
+
             return this._components.filter(item => {
                 const normalizedName = item.htmlName
                     .replace(/-/g, '')
@@ -34,16 +27,20 @@ export default class ComponentsPanel extends LightningElement {
         return this._components;
     }
 
+    get hasComponents() {
+        return this._components && this._components.length > 0;
+    }
+
+    get hasVisibleComponents() {
+        return this.components.length > 0;
+    }
+
     get componentsListLabel() {
         return this.searchInProgress ? 'Search Results' : 'All Components';
     }
 
     get searchDisabled() {
         return !this.hasComponents;
-    }
-
-    get hasPackages() {
-        return this._packages && this._packages.length > 0;
     }
 
     get packages() {
@@ -71,7 +68,9 @@ export default class ComponentsPanel extends LightningElement {
         getProjectMetadata().then(data => {
             this.projectName = data.projectName;
             this.packages = data.packages;
-            this.selectedPackage = this.packages[0].key;
+            if (this.packages.length) {
+                this.selectedPackage = this.packages[0].key;
+            }
         });
     }
 
@@ -84,6 +83,7 @@ export default class ComponentsPanel extends LightningElement {
     clearInput(event) {
         event.preventDefault();
         event.stopPropagation();
+
         const input = this.template.querySelector('.search-input');
         if (input) {
             input.value = '';

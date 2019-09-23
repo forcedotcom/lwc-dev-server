@@ -1,6 +1,8 @@
 import { createElement } from 'lwc';
 import Preview from 'localdevserver/preview';
 import { createElement as talonCreateElement } from 'talon/componentService';
+import { flushPromises } from '../../../__tests__/testutils';
+import { getComponentMetadata } from 'localdevserver/projectMetadataLib';
 
 // this is indirectly imported by talon framework stuff, and needs to be mocked!
 jest.mock('@talon/connect-gen/dist/forceChatterApi/util/util', () => ({}), {
@@ -11,11 +13,11 @@ jest.mock('talon/componentService', () => ({
     createElement: jest.fn()
 }));
 
-async function waitForRender() {
-    return new Promise(resolve => {
-        process.nextTick(resolve);
-    });
-}
+jest.mock('localdevserver/projectMetadataLib');
+
+// jest.mock('localdevserver/projectMetadataLib', () => ({
+//     getComponentMetadata: jest.fn()
+// }));
 
 function createComponentUnderTest(props) {
     const el = createElement('localdevserver-preview', { is: Preview });
@@ -41,29 +43,22 @@ describe('preview', () => {
             return Promise.resolve(el);
         });
 
-        global.LocalDev = {
-            project: {
-                projectName: 'test-project',
-                packages: [
-                    {
-                        packageName: 'Test Package',
-                        isDefault: true,
-                        components: [
-                            {
-                                jsName: 'c/foo',
-                                htmlName: 'c-foo'
-                            }
-                        ]
-                    }
-                ]
-            }
-        };
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve({
+                namespace: 'c',
+                name: 'foo',
+                jsName: 'c/foo',
+                htmlName: 'c-foo',
+                url: 'test/c/foo',
+                path: '/Users/arya/dev/test/src/foo/foo.js'
+            });
+        });
 
         const componentElement = createComponentUnderTest({
             cmp: 'c/foo'
         });
 
-        await waitForRender();
+        await flushPromises();
         expect(componentElement).toMatchSnapshot();
     });
 
@@ -74,29 +69,22 @@ describe('preview', () => {
             return Promise.reject('test error');
         });
 
-        global.LocalDev = {
-            project: {
-                projectName: 'test-project',
-                packages: [
-                    {
-                        packageName: 'Test Package',
-                        isDefault: true,
-                        components: [
-                            {
-                                jsName: 'c/foo',
-                                htmlName: 'c-foo'
-                            }
-                        ]
-                    }
-                ]
-            }
-        };
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve({
+                namespace: 'c',
+                name: 'foo',
+                jsName: 'c/foo',
+                htmlName: 'c-foo',
+                url: 'test/c/foo',
+                path: '/Users/arya/dev/test/src/foo/foo.js'
+            });
+        });
 
         const componentElement = createComponentUnderTest({
             cmp: 'c/foo'
         });
 
-        await waitForRender();
+        await flushPromises();
         expect(componentElement).toMatchSnapshot();
     });
 });

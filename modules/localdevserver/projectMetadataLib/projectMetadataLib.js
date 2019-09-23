@@ -10,27 +10,29 @@ export async function getProjectMetadata() {
     return loadMetadata();
 }
 
-export async function getComponentMetadata(jsName, packageName) {
+export async function getComponentMetadata(jsName, packageKey) {
     return new Promise(async (resolve, reject) => {
         const metadata = await loadMetadata();
         let pkg;
-        if (packageName) {
-            pkg = metadata.packages.find(p => p.packageName === packageName);
-        }
-        if (!pkg) {
+        if (packageKey) {
+            pkg = metadata.packages.find(p => p.key === packageKey);
+        } else {
             pkg = metadata.packages.find(p => !!p.isDefault);
         }
+
         if (pkg) {
             const component = pkg.components.find(cmp => cmp.jsName === jsName);
             if (component) {
                 resolve(component);
                 return;
             } else {
-                reject(`Unable to find component '${jsName}'`);
+                reject(new Error(`Unable to find component '${jsName}'`));
             }
             resolve(pkg);
         } else {
-            reject(`Unable to find package ${packageName || 'default'}`);
+            reject(
+                new Error(`Unable to find package ${packageName || 'default'}`)
+            );
         }
     });
 }

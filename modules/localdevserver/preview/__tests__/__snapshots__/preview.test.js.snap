@@ -43,7 +43,7 @@ exports[`preview displays errors 1`] = `
             </a>
             <a
               class="slds-button slds-button_brand"
-              href="javascript:void(0);"
+              href="vscode://file//Users/arya/dev/test/src/foo/foo.js"
             >
               View in VS Code
             </a>
@@ -240,7 +240,7 @@ exports[`preview renders a component 1`] = `
             </a>
             <a
               class="slds-button slds-button_brand"
-              href="javascript:void(0);"
+              href="vscode://file//Users/arya/dev/test/src/foo/foo.js"
             >
               View in VS Code
             </a>
