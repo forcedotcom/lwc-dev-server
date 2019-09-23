@@ -15,10 +15,6 @@ jest.mock('talon/componentService', () => ({
 
 jest.mock('localdevserver/projectMetadataLib');
 
-// jest.mock('localdevserver/projectMetadataLib', () => ({
-//     getComponentMetadata: jest.fn()
-// }));
-
 function createComponentUnderTest(props) {
     const el = createElement('localdevserver-preview', { is: Preview });
     Object.assign(el, props);

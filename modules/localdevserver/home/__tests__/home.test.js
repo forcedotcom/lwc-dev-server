@@ -1,5 +1,5 @@
 import { createElement } from 'lwc';
-import Home from '../home';
+import Home from 'localdevserver/home';
 
 function createComponentUnderTest(props) {
     const el = createElement('localdevserver-home', {

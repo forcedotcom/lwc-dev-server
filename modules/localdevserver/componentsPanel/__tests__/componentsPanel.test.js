@@ -1,5 +1,5 @@
 import { createElement } from 'lwc';
-import ComponentsPanel from '../componentsPanel';
+import ComponentsPanel from 'localdevserver/componentsPanel';
 import { flushPromises } from '../../../__tests__/testutils';
 
 jest.useFakeTimers();
