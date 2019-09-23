@@ -1,6 +1,6 @@
 {
     "commandDescription": "Develop Lightning Web Component modules and see live changes without publishing your components to an org.",
-    "portFlagDescription": "Port to run local dev server on, defaults to 3333",
+    "portFlagDescription": "port to run local dev server on, defaults to 3333",
  
     "legal:cliusage": "Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n",
 
