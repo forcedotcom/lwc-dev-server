@@ -23,11 +23,16 @@ describe('ComponentIndex getModules()', () => {
                     namespace: {
                         module: {
                             'module.html': '',
-                            'module.js': ''
+                            'module.js': 'extends LightningElement'
                         },
                         module2: {
                             'module2.html': '',
-                            'module2.js': ''
+                            'module2.js':
+                                'extends NavigationMixin(LightningElement)'
+                        },
+                        module3: {
+                            'module3.html': '',
+                            'module3 .js': ''
                         }
                     }
                 }
