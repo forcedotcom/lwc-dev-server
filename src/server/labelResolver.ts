@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import parser from 'fast-xml-parser';
 import debugLogger from 'debug';
 
-const debug = debugLogger('localdevserver:labelsresolver');
+const debug = debugLogger('localdevserver');
 
 /**
  * Contains a map of namespaces/sections to label key-value pairs.
