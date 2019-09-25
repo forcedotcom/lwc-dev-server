@@ -156,7 +156,7 @@ export default class Start extends SfdxCommand {
             port,
             token: accessToken
         };
-        debug(JSON.stringify(retValue));
+        debug(JSON.stringify({ ...retValue, token: undefined }));
 
         // Start local dev server
         new LocalDevServer().start(project, conn);
