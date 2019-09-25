@@ -20,17 +20,19 @@ export default class Preview extends LightningElement {
             this.metadata = data;
         });
 
-        createElement(jsName)
-            .then(el => {
-                const container = this.template.querySelector('.container');
-                container.appendChild(el);
-            })
-            .catch(err => {
-                this.error = err;
-            })
-            .finally(() => {
-                this.isLoading = false;
-            });
+        // TODO Edge breaks without the timeout, need to investigate further
+        setTimeout(() => {
+            createElement(jsName)
+                .then(el => {
+                    const container = this.template.querySelector('.container');
+                    container.appendChild(el);
+                    this.isLoading = false;
+                })
+                .catch(err => {
+                    this.error = err;
+                    this.isLoading = false;
+                });
+        }, 0);
     }
 
     get componentLabel() {
