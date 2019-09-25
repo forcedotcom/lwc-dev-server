@@ -236,7 +236,6 @@ export function salesforceStaticAssetsRoute(basePath: string) {
         // libsD3 - resolution works properly because its metadata contentType is <contentType>application/zip</contentType>
         // libsChartjs - resolution fails because its metadata contentType is <contentType>application/javascript</contentType>
         if (req.url.indexOf('.') === -1) {
-            // TODO make this work on windows
             req.url = `${basePath}/assets/${req.params[0]}`;
             const xmlFileName =
                 '.localdevserver/public' + req.url + '.resource-meta.xml';
