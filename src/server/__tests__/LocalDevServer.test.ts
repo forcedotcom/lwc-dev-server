@@ -119,22 +119,23 @@ describe('LocalDevServer', () => {
 
             //require.resolve
             jest.spyOn(require, 'resolve').mockImplementation(
-                () => 'node_modules/lwc-dev-server-runtime-lib/index.js'
+                () =>
+                    'node_modules/@salesforce/lwc-dev-server-dependencies/index.js'
             );
 
             jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
             const server = new LocalDevServer();
             await server.start(project, mockConn);
-            // require.resolve('lwc-dev-server-runtime-lib')
+            // require.resolve('@salesforce/lwc-dev-server-dependencies')
             const expected = [
                 path.resolve(
                     __dirname,
-                    '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-218'
+                    '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218'
                 ),
                 path.resolve(
                     __dirname,
-                    '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-220'
+                    '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-220'
                 )
             ];
 
@@ -156,17 +157,18 @@ describe('LocalDevServer', () => {
 
             //require.resolve
             jest.spyOn(require, 'resolve').mockImplementation(
-                () => 'node_modules/lwc-dev-server-runtime-lib/index.js'
+                () =>
+                    'node_modules/@salesforce/lwc-dev-server-dependencies/index.js'
             );
 
             jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
             const server = new LocalDevServer();
             await server.start(project, mockConn);
-            // require.resolve('lwc-dev-server-runtime-lib')
+            // require.resolve('@salesforce/lwc-dev-server-dependencies')
             const expected = path.resolve(
                 __dirname,
-                '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-218'
+                '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218'
             );
 
             expect(talonServer.createServer).toBeCalledWith(

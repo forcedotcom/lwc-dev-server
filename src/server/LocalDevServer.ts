@@ -50,7 +50,7 @@ export default class LocalDevServer {
         // vendor deps that we override, like LGC, LDS, etc
         const vendors = path.resolve(
             path.join(
-                require.resolve('lwc-dev-server-runtime-lib'),
+                require.resolve('@salesforce/lwc-dev-server-dependencies'),
                 '..', // above resolve includes index.js
                 'vendors',
                 `dependencies-${version}`
@@ -72,7 +72,9 @@ export default class LocalDevServer {
             modulePaths.unshift(
                 path.resolve(
                     path.join(
-                        require.resolve('lwc-dev-server-runtime-lib'),
+                        require.resolve(
+                            '@salesforce/lwc-dev-server-dependencies'
+                        ),
                         '..', // above resolve includes index.js
                         'vendors',
                         `dependencies-218`

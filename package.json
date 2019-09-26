@@ -160,7 +160,7 @@
         "gunzip-maybe": "^1.4.1",
         "helmet": "^3.18.0",
         "jsdom": "^15.1.1",
-        "lwc-dev-server-runtime-lib": "file:lib/unpacked/lwc-dev-server-runtime-lib-1.0.36",
+        "@salesforce/lwc-dev-server-dependencies": "1.0.47",
         "mime-types": "^2.1.24",
         "path": "^0.12.7",
         "reload": "^3.0.1",
