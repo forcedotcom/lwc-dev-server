@@ -50,9 +50,9 @@ export default class LocalDevServer {
         // vendor deps that we override, like LGC, LDS, etc
         const vendors = path.resolve(
             path.join(
-                //require.resolve('@salesforce/lwc-dev-server-dependencies'),
-                '/Users/kgray/Dev/lwc-dev-server/node_modules/_kris/lwc-dev-server-dependencies',
-                //'..', // above resolve includes index.js
+                require.resolve('@salesforce/lwc-dev-server-dependencies'),
+                //'/Users/kgray/Dev/lwc-dev-server/node_modules/_kris/lwc-dev-server-dependencies',
+                '..', // above resolve includes index.js
                 'vendors',
                 `dependencies-${version}`
             )
@@ -120,7 +120,15 @@ export default class LocalDevServer {
                 modulePaths,
                 runInBand: true,
                 liveReload: configuration.liveReload,
-                modes: ['dev']
+                modes: ['dev'],
+                webruntimeConfig: {
+                    lwcOptions: {
+                        exclude: [
+                            '/**/*.mjs',
+                            /@salesforce\/(?!lwc-dev-server-dependencies).*/
+                        ]
+                    }
+                }
             };
 
             debug('Running Universal Container with config:');
