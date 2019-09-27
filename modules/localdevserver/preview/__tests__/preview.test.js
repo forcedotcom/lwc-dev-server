@@ -1,15 +1,19 @@
 import { createElement } from 'lwc';
 import Preview from 'localdevserver/preview';
-import { createElement as talonCreateElement } from 'talon/componentService';
+import { createElement as talonCreateElement } from 'webruntime/componentService';
 import { flushPromises } from '../../../__tests__/testutils';
 import { getComponentMetadata } from 'localdevserver/projectMetadataLib';
 
 // this is indirectly imported by talon framework stuff, and needs to be mocked!
-jest.mock('@talon/connect-gen/dist/forceChatterApi/util/util', () => ({}), {
-    virtual: true
-});
+jest.mock(
+    '@webruntime/connect-gen/dist/forceChatterApi/util/util',
+    () => ({}),
+    {
+        virtual: true
+    }
+);
 
-jest.mock('talon/componentService', () => ({
+jest.mock('webruntime/componentService', () => ({
     createElement: jest.fn()
 }));
 

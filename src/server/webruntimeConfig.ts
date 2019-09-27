@@ -1,12 +1,10 @@
-export const talonConfig: {
-    includeLwcModules: string[];
-    rollup: {
-        plugins: object[];
-    };
-} = {
-    includeLwcModules: ['force/lds'],
+export const webruntimeConfig: any = {
     rollup: {
         plugins: []
+    },
+    includeLwcModules: ['force/lds'],
+    lwcOptions: {
+        exclude: ['/**/*.mjs', /@salesforce\/(?!lwc-dev-server-dependencies).*/]
     }
 };
 
