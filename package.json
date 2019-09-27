@@ -27,14 +27,10 @@
         }
     },
     "files": [
-        "bin",
-        "dist",
-        "!dist/__test__",
-        "lib",
-        "!lib/unpacked",
-        "modules",
-        "script",
-        "vendors",
+        "/bin",
+        "/dist",
+        "/modules",
+        "/script",
         "/messages",
         "/oclif.manifest.json"
     ],
