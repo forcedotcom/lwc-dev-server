@@ -8,9 +8,9 @@ class HomePage implements Page {
         await browser.url(`http://localhost:${global.serverPort}`);
         let self = this;
         return browser
-            .$('talon-app')
+            .$('webruntime-app')
             .then(el => el.shadow$('localdevserver-layout'))
-            .then(el => el.$('talon-router-container'))
+            .then(el => el.$('webruntime-router-container'))
             .then(el => el.shadow$('localdevserver-home'))
             .then(el => (self.container = el));
     }

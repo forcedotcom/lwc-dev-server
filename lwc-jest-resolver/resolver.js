@@ -100,9 +100,9 @@ module.exports = function(modulePath, options) {
     /**
      * NOTE: lwc-dev-tools changes
      */
-    if (modulePath.startsWith('talon')) {
+    if (modulePath.startsWith('webruntime')) {
         modulePath = modulePath.replace(
-            /(talon)\/(.+)$/,
+            /(webruntime)\/(.+)$/,
             path.join(
                 __dirname,
                 '../node_modules/@webruntime/framework/src/modules/$1/$2/$2'

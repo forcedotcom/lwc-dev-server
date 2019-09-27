@@ -4,7 +4,7 @@ import cpx from 'cpx';
 import { createServer, startServer } from './talonServerCopy';
 import Project from '../common/Project';
 import ComponentIndex from '../common/ComponentIndex';
-import { talonConfig, views, theme, routes } from './talonConfig';
+import { webruntimeConfig, views, theme, routes } from './webruntimeConfig';
 import { copyFiles, removeFile } from '../common/fileUtils';
 import { customComponentPlugin } from './config/rollup-plugin-custom-components';
 import salesforceApexWireResolver from './config/rollup-plugin-salesforce-apex';
@@ -51,7 +51,6 @@ export default class LocalDevServer {
         const vendors = path.resolve(
             path.join(
                 require.resolve('@salesforce/lwc-dev-server-dependencies'),
-                //'/Users/kgray/Dev/lwc-dev-server/node_modules/_kris/lwc-dev-server-dependencies',
                 '..', // above resolve includes index.js
                 'vendors',
                 `dependencies-${version}`
@@ -88,7 +87,7 @@ export default class LocalDevServer {
 
         try {
             if (project.isSfdx) {
-                talonConfig.rollup.plugins.push(
+                webruntimeConfig.rollup.plugins.push(
                     customComponentPlugin(
                         configuration.namespace,
                         'lwc',
@@ -97,7 +96,7 @@ export default class LocalDevServer {
                 );
             }
 
-            talonConfig.rollup.plugins.push(salesforceApexWireResolver());
+            webruntimeConfig.rollup.plugins.push(salesforceApexWireResolver());
 
             const resolver = labelResolver({
                 customLabelsPath: project.customLabelsPath
@@ -106,7 +105,7 @@ export default class LocalDevServer {
 
             const config = {
                 templateDir: directory,
-                talonConfig,
+                webruntimeConfig,
                 srcDir: project.modulesSourceDirectory,
                 views,
                 indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
@@ -120,15 +119,7 @@ export default class LocalDevServer {
                 modulePaths,
                 runInBand: true,
                 liveReload: configuration.liveReload,
-                modes: ['dev'],
-                webruntimeConfig: {
-                    lwcOptions: {
-                        exclude: [
-                            '/**/*.mjs',
-                            /@salesforce\/(?!lwc-dev-server-dependencies).*/
-                        ]
-                    }
-                }
+                modes: ['dev']
             };
 
             debug('Running Universal Container with config:');
