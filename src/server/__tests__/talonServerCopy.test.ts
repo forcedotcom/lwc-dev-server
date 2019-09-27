@@ -5,7 +5,7 @@ jest.mock('compression', () => {
     const compressionMock = jest.fn();
     return jest.fn(() => compressionMock);
 });
-jest.mock('@talon/compiler', () => {
+jest.mock('@webruntime/compiler', () => {
     return {
         contextService: {
             startContext: jest.fn(() => {

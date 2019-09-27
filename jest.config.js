@@ -18,7 +18,7 @@ module.exports = {
         '/integration-tests/src/.+/project/.+/__tests__/'
     ],
     transformIgnorePatterns: [
-        '.*node_modules/(?!@talon|@salesforce/lwc-jest).*'
+        '.*node_modules/(?!@webruntime|@salesforce/lwc-jest).*'
     ],
     moduleDirectories: ['node_modules'],
     collectCoverage: false,

@@ -105,7 +105,7 @@ module.exports = function(modulePath, options) {
             /(talon)\/(.+)$/,
             path.join(
                 __dirname,
-                '../node_modules/@talon/framework/src/modules/$1/$2/$2'
+                '../node_modules/@webruntime/framework/src/modules/$1/$2/$2'
             )
         );
         const resolved = resolver.call(null, modulePath, options);
