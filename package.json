@@ -1,5 +1,5 @@
 {
-    "name": "lwc-dev-server",
+    "name": "@salesforce/lwc-dev-server",
     "version": "1.0.7",
     "description": "Local dev server",
     "main": "dist/server/LocalDevServer.js",
