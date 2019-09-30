@@ -4,7 +4,7 @@ export const webruntimeConfig: any = {
     },
     includeLwcModules: ['force/lds'],
     lwcOptions: {
-        exclude: ['/**/*.mjs', /@salesforce\/(?!lwc-dev-server-dependencies).*/]
+        exclude: ['/**/*.mjs', /@salesforce\/(?!lwc-dev-server).*/]
     }
 };
 
