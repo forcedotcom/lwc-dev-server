@@ -36,7 +36,7 @@ describe('preview', () => {
         expect(componentElement).toMatchSnapshot();
     });
 
-    it('renders a component', async () => {
+    it('renders a component', async done => {
         talonCreateElement.mockImplementation(() => {
             const el = document.createElement('div');
             el.appendChild(document.createTextNode('test element'));
@@ -58,8 +58,12 @@ describe('preview', () => {
             cmp: 'c/foo'
         });
 
-        await flushPromises();
-        expect(componentElement).toMatchSnapshot();
+        // FIXME remove timeout
+        setTimeout(async () => {
+            await flushPromises();
+            expect(componentElement).toMatchSnapshot();
+            done();
+        }, 0);
     });
 
     it('displays errors', async () => {
