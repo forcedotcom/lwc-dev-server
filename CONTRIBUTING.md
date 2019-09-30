@@ -4,7 +4,7 @@ Clone the repo and build:
 ```sh
 git clone git@github.com:forcedotcom/lwc-dev-server.git
 cd lwc-dev-server
-yarn install && yarn build
+yarn
 ```
 
 As you are making changes, you'll probably want to enable `watch` in a separate terminal window:
@@ -20,7 +20,7 @@ Otherwise you will need to run `yarn build` after making any changes.
 
 ## Links
 
-- [CircleCI](https://circleci.com/gh/forcedotcom)
+- [CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server)
 
 ## Running Talon from Source
 
@@ -67,7 +67,27 @@ node_modules/@webruntime/compiler
 
 ## Publishing
 
-New stable versions are pushed to the [internal SFDX npm registry](http://platform-cli-registry.eng.sfdc.net:4880/#/). Before you can publish you need to add yourself as a user if you haven't already:
+Bump the package version: 
+
+```sh
+npm version patch
+git push origin master
+```
+
+Tag the version:
+
+```sh
+git tag -a v0.1.0 -m "version 0.1.0"
+git push --tags origin
+```
+
+### Publishing Publicly
+
+Currently we work with Jason Grantham to push signed packages to the npm repo.
+
+### Publishing an Internal Testing Version
+
+New versions for internal testing can be pushed to the [internal SFDX npm registry](http://platform-cli-registry.eng.sfdc.net:4880/#/). Before you can publish you need to add yourself as a user if you haven't already:
 
 ```sh
 npm adduser --registry http://platform-cli-registry.eng.sfdc.net:4880
@@ -75,19 +95,24 @@ npm adduser --registry http://platform-cli-registry.eng.sfdc.net:4880
 
 This will prompt you for a username, password and email, then save the authToken to `~/.npmrc`. This only has to be done once.
 
-To publish, first bump the package version. For example: 
-
-```sh
-npm version patch
-git push origin master
-git push --tags origin
-```
-
-replace `origin` with whatever you named the master repo.
+Change the package version to a beta version, for example `0.1.0-beta.1`.
 
 Then publish it:
 ```sh
 npm publish --registry http://platform-cli-registry.eng.sfdc.net:4880
+```
+
+To use this version users will need to add the internal registries to their PATH:
+
+```sh
+export SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880'
+export SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli'
+```
+
+Or alternatively run the plugin with these variables set:
+
+```sh
+SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install @salesforce/lwc-dev-server
 ```
 
 ## Tests
@@ -130,21 +155,8 @@ Specify the project folder (defaults to `./project`):
 
 See the [specific environment typescript files](/integration-tests/environment ) for more documentation on available parameters for tests using that environment.
 
-#### Debugging
+### Debugging
 
-Add this line to your test:
-
-```js
-await browser.debug();
-```
-
-It will leave the browser open and you can REPL in the terminal (e.g., use `$` to find elements on the page). In this case you will want to temporarily increase the timeout with `jest.setTimeout` in your test file, or when running the test set the `DEBUG` environment variable which will increase the timeout to one day:
-
-```sh
-DEBUG=true yarn test:e2e test-file
-DEBUG=localdevserver* yarn test:e2e test-file
-```
-#### Debugging your plugin
 We recommend using the Visual Studio Code (VS Code) IDE for your plugin development. Included in the `.vscode` directory of this plugin is a `launch.json` config file, which allows you to attach a debugger to the node process when running your commands.
 
 To debug the `force:lightning:lwc:start` command:
@@ -165,5 +177,20 @@ $ NODE_OPTIONS=--inspect-brk bin/run force:lightning:lwc:start
 4. In the upper left hand corner of VS Code, verify that the "Attach to Remote" launch configuration has been chosen.
 5. Hit the green play button to the left of the "Attach to Remote" launch configuration window. The debugger should now be suspended on the first line of the program. 
 6. Hit the green play button at the top middle of VS Code (this play button will be to the right of the play button that you clicked in step #5).
-<br><img src=".images/vscodeScreenshot.png" width="480" height="278"><br>
+
 Congrats, you are debugging!
+
+#### Debugging Integration Tests
+
+Add this line to your test:
+
+```js
+await browser.debug();
+```
+
+It will leave the browser open and you can REPL in the terminal (e.g., use `$` to find elements on the page). In this case you will want to temporarily increase the timeout with `jest.setTimeout` in your test file, or when running the test set the `DEBUG` environment variable which will increase the timeout to one day:
+
+```sh
+DEBUG=true yarn test:e2e test-file
+DEBUG=localdevserver* yarn test:e2e test-file
+```
