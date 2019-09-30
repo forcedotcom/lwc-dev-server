@@ -67,7 +67,7 @@ node_modules/@webruntime/compiler
 
 ## Publishing
 
-We use the `npm version` command to update the package.json version based on semver.
+We use the `npm version` command to update the package.json version based on [semver](https://docs.npmjs.com/about-semantic-versioning).
 
 If you are pushing the version bump in a branch (as opposed to master):
 
