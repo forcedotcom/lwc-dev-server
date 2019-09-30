@@ -22,12 +22,13 @@ describe('ComponentIndex getModules()', () => {
                     namespace: {
                         module: {
                             'module.html': '',
-                            'module.js': 'extends LightningElement'
+                            'module.js':
+                                'export default class Module extends LightningElement {}'
                         },
                         module2: {
                             'module2.html': '',
                             'module2.js':
-                                'extends NavigationMixin(LightningElement)'
+                                'export default class Module extends NavigationMixin(LightningElement) {}'
                         },
                         module3: {
                             'module3.html': '',
@@ -90,12 +91,13 @@ describe('ComponentIndex getModules()', () => {
                             lwc: {
                                 module: {
                                     'module.html': '',
-                                    'module.js': 'extends LightningElement'
+                                    'module.js':
+                                        'export default class Module extends LightningElement {}'
                                 },
                                 module2: {
                                     'module2.html': '',
                                     'module2.js':
-                                        'extends NavigationMixin(LightningElement)'
+                                        'export default class Module extends NavigationMixin(LightningElement) {}'
                                 },
                                 module3: {
                                     'module3.html': '',
@@ -160,11 +162,13 @@ describe('ComponentIndex getModules()', () => {
                             lwc: {
                                 module: {
                                     'module.html': '',
-                                    'module.js': ''
+                                    'module.js':
+                                        'export default class Module extends LightningElement {}'
                                 },
                                 module2: {
                                     'module2.html': '',
-                                    'module2.js': ''
+                                    'module2.js':
+                                        'export default class Module2 extends LightningElement {}'
                                 }
                             }
                         }
@@ -241,11 +245,13 @@ describe('ComponentIndex getModules()', () => {
                             lwc: {
                                 module: {
                                     'module.html': '',
-                                    'module.js': ''
+                                    'module.js':
+                                        'export default class Module extends LightningElement {}'
                                 },
                                 module2: {
                                     'module2.html': '',
-                                    'module2.js': ''
+                                    'module2.js':
+                                        'export default class Module2 extends LightningElement {}'
                                 }
                             }
                         }
@@ -257,11 +263,13 @@ describe('ComponentIndex getModules()', () => {
                             lwc: {
                                 module3: {
                                     'module.html': '',
-                                    'module.js': ''
+                                    'module.js':
+                                        'export default class Module extends LightningElement {}'
                                 },
                                 module4: {
                                     'module2.html': '',
-                                    'module2.js': ''
+                                    'module2.js':
+                                        'export default class Module2 extends LightningElement {}'
                                 }
                             }
                         }
@@ -329,11 +337,13 @@ describe('ComponentIndex getModules()', () => {
                             lwc: {
                                 module: {
                                     'module.html': '',
-                                    'module.js': ''
+                                    'module.js':
+                                        'export default class Module extends LightningElement {}'
                                 },
                                 module2: {
                                     'module2.html': '',
-                                    'module2.js': ''
+                                    'module2.js':
+                                        'export default class Module2 extends LightningElement {}'
                                 }
                             }
                         }
