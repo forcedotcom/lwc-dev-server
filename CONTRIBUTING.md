@@ -18,12 +18,6 @@ yarn test:watch
 ```
 Otherwise you will need to run `yarn build` after making any changes.
 
-Start up the test project:
-
-```sh
-yarn start:todo
-```
-
 ## Links
 
 - [CircleCI](https://circleci.com/gh/forcedotcom)
@@ -70,16 +64,6 @@ node_modules/@webruntime/framework
 node_modules/@webruntime/common
 node_modules/@webruntime/compiler
 ```
-
-### Caveats
-
-This process is hacky (hopefully temporary). Roughly speaking:
-
-1. The tarballs are unpacked to folders during `install` via the postinstall script.
-2. During unpacking any packages that depend on other private dependencies (e.g., @talon/compiler -> @talon/common) are modified to point to the local version.
-3. `yarn add` is called on each of the unpacked directories, which will install them and their dependencies into `node_modules` 
-
-The client follows the same steps after `yarn add lwc-dev-server` is called-- i.e., the postinstall script is run and the local tarballs are unpacked and added.
 
 ## Publishing
 
@@ -160,3 +144,26 @@ It will leave the browser open and you can REPL in the terminal (e.g., use `$` t
 DEBUG=true yarn test:e2e test-file
 DEBUG=localdevserver* yarn test:e2e test-file
 ```
+#### Debugging your plugin
+We recommend using the Visual Studio Code (VS Code) IDE for your plugin development. Included in the `.vscode` directory of this plugin is a `launch.json` config file, which allows you to attach a debugger to the node process when running your commands.
+
+To debug the `force:lightning:lwc:start` command:
+1. Start the inspector
+  
+If you linked your plugin to the sfdx cli, call your command with the `dev-suspend` switch: 
+```sh-session
+$ sfdx force:lightning:lwc:start --dev-suspend
+```
+  
+Alternatively, to call your command using the `bin/run` script, set the `NODE_OPTIONS` environment variable to `--inspect-brk` when starting the debugger:
+```sh-session
+$ NODE_OPTIONS=--inspect-brk bin/run force:lightning:lwc:start
+```
+
+2. Set some breakpoints in your command code
+3. Click on the Debug icon in the Activity Bar on the side of VS Code to open up the Debug view.
+4. In the upper left hand corner of VS Code, verify that the "Attach to Remote" launch configuration has been chosen.
+5. Hit the green play button to the left of the "Attach to Remote" launch configuration window. The debugger should now be suspended on the first line of the program. 
+6. Hit the green play button at the top middle of VS Code (this play button will be to the right of the play button that you clicked in step #5).
+<br><img src=".images/vscodeScreenshot.png" width="480" height="278"><br>
+Congrats, you are debugging!
