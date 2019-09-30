@@ -75,15 +75,6 @@ sfdx force:lightning:lwc:start
 
 For more information on local development commands, view the local development documentation by running sfdx force:lightning:lwc:<commandName> --help. 
 
-### Troubleshooting
-
-```sh-session
-$ sfdx force:lightning:lwc:start
-Starting LWC Local Development.
-    Dev Hub Org: mydevhub
-    Scratch Org: undefined - We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide (https://sfdc.co/cuuVX4) or the Local Development Server Getting Started.
-```
-
 If you see this error, make sure that you authenticate to your Dev Hub and create a scratch org. 
 
 ### Configuration for Projects (Optional)
@@ -112,6 +103,15 @@ Here's an example that shows the available configuration parameters.
     // Optional path to the custom labels file
     "customLabelsFile": "labels/CustomLabels.labels-meta.xml",
 }
+```
+
+## Troubleshooting
+
+```sh-session
+$ sfdx force:lightning:lwc:start
+Starting LWC Local Development.
+    Dev Hub Org: mydevhub
+    Scratch Org: undefined - We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide (https://sfdc.co/cuuVX4) or the Local Development Server Getting Started.
 ```
 
 ## Working With Modules and Components
@@ -156,14 +156,14 @@ The local development server throws an error if you try to preview any component
 
 ## Running from Source
 
-With linking you can run the latest code from source with the Salesforce CLI.
+With linking you can run the latest code from source.
 
 Clone this repo:
 ```sh
 git clone git@github.com:forcedotcom/lwc-dev-server.git
 ```
 
-Next build the project:
+Build the project:
 ```sh
 cd lwc-dev-server
 yarn install && yarn build
@@ -187,7 +187,7 @@ salesforcedx 45.13.1-0 (release)
 ├─ force-language-services 45.9.1-0
 └─ salesforce-alm 45.15.1-1
 ```
-Note you can also unlink the plugins by running the unlink command from the same directory:
+Note, you can also unlink the plugins by running the unlink command from the same directory:
 ```sh
 sfdx plugins:unlink
 ```
