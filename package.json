@@ -19,12 +19,7 @@
         "plugins": [
             "@oclif/plugin-help",
             "@oclif/plugin-update"
-        ],
-        "update": {
-            "s3": {
-                "bucket": "bucketeer-42b78764-a91c-4b23-a7ba-4c047290ae18"
-            }
-        }
+        ]
     },
     "files": [
         "/bin",
