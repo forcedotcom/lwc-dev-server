@@ -1,25 +1,20 @@
 {
     "name": "@salesforce/lwc-dev-server",
-    "version": "1.0.7",
-    "description": "Local dev server",
+    "version": "0.1.0",
+    "description": "Salesforce CLI plugin for Local Development (Beta)",
+    "license": "MIT",
+    "repository": "forcedotcom/lwc-dev-server-feedback",
+    "bugs": "https://github.com/forcedotcom/lwc-dev-server-feedback/issues",
+    "keywords": [
+        "salesforce",
+        "sfdx",
+        "salesforcedx",
+        "sfdx-plugin"
+    ],
     "main": "dist/server/LocalDevServer.js",
     "types": "dist/server/LocalDevServer.d.ts",
-    "author": "Lightning Tooling",
-    "license": "MIT",
-    "repository": "forcedotcom/lwc-dev-server",
     "bin": {
         "lwc-dev-server": "./bin/run"
-    },
-    "oclif": {
-        "macos": {
-            "identifier": "com.salesforce.lwcdevserver"
-        },
-        "commands": "./dist/cli/commands",
-        "bin": "lwc-dev-server",
-        "plugins": [
-            "@oclif/plugin-help",
-            "@oclif/plugin-update"
-        ]
     },
     "files": [
         "/bin",
@@ -29,12 +24,6 @@
         "/messages",
         "/oclif.manifest.json"
     ],
-    "lwc": {
-        "mapNamespaceFromPath": true,
-        "modules": [
-            "modules"
-        ]
-    },
     "scripts": {
         "clean": "yarn rimraf dist reports coverage errorShots oclif.manifest.json",
         "build": "yarn clean && tsc && ts-node script/copy-assets",
@@ -157,19 +146,39 @@
         "uuidv4": "^4.0.0",
         "watch": "^1.0.2"
     },
-    "engines": {
-        "node": ">=10.15.3"
-    },
     "resolutions": {
         "js-yaml": "^3.13.1",
         "braces": "^3.0.2",
         "eslint-utils": "^1.4.2",
         "mem": "^4.0.0"
     },
+    "engines": {
+        "node": ">=10.15.3"
+    },
+    "oclif": {
+        "macos": {
+            "identifier": "com.salesforce.lwcdevserver"
+        },
+        "commands": "./dist/cli/commands",
+        "bin": "lwc-dev-server",
+        "plugins": [
+            "@oclif/plugin-help",
+            "@oclif/plugin-update"
+        ]
+    },
+    "lwc": {
+        "mapNamespaceFromPath": true,
+        "modules": [
+            "modules"
+        ]
+    },
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged",
             "pre-push": "yarn lint"
         }
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
