@@ -4,7 +4,7 @@ Clone the repo and build:
 ```sh
 git clone git@github.com:forcedotcom/lwc-dev-server.git
 cd lwc-dev-server
-yarn install && yarn build
+yarn
 ```
 
 As you are making changes, you'll probably want to enable `watch` in a separate terminal window:
@@ -18,15 +18,9 @@ yarn test:watch
 ```
 Otherwise you will need to run `yarn build` after making any changes.
 
-Start up the test project:
-
-```sh
-yarn start:todo
-```
-
 ## Links
 
-- [CircleCI](https://circleci.com/gh/forcedotcom)
+- [CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server)
 
 ## Running Talon from Source
 
@@ -71,19 +65,37 @@ node_modules/@webruntime/common
 node_modules/@webruntime/compiler
 ```
 
-### Caveats
-
-This process is hacky (hopefully temporary). Roughly speaking:
-
-1. The tarballs are unpacked to folders during `install` via the postinstall script.
-2. During unpacking any packages that depend on other private dependencies (e.g., @talon/compiler -> @talon/common) are modified to point to the local version.
-3. `yarn add` is called on each of the unpacked directories, which will install them and their dependencies into `node_modules` 
-
-The client follows the same steps after `yarn add lwc-dev-server` is called-- i.e., the postinstall script is run and the local tarballs are unpacked and added.
-
 ## Publishing
 
-New stable versions are pushed to the [internal SFDX npm registry](http://platform-cli-registry.eng.sfdc.net:4880/#/). Before you can publish you need to add yourself as a user if you haven't already:
+We use the `npm version` command to update the package.json version based on [semver](https://docs.npmjs.com/about-semantic-versioning).
+
+If you are pushing the version bump in a branch (as opposed to master):
+
+```sh
+git checkout -b bump-version
+git push --set-upstream origin bump-version
+```
+
+
+### Publishing Publicly
+
+For backwards-compatible bug fixes:
+
+```sh
+npm version patch
+```
+
+For backwards-compatible features and bug fixes:
+
+```sh
+npm version minor
+```
+
+Currently we work with Jason Grantham to push signed packages to npmjs.com.
+
+### Publishing an Internal Testing Version
+
+Versions for internal testing can be pushed to the [internal SFDX npm registry](http://platform-cli-registry.eng.sfdc.net:4880/#/). Before you can publish you need to add yourself as a user if you haven't already:
 
 ```sh
 npm adduser --registry http://platform-cli-registry.eng.sfdc.net:4880
@@ -91,19 +103,30 @@ npm adduser --registry http://platform-cli-registry.eng.sfdc.net:4880
 
 This will prompt you for a username, password and email, then save the authToken to `~/.npmrc`. This only has to be done once.
 
-To publish, first bump the package version. For example: 
+Use `npm version` with prerelease, preminor, prepatch etc. as appropriate. With prerelease use `--preid=beta`.
+
+For example, to go from `1.0.0` to `1.0.1-beta.0` or `1.0.1-beta.0` to `1.0.1-beta.1`:
 
 ```sh
-npm version patch
-git push origin master
-git push --tags origin
+npm version prerelease --preid=beta
 ```
-
-replace `origin` with whatever you named the master repo.
 
 Then publish it:
 ```sh
 npm publish --registry http://platform-cli-registry.eng.sfdc.net:4880
+```
+
+To use this version users will need to add the internal registries to their PATH:
+
+```sh
+export SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880'
+export SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli'
+```
+
+Or alternatively run the plugin with these variables set:
+
+```sh
+SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install @salesforce/lwc-dev-server
 ```
 
 ## Tests
@@ -146,7 +169,32 @@ Specify the project folder (defaults to `./project`):
 
 See the [specific environment typescript files](/integration-tests/environment ) for more documentation on available parameters for tests using that environment.
 
-#### Debugging
+### Debugging
+
+We recommend using the Visual Studio Code (VS Code) IDE for your plugin development. Included in the `.vscode` directory of this plugin is a `launch.json` config file, which allows you to attach a debugger to the node process when running your commands.
+
+To debug the `force:lightning:lwc:start` command:
+1. Start the inspector
+  
+If you linked your plugin to the sfdx cli, call your command with the `dev-suspend` switch: 
+```sh-session
+$ sfdx force:lightning:lwc:start --dev-suspend
+```
+  
+Alternatively, to call your command using the `bin/run` script, set the `NODE_OPTIONS` environment variable to `--inspect-brk` when starting the debugger:
+```sh-session
+$ NODE_OPTIONS=--inspect-brk bin/run force:lightning:lwc:start
+```
+
+2. Set some breakpoints in your command code
+3. Click on the Debug icon in the Activity Bar on the side of VS Code to open up the Debug view.
+4. In the upper left hand corner of VS Code, verify that the "Attach to Remote" launch configuration has been chosen.
+5. Hit the green play button to the left of the "Attach to Remote" launch configuration window. The debugger should now be suspended on the first line of the program. 
+6. Hit the green play button at the top middle of VS Code (this play button will be to the right of the play button that you clicked in step #5).
+
+Congrats, you are debugging!
+
+#### Debugging Integration Tests
 
 Add this line to your test:
 

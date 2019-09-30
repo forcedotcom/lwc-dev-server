@@ -11,7 +11,6 @@ node_modules/
 # Build directories
 dist/
 .localdevserver
-lib/unpacked/
 
 # config
 .env*

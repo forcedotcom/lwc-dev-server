@@ -1,94 +1,174 @@
-# Local Development (Duck Burrito)
+# Local Development
 
 [![CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server.svg?style=svg&circle-token=19ea057fcc409cec956c360fc347b727d0429396)](https://circleci.com/gh/forcedotcom/lwc-dev-server)
 [![Build status](https://ci.appveyor.com/api/projects/status/ix3iloviwyyg4agt/branch/master?svg=true)](https://ci.appveyor.com/project/forcedotcom/lwc-dev-server/branch/master)
 [![codecov](https://codecov.io/gh/forcedotcom/lwc-dev-server/branch/master/graph/badge.svg?token=LJxxclDlYz)](https://codecov.io/gh/forcedotcom/lwc-dev-server)
 
-Local Development lets you run an LWC-enabled server on your local machine and view live changes to components without pushing to your org.
+The Local Development Server is a Salesforce CLI plugin that configures and runs a Lightning Web Components-enabled server on your computer. Now you can develop Lightning Web Component modules and see live changes without publishing your components to an org.
 
-# Setup
+**Note**: This feature is in beta and has been released early so we can collect your feedback. It may contain significant problems, undergo major changes, or be discontinued. If you encounter any problems, or want to request an enhancement, open a [GitHub issue](https://github.com/forcedotcom/lwc-dev-server-feedback/issues). The use of this feature is governed by the [Salesforce.com Program Agreement](https://trailblazer.me/terms?lan=en).
 
-## Quick Start
+## Setup
 
-Currently the best way to test this project is with [LWC Recipes](https://github.com/trailheadapps/lwc-recipes). These setup steps will get you started using lwc-dev-server if you've never installed it previously. For more detailed instructions / explanations, read the Usage section below.
+### System Requirements
+- Developer Hub-enabled org
+- Most recent stable version of Chrome, Firefox, Safari, or Edge web browser
+- Windows—Windows 7 (64-bit and 32-bit) or later
+- Mac—macOS 10.11 or later
+- Linux—Ubuntu 14.0.4 or later
+- Salesforce CLI
 
-```sh
-SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install lwc-dev-server
-git clone git@github.com:trailheadapps/lwc-recipes.git
-cd lwc-recipes
-sfdx force:auth:web:login -d -a myhuborg
-sfdx force:lightning:lwc:start
-```
-Now your local server should be started -> http://localhost:3333/
-
-## Usage
-
-### SFDX CLI
-
-You must be on the internal network or the VPN in order to install the plugin or get updates.
+To develop Lightning web components, use your favorite code editor. We recommend using Visual Studio Code because its [Salesforce Extensions for VS Code](https://developer.salesforce.com/tools/extension_vscode) provide powerful features for development on Lightning Platform.
 
 ### Installation
 
-The plugin is installed from the internal SFDX npm registry. You can point the CLI to this registry by setting the `SFDX_NPM_REGISTRY` environment variable. For example, in your `~/.bash_profile` file add this line:
+1. Open a new terminal window and run the following command to install the local development server. 
 
 ```sh
-export SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880'
-export SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli'
+sfdx plugins:install @salesforce/lwc-dev-server
 ```
 
-Afterwards open a new terminal window and install:
+2. Check for updates to the local development server.
 
 ```sh
-sfdx plugins:install lwc-dev-server
+sfdx plugins:update
 ```
 
-*Note: you will get a notice that the plugin is not digitally signed and asking whether to continue installation. Enter 'y'.*
-
-If you do not edit `.bash_profile` you can alternatively specify it inline:
+3. Navigate to your SFDX project, or clone one that has Lightning web components. In this example, we are using `lwc-recipes`.
 
 ```sh
-SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:install lwc-dev-server
+git clone git@github.com:trailheadapps/lwc-recipes.git
 ```
-Installation will take a few minutes which is something we will improve. 
-
-### Updates
-
-New "stable" versions of the plugin will be pushed to the internal SFDX npm registry. Grab it like so:
+4. If you're not in the the `lwc-recipes` root directory already, `cd` into it. 
 
 ```sh
-SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REGISTRY='http://platform-cli-registry.eng.sfdc.net:4880' sfdx plugins:update
+cd lwc-recipes
 ```
 
-### Running lwc-dev-server
+5. Add the `.localdevserver` folder in your SFDX project to your `.gitignore` file. Do not modify files inside of this folder.
 
-At the moment the plugin **must be run within an SFDX project**, such as [LWC Recipes](https://github.com/trailheadapps/lwc-recipes).
+6. Authorize a Developer Hub (Dev Hub) by following the steps in [Enable Dev Hub In Your Org](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_enable_devhub.htm) in the *Salesforce DX Developer Guide*. A Dev Hub is the main Salesforce org that you and your team use to create and manage your scratch orgs, temporary environments for developing on the Salesforce platform. You need the Dev Hub to create a scratch org in a later step.
 
-Start the server:
+7. Following the instructions in the *Salesforce DX Developer Guide*, log in using your Dev Hub credentials. Running the following command spawns a login window in your browser.
+
+```sh
+sfdx force:auth:web:login -d -a <myhuborg>
+```
+
+8. In local development, requests to Lightning Data Service and Apex go to scratch orgs, similar to how they go to your production org. To create a scratch org, run this command from the command line.
+
+```sh
+sfdx force:org:create -s -f config/project-scratch-def.json -a "LWC"
+```
+
+“LWC” is an alias for the scratch org that you can use in other Salesforce CLI commands.
+
+To create a scratch org, specify a scratch org definition file. This example uses the scratch org definition file, `project-scratch-def.json` that is included in `lwc-recipes`. For other projects, create your own. For more information, see the instructions for [Create Scratch Orgs](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_create.htm) in the *Salesforce DX Developer Guide*.
+
+9. Start the server.
 
 ```sh
 sfdx force:lightning:lwc:start
 ```
 
-Once it's started, visit [http://localhost:3333](http://localhost:3333) in your browser.
+10. View the server at [http://localhost:3333/](http://localhost:3333/). 
 
-For more information on the command see the [SFDX_plugin.md](SFDX_plugin.md) file.
+For more information on local development commands, view the local development documentation by running sfdx force:lightning:lwc:<commandName> --help. 
 
-### Running from Source
+### Configuration for Projects (Optional)
 
-With linking you can run the latest code from source with the SFDX CLI.
+SFDX automatically configures your project out of the box, but if you need to override configuration for the server, add a localdevserver.config.json file at the base of your project. 
+
+Here's an example that shows the available configuration parameters.
+
+```json5
+{
+    // What namespace to use referencing your Lightning Web Components
+    "namespace": "c",
+
+    // Name of the component to load in the default container
+    "main": "app", 
+
+    // Where are your component files. If you have a namespace, specify the directory the namespace folder is in.
+    "modulesSourceDirectory": "src/", 
+
+    // Where are your static assets.
+    "staticResourcesDirectory": "staticresources/",
+
+    // The address port for your local server. Defaults to 3333
+    "port": 3333,
+
+    // Optional path to the custom labels file
+    "customLabelsFile": "labels/CustomLabels.labels-meta.xml",
+}
+```
+
+## Troubleshooting
+
+```sh-session
+$ sfdx force:lightning:lwc:start
+Starting LWC Local Development.
+    Dev Hub Org: mydevhub
+    Scratch Org: undefined - We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide (https://sfdc.co/cuuVX4) or the Local Development Server Getting Started.
+```
+
+If you see this error, make sure that you authenticate to your Dev Hub and create a scratch org. 
+
+## Working With Modules and Components
+
+### Supported Modules
+
+The local development server supports the following modules. Modules refer to `@salesforce` modules and modules imported without `@salesforce`, like `lightning/empApi`. For more information about how these modules work with Lightning web components, see [`@salesforce` Modules](https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.reference_salesforce_modules) in the *Lightning Web Components Developer Guide*.
+
+| Module Name | Local Development Behavior |
+| ----------- | -------------------------- |
+| `@salesforce/resourceUrl` | Import static resources into your Salesforce org using the structure: `import <resourceName> from '@salesforce/resourceUrl'`. Static resources are copied and served from the SFDX project location on your filesystem to the local development server. |
+| `@salesforce/label`       | Custom Labels are resolved from the SFDX project directory `labels/CustomLabels.labels-meta.xml`. The local development server displays a placeholder for labels that it either can't find or that you created in Setup but didn't sync to your local filesystem. The placeholder looks like this: `{unknown label: foo}`. In the case where your label is not in your org, SFDX returns an error when you push your code. |
+| `@salesforce/apex`        | Apex requests are proxied to your scratch org. |
+| `@salesforce/schema`      | Follows the same behavior described in the _Lightning Web Components Developer Guide_ [reference](https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.reference_salesforce_modules). |
+
+### Partially Supported Modules
+
+These modules work with the local development server, but behave differently from how they do in a production org. 
+
+| Module Name | Local Development Behavior |
+| ----------- | -------------------------- |
+| `@salesforce/i18n`   | The locale is set to US/English locale. For local development, all imports from `@salesforce/i18n` are hardcoded to return values that are similar to what you would see in the en-US locale in production. |
+| `@salesforce/user`   | You can include `@salesforce/user` when working in local development. User ID is not supported, and local development assigns it a value of `undefined`. The value of `isGuest` always returns true. |
+
+### Unsupported Modules
+
+The local development server throws an error if you try to preview any components that use these modules.
+
+- `@salesforce/contentAssetUrl`
+- `@salesforce/apexContinuation`
+
+## Considerations
+
+- The local development server supports Lightning web components only. It does not support Aura components. 
+- Don't connect to a production Salesforce org with the local development server. Local development uses data in real time. If you authenticate to a production org, then you will modify or overwrite data in production. 
+- You can't specify or change attribute values for your components on the component preview page. Components render with their default attribute values. For example, let's say you're writing a clock component. To view the component, the clock needs to know your timezone, which requires setting a timezone attribute. We recommend setting a default timezone in the code. If you can't specify a default value, create a wrapper component that creates the clock and sets the proper attributes. To prevent confusion, make sure to give your wrapper component a name that clarifies it is for testing purposes only. 
+- SLDS CSS and icons are included with the local development plugin, and are automatically included on every page. If you notice differences between how some SLDS classes render in local development versus how they do on your Salesforce instance, they may be running different versions. In the beta release, you cannot modify the version of SLDS, and it won't sync with the version you're running on your instance. 
+- Flexipages aren't supported.
+- Locker is not supported. 
+- Salesforce Standard Design Tokens and Custom Tokens in CSS files aren't supported.
+
+## Running from Source
+
+With linking you can run the latest code from source.
 
 Clone this repo:
 ```sh
 git clone git@github.com:forcedotcom/lwc-dev-server.git
 ```
 
-Next build the project:
+Build the project:
 ```sh
 cd lwc-dev-server
 yarn install && yarn build
 ```
 
-From within the lwc-dev-server directory, link it with the SFDX CLI:
+From within the lwc-dev-server directory, link it with the Salesforce CLI:
 ```sh
 sfdx plugins:link
 ```
@@ -106,53 +186,9 @@ salesforcedx 45.13.1-0 (release)
 ├─ force-language-services 45.9.1-0
 └─ salesforce-alm 45.15.1-1
 ```
-Note you can also unlink the plugins by running the unlink command from the same directory:
+Note, you can also unlink the plugins by running the unlink command from the same directory:
 ```sh
 sfdx plugins:unlink
-```
-
-## Troubleshooting
-
-```sh-session
-$ sfdx force:lightning:lwc:start
-(node:78804) [ENOENT] Error: spawn lwc-dev-server ENOENT
-ERROR running force:lightning:lwc:start:  Must pass a username and/or OAuth options when creating an AuthInfo instance.
-```
-
-You need to ensure you authenticate to your devhub via SFDX and create a scratch org.
-In lwc-recipes we have a scratch org json file, just create one from that.
-
-
-## Configuration for Projects (WIP)
-
-Projects can provide configuration information for the server. Supply a localdevserver.config.json file at the base of your project.
-
-The following configuration parameters are available.
-
-```json5
-{
-    // What namespace to use referencing your Lightning Web Components
-    "namespace": "c",
-
-    // Name of the component to load in the default container
-    "main": "app", 
-
-    // Where are your component files. If you have a namespace, specify the directory the namespace folder is in.
-    "modulesSourceDirectory": "src/", 
-
-    // Where are your static assets.
-    "staticResourcesDirectory": "",
-
-    // Optional path to the custom labels file
-    "customLabelsFile": "labels/CustomLabels.labels-meta.xml",
-
-    // The address port for your local server. Defaults to 3333
-    "port": 3333,
-
-    "api_version": 47,
-
-    "endpoint": "...",
-}
 ```
 
 ## Contributing
