@@ -67,11 +67,9 @@ node_modules/@webruntime/compiler
 
 ## Publishing
 
-### Update the Version
-
 We use the `npm version` command to update the package.json version based on semver.
 
-#### Publishing Publicly
+### Publishing Publicly
 
 For backwards-compatible bug fixes:
 
@@ -87,7 +85,7 @@ npm version minor
 
 Currently we work with Jason Grantham to push signed packages to npmjs.com.
 
-#### Publishing an Internal Testing Version
+### Publishing an Internal Testing Version
 
 Versions for internal testing can be pushed to the [internal SFDX npm registry](http://platform-cli-registry.eng.sfdc.net:4880/#/). Before you can publish you need to add yourself as a user if you haven't already:
 
