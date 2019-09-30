@@ -67,27 +67,29 @@ node_modules/@webruntime/compiler
 
 ## Publishing
 
-Bump the package version: 
+### Update the Version
+
+We use the `npm version` command to update the package.json version based on semver.
+
+#### Publishing Publicly
+
+For backwards-compatible bug fixes:
 
 ```sh
 npm version patch
-git push origin master
 ```
 
-Tag the version:
+For backwards-compatible features and bug fixes:
 
 ```sh
-git tag -a v0.1.0 -m "version 0.1.0"
-git push --tags origin
+npm version minor
 ```
 
-### Publishing Publicly
+Currently we work with Jason Grantham to push signed packages to npmjs.com.
 
-Currently we work with Jason Grantham to push signed packages to the npm repo.
+#### Publishing an Internal Testing Version
 
-### Publishing an Internal Testing Version
-
-New versions for internal testing can be pushed to the [internal SFDX npm registry](http://platform-cli-registry.eng.sfdc.net:4880/#/). Before you can publish you need to add yourself as a user if you haven't already:
+Versions for internal testing can be pushed to the [internal SFDX npm registry](http://platform-cli-registry.eng.sfdc.net:4880/#/). Before you can publish you need to add yourself as a user if you haven't already:
 
 ```sh
 npm adduser --registry http://platform-cli-registry.eng.sfdc.net:4880
@@ -95,7 +97,11 @@ npm adduser --registry http://platform-cli-registry.eng.sfdc.net:4880
 
 This will prompt you for a username, password and email, then save the authToken to `~/.npmrc`. This only has to be done once.
 
-Change the package version to a beta version, for example `0.1.0-beta.1`.
+Use `npm version` with prepatch, preminor, etc. as appropriate.
+
+```sh
+npm version prepatch
+```
 
 Then publish it:
 ```sh
