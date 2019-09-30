@@ -55,18 +55,6 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug With Test Project: todomvc",
-      "program": "${workspaceFolder}/bin/run",
-      "args": [
-        "server",
-        "${workspaceFolder}/test-projects/lwc-todomvc-e8217b7",
-        "todo/app"
-      ],
-      "console": "integratedTerminal"
-    },
+    }
   ]
 }
