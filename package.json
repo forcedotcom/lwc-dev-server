@@ -22,7 +22,10 @@
         "/modules",
         "/script",
         "/messages",
-        "/oclif.manifest.json"
+        "/oclif.manifest.json",
+        "!**/__tests__/",
+        "!**/__mocks__/",
+        "!**/.DS_Store"
     ],
     "scripts": {
         "clean": "yarn rimraf dist reports coverage errorShots oclif.manifest.json",
