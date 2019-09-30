@@ -12,7 +12,7 @@ import ComponentIndex, {
 } from '../../common/ComponentIndex';
 import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import fs from 'fs';
-import { talonConfig } from '../talonConfig';
+import { webruntimeConfig } from '../webruntimeConfig';
 
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -69,7 +69,7 @@ describe('LocalDevServer', () => {
 
     afterEach(() => {
         jest.resetAllMocks();
-        talonConfig.rollup.plugins.length = 0;
+        webruntimeConfig.rollup.plugins.length = 0;
     });
 
     describe('start()', () => {
@@ -119,22 +119,23 @@ describe('LocalDevServer', () => {
 
             //require.resolve
             jest.spyOn(require, 'resolve').mockImplementation(
-                () => 'node_modules/lwc-dev-server-runtime-lib/index.js'
+                () =>
+                    'node_modules/@salesforce/lwc-dev-server-dependencies/index.js'
             );
 
             jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
             const server = new LocalDevServer();
             await server.start(project, mockConn);
-            // require.resolve('lwc-dev-server-runtime-lib')
+            // require.resolve('@salesforce/lwc-dev-server-dependencies')
             const expected = [
                 path.resolve(
                     __dirname,
-                    '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-218'
+                    '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218'
                 ),
                 path.resolve(
                     __dirname,
-                    '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-220'
+                    '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-220'
                 )
             ];
 
@@ -156,17 +157,18 @@ describe('LocalDevServer', () => {
 
             //require.resolve
             jest.spyOn(require, 'resolve').mockImplementation(
-                () => 'node_modules/lwc-dev-server-runtime-lib/index.js'
+                () =>
+                    'node_modules/@salesforce/lwc-dev-server-dependencies/index.js'
             );
 
             jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
             const server = new LocalDevServer();
             await server.start(project, mockConn);
-            // require.resolve('lwc-dev-server-runtime-lib')
+            // require.resolve('@salesforce/lwc-dev-server-dependencies')
             const expected = path.resolve(
                 __dirname,
-                '../../../node_modules/lwc-dev-server-runtime-lib/vendors/dependencies-218'
+                '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218'
             );
 
             expect(talonServer.createServer).toBeCalledWith(
@@ -300,7 +302,7 @@ describe('LocalDevServer', () => {
             const call = (talonServer.createServer as any).mock.calls[0];
             const config = call[0];
 
-            expect(config.talonConfig.rollup.plugins[0].name).toBe(
+            expect(config.webruntimeConfig.rollup.plugins[0].name).toBe(
                 'rollup-plugin-custom-components'
             );
         });
@@ -322,7 +324,7 @@ describe('LocalDevServer', () => {
             const call = (talonServer.createServer as any).mock.calls[0];
             const config = call[0];
 
-            expect(config.talonConfig.rollup.plugins[1].name).toBe(
+            expect(config.webruntimeConfig.rollup.plugins[1].name).toBe(
                 'rollup-plugin-apex'
             );
         });

@@ -66,37 +66,9 @@ And you can view which packages are currently linked:
 
 ```console
 $ find node_modules -type l | grep -v .bin
-node_modules/@talon/framework
-node_modules/@talon/common
-node_modules/@talon/compiler
-```
-
-## Updating Talon/Local Dependencies
-
-Non-public dependencies from nexus such as @talon are temporarily consumed as tarballs checked into this repo. This will be done until those packages are available on public npm.
-
-Update everything to the 'latest' from nexus:
-
-```sh
-script/libs-update-all.js
-```
-
-Update or add a specific package:
-
-```sh
-npm pack package@version --registry https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/
-```
-
-Move the downloaded tarball to `lib` and delete the old one. Then install:
-
-```sh
-yarn install
-```
-
-To force unpack and replace all of the local libs:
-
-```sh
-./script/libs-install.js --force
+node_modules/@webruntime/framework
+node_modules/@webruntime/common
+node_modules/@webruntime/compiler
 ```
 
 ### Caveats

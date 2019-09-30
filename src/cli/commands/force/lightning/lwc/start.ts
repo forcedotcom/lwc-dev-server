@@ -14,7 +14,7 @@ Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = Messages.loadMessages('lwc-dev-server', 'start');
+const messages = Messages.loadMessages('@salesforce/lwc-dev-server', 'start');
 
 export default class Start extends SfdxCommand {
     public static description = messages.getMessage('commandDescription');
@@ -156,7 +156,7 @@ export default class Start extends SfdxCommand {
             port,
             token: accessToken
         };
-        debug(JSON.stringify(retValue));
+        debug(JSON.stringify({ ...retValue, token: undefined }));
 
         // Start local dev server
         new LocalDevServer().start(project, conn);

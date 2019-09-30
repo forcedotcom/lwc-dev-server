@@ -1,15 +1,19 @@
 import { createElement } from 'lwc';
 import Preview from 'localdevserver/preview';
-import { createElement as talonCreateElement } from 'talon/componentService';
+import { createElement as talonCreateElement } from 'webruntime/componentService';
 import { flushPromises } from '../../../__tests__/testutils';
 import { getComponentMetadata } from 'localdevserver/projectMetadataLib';
 
 // this is indirectly imported by talon framework stuff, and needs to be mocked!
-jest.mock('@talon/connect-gen/dist/forceChatterApi/util/util', () => ({}), {
-    virtual: true
-});
+jest.mock(
+    '@webruntime/connect-gen/dist/forceChatterApi/util/util',
+    () => ({}),
+    {
+        virtual: true
+    }
+);
 
-jest.mock('talon/componentService', () => ({
+jest.mock('webruntime/componentService', () => ({
     createElement: jest.fn()
 }));
 
@@ -32,7 +36,7 @@ describe('preview', () => {
         expect(componentElement).toMatchSnapshot();
     });
 
-    it('renders a component', async () => {
+    it('renders a component', async done => {
         talonCreateElement.mockImplementation(() => {
             const el = document.createElement('div');
             el.appendChild(document.createTextNode('test element'));
@@ -54,8 +58,12 @@ describe('preview', () => {
             cmp: 'c/foo'
         });
 
-        await flushPromises();
-        expect(componentElement).toMatchSnapshot();
+        // FIXME remove timeout
+        setTimeout(async () => {
+            await flushPromises();
+            expect(componentElement).toMatchSnapshot();
+            done();
+        }, 0);
     });
 
     it('displays errors', async () => {

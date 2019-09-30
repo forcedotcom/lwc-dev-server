@@ -1,5 +1,5 @@
 /*
- * Essentially a copy of @talon/compiler/src/server/server.js
+ * Essentially a copy of @webruntime/compiler/src/server/server.js
  * Splits the run method into createServer / startServer methods.
  * Ideally we can move this back into talon once we determine how best
  * to expose talon's express server for configuration
@@ -12,7 +12,7 @@ import {
     contextService,
     staticMiddleware,
     templateMiddleware
-} from '@talon/compiler';
+} from '@webruntime/compiler';
 import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
@@ -37,7 +37,7 @@ const debug = debugLogger('localdevserver');
 const { log } = console;
 
 const FRAMEWORK_RESOURCE_JSON = require.resolve(
-    '@talon/framework/dist/resources.json'
+    '@webruntime/framework/dist/resources.json'
 );
 const FRAMEWORK_OUTPUT_DIR = path.dirname(FRAMEWORK_RESOURCE_JSON);
 
@@ -236,7 +236,6 @@ export function salesforceStaticAssetsRoute(basePath: string) {
         // libsD3 - resolution works properly because its metadata contentType is <contentType>application/zip</contentType>
         // libsChartjs - resolution fails because its metadata contentType is <contentType>application/javascript</contentType>
         if (req.url.indexOf('.') === -1) {
-            // TODO make this work on windows
             req.url = `${basePath}/assets/${req.params[0]}`;
             const xmlFileName =
                 '.localdevserver/public' + req.url + '.resource-meta.xml';

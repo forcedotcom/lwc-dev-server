@@ -4,9 +4,13 @@ import ErrorStacks from 'localdevserver/error';
 jest.useFakeTimers();
 
 // this is indirectly imported by talon framework stuff, and needs to be mocked!
-jest.mock('@talon/connect-gen/dist/forceChatterApi/util/util', () => ({}), {
-    virtual: true
-});
+jest.mock(
+    '@webruntime/connect-gen/dist/forceChatterApi/util/util',
+    () => ({}),
+    {
+        virtual: true
+    }
+);
 
 const errors = {};
 errors.simple = new Error('simple error');
@@ -19,7 +23,7 @@ errors.withfilename.stack = `SyntaxError: /Users/midzelis/git/duck.burrito/ebike
 8 |     /** Whether the tile is draggable. */
 >  9 |     @api draggable;
     |     ^
-10 | 
+10 |
 11 |     _product;
 12 |     /** Product__c to display. */
     at File.buildCodeFrameError (/Users/midzelis/git/duck.burrito/talon/packages/talon-compiler/node_modules/@lwc/compiler/node_modules/@babel/core/lib/transformation/file/file.js:261:12)
@@ -77,9 +81,7 @@ describe('localdevserver-error-stacks', () => {
                     .getAttribute('href');
                 if (error.location) {
                     expect(href).toBe(
-                        `vscode://file${error.filename}:${
-                            error.location.line
-                        }:${error.location.column}`
+                        `vscode://file${error.filename}:${error.location.line}:${error.location.column}`
                     );
                 } else {
                     expect(href).toBe(`vscode://file${error.filename}`);
