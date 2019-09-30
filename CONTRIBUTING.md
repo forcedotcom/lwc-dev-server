@@ -69,6 +69,14 @@ node_modules/@webruntime/compiler
 
 We use the `npm version` command to update the package.json version based on semver.
 
+If you are pushing the version bump in a branch (as opposed to master):
+
+```sh
+git checkout -b version-bump
+git push --set-upstream origin version-bump
+```
+
+
 ### Publishing Publicly
 
 For backwards-compatible bug fixes:
@@ -95,10 +103,12 @@ npm adduser --registry http://platform-cli-registry.eng.sfdc.net:4880
 
 This will prompt you for a username, password and email, then save the authToken to `~/.npmrc`. This only has to be done once.
 
-Use `npm version` with prepatch, preminor, etc. as appropriate.
+Use `npm version` with prepatch, preminor, prerelease etc. as appropriate. With prerelease use `--preid=beta`.
+
+For example, to go from `1.0.0` to `1.0.1-beta.0` or `1.0.1-beta.0` to `1.0.1-beta.1`:
 
 ```sh
-npm version prepatch
+npm version prerelease --preid=beta
 ```
 
 Then publish it:
