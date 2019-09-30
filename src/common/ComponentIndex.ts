@@ -97,11 +97,13 @@ export default class ComponentIndex {
      * @return true if file content contains 'LightningElement'
      */
     private isUIComponent(file: string): boolean {
-        const fileContent = fs.readFileSync(file);
-        if (fileContent.indexOf('LightningElement') > -1) {
+        // TODO find a more robust way to do this
+        try {
+            const fileContent = fs.readFileSync(file);
+            return fileContent.indexOf('LightningElement') > -1;
+        } catch (e) {
             return true;
         }
-        return false;
     }
 
     private nameFromFile(file: string) {
