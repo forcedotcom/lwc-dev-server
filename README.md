@@ -3,6 +3,8 @@
 [![CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server.svg?style=svg&circle-token=19ea057fcc409cec956c360fc347b727d0429396)](https://circleci.com/gh/forcedotcom/lwc-dev-server)
 [![Build status](https://ci.appveyor.com/api/projects/status/ix3iloviwyyg4agt/branch/master?svg=true)](https://ci.appveyor.com/project/forcedotcom/lwc-dev-server/branch/master)
 [![codecov](https://codecov.io/gh/forcedotcom/lwc-dev-server/branch/master/graph/badge.svg?token=LJxxclDlYz)](https://codecov.io/gh/forcedotcom/lwc-dev-server)
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+![npm (scoped)](https://img.shields.io/npm/v/@salesforce/lwc-dev-server)
 
 The Local Development Server is a Salesforce CLI plugin that configures and runs a Lightning Web Components-enabled server on your computer. Now you can develop Lightning Web Component modules and see live changes without publishing your components to an org.
 
@@ -120,21 +122,21 @@ If you see this error, make sure that you authenticate to your Dev Hub and creat
 
 The local development server supports the following modules. Modules refer to `@salesforce` modules and modules imported without `@salesforce`, like `lightning/empApi`. For more information about how these modules work with Lightning web components, see [`@salesforce` Modules](https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.reference_salesforce_modules) in the *Lightning Web Components Developer Guide*.
 
-| Module Name | Local Development Behavior |
-| ----------- | -------------------------- |
-| `@salesforce/resourceUrl` | Import static resources into your Salesforce org using the structure: `import <resourceName> from '@salesforce/resourceUrl'`. Static resources are copied and served from the SFDX project location on your filesystem to the local development server. |
+| Module Name               | Local Development Behavior                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@salesforce/resourceUrl` | Import static resources into your Salesforce org using the structure: `import <resourceName> from '@salesforce/resourceUrl'`. Static resources are copied and served from the SFDX project location on your filesystem to the local development server.                                                                                                                                                                    |
 | `@salesforce/label`       | Custom Labels are resolved from the SFDX project directory `labels/CustomLabels.labels-meta.xml`. The local development server displays a placeholder for labels that it either can't find or that you created in Setup but didn't sync to your local filesystem. The placeholder looks like this: `{unknown label: foo}`. In the case where your label is not in your org, SFDX returns an error when you push your code. |
-| `@salesforce/apex`        | Apex requests are proxied to your scratch org. |
-| `@salesforce/schema`      | Follows the same behavior described in the _Lightning Web Components Developer Guide_ [reference](https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.reference_salesforce_modules). |
+| `@salesforce/apex`        | Apex requests are proxied to your scratch org.                                                                                                                                                                                                                                                                                                                                                                             |
+| `@salesforce/schema`      | Follows the same behavior described in the _Lightning Web Components Developer Guide_ [reference](https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.reference_salesforce_modules).                                                                                                                                                                                                             |
 
 ### Partially Supported Modules
 
 These modules work with the local development server, but behave differently from how they do in a production org. 
 
-| Module Name | Local Development Behavior |
-| ----------- | -------------------------- |
-| `@salesforce/i18n`   | The locale is set to US/English locale. For local development, all imports from `@salesforce/i18n` are hardcoded to return values that are similar to what you would see in the en-US locale in production. |
-| `@salesforce/user`   | You can include `@salesforce/user` when working in local development. User ID is not supported, and local development assigns it a value of `undefined`. The value of `isGuest` always returns true. |
+| Module Name        | Local Development Behavior                                                                                                                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@salesforce/i18n` | The locale is set to US/English locale. For local development, all imports from `@salesforce/i18n` are hardcoded to return values that are similar to what you would see in the en-US locale in production. |
+| `@salesforce/user` | You can include `@salesforce/user` when working in local development. User ID is not supported, and local development assigns it a value of `undefined`. The value of `isGuest` always returns true.        |
 
 ### Unsupported Modules
 
