@@ -106,6 +106,23 @@ export default class Start extends SfdxCommand {
 
         const orgusername = this.org.getUsername() || '';
         try {
+            // currently something in sfdx is resulting in an unhandled
+            // promise rejection, instead of surfacing that rejection
+            // through the returned promise. @W-6723813
+            process.on('unhandledRejection', reason => {
+                if (
+                    reason &&
+                    // @ts-ignore
+                    reason.name &&
+                    // @ts-ignore
+                    reason.name === 'StatusCodeError'
+                ) {
+                    // ignore unhandled rejects during below refresh call
+                    debug(`unhandledPromiseRejection: ${reason}`);
+                } else {
+                    this.ux.error(`unhandledPromiseRejection: ${reason}`);
+                }
+            });
             await this.org.refreshAuth();
         } catch (err) {
             this.reportStatus(
