@@ -329,6 +329,59 @@ Starting LWC Local Development.
             expect(log.mock.calls[1][0]).toEqual(expected);
         });
 
+        test('on org refresh, unhandledRejections for StatusCodeErrors are suppressed', async () => {
+            setupFlags();
+            const org = setupOrg();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                },
+                configurable: true,
+                enumerable: true
+            });
+            org.refreshAuth.mockImplementation(async () => {
+                const err = new Error('foo');
+                err.name = 'StatusCodeError';
+                process.emit('unhandledRejection', err, Promise.reject(err));
+                throw err;
+            });
+
+            await start.run();
+
+            expect(error).not.toBeCalled();
+        });
+
+        test('on org refresh, unhandledRejections for other errors are not suppressed', async () => {
+            setupFlags();
+            const org = setupOrg();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                },
+                configurable: true,
+                enumerable: true
+            });
+            org.refreshAuth.mockImplementation(async () => {
+                const err = new Error('test error');
+                process.emit('unhandledRejection', err, Promise.reject(err));
+                throw err;
+            });
+
+            await start.run();
+
+            expect(error).toBeCalledWith(expect.stringMatching('test error'));
+        });
+
         test('startup reports devhuborg, scratchorg and api version', async () => {
             setupFlags();
             const org = setupOrg();

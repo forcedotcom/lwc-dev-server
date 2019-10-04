@@ -120,7 +120,7 @@ export default class Start extends SfdxCommand {
                     // ignore unhandled rejects during below refresh call
                     debug(`unhandledPromiseRejection: ${reason}`);
                 } else {
-                    console.error(`unhandledPromiseRejection: ${reason}`);
+                    this.ux.error(`unhandledPromiseRejection: ${reason}`);
                 }
             });
             await this.org.refreshAuth();
