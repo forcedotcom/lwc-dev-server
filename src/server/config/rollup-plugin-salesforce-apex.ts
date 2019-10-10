@@ -1,4 +1,4 @@
-const APEX_REGEX = /^(@salesforce\/apex)(?:\/([A-Za-z0-9]+\.[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)?))?$/;
+const APEX_REGEX = /^(@salesforce\/apex)(?:\/([A-Za-z0-9_]+\.[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)?))?$/;
 
 function matchesApexScopedModule(id: string) {
     return id && id.match(APEX_REGEX);
