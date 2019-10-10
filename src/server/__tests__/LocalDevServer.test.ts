@@ -89,7 +89,11 @@ describe('LocalDevServer', () => {
                     outputDir: expected
                 }),
                 expect.anything(),
-                mockConn
+                mockConn,
+                expect.objectContaining({
+                    'ai.user.id': '',
+                    'ai.session.id': ''
+                })
             );
         });
 
@@ -108,7 +112,11 @@ describe('LocalDevServer', () => {
                     modulePaths: expect.arrayContaining([expected])
                 }),
                 expect.anything(),
-                mockConn
+                mockConn,
+                expect.objectContaining({
+                    'ai.user.id': '',
+                    'ai.session.id': ''
+                })
             );
         });
 
@@ -176,7 +184,11 @@ describe('LocalDevServer', () => {
                     modulePaths: expect.arrayContaining([expected])
                 }),
                 expect.anything(),
-                mockConn
+                mockConn,
+                expect.objectContaining({
+                    'ai.user.id': '',
+                    'ai.session.id': ''
+                })
             );
 
             jest.restoreAllMocks();
@@ -462,7 +474,10 @@ describe('LocalDevServer', () => {
 
         describe('telemetry', () => {
             it('reports on application start', async () => {
-                const reporter = await LocalDevTelemetryReporter.getInstance();
+                const reporter = await LocalDevTelemetryReporter.getInstance(
+                    'userid',
+                    'sessionid'
+                );
                 reporter.trackApplicationStart = jest.fn();
 
                 const projectPath = '/Users/arya/dev/myproject';
@@ -483,7 +498,10 @@ describe('LocalDevServer', () => {
             it('reports on application end', async () => {
                 const projectPath = '/Users/arya/dev/myproject';
                 const project = mockProject({ projectPath });
-                const reporter = await LocalDevTelemetryReporter.getInstance();
+                const reporter = await LocalDevTelemetryReporter.getInstance(
+                    'userid',
+                    'sessionid'
+                );
                 reporter.trackApplicationEnd = jest.fn();
 
                 const server = new LocalDevServer();
@@ -500,7 +518,10 @@ describe('LocalDevServer', () => {
             it('reports when exception is thrown durning application start', async () => {
                 const projectPath = '/Users/arya/dev/myproject';
                 const project = mockProject({ projectPath });
-                const reporter = await LocalDevTelemetryReporter.getInstance();
+                const reporter = await LocalDevTelemetryReporter.getInstance(
+                    'userid',
+                    'sessionid'
+                );
                 // Throw an exception during LocalDevServer start
                 reporter.trackApplicationStart = jest
                     .fn()

@@ -34,12 +34,19 @@ export default class LocalDevServer {
      */
     private readonly anonymousUserId: string;
 
-    constructor(devhubUser: string) {
-        this.devhubUser = devhubUser;
-        this.anonymousUserId = crypto
-            .createHash('md5')
-            .update(this.devhubUser)
-            .digest('hex');
+    /**
+     * Initializes properties for the LocalDevServer
+     *
+     * @param devhubUser By providing a devhubUser we can provide instrumentation for a unique user. Otherwise they all get bucketed into one user.
+     */
+    constructor(devhubUser?: string) {
+        this.devhubUser = devhubUser || '';
+        this.anonymousUserId = devhubUser
+            ? crypto
+                  .createHash('md5')
+                  .update(this.devhubUser)
+                  .digest('hex')
+            : '';
         this.nonce = crypto.randomBytes(16).toString('base64');
     }
 
