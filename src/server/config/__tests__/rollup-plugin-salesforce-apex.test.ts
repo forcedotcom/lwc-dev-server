@@ -7,7 +7,15 @@ describe('salesforceApexWireResolver', () => {
 
     describe('resolveId', () => {
         it('Resolves @salesforce imports', () => {
-            const id = '@salesforce/apex/Conroller.method';
+            const id = '@salesforce/apex/Controller.method';
+
+            const plugin = salesforceApexWireResolver();
+
+            expect(plugin.resolveId(id)).toBeTruthy();
+        });
+
+        it('resolves apex names with underscores', () => {
+            const id = '@salesforce/apex/My_Controller.method';
 
             const plugin = salesforceApexWireResolver();
 
