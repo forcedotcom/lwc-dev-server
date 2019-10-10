@@ -54,7 +54,7 @@ cd lwc-recipes
 7. Following the instructions in the *Salesforce DX Developer Guide*, log in using your Dev Hub credentials. Running the following command spawns a login window in your browser.
 
 ```sh
-sfdx force:auth:web:login -d -a <myhuborg>
+sfdx force:auth:web:login -d -a myhuborg
 ```
 
 8. In local development, requests to Lightning Data Service and Apex go to scratch orgs, similar to how they go to your production org. To create a scratch org, run this command from the command line.
