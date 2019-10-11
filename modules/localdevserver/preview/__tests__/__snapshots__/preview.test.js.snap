@@ -53,7 +53,7 @@ exports[`preview displays errors 1`] = `
           class="preview-content slds-grid slds-grid_vertical-align-center slds-grid_align-center"
         >
           <div
-            class="container slds-p-around_large"
+            class="container slds-scrollable slds-m-around_large"
           />
           <localdevserver-error>
             #shadow-root(open)
@@ -186,7 +186,7 @@ exports[`preview renders 1`] = `
           class="preview-content slds-grid slds-grid_vertical-align-center slds-grid_align-center"
         >
           <div
-            class="container slds-p-around_large"
+            class="container slds-scrollable slds-m-around_large"
           />
           <lightning-spinner>
             #shadow-root(open)
@@ -250,7 +250,7 @@ exports[`preview renders a component 1`] = `
           class="preview-content slds-grid slds-grid_vertical-align-center slds-grid_align-center"
         >
           <div
-            class="container slds-p-around_large"
+            class="container slds-scrollable slds-m-around_large"
           >
             <div>
               test element
