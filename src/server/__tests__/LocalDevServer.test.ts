@@ -89,11 +89,7 @@ describe('LocalDevServer', () => {
                     outputDir: expected
                 }),
                 expect.anything(),
-                mockConn,
-                expect.objectContaining({
-                    'ai.user.id': '',
-                    'ai.session.id': ''
-                })
+                mockConn
             );
         });
 
@@ -112,11 +108,7 @@ describe('LocalDevServer', () => {
                     modulePaths: expect.arrayContaining([expected])
                 }),
                 expect.anything(),
-                mockConn,
-                expect.objectContaining({
-                    'ai.user.id': '',
-                    'ai.session.id': ''
-                })
+                mockConn
             );
         });
 
@@ -184,11 +176,7 @@ describe('LocalDevServer', () => {
                     modulePaths: expect.arrayContaining([expected])
                 }),
                 expect.anything(),
-                mockConn,
-                expect.objectContaining({
-                    'ai.user.id': '',
-                    'ai.session.id': ''
-                })
+                mockConn
             );
 
             jest.restoreAllMocks();
@@ -473,12 +461,23 @@ describe('LocalDevServer', () => {
         });
 
         describe('telemetry', () => {
+            const MockReporter = {
+                trackApplicationStart: jest.fn(),
+                trackApplicationEnd: jest.fn(),
+                trackApplicationStartException: jest.fn()
+            };
             it('reports on application start', async () => {
+                // @ts-ignore
+                LocalDevTelemetryReporter.getInstance = async (
+                    userId,
+                    sessionId
+                ) => {
+                    return MockReporter;
+                };
                 const reporter = await LocalDevTelemetryReporter.getInstance(
                     'userid',
                     'sessionid'
                 );
-                reporter.trackApplicationStart = jest.fn();
 
                 const projectPath = '/Users/arya/dev/myproject';
                 const project = mockProject({
@@ -502,7 +501,6 @@ describe('LocalDevServer', () => {
                     'userid',
                     'sessionid'
                 );
-                reporter.trackApplicationEnd = jest.fn();
 
                 const server = new LocalDevServer();
                 await server.start(project);
@@ -528,7 +526,6 @@ describe('LocalDevServer', () => {
                     .mockImplementationOnce(() => {
                         throw new Error('expected error');
                     });
-                reporter.trackApplicationStartException = jest.fn();
 
                 // Will throw an exception
                 try {

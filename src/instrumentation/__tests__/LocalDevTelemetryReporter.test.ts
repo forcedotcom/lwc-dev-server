@@ -132,12 +132,4 @@ describe('LocalDevTelemetryReporter', () => {
             }
         );
     });
-
-    test('getInstance() returns instance of LocalDevTelemetryReporter and uses cached version on further calls', async () => {
-        const localDevReporter = await LocalDevTelemetryReporter.getInstance();
-        const localDevReporter2 = await LocalDevTelemetryReporter.getInstance();
-
-        expect(localDevReporter).toBeTruthy();
-        expect(localDevReporter).toBe(localDevReporter2);
-    });
 });
