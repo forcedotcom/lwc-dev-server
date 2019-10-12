@@ -5,6 +5,14 @@
                 radial-gradient(circle, #fbfbfb, #b0cdf3);
 }
 
+/* on wide viewports have the background image scale */
+/* 1920px = width of above mountain.svg */
+@media (min-width: 1920px) {
+    :host {
+        background-size: contain;
+    }
+}
+
 .skip-link {
     color: #fff;
 }
