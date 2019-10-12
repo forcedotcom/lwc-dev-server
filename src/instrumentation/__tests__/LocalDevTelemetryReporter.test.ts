@@ -132,4 +132,30 @@ describe('LocalDevTelemetryReporter', () => {
             }
         );
     });
+
+    test('getInstance() passes userId to TelemetryReporter', async () => {
+        TelemetryReporter.create = jest.fn();
+        const localDevReporter = LocalDevTelemetryReporter.getInstance(
+            'userId',
+            'sessionId'
+        );
+        // @ts-ignore
+        const createMock = TelemetryReporter.create.mock;
+
+        expect(createMock.calls[0][0].contextTags['ai.user.id']).toBe('userId');
+    });
+
+    test('getInstance() passes sessionId to TelemetryReporter', async () => {
+        TelemetryReporter.create = jest.fn();
+        const localDevReporter = LocalDevTelemetryReporter.getInstance(
+            'userid',
+            'sessionId'
+        );
+        // @ts-ignore
+        const createMock = TelemetryReporter.create.mock;
+
+        expect(createMock.calls[0][0].contextTags['ai.session.id']).toBe(
+            'sessionId'
+        );
+    });
 });
