@@ -32,7 +32,7 @@ export default class LocalDevServer {
             project.configuration;
 
         // Find where all the source code is.
-        // This should have /lwc on the end, but I think the talon compiler
+        // This should have /lwc on the end, but I think the webruntime compiler
         // expects the directory name to be the namespace passed to the
         // descriptor.
         const directory = project.directory;
@@ -126,7 +126,7 @@ export default class LocalDevServer {
             debug(config);
 
             // fixme: clear outputDir for now because of a caching issue
-            // with talon (maybe we need to force a recompile of the views?)
+            // with webruntime (maybe we need to force a recompile of the views?)
             removeFile(config.outputDir);
             debug('cleared outputDirectory');
 
@@ -134,14 +134,14 @@ export default class LocalDevServer {
 
             const proxyConfig = {
                 apiEndpoint: configuration.endpoint,
-                recordApiCalls: false,
+                recordApiCalls: true,
                 onProxyReq: configuration.onProxyReq,
                 pathRewrite: this.pathRewrite(
                     configuration.api_version || DEFAULT_API_VERSION
                 )
             };
 
-            // Start the talon site.
+            // Start the webruntime site.
             const server = await createServer(config, proxyConfig, connection);
 
             server.get(
