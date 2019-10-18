@@ -114,7 +114,7 @@ describe('LocalDevServer', () => {
 
         it('configures the modulePaths with the 218 and 220 depenencies when using 220', async () => {
             const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({ projectPath, version: '46.0' });
+            const project = mockProject({ projectPath, version: '47.0' });
             const mockConn: any = {};
 
             //require.resolve
@@ -127,7 +127,7 @@ describe('LocalDevServer', () => {
 
             const server = new LocalDevServer();
             await server.start(project, mockConn);
-            // require.resolve('@salesforce/lwc-dev-server-dependencies')
+
             const expected = [
                 path.resolve(
                     __dirname,
@@ -135,7 +135,7 @@ describe('LocalDevServer', () => {
                 ),
                 path.resolve(
                     __dirname,
-                    '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-220'
+                    '../../../node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-222'
                 )
             ];
 
