@@ -138,6 +138,15 @@ describe('ComponentIndex getModules()', () => {
 
         expect(componentIndex.getModules()).toEqual(expected);
     });
+});
+
+describe('ComponentIndex getProjectMetadata()', () => {
+    afterEach(mock.restore);
+
+    // usages of these functions during mocking the filesystem cause exceptions
+    console.log = jest.fn();
+    console.warn = jest.fn();
+    console.error = jest.fn();
 
     test('when using sfdx, returns project metadata', () => {
         mock({

@@ -34,7 +34,6 @@ import getPort from 'get-port';
 const PUBLIC_DIR = 'public';
 
 const debug = debugLogger('localdevserver');
-const { log } = console;
 
 const FRAMEWORK_RESOURCE_JSON = require.resolve(
     '@webruntime/framework/dist/resources.json'
@@ -156,7 +155,7 @@ export async function startServer(
 
     // Start the server
     const server = getRootApp(app, basePath).listen(port, () => {
-        log(
+        console.log(
             colors.magenta.bold(
                 `Server up on http://localhost:${
                     server.address().port
