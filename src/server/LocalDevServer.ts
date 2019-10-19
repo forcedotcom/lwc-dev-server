@@ -134,7 +134,7 @@ export default class LocalDevServer {
 
             const proxyConfig = {
                 apiEndpoint: configuration.endpoint,
-                recordApiCalls: true,
+                recordApiCalls: false,
                 onProxyReq: configuration.onProxyReq,
                 pathRewrite: this.pathRewrite(
                     configuration.api_version || DEFAULT_API_VERSION
