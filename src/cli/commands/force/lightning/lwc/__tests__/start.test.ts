@@ -18,6 +18,14 @@ describe('start', () => {
     beforeEach(() => {
         start = new Start([], new Config.Config(<Config.Options>{}));
         setupConfigAggregator();
+        const hubOrg = {
+            getUsername: jest.fn()
+        };
+        Object.defineProperty(start, 'hubOrg', {
+            get: () => {
+                return hubOrg;
+            }
+        });
 
         // Setup project with a default configuration instance.
         const _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
@@ -263,9 +271,7 @@ describe('start', () => {
                 };
             });
             // @ts-ignore
-            start.configAggregator.getPropertyValue.mockReturnValue(
-                'admin@devhub.org'
-            );
+            start.hubOrg.getUsername.mockReturnValue('admin@devhub.org');
 
             await start.run();
 
