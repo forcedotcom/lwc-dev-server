@@ -24,17 +24,17 @@ Otherwise you will need to run `yarn build` after making any changes.
 
 ## Running Talon from Source
 
-From the same directory where you cloned this project, clone the talon repo:
+From the same directory where you cloned this project, clone the webruntime repo:
 
 ```sh
-git clone git@git.soma.salesforce.com:communities/talon.git
-cd talon
+git clone git@git.soma.salesforce.com:communities/webruntime.git
+cd webruntime
 yarn install
 yarn build
-yarn link-talon
+yarn link-webruntime
 
 cd ../lwc-dev-server
-yarn link-talon
+yarn link-webruntime
 yarn build
 ```
 
@@ -43,17 +43,17 @@ You can view packages registered for linking under `~/.config/yarn/link`:
 ```console
 $ ls -lR  ~/.config/yarn/link
 total 0
-drwxr-xr-x  5 nmcwilliams  wheel  160 May  9 14:35 @talon
+drwxr-xr-x  5 nmcwilliams  wheel  160 May  9 14:35 @webruntime
 lrwxr-xr-x  1 nmcwilliams  wheel   68 Mar 20 18:05 lightning-lsp-common -> ../../../dev/lightning-language-server/packages/lightning-lsp-common
-lrwxr-xr-x  1 nmcwilliams  wheel   37 May  9 14:35 talon-e2e -> ../../../dev/talon/packages/talon-e2e
-lrwxr-xr-x  1 nmcwilliams  wheel   45 Apr 26 12:24 talon-integration -> ../../../dev/talon/packages/talon-integration
-lrwxr-xr-x  1 nmcwilliams  wheel   52 May  9 14:35 talon-template-flashhelp -> ../../../dev/talon/packages/talon-template-flashhelp
+lrwxr-xr-x  1 nmcwilliams  wheel   37 May  9 14:35 webruntime-e2e -> ../../../dev/webruntime/packages/webruntime-e2e
+lrwxr-xr-x  1 nmcwilliams  wheel   45 Apr 26 12:24 webruntime-integration -> ../../../dev/webruntime/packages/webruntime-integration
+lrwxr-xr-x  1 nmcwilliams  wheel   52 May  9 14:35 webruntime-template-flashhelp -> ../../../dev/webruntime/packages/webruntime-template-flashhelp
 
-/Users/nmcwilliams/.config/yarn/link/@talon:
+/Users/nmcwilliams/.config/yarn/link/@webruntime:
 total 0
-lrwxr-xr-x  1 nmcwilliams  wheel  43 May  9 14:35 common -> ../../../../dev/talon/packages/talon-common
-lrwxr-xr-x  1 nmcwilliams  wheel  45 May  9 14:35 compiler -> ../../../../dev/talon/packages/talon-compiler
-lrwxr-xr-x  1 nmcwilliams  wheel  46 May  9 14:35 framework -> ../../../../dev/talon/packages/talon-framework
+lrwxr-xr-x  1 nmcwilliams  wheel  43 May  9 14:35 common -> ../../../../dev/webruntime/packages/webruntime-common
+lrwxr-xr-x  1 nmcwilliams  wheel  45 May  9 14:35 compiler -> ../../../../dev/webruntime/packages/webruntime-compiler
+lrwxr-xr-x  1 nmcwilliams  wheel  46 May  9 14:35 framework -> ../../../../dev/webruntime/packages/webruntime-framework
 ```
 
 And you can view which packages are currently linked:

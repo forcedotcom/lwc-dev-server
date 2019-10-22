@@ -1,8 +1,8 @@
 /*
  * Essentially a copy of @webruntime/compiler/src/server/server.js
  * Splits the run method into createServer / startServer methods.
- * Ideally we can move this back into talon once we determine how best
- * to expose talon's express server for configuration
+ * Ideally we can move this back into webruntime once we determine how best
+ * to expose webruntime's express server for configuration
  *
  */
 import {
@@ -50,7 +50,7 @@ let _RELOAD_RETURNED = { reload: () => {}, closeServer: async () => {} };
  *
  * @example
  *
- * const { FRAMEWORK_PUBLIC_DIR } = require('@talon/compiler');
+ * const { FRAMEWORK_PUBLIC_DIR } = require('@webruntime/compiler');
  *
  * app.use(express.static(FRAMEWORK_PUBLIC_DIR));
  *
