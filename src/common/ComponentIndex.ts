@@ -23,14 +23,14 @@ export default class ComponentIndex {
     }
 
     public getModules(): PackageComponent[] {
-        let temp = this.project.modulesSourceDirectory;
-        if (temp !== null) {
-            if (this.project.isSfdx) {
-                temp = path.join(temp, 'main/default/lwc');
-            }
-            return this.findModulesIn(temp);
+        let modulesSourceDirectory = this.project.modulesSourceDirectory;
+        if (this.project.isSfdx) {
+            modulesSourceDirectory = path.join(
+                modulesSourceDirectory,
+                'main/default/lwc'
+            );
         }
-        return [];
+        return this.findModulesIn(modulesSourceDirectory);
     }
 
     /**

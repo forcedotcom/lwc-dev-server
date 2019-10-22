@@ -454,5 +454,20 @@ describe('project', () => {
 
             expect(project.staticResourcesDirectory).toBeNull();
         });
+
+        test('when staticResourcesDirectory is specified as absolute in the config json file, staticResourcesDirectory uses the specified file unchanged', () => {
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        staticResourcesDirectory: '/tmp/absolute/path'
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+
+            expect(project.staticResourcesDirectory).toBe('/tmp/absolute/path');
+        });
     });
 });
