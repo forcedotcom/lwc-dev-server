@@ -15,6 +15,7 @@ import { Server } from 'http';
 import { Connection } from '@salesforce/core';
 import { performance } from 'perf_hooks';
 import LocalDevTelemetryReporter from '../instrumentation/LocalDevTelemetryReporter';
+import crypto from 'crypto';
 
 const debug = debugLogger('localdevserver');
 const packageRoot = path.join(__dirname, '..', '..');
@@ -24,6 +25,30 @@ export const defaultOutputDirectory = '.localdevserver';
 
 export default class LocalDevServer {
     private server?: Server;
+    private readonly nonce: string;
+    private readonly devhubUser: string;
+
+    /**
+     * A unique ID that maps to the user that is operating local development.
+     * It has no information you can map back to the actual user,
+     */
+    private readonly anonymousUserId: string;
+
+    /**
+     * Initializes properties for the LocalDevServer
+     *
+     * @param devhubUser By providing a devhubUser we can provide instrumentation for a unique user. Otherwise they all get bucketed into one user.
+     */
+    constructor(devhubUser?: string) {
+        this.devhubUser = devhubUser || '';
+        this.anonymousUserId = devhubUser
+            ? crypto
+                  .createHash('md5')
+                  .update(this.devhubUser)
+                  .digest('hex')
+            : '';
+        this.nonce = crypto.randomBytes(16).toString('base64');
+    }
 
     public async start(project: Project, connection?: Connection) {
         const startTime = performance.now();
@@ -61,7 +86,10 @@ export default class LocalDevServer {
         const localDependencies = packageRoot;
 
         // Reporter for instrumentation
-        const reporter = await LocalDevTelemetryReporter.getInstance();
+        const reporter = await LocalDevTelemetryReporter.getInstance(
+            this.anonymousUserId,
+            this.nonce
+        );
 
         // all the deps, filtered by existing
         let modulePaths = [vendors, localDependencies, ...nodePaths];
