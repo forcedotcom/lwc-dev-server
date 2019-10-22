@@ -461,10 +461,29 @@ describe('LocalDevServer', () => {
         });
 
         describe('telemetry', () => {
-            it('reports on application start', async () => {
-                const reporter = await LocalDevTelemetryReporter.getInstance();
-                reporter.trackApplicationStart = jest.fn();
+            const MockReporter = {
+                trackApplicationStart: jest.fn(),
+                trackApplicationEnd: jest.fn(),
+                trackApplicationStartException: jest.fn()
+            };
 
+            beforeEach(() => {
+                jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+                    // @ts-ignore
+                    .mockImplementation(async () => MockReporter);
+            });
+
+            afterEach(() => {
+                // @ts-ignore
+                LocalDevTelemetryReporter.getInstance.mockClear();
+            });
+
+            it('reports on application start', async () => {
+                const reporter = await LocalDevTelemetryReporter.getInstance(
+                    'userid',
+                    'sessionid'
+                );
+                jest.spyOn(reporter, 'trackApplicationStart');
                 const projectPath = '/Users/arya/dev/myproject';
                 const project = mockProject({
                     projectPath
@@ -483,8 +502,10 @@ describe('LocalDevServer', () => {
             it('reports on application end', async () => {
                 const projectPath = '/Users/arya/dev/myproject';
                 const project = mockProject({ projectPath });
-                const reporter = await LocalDevTelemetryReporter.getInstance();
-                reporter.trackApplicationEnd = jest.fn();
+                const reporter = await LocalDevTelemetryReporter.getInstance(
+                    'userid',
+                    'sessionid'
+                );
 
                 const server = new LocalDevServer();
                 await server.start(project);
@@ -500,14 +521,16 @@ describe('LocalDevServer', () => {
             it('reports when exception is thrown durning application start', async () => {
                 const projectPath = '/Users/arya/dev/myproject';
                 const project = mockProject({ projectPath });
-                const reporter = await LocalDevTelemetryReporter.getInstance();
+                const reporter = await LocalDevTelemetryReporter.getInstance(
+                    'userid',
+                    'sessionid'
+                );
                 // Throw an exception during LocalDevServer start
                 reporter.trackApplicationStart = jest
                     .fn()
                     .mockImplementationOnce(() => {
                         throw new Error('expected error');
                     });
-                reporter.trackApplicationStartException = jest.fn();
 
                 // Will throw an exception
                 try {
@@ -519,10 +542,79 @@ describe('LocalDevServer', () => {
                     expect.any(Error)
                 );
             });
+
+            it('passes encoded devhubuser to instrumentation as userid', async () => {
+                const projectPath = '/Users/arya/dev/myproject';
+                const project = mockProject({ projectPath });
+                const localDevServer = new LocalDevServer(
+                    'devhubuser@salesforce.com'
+                );
+                // @ts-ignore
+                localDevServer.anonymousUserId = 'anonymousUserId';
+
+                localDevServer.start(project);
+
+                expect(
+                    // @ts-ignore
+                    LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
+                ).toBe('anonymousUserId');
+            });
+
+            it('passes nonce to instrumentation as sessionid', async () => {
+                const projectPath = '/Users/arya/dev/myproject';
+                const project = mockProject({ projectPath });
+                const localDevServer = new LocalDevServer(
+                    'devhubuser@salesforce.com'
+                );
+                // @ts-ignore
+                localDevServer.nonce = 'nonce';
+
+                localDevServer.start(project);
+
+                expect(
+                    // @ts-ignore
+                    LocalDevTelemetryReporter.getInstance.mock.calls[0][1]
+                ).toBe('nonce');
+            });
+
+            it('serializes devhubuser ', async () => {
+                const projectPath = '/Users/arya/dev/myproject';
+                const project = mockProject({ projectPath });
+                // jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+                //     // @ts-ignore
+                //     .mockImplementation(async () => MockReporter);
+
+                const localDevServer = new LocalDevServer(
+                    'devhubuser@salesforce.com'
+                );
+                localDevServer.start(project);
+
+                expect(
+                    // @ts-ignore
+                    LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
+                ).not.toBe('devhubuser@salesforce.com');
+            });
         });
     });
 
     describe('stop()', () => {
+        const MockReporter = {
+            trackApplicationStart: jest.fn(),
+            trackApplicationEnd: jest.fn(),
+            trackApplicationStartException: jest.fn()
+        };
+
+        beforeEach(() => {
+            jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+                // @ts-ignore
+                .mockImplementation(async () => MockReporter);
+        });
+
+        afterEach(() => {
+            // @ts-ignore
+            LocalDevTelemetryReporter.getInstance.mockClear();
+        });
+
         it('calls close on the server', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });
@@ -572,6 +664,23 @@ describe('LocalDevServer', () => {
     });
 
     describe('port()', () => {
+        const MockReporter = {
+            trackApplicationStart: jest.fn(),
+            trackApplicationEnd: jest.fn(),
+            trackApplicationStartException: jest.fn()
+        };
+
+        beforeEach(() => {
+            jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+                // @ts-ignore
+                .mockImplementation(async () => MockReporter);
+        });
+
+        afterEach(() => {
+            // @ts-ignore
+            LocalDevTelemetryReporter.getInstance.mockClear();
+        });
+
         it('returns the port number', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });

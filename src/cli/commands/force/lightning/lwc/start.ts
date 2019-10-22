@@ -43,7 +43,8 @@ export default class Start extends SfdxCommand {
     protected static requiresProject = true;
 
     public async run(): Promise<AnyJson> {
-        const defaultdevhubusername = this.configAggregator.getPropertyValue(
+        const devhubusername = this.hubOrg ? this.hubOrg.getUsername() : '';
+        const devhubalias = this.configAggregator.getPropertyValue(
             'defaultdevhubusername'
         ) as string;
 
@@ -65,7 +66,7 @@ export default class Start extends SfdxCommand {
             const targetusername = this.flags.targetusername;
             if (targetusername) {
                 this.reportStatus(
-                    colors.green(defaultdevhubusername),
+                    colors.green(devhubalias),
                     colors.red(
                         `${targetusername} - ${messages.getMessage(
                             'error:invalidscratchorgusername'
@@ -77,7 +78,7 @@ export default class Start extends SfdxCommand {
                     'defaultusername'
                 );
                 this.reportStatus(
-                    colors.green(defaultdevhubusername),
+                    colors.green(devhubalias),
                     colors.red(
                         `${configuredusername} - ${messages.getMessage(
                             'error:noscratchorg'
@@ -126,7 +127,7 @@ export default class Start extends SfdxCommand {
             await this.org.refreshAuth();
         } catch (err) {
             this.reportStatus(
-                colors.green(defaultdevhubusername),
+                colors.green(devhubalias),
                 colors.red(
                     `${orgusername} - ${messages.getMessage(
                         'error:inactivescratchorg'
@@ -138,7 +139,7 @@ export default class Start extends SfdxCommand {
         }
 
         this.reportStatus(
-            colors.green(defaultdevhubusername),
+            colors.green(devhubalias),
             colors.green(orgusername),
             colors.green(api_version)
         );
@@ -176,7 +177,7 @@ export default class Start extends SfdxCommand {
         debug(JSON.stringify({ ...retValue, token: undefined }));
 
         // Start local dev server
-        new LocalDevServer().start(project, conn);
+        new LocalDevServer(devhubusername).start(project, conn);
 
         return retValue;
     }

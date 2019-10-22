@@ -69,13 +69,10 @@ export default class LocalDevTelemetryReporter {
         });
     }
 
-    public static async getInstance() {
-        if (!this._instance) {
-            const reporter = await TelemetryReporter.create(
-                new LocalDevTelemetryOptions()
-            );
-            this._instance = new LocalDevTelemetryReporter(reporter);
-        }
-        return this._instance;
+    public static async getInstance(userId: string, sessionId: string) {
+        const reporter = await TelemetryReporter.create(
+            new LocalDevTelemetryOptions(userId, sessionId)
+        );
+        return new LocalDevTelemetryReporter(reporter);
     }
 }

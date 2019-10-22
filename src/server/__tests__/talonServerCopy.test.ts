@@ -1,5 +1,6 @@
 import * as talonServer from '../talonServerCopy';
 import mockFs from 'mock-fs';
+import colors from 'colors';
 
 jest.mock('compression', () => {
     const compressionMock = jest.fn();
@@ -100,6 +101,46 @@ describe('talonServerCopy', () => {
     });
 
     describe('startServer', () => {
+        test('on server start, log outputs message', async () => {
+            const expected = colors.magenta.bold(
+                `Server up on http://localhost:${1234}`
+            );
+
+            let listenCallback = () => {};
+            const server = {
+                on: jest.fn(),
+                address: () => {
+                    return { port: 1234 };
+                }
+            };
+            const app = require('express')();
+            app.listen = jest.fn((port, callback) => {
+                listenCallback = callback;
+                return server;
+            });
+            const logSpy = jest.spyOn(console, 'log');
+
+            await talonServer.startServer(app, '', 1234);
+            listenCallback();
+
+            expect(logSpy.mock.calls[0][0]).toBe(expected);
+        });
+
+        test('port passed to start server is used for listening on the application', async () => {
+            let actual;
+            const server = { on: jest.fn() };
+            const app = require('express')();
+            app.listen = jest.fn((port, callback) => {
+                actual = port;
+                return server;
+            });
+            const onClose = jest.fn();
+
+            await talonServer.startServer(app, '', 1234, onClose);
+
+            expect(actual).toBe(1234);
+        });
+
         test('onClose called on server close', async () => {
             const server = { on: jest.fn() };
             const app = require('express')();

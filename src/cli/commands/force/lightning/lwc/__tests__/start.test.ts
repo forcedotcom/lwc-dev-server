@@ -18,6 +18,23 @@ describe('start', () => {
     beforeEach(() => {
         start = new Start([], new Config.Config(<Config.Options>{}));
         setupConfigAggregator();
+        const hubOrg = {
+            getUsername: jest.fn()
+        };
+        Object.defineProperty(start, 'hubOrg', {
+            get: () => {
+                return hubOrg;
+            }
+        });
+
+        // Setup project with a default configuration instance.
+        const _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
+        Object.defineProperty(Project.prototype, 'configuration', {
+            configurable: true,
+            get: () => {
+                return _configuration;
+            }
+        });
     });
 
     function setupAllDev() {
@@ -110,14 +127,6 @@ describe('start', () => {
                 };
             });
 
-            let _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
-            Object.defineProperty(Project.prototype, 'configuration', {
-                configurable: true,
-                get: () => {
-                    return _configuration;
-                }
-            });
-
             let result: JsonMap = (await start.run()) as JsonMap;
             if (result) {
                 expect(result['endpoint']).toEqual('http://test.instance.url');
@@ -168,15 +177,8 @@ describe('start', () => {
                 }
             };
 
-            let _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
-            Object.defineProperty(Project.prototype, 'configuration', {
-                configurable: true,
-                get: () => {
-                    return _configuration;
-                }
-            });
             let result = await start.run();
-            _configuration.onProxyReq(request, null, null);
+            Project.prototype.configuration.onProxyReq(request, null, null);
 
             expect(header).toBe('Authorization: Bearer testingAccessToken');
         });
@@ -229,6 +231,51 @@ describe('start', () => {
             await start.run();
 
             expect(log.mock.calls[0][0]).toEqual(expected);
+        });
+
+        test('uses port from flags', async () => {
+            setupUX();
+            setupOrg();
+            setupProject();
+
+            Object.defineProperty(start, 'flags', {
+                get: () => {
+                    return { port: '5151' };
+                }
+            });
+
+            let configuredPort = null;
+            // @ts-ignore
+            LocalDevServer.mockImplementation(() => {
+                return {
+                    start: (project: Project) => {
+                        configuredPort = project.configuration.port;
+                    }
+                };
+            });
+
+            await start.run();
+
+            expect(configuredPort).toBe(5151);
+        });
+
+        test('passes devhub user to LocalDevServer', async () => {
+            setupAllDev();
+
+            let actual;
+            // @ts-ignore
+            LocalDevServer.mockImplementation(devhubUser => {
+                actual = devhubUser;
+                return {
+                    start: () => {}
+                };
+            });
+            // @ts-ignore
+            start.hubOrg.getUsername.mockReturnValue('admin@devhub.org');
+
+            await start.run();
+
+            expect(actual).toBe('admin@devhub.org');
         });
     });
 

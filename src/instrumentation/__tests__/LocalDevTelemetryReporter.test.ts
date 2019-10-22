@@ -133,11 +133,29 @@ describe('LocalDevTelemetryReporter', () => {
         );
     });
 
-    test('getInstance() returns instance of LocalDevTelemetryReporter and uses cached version on further calls', async () => {
-        const localDevReporter = await LocalDevTelemetryReporter.getInstance();
-        const localDevReporter2 = await LocalDevTelemetryReporter.getInstance();
+    test('getInstance() passes userId to TelemetryReporter', async () => {
+        TelemetryReporter.create = jest.fn();
+        const localDevReporter = LocalDevTelemetryReporter.getInstance(
+            'userId',
+            'sessionId'
+        );
+        // @ts-ignore
+        const createMock = TelemetryReporter.create.mock;
 
-        expect(localDevReporter).toBeTruthy();
-        expect(localDevReporter).toBe(localDevReporter2);
+        expect(createMock.calls[0][0].contextTags['ai.user.id']).toBe('userId');
+    });
+
+    test('getInstance() passes sessionId to TelemetryReporter', async () => {
+        TelemetryReporter.create = jest.fn();
+        const localDevReporter = LocalDevTelemetryReporter.getInstance(
+            'userid',
+            'sessionId'
+        );
+        // @ts-ignore
+        const createMock = TelemetryReporter.create.mock;
+
+        expect(createMock.calls[0][0].contextTags['ai.session.id']).toBe(
+            'sessionId'
+        );
     });
 });
