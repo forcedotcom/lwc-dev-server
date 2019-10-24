@@ -69,16 +69,9 @@ node_modules/@webruntime/compiler
 
 We use the `npm version` command to update the package.json version based on [semver](https://docs.npmjs.com/about-semantic-versioning).
 
-If you are pushing the version bump in a branch (as opposed to master):
-
-```sh
-git checkout -b bump-version
-git push --set-upstream origin bump-version
-```
-
-
 ### Publishing Publicly
 
+#### 1) Update the Version
 For backwards-compatible bug fixes:
 
 ```sh
@@ -91,7 +84,9 @@ For backwards-compatible features and bug fixes:
 npm version minor
 ```
 
-Currently we work with Jason Grantham to push signed packages to npmjs.com.
+#### 2) Push to NPM
+
+Currently we work with Jason Grantham to manually push signed packages to npmjs.com every Thursday.
 
 ### Publishing an Internal Testing Version
 
