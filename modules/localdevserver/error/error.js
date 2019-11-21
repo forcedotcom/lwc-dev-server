@@ -1,4 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
+import { getNonce } from '../projectMetadataLib/projectMetadataLib';
 
 export default class Error extends LightningElement {
     @track
@@ -40,7 +41,7 @@ export default class Error extends LightningElement {
                 this.errorLine = null;
             }
             this.errorMessage = this.processMessage(this.error.message);
-            fetch(`/show?file=${this._error.filename}`, {
+            fetch(`/localdev/${getNonce()}/show?file=${this._error.filename}`, {
                 credentials: 'same-origin'
             })
                 .then(response => {

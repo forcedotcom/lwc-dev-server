@@ -329,34 +329,61 @@ describe('LocalDevServer', () => {
             );
         });
 
-        it('adds /localdev/localdev.json route', async () => {
+        it('adds /localdev/{{nonce}}/localdev.json route', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({
                 projectPath
             });
 
             const server = new LocalDevServer();
+
+            // @ts-ignore
+            server.nonce = 'nonce';
+
             await server.start(project);
 
             const result = (talonServer.createServer as any).mock.results[0];
             const get = result.value.get;
 
-            expect(get.mock.calls[0][0]).toBe('/localdev/localdev.json');
+            expect(get.mock.calls[0][0]).toBe('/localdev/nonce/localdev.json');
         });
 
-        it('adds /localdev/localdev.js route', async () => {
+        it('adds /localdev/{{nonce}}/localdev.js route', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({
                 projectPath
             });
 
             const server = new LocalDevServer();
+
+            // @ts-ignore
+            server.nonce = 'nonce';
+
             await server.start(project);
 
             const result = (talonServer.createServer as any).mock.results[0];
             const get = result.value.get;
 
-            expect(get.mock.calls[1][0]).toBe('/localdev/localdev.js');
+            expect(get.mock.calls[1][0]).toBe('/localdev/nonce/localdev.js');
+        });
+
+        it('adds /localdev/{{nonce}}/show route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+
+            const server = new LocalDevServer();
+
+            // @ts-ignore
+            server.nonce = 'nonce';
+
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const get = result.value.get;
+
+            expect(get.mock.calls[2][0]).toBe('/localdev/nonce/show');
         });
 
         it('returns project metadata for localdev.json route', async () => {
@@ -458,6 +485,151 @@ describe('LocalDevServer', () => {
             };
             const content = `window.LocalDev = ${JSON.stringify(LocalDev)};`;
             expect(response.send.mock.calls[0][0]).toEqual(content);
+        });
+
+        it('should send a file with allowed file extension for show route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const modulesPath = '/mymodules';
+            const project = mockProject({
+                projectPath,
+                modulesPath
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const routeHandler = result.value.get.mock.calls[2][1];
+
+            const request = {
+                query: {
+                    file: '/mymodules/filename.html'
+                }
+            };
+
+            const response = {
+                sendFile: jest.fn()
+            };
+
+            routeHandler(request, response, jest.fn());
+
+            expect(response.sendFile).toBeCalledTimes(1);
+        });
+
+        it('should not send a file from outside of the module path for show route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const modulesPath = '/mymodules';
+            const project = mockProject({
+                projectPath,
+                modulesPath
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const routeHandler = result.value.get.mock.calls[2][1];
+
+            const request = {
+                query: {
+                    file: '/notmymodules/filename.ts'
+                }
+            };
+
+            const response = {
+                sendFile: jest.fn()
+            };
+
+            routeHandler(request, response, jest.fn());
+
+            expect(response.sendFile).toBeCalledTimes(0);
+        });
+
+        it('should not send a file with relative path outside of module path for show route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const modulesPath = '/mymodules';
+            const project = mockProject({
+                projectPath,
+                modulesPath
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const routeHandler = result.value.get.mock.calls[2][1];
+
+            const request = {
+                query: {
+                    file: '/mymodules/../filename.ts'
+                }
+            };
+
+            const response = {
+                sendFile: jest.fn()
+            };
+
+            routeHandler(request, response, jest.fn());
+
+            expect(response.sendFile).toBeCalledTimes(0);
+        });
+
+        it('should not send a file with unallowed file extension for show route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const modulesPath = '/mymodules';
+            const project = mockProject({
+                projectPath,
+                modulesPath
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const routeHandler = result.value.get.mock.calls[2][1];
+
+            const request = {
+                query: {
+                    file: '/mymodules/filename.ts'
+                }
+            };
+
+            const response = {
+                sendFile: jest.fn()
+            };
+
+            routeHandler(request, response, jest.fn());
+
+            expect(response.sendFile).toBeCalledTimes(0);
+        });
+
+        it('should not send a file without a file extension for show route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const modulesPath = '/mymodules';
+            const project = mockProject({
+                projectPath,
+                modulesPath
+            });
+
+            const server = new LocalDevServer();
+            await server.start(project);
+
+            const result = (talonServer.createServer as any).mock.results[0];
+            const routeHandler = result.value.get.mock.calls[2][1];
+
+            const request = {
+                query: {
+                    file: '/mymodules/filename.ts'
+                }
+            };
+
+            const response = {
+                sendFile: jest.fn()
+            };
+
+            routeHandler(request, response, jest.fn());
+
+            expect(response.sendFile).toBeCalledTimes(0);
         });
 
         describe('telemetry', () => {
