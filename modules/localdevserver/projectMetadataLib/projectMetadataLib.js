@@ -6,6 +6,12 @@ async function loadMetadata() {
     }
 }
 
+export function getNonce() {
+    const meta = document.head.querySelector('meta[name=nonce][content]');
+
+    return meta ? meta.content : '';
+}
+
 export async function getProjectMetadata() {
     return loadMetadata();
 }

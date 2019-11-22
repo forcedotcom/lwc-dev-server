@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import cpx from 'cpx';
+import express from 'express';
+import uuidv4 from 'uuidv4';
 import { createServer, startServer } from './talonServerCopy';
 import Project from '../common/Project';
 import ComponentIndex from '../common/ComponentIndex';
@@ -20,6 +22,12 @@ import crypto from 'crypto';
 const debug = debugLogger('localdevserver');
 const packageRoot = path.join(__dirname, '..', '..');
 const DEFAULT_API_VERSION = '46.0';
+
+const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
+    '.html': true,
+    '.css': true,
+    '.js': true
+};
 
 export const defaultOutputDirectory = '.localdevserver';
 
@@ -47,7 +55,7 @@ export default class LocalDevServer {
                   .update(this.devhubUser)
                   .digest('hex')
             : '';
-        this.nonce = crypto.randomBytes(16).toString('base64');
+        this.nonce = uuidv4();
     }
 
     public async start(project: Project, connection?: Connection) {
@@ -136,6 +144,7 @@ export default class LocalDevServer {
                 webruntimeConfig,
                 srcDir: project.modulesSourceDirectory,
                 views,
+                partials: { nonce: this.nonce },
                 indexHtml: path.join(__dirname, '..', 'html', 'index.html'),
                 routes,
                 labels,
@@ -173,16 +182,25 @@ export default class LocalDevServer {
             const server = await createServer(config, proxyConfig, connection);
 
             server.get(
-                '/localdev/localdev.json',
-                (req: any, res: any, next: () => void) => {
+                `/localdev/${this.nonce}/localdev.json`,
+                (
+                    req: express.Request,
+                    res: express.Response,
+                    next: express.NextFunction
+                ) => {
                     const componentIndex = new ComponentIndex(project);
                     const json = componentIndex.getProjectMetadata();
                     res.json(json);
                 }
             );
+
             server.get(
-                '/localdev/localdev.js',
-                (req: any, res: any, next: () => void) => {
+                `/localdev/${this.nonce}/localdev.js`,
+                (
+                    req: express.Request,
+                    res: express.Response,
+                    next: express.NextFunction
+                ) => {
                     const componentIndex = new ComponentIndex(project);
                     const json = componentIndex.getProjectMetadata();
                     const LocalDev = {
@@ -192,6 +210,28 @@ export default class LocalDevServer {
                     res.send(`window.LocalDev = ${JSON.stringify(LocalDev)};`);
                 }
             );
+
+            server.get(
+                `/localdev/${this.nonce}/show`,
+                (
+                    req: express.Request,
+                    res: express.Response,
+                    next: express.NextFunction
+                ) => {
+                    const file = req.query.file;
+                    const extension = path.extname(file);
+                    const normalizedFile = path.normalize(file);
+                    if (
+                        normalizedFile.startsWith(
+                            path.normalize(project.modulesSourceDirectory)
+                        ) &&
+                        ALLOWED_SHOW_EXTENSIONS[extension]
+                    ) {
+                        res.sendFile(file);
+                    }
+                }
+            );
+
             this.server = await startServer(
                 server,
                 '',

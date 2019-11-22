@@ -64,12 +64,6 @@ const staticOptions = {
     maxAge: 31536000
 };
 
-const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
-    '.html': true,
-    '.css': true,
-    '.js': true
-};
-
 export function getRootApp(app: any, basePath: string) {
     if (basePath) {
         const rootApp = express();
@@ -134,9 +128,6 @@ export async function createServer(
 
     // Proxy, record and replay API calls
     app.use(apiMiddleware(apiConfig));
-
-    // LWC-DEV-SERVER: Show source handler
-    app.use(`/show`, showRoute(sourceDir));
 
     return app;
 }
@@ -265,32 +256,6 @@ export function salesforceStaticAssetsRoute(basePath: string) {
                 next('route');
             } else {
                 next();
-            }
-        }
-    };
-}
-
-/**
- * Return the source code for a specified file.
- *
- * @param sourceDir Directory to accept which files to expose.
- */
-export function showRoute(sourceDir: string) {
-    const normalizedSourceDir = path.normalize(sourceDir);
-    return (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-    ) => {
-        const file = req.query.file;
-        if (file) {
-            const extension = path.extname(file);
-            const normalizedFile = path.normalize(file);
-            if (
-                normalizedFile.startsWith(normalizedSourceDir) &&
-                ALLOWED_SHOW_EXTENSIONS[extension]
-            ) {
-                res.sendFile(file);
             }
         }
     };

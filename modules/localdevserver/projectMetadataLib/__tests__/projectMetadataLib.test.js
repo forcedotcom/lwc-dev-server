@@ -42,11 +42,27 @@ function createProjectMetadata() {
 }
 
 describe('localdevserver-project-metadata-lib', () => {
-    afterEach(() => {
-        window.LocalDev = null;
+    describe('getNonce', () => {
+        afterEach(() => {
+            document.head.innerHTML = '';
+        });
+
+        it('should return the nonce from the meta tag', () => {
+            document.head.innerHTML = '<meta name="nonce" content="secret">';
+
+            expect(lib.getNonce()).toEqual('secret');
+        });
+
+        it('should return empty string when the meta tag does not exist', () => {
+            expect(lib.getNonce()).toEqual('');
+        });
     });
 
     describe('getProjectMetadata', () => {
+        afterEach(() => {
+            window.LocalDev = null;
+        });
+
         it('resolves data from window.LocalDev', async () => {
             const metadata = createProjectMetadata();
             window.LocalDev = metadata;
@@ -63,6 +79,10 @@ describe('localdevserver-project-metadata-lib', () => {
     });
 
     describe('getComponentMetadata', () => {
+        afterEach(() => {
+            window.LocalDev = null;
+        });
+
         it('finds the metadata from the default package', async () => {
             const cmp1 = {
                 namespace: 'c',
