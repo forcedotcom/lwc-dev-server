@@ -30,6 +30,7 @@ import { Connection } from '@salesforce/core';
 import reload from 'reload';
 import watch from 'watch';
 import getPort from 'get-port';
+import minimatch from 'minimatch';
 
 const PUBLIC_DIR = 'public';
 
@@ -123,7 +124,7 @@ export async function createServer(
     }
 
     if (options.liveReload) {
-        await startLiveReload(app, sourceDir, outputDir);
+        await startLiveReload(app, sourceDir, outputDir, templateDir);
     }
 
     // Proxy, record and replay API calls
@@ -271,7 +272,8 @@ export function salesforceStaticAssetsRoute(basePath: string) {
 export async function startLiveReload(
     app: express.Application,
     sourceDir: string,
-    outputDir: string
+    outputDir: string,
+    templateDir: string
 ) {
     // reload - auto reloading of the page
     const reloading: { [key: string]: boolean } = {};
@@ -286,35 +288,61 @@ export async function startLiveReload(
         debug('watching: ' + sourceDir);
         const ignoreDirectoryPattern = new RegExp(outputDir + '.*');
         const watchCallback = function(file: any, curr: any, prev: any) {
-            if (typeof file === 'string') {
-                const fileName: string = file.toString();
-                debug('file changed: ' + fileName);
-                if (!reloading[fileName]) {
-                    reloading[fileName] = true;
-                    _RELOAD_RETURNED.reload();
-                    setTimeout(() => {
-                        reloading[fileName] = false;
-                    }, 500);
+            // ignore the initial invoke of the callback
+            // - the initial invoke returns an object with every file in the tree.
+            // - all other invokes return the path of the modified file.
+            if (typeof file === 'object' && prev === null && curr === null) {
+                return;
+            }
+
+            // filepath expected from first argument
+            if (typeof file !== 'string') {
+                return;
+            }
+
+            debug('file changed: ' + file);
+
+            const forceIgnorePatterns = loadIgnorePatterns(
+                path.join(templateDir, '.forceignore')
+            );
+
+            // exit early if the updated file matches a force ignore pattern
+            for (const ignorePattern of forceIgnorePatterns) {
+                if (minimatch(file, ignorePattern)) {
+                    return;
                 }
-                if (
-                    fs.existsSync(fileName) &&
-                    fs.lstatSync(fileName).isDirectory()
-                ) {
-                    debug('new folder, now watching: ' + fileName);
-                    watch.watchTree(
-                        fileName,
-                        { ignoreDirectoryPattern },
-                        watchCallback
-                    );
-                    _WATCHTREE_FOLDERS.push(fileName);
-                } else if (_WATCHTREE_FOLDERS.indexOf(fileName) !== -1) {
-                    _WATCHTREE_FOLDERS.splice(
-                        _WATCHTREE_FOLDERS.indexOf(fileName),
-                        1
-                    );
-                }
+            }
+
+            if (!reloading[file]) {
+                reloading[file] = true;
+                _RELOAD_RETURNED.reload();
+                setTimeout(() => {
+                    reloading[file] = false;
+                }, 500);
+            }
+            if (fs.existsSync(file) && fs.lstatSync(file).isDirectory()) {
+                debug('new folder, now watching: ' + file);
+                watch.watchTree(
+                    file,
+                    { ignoreDirectoryPattern },
+                    watchCallback
+                );
+                _WATCHTREE_FOLDERS.push(file);
+            } else if (_WATCHTREE_FOLDERS.indexOf(file) !== -1) {
+                _WATCHTREE_FOLDERS.splice(_WATCHTREE_FOLDERS.indexOf(file), 1);
             }
         };
         watch.watchTree(sourceDir, { ignoreDirectoryPattern }, watchCallback);
     });
+}
+
+function loadIgnorePatterns(filepath: string) {
+    if (!fs.existsSync(filepath) || !fs.lstatSync(filepath).isFile()) {
+        return [];
+    }
+    return fs
+        .readFileSync(filepath)
+        .toString()
+        .split('\n')
+        .filter(value => value.length > 0 && value.trim()[0] != '#');
 }

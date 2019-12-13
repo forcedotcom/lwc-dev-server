@@ -102,7 +102,7 @@
         "ts-node": "^8.3.0",
         "tslint": "^5.18.0",
         "typescript": "^3.5.3",
-        "webdriverio": "^5.11.0"
+        "webdriverio": "^5.16.15"
     },
     "dependencies": {
         "@babel/core": "^7.5.4",
@@ -141,6 +141,7 @@
         "helmet": "^3.18.0",
         "jsdom": "^15.1.1",
         "mime-types": "^2.1.24",
+        "minimatch": "^3.0.4",
         "path": "^0.12.7",
         "reload": "^3.0.1",
         "request": "^2.88.0",

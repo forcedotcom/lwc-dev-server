@@ -42,7 +42,12 @@ jest.mock('express', () => {
     return express;
 });
 jest.mock('reload', () => {
-    return jest.fn(() => Promise.resolve());
+    return jest.fn(() =>
+        Promise.resolve({
+            reload: jest.fn(),
+            closeServer: jest.fn()
+        })
+    );
 });
 jest.mock('watch', () => {
     return {
@@ -52,6 +57,10 @@ jest.mock('watch', () => {
 });
 
 describe('talonServerCopy', () => {
+    afterEach(() => {
+        mockFs.restore();
+    });
+
     describe('getRootApp', () => {
         test('wraps application with basePath when provided', async () => {
             const app = require('express')();
@@ -93,10 +102,130 @@ describe('talonServerCopy', () => {
             await talonServer.createServer({
                 liveReload: true
             });
-            const watchCallback = watch.watchTree.mock.calls[0][2];
-            watchCallback(null);
 
             expect(watch.watchTree).toBeCalledTimes(1);
+        });
+
+        test('watch callback does not reload for the initial invoke', async () => {
+            const reload = require('reload');
+            (reload as any).mockClear();
+
+            const watch = require('watch');
+            (watch.watchTree as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+
+            const reloadReturned = await reload.mock.results[0].value;
+
+            const watchCallback = watch.watchTree.mock.calls[0][2];
+            watchCallback({}, null, null);
+
+            expect(reloadReturned.reload).toBeCalledTimes(0);
+        });
+
+        test('watch callback does not reload for non-string file argument', async () => {
+            const reload = require('reload');
+            (reload as any).mockClear();
+
+            const watch = require('watch');
+            (watch.watchTree as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+
+            const reloadReturned = await reload.mock.results[0].value;
+
+            const watchCallback = watch.watchTree.mock.calls[0][2];
+            watchCallback([]);
+
+            expect(reloadReturned.reload).toBeCalledTimes(0);
+        });
+
+        test('watch callback does not reload for ignored files', async () => {
+            const reload = require('reload');
+            (reload as any).mockClear();
+
+            const watch = require('watch');
+            (watch.watchTree as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+
+            mockFs({
+                '.forceignore': '**/jsconfig.json'
+            });
+
+            const reloadReturned = await reload.mock.results[0].value;
+
+            const watchCallback = watch.watchTree.mock.calls[0][2];
+            watchCallback('jsconfig.json');
+
+            expect(reloadReturned.reload).toBeCalledTimes(0);
+        });
+
+        test('watch callback reloads for component files', async () => {
+            const reload = require('reload');
+            (reload as any).mockClear();
+
+            const watch = require('watch');
+            (watch.watchTree as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+
+            const reloadReturned = await reload.mock.results[0].value;
+
+            const watchCallback = watch.watchTree.mock.calls[0][2];
+            watchCallback('path/to/mycomponent.html');
+
+            expect(reloadReturned.reload).toBeCalledTimes(1);
+        });
+
+        test('watch callback calls watchTree for a new directory', async () => {
+            const watch = require('watch');
+            (watch.watchTree as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+
+            mockFs({
+                'path/to/mycomponent.html': ''
+            });
+
+            const watchCallback = watch.watchTree.mock.calls[0][2];
+            watchCallback('path/to');
+
+            // watchTree is called on startup and as a result of the callback
+            expect(watch.watchTree).toBeCalledTimes(2);
+        });
+
+        test('watch callback does not call watchTree for a deleted directory', async () => {
+            const watch = require('watch');
+            (watch.watchTree as any).mockClear();
+
+            await talonServer.createServer({
+                liveReload: true
+            });
+
+            mockFs({
+                'path/to/mycomponent.html': ''
+            });
+
+            const watchCallback = watch.watchTree.mock.calls[0][2];
+            watchCallback('path/to');
+
+            mockFs.restore();
+
+            watchCallback('path/to');
+
+            // watchTree is called on startup and as a result of the first callback
+            expect(watch.watchTree).toBeCalledTimes(2);
         });
     });
 
