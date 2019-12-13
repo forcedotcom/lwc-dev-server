@@ -8,7 +8,7 @@ describe('Auto Reload', () => {
         'project/force-app/main/default/lwc'
     );
 
-    it('Test that updating a file will auto reload the page', async () => {
+    it('should reload the page when a component is updated', async () => {
         // copy autoreload to autoreloadtesting
         const testingTargetDir = path.join(lwcFolder, 'autoreloadtestingcopy');
         const testingTargetHtml = path.join(
@@ -32,29 +32,81 @@ describe('Auto Reload', () => {
         );
 
         await previewPage.open();
-        let pageContainer = await previewPage.testComponent;
+        const pageContainer = await previewPage.testComponent;
         const originalText = await (await pageContainer.shadow$(
             '.content'
         )).getText();
+        const originalTime = await (await pageContainer.shadow$(
+            '.time'
+        )).getText();
+
         expect(originalText).toBe('Initial Content');
 
         // edit autoreloadtesting
         const newFile = path.join(lwcFolder, 'autoreload', 'autoreload2.html');
         await fs.copy(newFile, testingTargetHtml);
 
-        // 'touch' the file to make sure it picks up the update
-        const time = new Date();
-        await fs.utimes(newFile, time, time);
-
         // verify new content appears
-        let newText = '';
         await browser.waitUntil(async () => {
-            return Promise.resolve(pageContainer.getText()).then(text => {
-                newText = text;
-                return originalText !== text;
-            });
-        }, 10000);
+            const newText = await (await pageContainer.shadow$(
+                '.content'
+            )).getText();
+            const newTime = await (await pageContainer.shadow$(
+                '.time'
+            )).getText();
 
-        expect(newText).toBe('New Content');
+            return originalText !== newText && originalTime !== newTime;
+        }, 10000);
+    });
+
+    it('should not reload the page when an ignored file is updated', async () => {
+        const testingTargetFile = path.join(lwcFolder, 'jsconfig.json');
+
+        // TODO: copy project to tmp directory for safe file modification.
+        await fs.remove(testingTargetFile);
+        await fs.createFile(testingTargetFile);
+        await fs.writeFile(
+            testingTargetFile,
+            JSON.stringify({
+                compilerOptions: {
+                    experimentalDecorators: false
+                },
+                typeAcquisition: {
+                    include: ['jest']
+                }
+            })
+        );
+
+        const previewPage: PreviewPage = new PreviewPage('c', 'autoreload');
+        await previewPage.open();
+
+        const pageContainer = await previewPage.testComponent;
+        const originalTime = await (await pageContainer.shadow$(
+            '.time'
+        )).getText();
+
+        // update the target file
+        // the content of the update does not matter
+        await fs.writeFile(
+            testingTargetFile,
+            JSON.stringify(
+                {
+                    compilerOptions: {
+                        experimentalDecorators: true
+                    },
+                    typeAcquisition: {
+                        include: ['jest']
+                    }
+                },
+                null,
+                4
+            )
+        );
+
+        // verify the page did not reload
+        // the time element should not change since the page is not reloaded.
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        const newTime = await (await pageContainer.shadow$('.time')).getText();
+        expect(newTime).toBe(originalTime);
     });
 });
