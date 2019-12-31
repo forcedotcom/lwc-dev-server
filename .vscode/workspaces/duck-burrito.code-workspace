@@ -1,18 +1,10 @@
 {
-	"folders": [
-		{
-			"path": "../../"
-		},
-		{
-			"path": "../../../talon"
-		}
-	],
-	"settings": {
-		"salesforcedx-vscode-lightning.activationMode": "always",
-		"workbench.colorCustomizations": {
-			"activityBar.background": "#0C3600",
-			"titleBar.activeBackground": "#114B00",
-			"titleBar.activeForeground": "#EDFFE8"
-		}
-	}
+    "settings": {
+        "salesforcedx-vscode-lightning.activationMode": "always",
+        "workbench.colorCustomizations": {
+            "activityBar.background": "#0C3600",
+            "titleBar.activeBackground": "#114B00",
+            "titleBar.activeForeground": "#EDFFE8"
+        }
+    }
 }
