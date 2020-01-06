@@ -1,4 +1,9 @@
 {
+    "folders": [
+        {
+            "path": "../../"
+        }
+    ],
     "settings": {
         "salesforcedx-vscode-lightning.activationMode": "always",
         "workbench.colorCustomizations": {
