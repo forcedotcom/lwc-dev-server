@@ -12,7 +12,7 @@ import {
     contextService,
     staticMiddleware,
     templateMiddleware
-} from '@webruntime/compiler';
+} from '@webruntime/framework-server';
 import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
