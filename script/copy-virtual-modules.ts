@@ -1,15 +1,25 @@
 // LWC's module resolver has changed the format in 224, so until we update our
-// webruntime dependency version (which uses the newer LWC version), the 224+
-// version of LGC is not compatible. This code converts the virtual modules in
-// the LGC package.json to the old format as a temporary workaround.
+// webruntime dependency version (to a version using a newer LWC version), the
+// 224+ version of LGC is not compatible. This code copies the virtual modules
+// in the LGC package.json to the old format as a temporary workaround.
 
-// When moving this, also remove
+// When moving this file, also remove:
 // 1. adding virtual-modules to the modulePaths in LocalDevServer.ts
 // 2. the reference to this script in package.json
 
 import path from 'path';
 import { mkdir, ls, rm } from 'shelljs';
 import fs from 'fs-extra';
+
+const packageJsonTemplate = `
+{
+  "name": "lwc-dev-server-virtual-modules",
+  "version": "0.0.1",
+  "lwc": {
+    "modules": []
+  }
+}
+`;
 
 const minVersion = 224;
 
@@ -22,19 +32,10 @@ const vendorsPath = path.join(
     'vendors'
 );
 
-const packageJsonTemplate = `
-{
-  "name": "lwc-dev-server-virtual-modules",
-  "version": "0.0.1",
-  "lwc": {
-    "modules": []
-  }
-}
-`;
-
 // clean output directory
 rm('-rf', virtualModulesPath);
 
+// copy content from LGC dependencies in node_modules to output directory
 ls(vendorsPath).forEach(childPath => {
     if (childPath.startsWith('dependencies')) {
         const split = childPath.split('-');
@@ -63,7 +64,7 @@ ls(vendorsPath).forEach(childPath => {
                 );
             }
 
-            if (!packageJson.lwc || !packageJson.lwc.modules) {
+            if (!packageJson.lwc) {
                 console.error(`missing lwcConfig in ${packageJsonPath}`);
                 return;
             } else if (
