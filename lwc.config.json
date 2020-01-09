@@ -1,0 +1,11 @@
+{
+    "modules": [
+        "modules",
+        "modules/localdevserver",
+        "@salesforce/lwc-dev-server-dependencies",
+        "@salesforce/lwc-dev-server-dependencies/vendors/dependencies-224",
+        "@salesforce/lwc-dev-server-dependencies/vendors/dependencies-224/force-pkg/src",
+        "node_modules/@salesforce/lwc-dev-server-dependencies/vendors/dependencies-224/force-pkg/src",
+        "@salesforce/lwc-dev-server-dependencies/vendors/dependencies-224/lightning-pkg/src"
+    ]
+}
