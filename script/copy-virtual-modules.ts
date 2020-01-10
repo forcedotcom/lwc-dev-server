@@ -3,12 +3,15 @@
 // 224+ version of LGC is not compatible. This code copies the virtual modules
 // in the LGC package.json to the old format as a temporary workaround.
 
+// https://github.com/salesforce/lwc/pull/1414
+// https://github.com/salesforce/lightning-components/pull/1954/files
+
 // When removing this file, also remove:
 // 1. adding virtual-modules to the modulePaths in LocalDevServer.ts
 // 2. the reference to this script in package.json
 
 import path from 'path';
-import { mkdir, ls, rm } from 'shelljs';
+import { mkdir, ls, rm, cp } from 'shelljs';
 import fs from 'fs-extra';
 
 const packageJsonTemplate = `
@@ -75,6 +78,9 @@ ls(vendorsPath).forEach(childPath => {
                 return;
             }
 
+            const outputDirectory = path.join(virtualModulesPath, `${version}`);
+            mkdir('-p', outputDirectory);
+
             const modules: any[] = packageJson.lwc.modules;
             const newModules: any = [{}];
 
@@ -87,22 +93,27 @@ ls(vendorsPath).forEach(childPath => {
                         lightningComponentsPath,
                         modulePath
                     );
-                    const relativeModulePath = path.relative(
-                        __filename,
-                        absoluteModulePath
+
+                    const copiedFilePath = path.join(
+                        outputDirectory,
+                        modulePath
                     );
-                    newModules[0][moduleName] = relativeModulePath;
+
+                    mkdir('-p', path.dirname(copiedFilePath));
+                    cp('-R', absoluteModulePath, copiedFilePath);
+
+                    newModules[0][moduleName] = modulePath;
                 }
             });
 
-            const output = JSON.parse(packageJsonTemplate);
-            output.lwc.modules = newModules;
+            const outputJson = JSON.parse(packageJsonTemplate);
+            outputJson.lwc.modules = newModules;
 
-            const outputDirectory = path.join(virtualModulesPath, `${version}`);
-            mkdir('-p', outputDirectory);
-
-            const outputPath = path.join(outputDirectory, 'package.json');
-            fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
+            const outputJsonPath = path.join(outputDirectory, 'package.json');
+            fs.writeFileSync(
+                outputJsonPath,
+                JSON.stringify(outputJson, null, 2)
+            );
         }
     }
 });
