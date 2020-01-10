@@ -3,6 +3,9 @@
 // 224+ version of LGC is not compatible. This code copies the virtual modules
 // in the LGC package.json to the old format as a temporary workaround.
 
+// https://github.com/salesforce/lwc/pull/1414
+// https://github.com/salesforce/lightning-components/pull/1954/files
+
 // When removing this file, also remove:
 // 1. adding virtual-modules to the modulePaths in LocalDevServer.ts
 // 2. the reference to this script in package.json
@@ -91,14 +94,9 @@ ls(vendorsPath).forEach(childPath => {
                         modulePath
                     );
 
-                    const relativeModulePath = path.relative(
-                        path.dirname(packageJsonPath),
-                        absoluteModulePath
-                    );
-
                     const copiedFilePath = path.join(
                         outputDirectory,
-                        relativeModulePath
+                        modulePath
                     );
 
                     mkdir('-p', path.dirname(copiedFilePath));
