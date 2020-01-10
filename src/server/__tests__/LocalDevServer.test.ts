@@ -182,6 +182,68 @@ describe('LocalDevServer', () => {
             jest.restoreAllMocks();
         });
 
+        it('configures the modulePaths with the matching virtual modules directory', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath, version: '48.0' });
+            const mockConn: any = {};
+
+            jest.spyOn(require, 'resolve').mockImplementation(
+                () =>
+                    'node_modules/@salesforce/lwc-dev-server-dependencies/index.js'
+            );
+
+            jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+            const server = new LocalDevServer();
+            await server.start(project, mockConn);
+
+            const expected = path.resolve(
+                __dirname,
+                '../../../virtual-modules/224'
+            );
+
+            expect(talonServer.createServer).toBeCalledWith(
+                expect.objectContaining({
+                    modulePaths: expect.arrayContaining([expected])
+                }),
+                expect.anything(),
+                mockConn
+            );
+
+            jest.restoreAllMocks();
+        });
+
+        it('does not error if a matching virtual module directory is not present', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath, version: '47.0' });
+            const mockConn: any = {};
+
+            jest.spyOn(require, 'resolve').mockImplementation(
+                () =>
+                    'node_modules/@salesforce/lwc-dev-server-dependencies/index.js'
+            );
+
+            jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+            const server = new LocalDevServer();
+            await server.start(project, mockConn);
+
+            const expected = path.resolve(
+                __dirname,
+                '../../../virtual-modules/224'
+            );
+
+            expect(talonServer.createServer).not.toBeCalledWith(
+                expect.objectContaining({
+                    modulePaths: expect.arrayContaining([expected])
+                }),
+                expect.anything(),
+                mockConn
+            );
+
+            jest.restoreAllMocks();
+        });
+
         it('clears the outputDirectory', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath });

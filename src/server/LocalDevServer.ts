@@ -93,6 +93,12 @@ export default class LocalDevServer {
         // our own lwc modules to host the local app
         const localDependencies = packageRoot;
 
+        const virtualModules = path.join(
+            packageRoot,
+            'virtual-modules',
+            `${version}`
+        );
+
         // Reporter for instrumentation
         const reporter = await LocalDevTelemetryReporter.getInstance(
             this.anonymousUserId,
@@ -100,9 +106,14 @@ export default class LocalDevServer {
         );
 
         // all the deps, filtered by existing
-        let modulePaths = [vendors, localDependencies, ...nodePaths];
+        let modulePaths = [
+            vendors,
+            virtualModules,
+            localDependencies,
+            ...nodePaths
+        ];
 
-        if (version === 222) {
+        if (version === 222 || version === 224) {
             // Use 218 version of LDS temporarily
             // Its the only thing in this 218 directory, so the rest will come from 220 dependencies
             modulePaths.unshift(
@@ -120,7 +131,6 @@ export default class LocalDevServer {
         }
 
         modulePaths = modulePaths.filter(fs.existsSync);
-
         try {
             if (project.isSfdx) {
                 webruntimeConfig.rollup.plugins.push(
