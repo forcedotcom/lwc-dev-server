@@ -8,7 +8,7 @@
 // 2. the reference to this script in package.json
 
 import path from 'path';
-import { mkdir, ls, rm } from 'shelljs';
+import { mkdir, ls, rm, cp } from 'shelljs';
 import fs from 'fs-extra';
 
 const packageJsonTemplate = `
@@ -75,6 +75,9 @@ ls(vendorsPath).forEach(childPath => {
                 return;
             }
 
+            const outputDirectory = path.join(virtualModulesPath, `${version}`);
+            mkdir('-p', outputDirectory);
+
             const modules: any[] = packageJson.lwc.modules;
             const newModules: any = [{}];
 
@@ -87,22 +90,32 @@ ls(vendorsPath).forEach(childPath => {
                         lightningComponentsPath,
                         modulePath
                     );
+
                     const relativeModulePath = path.relative(
-                        __filename,
+                        path.dirname(packageJsonPath),
                         absoluteModulePath
                     );
-                    newModules[0][moduleName] = relativeModulePath;
+
+                    const copiedFilePath = path.join(
+                        outputDirectory,
+                        relativeModulePath
+                    );
+
+                    mkdir('-p', path.dirname(copiedFilePath));
+                    cp('-R', absoluteModulePath, copiedFilePath);
+
+                    newModules[0][moduleName] = modulePath;
                 }
             });
 
-            const output = JSON.parse(packageJsonTemplate);
-            output.lwc.modules = newModules;
+            const outputJson = JSON.parse(packageJsonTemplate);
+            outputJson.lwc.modules = newModules;
 
-            const outputDirectory = path.join(virtualModulesPath, `${version}`);
-            mkdir('-p', outputDirectory);
-
-            const outputPath = path.join(outputDirectory, 'package.json');
-            fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
+            const outputJsonPath = path.join(outputDirectory, 'package.json');
+            fs.writeFileSync(
+                outputJsonPath,
+                JSON.stringify(outputJson, null, 2)
+            );
         }
     }
 });
