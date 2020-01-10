@@ -3,7 +3,7 @@
 // 224+ version of LGC is not compatible. This code copies the virtual modules
 // in the LGC package.json to the old format as a temporary workaround.
 
-// When moving this file, also remove:
+// When removing this file, also remove:
 // 1. adding virtual-modules to the modulePaths in LocalDevServer.ts
 // 2. the reference to this script in package.json
 
