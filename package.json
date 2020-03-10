@@ -84,6 +84,7 @@
         "@typescript-eslint/parser": "^1.11.0",
         "archiver": "^3.1.1",
         "aws-sdk": "^2.490.0",
+	"env-var": "^5.2.0",
         "eslint": "^6.0.1",
         "eslint-config-prettier": "^6.0.0",
         "eslint-plugin-prettier": "^3.1.0",
