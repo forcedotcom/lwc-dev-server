@@ -91,7 +91,7 @@ exports[`localdevserver-components-panel renders 1`] = `
           >
             <label
               class="slds-form-element__label slds-no-flex slds-assistive-text"
-              for="input-1"
+              for="[shadow:guid]"
             >
               Search for a component
             </label>
@@ -108,7 +108,7 @@ exports[`localdevserver-components-panel renders 1`] = `
               </svg>
               <input
                 class="slds-input search-input"
-                id="input-1"
+                id="[shadow:guid]"
                 placeholder="Search for a component..."
                 type="search"
               />

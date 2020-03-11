@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import { createElement } from 'webruntime/componentService';
+import { createElement } from 'lwc';
 import { getComponentMetadata } from 'localdevserver/projectMetadataLib';
 
 export default class Preview extends LightningElement {
