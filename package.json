@@ -122,7 +122,7 @@
         "@salesforce/telemetry": "^1.2.2",
         "@salesforce/ts-types": "^1.1.4",
         "@webruntime/common": "0.18.23",
-        "@webruntime/compiler": "0.18.23",
+        "@webruntime/compiler": "0.18.39",
         "@webruntime/framework": "0.18.23",
         "@webruntime/metadata-schema": "0.18.23",
         "@webruntime/navigation": "0.18.23",
