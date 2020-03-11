@@ -20,7 +20,7 @@ exports[`localdevserver-error-stacks renders - no error 1`] = `
           class="slds-modal__header"
         >
           <h2
-            id="modal-heading-01-1"
+            id="[shadow:guid]"
           >
             <img
               class="error-image"

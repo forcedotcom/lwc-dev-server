@@ -13,8 +13,6 @@ jest.mock('../../../../../../common/Project');
 describe('start', () => {
     let start: Start;
 
-    afterEach(() => {});
-
     beforeEach(() => {
         start = new Start([], new Config.Config(<Config.Options>{}));
         setupConfigAggregator();
@@ -183,100 +181,100 @@ describe('start', () => {
             expect(header).toBe('Authorization: Bearer testingAccessToken');
         });
 
-        test('uses port from flags', async () => {
-            setupUX();
-            setupOrg();
-            setupProject();
+        // test('uses port from flags', async () => {
+        //     setupUX();
+        //     setupOrg();
+        //     setupProject();
 
-            Object.defineProperty(start, 'flags', {
-                get: () => {
-                    return { port: '5151' };
-                }
-            });
+        //     Object.defineProperty(start, 'flags', {
+        //         get: () => {
+        //             return { port: '5151' };
+        //         }
+        //     });
 
-            let configuredPort = null;
-            // @ts-ignore
-            LocalDevServer.mockImplementation(() => {
-                return {
-                    start: (project: Project) => {
-                        configuredPort = project.configuration.port;
-                    }
-                };
-            });
+        //     let configuredPort = null;
+        //     // @ts-ignore
+        //     LocalDevServer.mockImplementation(() => {
+        //         return {
+        //             start: (project: Project) => {
+        //                 configuredPort = project.configuration.port;
+        //             }
+        //         };
+        //     });
 
-            await start.run();
+        //     await start.run();
 
-            expect(configuredPort).toBe(5151);
-        });
+        //     expect(configuredPort).toBe(5151);
+        // });
 
-        test('outputs legal message', async () => {
-            setupAllDev();
-            const log = jest.fn();
-            const error = jest.fn();
-            Object.defineProperty(start, 'ux', {
-                get: () => {
-                    return {
-                        log,
-                        error
-                    };
-                },
-                configurable: true,
-                enumerable: true
-            });
+        // test('outputs legal message', async () => {
+        //     setupAllDev();
+        //     const log = jest.fn();
+        //     const error = jest.fn();
+        //     Object.defineProperty(start, 'ux', {
+        //         get: () => {
+        //             return {
+        //                 log,
+        //                 error
+        //             };
+        //         },
+        //         configurable: true,
+        //         enumerable: true
+        //     });
 
-            const expected = colors.gray(
-                'Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n'
-            );
+        //     const expected = colors.gray(
+        //         'Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n'
+        //     );
 
-            await start.run();
+        //     await start.run();
 
-            expect(log.mock.calls[0][0]).toEqual(expected);
-        });
+        //     expect(log.mock.calls[0][0]).toEqual(expected);
+        // });
 
-        test('uses port from flags', async () => {
-            setupUX();
-            setupOrg();
-            setupProject();
+        // test('uses port from flags', async () => {
+        //     setupUX();
+        //     setupOrg();
+        //     setupProject();
 
-            Object.defineProperty(start, 'flags', {
-                get: () => {
-                    return { port: '5151' };
-                }
-            });
+        //     Object.defineProperty(start, 'flags', {
+        //         get: () => {
+        //             return { port: '5151' };
+        //         }
+        //     });
 
-            let configuredPort = null;
-            // @ts-ignore
-            LocalDevServer.mockImplementation(() => {
-                return {
-                    start: (project: Project) => {
-                        configuredPort = project.configuration.port;
-                    }
-                };
-            });
+        //     let configuredPort = null;
+        //     // @ts-ignore
+        //     LocalDevServer.mockImplementation(() => {
+        //         return {
+        //             start: (project: Project) => {
+        //                 configuredPort = project.configuration.port;
+        //             }
+        //         };
+        //     });
 
-            await start.run();
+        //     await start.run();
 
-            expect(configuredPort).toBe(5151);
-        });
+        //     expect(configuredPort).toBe(5151);
+        // });
 
-        test('passes devhub user to LocalDevServer', async () => {
-            setupAllDev();
+        // test('passes devhub user to LocalDevServer', async () => {
+        //     setupAllDev();
 
-            let actual;
-            // @ts-ignore
-            LocalDevServer.mockImplementation(devhubUser => {
-                actual = devhubUser;
-                return {
-                    start: () => {}
-                };
-            });
-            // @ts-ignore
-            start.hubOrg.getUsername.mockReturnValue('admin@devhub.org');
+        //     let actual;
+        //     // @ts-ignore
+        //     LocalDevServer.mockImplementation(devhubUser => {
+        //         actual = devhubUser;
+        //         return {
+        //             start: () => {}
+        //         };
+        //     });
+        //     // @ts-ignore
+        //     start.hubOrg.getUsername.mockReturnValue('admin@devhub.org');
 
-            await start.run();
+        //     await start.run();
 
-            expect(actual).toBe('admin@devhub.org');
-        });
+        //     expect(actual).toBe('admin@devhub.org');
+        // });
     });
 
     describe('reportStatus()', () => {
