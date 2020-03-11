@@ -52,6 +52,9 @@
         "postversion": "git push --no-verify && git push --tags --no-verify"
     },
     "devDependencies": {
+        "@lwc/jest-preset": "^4.5.0",
+        "@lwc/jest-resolver": "^4.5.0",
+        "@lwc/synthetic-shadow": "1.2.2",
         "@oclif/dev-cli": "^1.22.0",
         "@oclif/test": "^1.2.4",
         "@oclif/tslint": "^3.1.1",
