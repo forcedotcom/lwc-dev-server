@@ -210,7 +210,7 @@ describe('LocalDevServerConfiguration', () => {
         expect(configuration.port).toBe(0);
     });
 
-    test('loading of api_version from config json', () => {
+    test('loading of namespace from config json', () => {
         mock({
             'config.json': JSON.stringify({
                 namespace: 'data-ns'
@@ -222,6 +222,46 @@ describe('LocalDevServerConfiguration', () => {
         );
 
         expect(configuration.namespace).toBe('data-ns');
+    });
+
+    test('loading of api version from config json', () => {
+        mock({
+            'config.json': JSON.stringify({
+                api_version: '48'
+            })
+        });
+
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+
+        expect(configuration.api_version).toBe('48');
+    });
+
+    test('loading of core version from config json with api version set', () => {
+        mock({
+            'config.json': JSON.stringify({
+                api_version: '48'
+            })
+        });
+
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+
+        expect(configuration.core_version).toBe('224');
+    });
+
+    test('loading of core version from config json without api version set', () => {
+        mock({
+            'config.json': '{}'
+        });
+
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
+            'config.json'
+        );
+
+        expect(configuration.core_version).toBe(undefined);
     });
 
     test('loading of endpoint from config json', () => {

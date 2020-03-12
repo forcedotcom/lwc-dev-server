@@ -48,8 +48,8 @@ module.exports = {
         // Include the project's modules in the resolution/compilation process
         lwcOptions: {
             modules: [
-                `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${process.env.PROJECT_API_VERSION}/lightning-pkg`,
-                `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${process.env.PROJECT_API_VERSION}/force-pkg`
+                `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${process.env.PROJECT_CORE_VERSION}/lightning-pkg`,
+                `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${process.env.PROJECT_CORE_VERSION}/force-pkg`
             ]
         },
 

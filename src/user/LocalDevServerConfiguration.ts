@@ -161,6 +161,17 @@ export default class LocalDevServerConfiguration {
         this.configFromJson.api_version = api_version;
     }
 
+    public get core_version(): string | undefined {
+        // Salesforce internal version == Salesforce API Version * 2 + 128
+        // Example: 45 * 2 + 128 = 218
+        return this.configFromJson.api_version !== undefined
+            ? (
+                  parseInt(this.configFromJson.api_version, 10) * 2 +
+                  128
+              ).toString()
+            : undefined;
+    }
+
     public get endpoint(): string | undefined {
         return this.configFromJson.endpoint;
     }

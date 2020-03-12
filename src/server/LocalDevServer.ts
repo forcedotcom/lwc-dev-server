@@ -5,16 +5,11 @@ export default class LocalDevServer {
     private server: any;
 
     constructor(project: any) {
-        const version =
-            project.configuration.api_version !== undefined
-                ? parseInt(project.configuration.api_version, 10) * 2 + 128
-                : 0;
-
         // set environment variables to be accessible in webruntime config
         process.env.LOCALDEV_PORT =
             project.configuration.port.toString() || '3333';
         process.env.PROJECT_ROOT = project.directory;
-        process.env.PROJECT_API_VERSION = version.toString();
+        process.env.PROJECT_CORE_VERSION = project.configuration.core_version;
         process.env.PROJECT_NAMESPACE = project.configuration.namespace;
         process.env.PROJECT_LWC_MODULES = path.join(
             project.modulesSourceDirectory,
