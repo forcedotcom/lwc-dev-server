@@ -45,6 +45,14 @@ module.exports = {
         // Use the LWR loader
         formatConfig: { amd: { define: 'Webruntime.define' } },
 
+        // Include the project's modules in the resolution/compilation process
+        lwcOptions: {
+            modules: [
+                `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${process.env.PROJECT_API_VERSION}/lightning-pkg`,
+                `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${process.env.PROJECT_API_VERSION}/force-pkg`
+            ]
+        },
+
         plugins: [
             // The project is expected to be a SFDX project which means the LWC
             //      components will be in the 'lwc' directory.
