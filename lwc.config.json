@@ -2,6 +2,8 @@
     "modules": [
         "@lwc/engine",
         "@lwc/wire-service",
-        "src/client/modules"
+        "src/client/modules",
+        "@salesforce/lwc-dev-server-dependencies/vendors/dependencies-224/lightning-pkg",
+        "@salesforce/lwc-dev-server-dependencies/vendors/dependencies-224/force-pkg"
     ]
 }

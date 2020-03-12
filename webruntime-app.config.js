@@ -6,6 +6,10 @@ const {
     AppBootstrapService
 } = require('@webruntime/services');
 
+const {
+    customComponentPlugin
+} = require('./dist/server/plugins/custom-components');
+
 const { LocalDevApp } = require('./dist/server/LocalDevApp');
 
 module.exports = {
@@ -41,10 +45,15 @@ module.exports = {
         // Use the LWR loader
         formatConfig: { amd: { define: 'Webruntime.define' } },
 
-        // Include the project's modules in the resolution/compilation process
-        // lwcOptions: {
-        //     modules: [process.env.PROJECT_LWC_MODULES]
-        // },
+        plugins: [
+            // The project is expected to be a SFDX project which means the LWC
+            //      components will be in the 'lwc' directory.
+            customComponentPlugin(
+                process.env.PROJECT_NAMESPACE,
+                'lwc',
+                process.env.PROJECT_LWC_MODULES
+            )
+        ],
 
         // Ensure the lwc framework does not get re-bundled outside
         //      of the main application bundle (ie: @webruntime/app)

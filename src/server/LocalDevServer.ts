@@ -9,11 +9,9 @@ export default class LocalDevServer {
         process.env.LOCALDEV_PORT =
             project.configuration.port.toString() || '3333';
         process.env.PROJECT_ROOT = project.directory;
-        process.env.PROJECT_LWC_MODULES = path.join(
-            project.modulesSourceDirectory,
-            'main',
-            'default'
-        );
+        process.env.PROJECT_NAMESPACE = project.configuration.namespace;
+        process.env.PROJECT_LWC_MODULES =
+            (project.modulesSourceDirectory as string) + '/main/default';
 
         this.server = new Server({
             projectDir: path.join(__dirname, '..', '..')
