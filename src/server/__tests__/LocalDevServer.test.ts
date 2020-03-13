@@ -47,6 +47,11 @@ function mockProject({
         'api_version',
         'get'
     ).mockReturnValue(version);
+    jest.spyOn(
+        localDevServerConfigurationMock,
+        'core_version',
+        'get'
+    ).mockReturnValue('218');
 
     const project = new Project(projectPath);
     Object.defineProperty(project, 'directory', {
@@ -71,6 +76,7 @@ describe('LocalDevServer', () => {
     afterEach(() => {
         delete process.env.LOCALDEV_PORT;
         delete process.env.PROJECT_ROOT;
+        delete process.env.PROJECT_CORE_VERSION;
         delete process.env.PROJECT_LWC_MODULES;
     });
 
@@ -84,6 +90,8 @@ describe('LocalDevServer', () => {
 
             expect(process.env.LOCALDEV_PORT).toEqual('3000');
             expect(process.env.PROJECT_ROOT).toEqual(project.directory);
+            expect(process.env.PROJECT_CORE_VERSION).toEqual('218');
+            expect(process.env.PROJECT_NAMESPACE).toEqual('c');
             expect(process.env.PROJECT_LWC_MODULES).toEqual(
                 path.join(project.modulesSourceDirectory, 'main', 'default')
             );
