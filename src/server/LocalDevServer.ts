@@ -31,10 +31,7 @@ export default class LocalDevServer {
         );
 
         this.server = new Server({
-            projectDir: path.join(__dirname, '..', '..'),
-            additionalProperties: {
-                kris: 'gray'
-            }
+            projectDir: path.join(__dirname, '..', '..')
         });
 
         // Configure Express before startup

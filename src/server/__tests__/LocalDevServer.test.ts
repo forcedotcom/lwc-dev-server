@@ -16,7 +16,11 @@ jest.mock('@webruntime/server', () => {
             return {
                 initialize,
                 start,
-                shutdown
+                shutdown,
+                app: {
+                    get: jest.fn(),
+                    use: jest.fn()
+                }
             };
         })
     };
@@ -87,6 +91,100 @@ describe('LocalDevServer', () => {
             expect(process.env.PROJECT_LWC_MODULES).toEqual(
                 path.join(project.modulesSourceDirectory, 'main', 'default')
             );
+        });
+
+        it('adds /localdev/{{sessionNonce}}/localdev.json route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+
+            const localDevServer = new LocalDevServer(project);
+
+            // @ts-ignore
+            const result = localDevServer.server.app.get.mock.calls[0][0];
+
+            expect(result).toBe(
+                // @ts-ignore
+                `/localdev/${localDevServer.sessionNonce}/localdev.json`
+            );
+        });
+
+        it('adds /localdev/{{sessionNonce}}/localdev.js route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+
+            const localDevServer = new LocalDevServer(project);
+
+            // @ts-ignore
+            const result = localDevServer.server.app.get.mock.calls[1][0];
+
+            expect(result).toBe(
+                // @ts-ignore
+                `/localdev/${localDevServer.sessionNonce}/localdev.js`
+            );
+        });
+
+        it('adds /localdev/{{sessionNonce}}/show route', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+
+            const localDevServer = new LocalDevServer(project);
+
+            // @ts-ignore
+            const result = localDevServer.server.app.get.mock.calls[2][0];
+
+            expect(result).toBe(
+                // @ts-ignore
+                `/localdev/${localDevServer.sessionNonce}/show`
+            );
+        });
+
+        it('server passes projectDir', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+            const server = require('@webruntime/server').Server;
+            server.mockClear();
+
+            const localDevServer = new LocalDevServer(project);
+
+            // @ts-ignore
+            const result = server;
+
+            expect(result).toBeCalledWith(
+                expect.objectContaining({
+                    projectDir: path.join(__dirname, '..', '..', '..')
+                })
+            );
+        });
+
+        it('registers the locals provider', async () => {
+            const res = {
+                locals: {
+                    sessionNonce: ''
+                }
+            };
+            const next = () => {};
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({
+                projectPath
+            });
+
+            const localDevServer = new LocalDevServer(project);
+            // @ts-ignore
+            localDevServer.sessionNonce = 'sessionNonce';
+
+            // @ts-ignore
+            const result = localDevServer.server.app.use.mock.calls[0][0];
+            result(undefined, res, next);
+
+            expect(res.locals.sessionNonce).toBe('sessionNonce');
         });
     });
 
