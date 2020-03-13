@@ -12,6 +12,7 @@ node_modules/
 dist/
 virtual-modules/
 .localdevserver
+cache-data/
 
 # config
 .env*

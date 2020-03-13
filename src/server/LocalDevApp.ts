@@ -14,10 +14,24 @@ export class LocalDevPage extends WebruntimePage {
         // TODO: The version key needs to be calculated until LWR provides it in 228.
         const versionKey = '123456';
 
-        // Replace template variables with properties from the Page Context.
-        return this.pageContext.templateContent
-            .replace(/{\s*basePath\s*}/g, basePath)
-            .replace(/{\s*versionKey\s*}/g, versionKey);
+        // Matches of {key} or { key } in the template will get replaced with
+        // values from this map.
+        const substitutions: { [key: string]: string } = {
+            sessionNonce: this.pageContext.locals.sessionNonce,
+            basePath: basePath,
+            versionKey: versionKey
+        };
+
+        // Replace template variables with properties from the
+        // subitutions map above.
+        return this.pageContext.templateContent.replace(
+            /{\s*([^{}]+)\s*}/g,
+            (originalValue: string, key: string) => {
+                return substitutions.hasOwnProperty(key)
+                    ? substitutions[key]
+                    : originalValue;
+            }
+        );
     }
 }
 
