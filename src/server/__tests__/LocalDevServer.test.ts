@@ -102,7 +102,7 @@ describe('LocalDevServer', () => {
             const localDevServer = new LocalDevServer(project);
 
             // @ts-ignore
-            const result = localDevServer.server.app.get.mock.calls[1][0];
+            const result = localDevServer.server.app.get.mock.calls[0][0];
 
             expect(result).toBe(
                 // @ts-ignore
@@ -119,7 +119,7 @@ describe('LocalDevServer', () => {
             const localDevServer = new LocalDevServer(project);
 
             // @ts-ignore
-            const result = localDevServer.server.app.get.mock.calls[2][0];
+            const result = localDevServer.server.app.get.mock.calls[1][0];
 
             expect(result).toBe(
                 // @ts-ignore
