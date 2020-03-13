@@ -17,7 +17,6 @@ export class LocalDevPage extends WebruntimePage {
         // Matches of {key} or { key } in the template will get replaced with
         // values from this map.
         const substitutions: { [key: string]: string } = {
-            nonce: this.pageContext.locals.nonce,
             sessionNonce: this.pageContext.locals.sessionNonce,
             basePath: basePath,
             versionKey: versionKey

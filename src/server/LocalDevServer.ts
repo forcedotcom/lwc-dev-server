@@ -64,20 +64,10 @@ export default class LocalDevServer {
 
     /**
      * Add routes to express for fetching the following.
-     * - /localdev/${this.sessionNonce}/localdev.json - JSON payload of all project configuration.
      * - /localdev/${this.sessionNonce}/localdev.js - JS version for embedding in the template of the project configuration.
      * - /localdev/${this.sessionNonce}/show - API end point to get the source of a particular component file
      */
     mountApiEndpoints() {
-        this.server.app.get(
-            `/localdev/${this.sessionNonce}/localdev.json`,
-            (req: Request, res: Response, next: NextFunction) => {
-                const componentIndex = new ComponentIndex(this.project);
-                const json = componentIndex.getProjectMetadata();
-                res.json(json);
-            }
-        );
-
         this.server.app.get(
             `/localdev/${this.sessionNonce}/localdev.js`,
             (req: Request, res: Response, next: NextFunction) => {

@@ -93,23 +93,6 @@ describe('LocalDevServer', () => {
             );
         });
 
-        it('adds /localdev/{{sessionNonce}}/localdev.json route', async () => {
-            const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({
-                projectPath
-            });
-
-            const localDevServer = new LocalDevServer(project);
-
-            // @ts-ignore
-            const result = localDevServer.server.app.get.mock.calls[0][0];
-
-            expect(result).toBe(
-                // @ts-ignore
-                `/localdev/${localDevServer.sessionNonce}/localdev.json`
-            );
-        });
-
         it('adds /localdev/{{sessionNonce}}/localdev.js route', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({
