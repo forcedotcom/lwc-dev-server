@@ -12,7 +12,7 @@ orbs:
 defaults: &defaults
     working_directory: ~/lwc-dev-server
     docker:
-        - image: circleci/node:lts-browsers
+        - image: circleci/node:lts
 
 jobs:
     build-and-test-linux:
