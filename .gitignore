@@ -10,7 +10,6 @@ node_modules/
 
 # Build directories
 dist/
-virtual-modules/
 .localdevserver
 cache-data/
 
