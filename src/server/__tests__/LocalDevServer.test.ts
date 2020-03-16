@@ -80,7 +80,7 @@ describe('LocalDevServer', () => {
     afterEach(() => {
         delete process.env.LOCALDEV_PORT;
         delete process.env.PROJECT_ROOT;
-        delete process.env.PROJECT_CORE_VERSION;
+        delete process.env.LOCALDEV_VENDOR_VERSION;
         delete process.env.PROJECT_LWC_MODULES;
 
         mockFs.restore();
@@ -96,7 +96,7 @@ describe('LocalDevServer', () => {
 
             expect(process.env.LOCALDEV_PORT).toEqual('3000');
             expect(process.env.PROJECT_ROOT).toEqual(project.directory);
-            expect(process.env.PROJECT_CORE_VERSION).toEqual('218');
+            expect(process.env.LOCALDEV_VENDOR_VERSION).toEqual('218');
             expect(process.env.PROJECT_NAMESPACE).toEqual('c');
             expect(process.env.PROJECT_LWC_MODULES).toEqual(
                 path.join(project.modulesSourceDirectory, 'main', 'default')
@@ -111,7 +111,7 @@ describe('LocalDevServer', () => {
 
             new LocalDevServer(project);
 
-            expect(process.env.PROJECT_CORE_VERSION).toEqual('224');
+            expect(process.env.LOCALDEV_VENDOR_VERSION).toEqual('224');
         });
 
         it('adds /localdev/{{sessionNonce}}/localdev.js route', async () => {

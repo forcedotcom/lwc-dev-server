@@ -21,19 +21,20 @@ export default class LocalDevServer {
         this.sessionNonce = uuidv4();
         this.project = project;
 
-        let coreVersion = project.configuration.core_version;
-        const supportedCoreVersion = this.getSupportedCoreVersions();
+        let vendorVersion = project.configuration.core_version;
+        const supportedCoreVersions = this.getSupportedCoreVersions();
 
-        if (!supportedCoreVersion.includes(coreVersion)) {
+        if (!supportedCoreVersions.includes(vendorVersion)) {
             // fallback to latest support core version
-            coreVersion = supportedCoreVersion[supportedCoreVersion.length - 1];
+            vendorVersion =
+                supportedCoreVersions[supportedCoreVersions.length - 1];
         }
 
         // set environment variables to be accessible in webruntime config
         process.env.LOCALDEV_PORT =
             project.configuration.port.toString() || '3333';
+        process.env.LOCALDEV_VENDOR_VERSION = vendorVersion;
         process.env.PROJECT_ROOT = project.directory;
-        process.env.PROJECT_CORE_VERSION = coreVersion;
         process.env.PROJECT_NAMESPACE = project.configuration.namespace;
         process.env.PROJECT_LWC_MODULES = path.join(
             project.modulesSourceDirectory,
