@@ -1,4 +1,5 @@
 import * as path from 'path';
+import mockFs from 'mock-fs';
 import LocalDevServer from '../LocalDevServer';
 import Project from '../../common/Project';
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
@@ -43,19 +44,18 @@ function mockProject({
 }): Project {
     // Some ts-ignores because mockImplementation doesn't exist on the class.
     const localDevServerConfigurationMock = new LocalDevServerConfiguration();
-    jest.spyOn(localDevServerConfigurationMock, 'port', 'get').mockReturnValue(
-        port
-    );
-    jest.spyOn(
-        localDevServerConfigurationMock,
-        'api_version',
-        'get'
-    ).mockReturnValue(version);
-    jest.spyOn(
-        localDevServerConfigurationMock,
-        'core_version',
-        'get'
-    ).mockReturnValue('218');
+
+    localDevServerConfigurationMock.port = port;
+    localDevServerConfigurationMock.api_version = version;
+
+    mockFs({
+        'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
+            'dependencies-218': {},
+            'dependencies-220': {},
+            'dependencies-222': {},
+            'dependencies-224': {}
+        }
+    });
 
     const project = new Project(projectPath);
     Object.defineProperty(project, 'directory', {
@@ -82,6 +82,8 @@ describe('LocalDevServer', () => {
         delete process.env.PROJECT_ROOT;
         delete process.env.PROJECT_CORE_VERSION;
         delete process.env.PROJECT_LWC_MODULES;
+
+        mockFs.restore();
     });
 
     describe('constructor', () => {
@@ -99,6 +101,17 @@ describe('LocalDevServer', () => {
             expect(process.env.PROJECT_LWC_MODULES).toEqual(
                 path.join(project.modulesSourceDirectory, 'main', 'default')
             );
+        });
+
+        it('should fallback to the latest supported core version', () => {
+            const project = mockProject({
+                projectPath: '/path/to/project',
+                version: '49.0'
+            });
+
+            new LocalDevServer(project);
+
+            expect(process.env.PROJECT_CORE_VERSION).toEqual('224');
         });
 
         it('adds /localdev/{{sessionNonce}}/localdev.js route', async () => {

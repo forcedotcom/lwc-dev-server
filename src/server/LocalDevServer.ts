@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 // import { Server } from '@webruntime/server';
 const { Server } = require('@webruntime/server');
 import { Request, Response, NextFunction } from 'express';
@@ -20,11 +21,19 @@ export default class LocalDevServer {
         this.sessionNonce = uuidv4();
         this.project = project;
 
+        let coreVersion = project.configuration.core_version;
+        const supportedCoreVersion = this.getSupportedCoreVersions();
+
+        if (!supportedCoreVersion.includes(coreVersion)) {
+            // fallback to latest support core version
+            coreVersion = supportedCoreVersion[supportedCoreVersion.length - 1];
+        }
+
         // set environment variables to be accessible in webruntime config
         process.env.LOCALDEV_PORT =
             project.configuration.port.toString() || '3333';
         process.env.PROJECT_ROOT = project.directory;
-        process.env.PROJECT_CORE_VERSION = project.configuration.core_version;
+        process.env.PROJECT_CORE_VERSION = coreVersion;
         process.env.PROJECT_NAMESPACE = project.configuration.namespace;
         process.env.PROJECT_LWC_MODULES = path.join(
             project.modulesSourceDirectory,
@@ -49,6 +58,27 @@ export default class LocalDevServer {
 
     close() {
         return this.server.shutdown();
+    }
+
+    /**
+     * Get supported core versions of vendored modules
+     */
+    getSupportedCoreVersions() {
+        const vendoredModulesPath = path.join(
+            __dirname,
+            '..',
+            '..',
+            'node_modules',
+            '@salesforce',
+            'lwc-dev-server-dependencies',
+            'vendors'
+        );
+
+        const vendoredModules = fs.readdirSync(vendoredModulesPath);
+
+        return vendoredModules.map(module => {
+            return module.split('-')[1];
+        });
     }
 
     /**
