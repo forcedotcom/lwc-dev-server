@@ -62,8 +62,6 @@ jobs:
             - checkout
             - restore_cache:
                   key: dependency-cache-win-{{ checksum "yarn.lock" }}
-            - browser-tools/install-chrome:
-                  replace-existing: true
             - run: yarn install --frozen-lockfile
             - run: yarn build
             - run: yarn test:ci
