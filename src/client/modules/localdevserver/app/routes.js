@@ -6,7 +6,7 @@ export default [
     },
     {
         id: 'preview',
-        path: '/preview/:descriptor',
+        path: '/preview/:namespace/:name',
         component: 'localdevserver/preview'
     }
 ];

@@ -1,4 +1,4 @@
-import { LightningElement, api, track, wire } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import { getComponentMetadata } from 'localdevserver/projectMetadataLib';
 import { NavigationContext, subscribe } from 'webruntime_navigation/navigation';
 
@@ -15,13 +15,13 @@ export default class Preview extends LightningElement {
 
     connectedCallback() {
         this.subscription = subscribe(this.navContext, route => {
-            const { descriptor } = route.attributes;
-            if (descriptor) {
-                const jsName = descriptor.replace('-', '/'); // TODO
+            const { namespace, name } = route.attributes;
+            if (namespace && name) {
+                const jsName = `${namespace}/${name}`;
                 this.loadHostedComponent(jsName);
             } else {
                 console.error(
-                    'There was a problem loading the component preview. The component descriptor was not found in the route:',
+                    'There was a problem loading the component preview. The component namespace and name was not found in the route:',
                     route
                 );
             }
@@ -29,6 +29,7 @@ export default class Preview extends LightningElement {
     }
 
     async loadHostedComponent(jsName) {
+        console.info('Loading component preview', jsName);
         this.metadata = await getComponentMetadata(jsName);
 
         try {
