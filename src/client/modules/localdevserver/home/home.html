@@ -1,15 +1,24 @@
 <template>
-    <main>
-        <localdevserver-layout-section main-content>
-            <div class="slds-grid slds-gutters slds-gutters_x-small slds-wrap slds-grid_vertical-stretch">
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3 slds-large-size_9-of-12">
-                    <localdevserver-components-panel></localdevserver-components-panel>
-                </div>
+    <localdevserver-layout>
+        <localdevserver-header></localdevserver-header>
+        <main>
+            <localdevserver-layout-section main-content>
+                <div
+                    class="slds-grid slds-gutters slds-gutters_x-small slds-wrap slds-grid_vertical-stretch"
+                >
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3 slds-large-size_9-of-12"
+                    >
+                        <localdevserver-components-panel></localdevserver-components-panel>
+                    </div>
 
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_3-of-12">
-                    <localdevserver-resources-panel></localdevserver-resources-panel>
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_3-of-12"
+                    >
+                        <localdevserver-resources-panel></localdevserver-resources-panel>
+                    </div>
                 </div>
-            </div>
-        </localdevserver-layout-section>
-    </main>
+            </localdevserver-layout-section>
+        </main>
+    </localdevserver-layout>
 </template>
