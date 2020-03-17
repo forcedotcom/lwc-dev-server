@@ -6,6 +6,7 @@ export { WebruntimeAppDefinition, WebruntimePage };
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
         const {
+            locals: { sessionNonce },
             config: {
                 server: { basePath }
             }
@@ -17,9 +18,9 @@ export class LocalDevPage extends WebruntimePage {
         // Matches of {key} or { key } in the template will get replaced with
         // values from this map.
         const substitutions: { [key: string]: string } = {
-            sessionNonce: this.pageContext.locals.sessionNonce,
-            basePath: basePath,
-            versionKey: versionKey
+            sessionNonce,
+            basePath,
+            versionKey
         };
 
         // Replace template variables with properties from the

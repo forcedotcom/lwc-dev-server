@@ -20,8 +20,9 @@ module.exports = {
     // Store the built components in the project directory
     buildDir: path.join(process.env.PROJECT_ROOT, '.localdevserver'),
 
-    // Modules provided by lwc-dev-server
-    moduleDir: 'src/client/modules',
+    // Modules provided by project directory
+    // LWR provides file watching and recompilation based on moduleDir
+    moduleDir: process.env.PROJECT_ROOT,
 
     // Application component and template provided by lwc-dev-server
     app: {

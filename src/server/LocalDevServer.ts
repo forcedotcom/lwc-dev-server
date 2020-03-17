@@ -3,8 +3,11 @@ import fs from 'fs';
 // import { Server } from '@webruntime/server';
 const { Server } = require('@webruntime/server');
 import { Request, Response, NextFunction } from 'express';
-import ComponentIndex from '../common/ComponentIndex';
 import uuidv4 from 'uuidv4';
+import reload from 'reload';
+import chokidar from 'chokidar';
+import ComponentIndex from '../common/ComponentIndex';
+import Project from '../common/Project';
 
 const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
     '.html': true,
@@ -14,8 +17,11 @@ const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
 
 export default class LocalDevServer {
     private server: any;
-    private project: any;
+    private project: Project;
     private readonly sessionNonce: string;
+
+    private liveReload: any;
+    private fileWatcher: chokidar.FSWatcher | undefined;
 
     constructor(project: any) {
         this.sessionNonce = uuidv4();
@@ -45,20 +51,33 @@ export default class LocalDevServer {
         this.server = new Server({
             projectDir: path.join(__dirname, '..', '..')
         });
+    }
 
-        // Configure Express before startup
+    async initialize() {
         this.registerLocalsProvider();
         this.mountApiEndpoints();
+
+        if (this.project.configuration.liveReload) {
+            await this.mountLiveReload();
+        }
+
+        await this.server.initialize();
     }
 
-    start() {
-        return this.server.initialize().then(() => {
-            this.server.start();
-        });
+    async start() {
+        await this.server.start();
     }
 
-    close() {
-        return this.server.shutdown();
+    async close() {
+        if (this.fileWatcher) {
+            await this.fileWatcher.close();
+        }
+
+        if (this.liveReload) {
+            await this.liveReload.closeServer();
+        }
+
+        await this.server.shutdown();
     }
 
     /**
@@ -132,5 +151,27 @@ export default class LocalDevServer {
                 }
             }
         );
+    }
+
+    /**
+     * Adds the live reload endpoint and starts the file watcher
+     */
+    async mountLiveReload() {
+        this.liveReload = await reload(this.server.app);
+
+        this.fileWatcher = chokidar
+            // watch LWR build metadata for changes
+            .watch(
+                // cache-data directory will be moving in a future release of LWR
+                path.join(__dirname, '..', '..', 'cache-data', 'metadata.json'),
+                {
+                    ignoreInitial: true
+                }
+            );
+
+        // trigger a reload when the metadata has changed
+        this.fileWatcher.on('change', () => {
+            this.liveReload.reload();
+        });
     }
 }
