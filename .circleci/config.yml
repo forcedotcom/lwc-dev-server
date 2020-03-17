@@ -64,8 +64,8 @@ jobs:
                   key: dependency-cache-win-{{ checksum "yarn.lock" }}
             - run: |
                   node --version
+                  npm install -g sfdx-cli@latest
                   sfdx --version
-
             - run: |
                   choco install googlechrome --ignore-checksums
             - run: yarn install --frozen-lockfile
