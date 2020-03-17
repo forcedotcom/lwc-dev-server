@@ -54,14 +54,17 @@ export default class LocalDevServer {
     }
 
     async initialize() {
+        // add middleware before initializing the LWR server
         this.registerLocalsProvider();
+
+        await this.server.initialize();
+
+        // add api endpoints after initializing the LWR server
         this.mountApiEndpoints();
 
         if (this.project.configuration.liveReload) {
             await this.mountLiveReload();
         }
-
-        await this.server.initialize();
     }
 
     async start() {
