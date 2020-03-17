@@ -62,7 +62,12 @@ jobs:
             - checkout
             - restore_cache:
                   key: dependency-cache-win-{{ checksum "yarn.lock" }}
-            - run: choco install googlechrome
+            - run: |
+                  node --version
+                  sfdx --version
+
+            - run: |
+                  choco install googlechrome --ignore-checksums
             - run: yarn install --frozen-lockfile
             - run: yarn build
             - run: yarn test:ci
