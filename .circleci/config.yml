@@ -62,16 +62,23 @@ jobs:
             - checkout
             - restore_cache:
                   key: dependency-cache-win-{{ checksum "yarn.lock" }}
-            - run: |
-                  node --version
-                  npm install -g sfdx-cli@latest
-                  sfdx --version
-            - run: |
-                  choco install googlechrome --ignore-checksums
+            - run:
+                  shell: bash.exe
+                  command: |
+                      node --version
+                      npm install -g sfdx-cli@latest
+                      sfdx --version
+            - run:
+                  shell: bash.exe
+                  command: |
+                      choco install googlechrome --ignore-checksums
             - run: yarn install --frozen-lockfile
             - run: yarn build
             - run: yarn test:ci
-            - run: yarn test:e2e-ci
+            - run:
+                  shell: bash.exe
+                  command: |
+                      yarn test:e2e-ci
             - store_test_results:
                   path: reports
             - store_artifacts:
