@@ -40,7 +40,7 @@ export class LocalDevApp extends WebruntimeAppDefinition {
     get pages() {
         return [
             {
-                route: '/',
+                route: '/*',
                 page: LocalDevPage
             }
         ];

@@ -1,29 +1,31 @@
 import path from 'path';
 import fs from 'fs';
-// import { Server } from '@webruntime/server';
-const { Server } = require('@webruntime/server');
-import { Request, Response, NextFunction } from 'express';
 import uuidv4 from 'uuidv4';
-import reload from 'reload';
-import chokidar from 'chokidar';
-import ComponentIndex from '../common/ComponentIndex';
 import Project from '../common/Project';
+import { LocalDevApp } from './LocalDevApp';
+import { customComponentPlugin } from './plugins/custom-components';
+import { SessionNonce } from './extensions/SessionNonce';
+import { ProjectMetadata } from './extensions/ProjectMetadata';
+import { LiveReload } from './extensions/LiveReload';
 
-const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
-    '.html': true,
-    '.css': true,
-    '.js': true
-};
+const { Server, Container } = require('@webruntime/server');
 
-export default class LocalDevServer {
-    private server: any;
+const {
+    ComponentService,
+    ImportMapService,
+    AppBootstrapService
+} = require('@webruntime/services');
+
+export { Server };
+
+export default class LocalDevServer extends Server {
     private project: Project;
     private readonly sessionNonce: string;
 
-    private liveReload: any;
-    private fileWatcher: chokidar.FSWatcher | undefined;
-
     constructor(project: any) {
+        // create default LWR server and override config/options
+        super();
+
         this.sessionNonce = uuidv4();
         this.project = project;
 
@@ -36,51 +38,96 @@ export default class LocalDevServer {
                 supportedCoreVersions[supportedCoreVersions.length - 1];
         }
 
-        // set environment variables to be accessible in webruntime config
-        process.env.LOCALDEV_PORT =
-            project.configuration.port.toString() || '3333';
-        process.env.LOCALDEV_VENDOR_VERSION = vendorVersion;
-        process.env.PROJECT_ROOT = project.directory;
-        process.env.PROJECT_NAMESPACE = project.configuration.namespace;
-        process.env.PROJECT_LWC_MODULES = path.join(
-            project.modulesSourceDirectory,
-            'main',
-            'default'
-        );
+        const config = {
+            ...this.config,
+            server: {
+                ...this.config.server,
+                port: project.configuration.port.toString() || '3333',
+                extensions: [
+                    SessionNonce(this.sessionNonce),
+                    ProjectMetadata(this.sessionNonce, this.project),
+                    LiveReload(
+                        path.join(
+                            __dirname,
+                            '..',
+                            '..',
+                            'cache-data',
+                            'metadata.json'
+                        )
+                    )
+                ]
+            },
 
-        this.server = new Server({
-            projectDir: path.join(__dirname, '..', '..')
-        });
-    }
+            projectDir: path.join(__dirname, '..', '..'),
+            buildDir: path.join(project.directory, '.localdevserver'),
+            moduleDir: project.directory,
 
-    async initialize() {
-        // add middleware before initializing the LWR server
-        this.registerLocalsProvider();
+            app: {
+                defaultComponent: 'localdevserver/app',
+                defaultTemplate: path.join(
+                    __dirname,
+                    '..',
+                    '..',
+                    'src/client/index.html'
+                ),
+                definition: LocalDevApp
+            },
 
-        await this.server.initialize();
+            services: [ComponentService, ImportMapService, AppBootstrapService],
 
-        // add api endpoints after initializing the LWR server
-        this.mountApiEndpoints();
+            // Bundle the main application (ie: @webruntime/app),
+            //      so it will include dependencies such as lwc all in one request
+            bundle: ['@webruntime/app'],
 
-        if (this.project.configuration.liveReload) {
-            await this.mountLiveReload();
-        }
-    }
+            // The loader is always included in the webruntime shim,
+            //      so it can be ignored by subsequent bundles
+            externals: ['webruntime_loader/loader'],
 
-    async start() {
-        await this.server.start();
-    }
+            compilerConfig: {
+                ...this.config.compilerConfig,
+                formatConfig: { amd: { define: 'Webruntime.define' } },
+                lwcOptions: {
+                    modules: [
+                        `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${vendorVersion}/lightning-pkg`,
+                        `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${vendorVersion}/force-pkg`
+                    ]
+                },
+                plugins: [
+                    // The project is expected to be a SFDX project which means the LWC
+                    //      components will be in the 'lwc' directory.
+                    customComponentPlugin(
+                        project.configuration.namespace,
+                        'lwc',
+                        path.join(
+                            project.modulesSourceDirectory,
+                            'main',
+                            'default'
+                        )
+                    )
+                ],
 
-    async close() {
-        if (this.fileWatcher) {
-            await this.fileWatcher.close();
-        }
+                // Ensure the lwc framework does not get re-bundled outside
+                //      of the main application bundle (ie: @webruntime/app)
+                inlineConfig: [
+                    {
+                        descriptor: '*/*',
+                        exclude: ['lwc', 'wire-service']
+                    }
+                ]
+            }
+        };
 
-        if (this.liveReload) {
-            await this.liveReload.closeServer();
-        }
+        const options = {
+            basePath: '',
+            projectDir: path.join(__dirname, '..', '..'),
+            port: project.configuration.port.toString() || '3333',
+            resourceRoot: '/webruntime'
+        };
 
-        await this.server.shutdown();
+        // override LWR defaults
+        this.config = config;
+        this.options = options;
+        this.container = new Container(this.config);
     }
 
     /**
@@ -101,80 +148,6 @@ export default class LocalDevServer {
 
         return vendoredModules.map(module => {
             return module.split('-')[1];
-        });
-    }
-
-    /**
-     * Adds data to the res.locals property so its accessible
-     * in the LocalDevApp class
-     */
-    registerLocalsProvider() {
-        this.server.app.use(
-            (req: Request, res: Response, next: NextFunction) => {
-                res.locals.sessionNonce = this.sessionNonce;
-                next();
-            }
-        );
-    }
-
-    /**
-     * Add routes to express for fetching the following.
-     * - /localdev/${this.sessionNonce}/localdev.js - JS version for embedding in the template of the project configuration.
-     * - /localdev/${this.sessionNonce}/show - API end point to get the source of a particular component file
-     */
-    mountApiEndpoints() {
-        this.server.app.get(
-            `/localdev/${this.sessionNonce}/localdev.js`,
-            (req: Request, res: Response, next: NextFunction) => {
-                const componentIndex = new ComponentIndex(this.project);
-                const json = componentIndex.getProjectMetadata();
-                const localDevConfig = {
-                    project: json
-                };
-                res.type('js');
-                res.send(
-                    `window.LocalDev = ${JSON.stringify(localDevConfig)};`
-                );
-            }
-        );
-
-        this.server.app.get(
-            `/localdev/${this.sessionNonce}/show`,
-            (req: Request, res: Response, next: NextFunction) => {
-                const file = req.query.file;
-                const extension = path.extname(file);
-                const normalizedFile = path.normalize(file);
-                if (
-                    normalizedFile.startsWith(
-                        path.normalize(this.project.modulesSourceDirectory)
-                    ) &&
-                    ALLOWED_SHOW_EXTENSIONS[extension]
-                ) {
-                    res.sendFile(file);
-                }
-            }
-        );
-    }
-
-    /**
-     * Adds the live reload endpoint and starts the file watcher
-     */
-    async mountLiveReload() {
-        this.liveReload = await reload(this.server.app);
-
-        this.fileWatcher = chokidar
-            // watch LWR build metadata for changes
-            .watch(
-                // cache-data directory will be moving in a future release of LWR
-                path.join(__dirname, '..', '..', 'cache-data', 'metadata.json'),
-                {
-                    ignoreInitial: true
-                }
-            );
-
-        // trigger a reload when the metadata has changed
-        this.fileWatcher.on('change', () => {
-            this.liveReload.reload();
         });
     }
 }
