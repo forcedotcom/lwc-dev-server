@@ -16,20 +16,19 @@ module.exports = async () => {
     // If we are on windows, allow CI to setup our key.json file so the windows keystore won't break the tests.
     // Without this, we get an error if the keychain hasn't been setup already (through a previous sfdx force:auth:web:login):
     // 'GenericKeychainServiceError: The service and account specified in key.json do not match the version of the toolbelt.'
-    // if (process.platform === 'win32' && process.env.SFDC_KEY) {
+    if (process.platform === 'win32' && process.env.CI) {
+        const key = crypto.randomBytes(Math.ceil(16)).toString('hex');
 
-    const key = crypto.randomBytes(Math.ceil(16)).toString('hex');
-
-    let newKeyChain = await KeychainConfig.create(
-        KeychainConfig.getDefaultOptions()
-    );
-    // let keychainPath = newKeyChain.getPath();
-    await newKeyChain.write({
-        service: 'sfdx',
-        account: 'local',
-        key
-    });
-    // }
+        let newKeyChain = await KeychainConfig.create(
+            KeychainConfig.getDefaultOptions()
+        );
+        // let keychainPath = newKeyChain.getPath();
+        await newKeyChain.write({
+            service: 'sfdx',
+            account: 'local',
+            key
+        });
+    }
 
     // Install Selenium if required.
     const seleniumOptions: any = {
