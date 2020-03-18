@@ -1,6 +1,7 @@
 import { ChildProcess } from 'child_process';
 import selenium from 'selenium-standalone';
 import { KeychainConfig } from '@salesforce/core/lib/config/keychainConfig';
+import * as crypto from 'crypto';
 
 declare global {
     namespace NodeJS {
@@ -15,15 +16,17 @@ module.exports = async () => {
     // If we are on windows, allow CI to setup our key.json file so the windows keystore won't break the tests.
     // Without this, we get an error if the keychain hasn't been setup already (through a previous sfdx force:auth:web:login):
     // 'GenericKeychainServiceError: The service and account specified in key.json do not match the version of the toolbelt.'
-    if (process.platform === 'win32' && process.env.SFDC_KEY) {
+    if (process.platform === 'win32' && process.env.CI) {
+        const key = crypto.randomBytes(Math.ceil(16)).toString('hex');
+
         let newKeyChain = await KeychainConfig.create(
             KeychainConfig.getDefaultOptions()
         );
-        let keychainPath = newKeyChain.getPath();
+        // let keychainPath = newKeyChain.getPath();
         await newKeyChain.write({
             service: 'sfdx',
             account: 'local',
-            key: process.env.SFDC_KEY
+            key
         });
     }
 
@@ -35,7 +38,7 @@ module.exports = async () => {
             chrome: {
                 // Load this URL to get the latest version.
                 // https://chromedriver.storage.googleapis.com/LATEST_RELEASE
-                version: '78.0.3904.105',
+                version: '80.0.3987.106',
                 arch: process.arch,
                 baseURL: 'https://chromedriver.storage.googleapis.com'
             }
