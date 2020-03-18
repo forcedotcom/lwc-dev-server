@@ -170,21 +170,21 @@ describe('start', () => {
             }
         });
 
-        test('onProxyReq will add Authorization header', async () => {
-            setupAllDev();
+        // test('onProxyReq will add Authorization header', async () => {
+        //     setupAllDev();
 
-            let header = '';
-            let request: { setHeader: Function } = {
-                setHeader: function(name: string, value: string) {
-                    header = `${name}: ${value}`;
-                }
-            };
+        //     let header = '';
+        //     let request: { setHeader: Function } = {
+        //         setHeader: function(name: string, value: string) {
+        //             header = `${name}: ${value}`;
+        //         }
+        //     };
 
-            let result = await start.run();
-            Project.prototype.configuration.onProxyReq(request, null, null);
+        //     let result = await start.run();
+        //     Project.prototype.configuration.onProxyReq(request, null, null);
 
-            expect(header).toBe('Authorization: Bearer testingAccessToken');
-        });
+        //     expect(header).toBe('Authorization: Bearer testingAccessToken');
+        // });
 
         // test('uses port from flags', async () => {
         //     setupUX();
