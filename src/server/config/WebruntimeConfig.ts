@@ -84,14 +84,26 @@ export default class WebruntimeConfig {
         };
     }
 
+    /**
+     * Prepend the LWR server extensions with middleware
+     * @param middleware - An array of LWR extensions
+     */
     addMiddleware(middleware: any[]) {
         this.server.extensions = [...middleware, ...this.server.extensions];
     }
 
+    /**
+     * Append the LWR server extensions with routes
+     * @param routes - An array of LWR extensions
+     */
     addRoutes(routes: any[]) {
         this.server.extensions = [...this.server.extensions, ...routes];
     }
 
+    /**
+     * Add LWC module paths to the LWR compiler configuration
+     * @param modules - An array of paths to LWC components
+     */
     addModules(modules: string[]) {
         this.compilerConfig.lwcOptions.modules = [
             ...this.compilerConfig.lwcOptions.modules,
@@ -99,6 +111,10 @@ export default class WebruntimeConfig {
         ];
     }
 
+    /**
+     * Add rollup plugins to the LWR compiler configuration
+     * @param plugins - An array of rollup plugins
+     */
     addPlugins(plugins: any[]) {
         this.compilerConfig.plugins = [
             ...this.compilerConfig.plugins,
