@@ -4,7 +4,7 @@ import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
 import { sessionNonce, projectMetadata, liveReload } from './extensions';
-import { customComponentPlugin } from './plugins/custom-components';
+import { getCustomComponentService } from './services/CustomComponentService';
 
 const { Server, Container } = require('@webruntime/server');
 
@@ -56,17 +56,13 @@ export default class LocalDevServer extends Server {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`
         ]);
 
-        config.addPlugins([
-            customComponentPlugin(
-                this.project.configuration.namespace,
-                'lwc',
-                path.join(
-                    this.project.modulesSourceDirectory,
-                    'main',
-                    'default'
-                )
-            )
-        ]);
+        if (this.project.isSfdx) {
+            const CustomComponentService = getCustomComponentService(
+                project.configuration.namespace,
+                path.join(project.modulesSourceDirectory, 'main', 'default')
+            );
+            config.addServices([CustomComponentService]);
+        }
 
         // override LWR defaults
         this.options = options;
