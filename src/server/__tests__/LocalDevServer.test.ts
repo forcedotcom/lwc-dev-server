@@ -1,5 +1,6 @@
 import mockFs from 'mock-fs';
-import LocalDevServer, { Server, Container } from '../LocalDevServer';
+import { Server, Container } from '@webruntime/server';
+import LocalDevServer from '../LocalDevServer';
 import Project from '../../common/Project';
 import WebruntimeConfig from '../config/WebruntimeConfig';
 
@@ -15,7 +16,9 @@ describe('LocalDevServer', () => {
     beforeEach(() => {
         // @ts-ignore
         WebruntimeConfig.mockClear();
+        // @ts-ignore
         Server.mockClear();
+        // @ts-ignore
         Container.mockClear();
 
         mockFs({
