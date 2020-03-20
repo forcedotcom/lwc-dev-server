@@ -35,7 +35,7 @@ export default class WebruntimeConfig {
 
         this.projectDir = path.join(__dirname, '..', '..', '..');
         this.buildDir = path.join(project.directory, '.localdevserver');
-        this.moduleDir = project.directory;
+        this.moduleDir = project.modulesSourceDirectory;
 
         this.server = {
             ...baseConfig.server,
@@ -45,10 +45,7 @@ export default class WebruntimeConfig {
         this.app = {
             defaultComponent: 'localdevserver/app',
             defaultTemplate: path.join(
-                __dirname,
-                '..',
-                '..',
-                '..',
+                this.projectDir,
                 'src/client/index.html'
             ),
             definition: LocalDevApp
@@ -60,7 +57,7 @@ export default class WebruntimeConfig {
             AppBootstrapService
         ];
 
-        this.bundle = ['@webruntime/app'];
+        this.bundle = ['@webruntime/app', 'webruntime_navigation/*'];
 
         this.preloadModules = [];
 
@@ -72,6 +69,10 @@ export default class WebruntimeConfig {
                 amd: { define: 'Webruntime.define' }
             },
             lwcOptions: {
+                experimentalDynamicComponent: {
+                    loader: 'webruntime_loader/loader',
+                    strictSpecifier: false
+                },
                 modules: []
             },
             plugins: [],
@@ -120,5 +121,9 @@ export default class WebruntimeConfig {
             ...this.compilerConfig.plugins,
             ...plugins
         ];
+    }
+
+    addServices(services: any[]) {
+        this.services = [...this.services, ...services];
     }
 }
