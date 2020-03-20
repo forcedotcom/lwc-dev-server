@@ -1,228 +1,111 @@
-import * as path from 'path';
 import mockFs from 'mock-fs';
-import LocalDevServer from '../LocalDevServer';
+import LocalDevServer, { Server, Container } from '../LocalDevServer';
 import Project from '../../common/Project';
-import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
+import WebruntimeConfig from '../config/WebruntimeConfig';
 
-const initialize = jest.fn(() => {
-    return Promise.resolve();
-});
-
-const start = jest.fn();
-const shutdown = jest.fn();
-
-jest.mock('@webruntime/server', () => {
-    return {
-        Server: jest.fn().mockImplementation(() => {
-            return {
-                initialize,
-                start,
-                shutdown,
-                app: {
-                    get: jest.fn(),
-                    use: jest.fn()
-                }
-            };
-        })
-    };
-});
-
+jest.mock('@webruntime/server');
+jest.mock('../config/WebruntimeConfig');
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
 jest.mock('../../common/ComponentIndex');
 
-function mockProject({
-    projectPath,
-    modulesPath = 'src/modules',
-    port = 3000,
-    version = '45.0'
-}: {
-    projectPath: string;
-    modulesPath?: string;
-    port?: number;
-    version?: string;
-}): Project {
-    // Some ts-ignores because mockImplementation doesn't exist on the class.
-    const localDevServerConfigurationMock = new LocalDevServerConfiguration();
-
-    localDevServerConfigurationMock.port = port;
-    localDevServerConfigurationMock.api_version = version;
-
-    mockFs({
-        'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
-            'dependencies-218': {},
-            'dependencies-220': {},
-            'dependencies-222': {},
-            'dependencies-224': {}
-        }
-    });
-
-    const project = new Project(projectPath);
-    Object.defineProperty(project, 'directory', {
-        get: jest.fn(() => projectPath)
-    });
-    Object.defineProperty(project, 'modulesSourceDirectory', {
-        get: jest.fn(() => modulesPath)
-    });
-    Object.defineProperty(project, 'configuration', {
-        get: jest.fn(() => localDevServerConfigurationMock)
-    });
-
-    return project;
-}
-
 describe('LocalDevServer', () => {
+    let project: Project;
+
     beforeEach(() => {
-        initialize.mockClear();
-        start.mockClear();
+        // @ts-ignore
+        WebruntimeConfig.mockClear();
+        Server.mockClear();
+        Container.mockClear();
+
+        mockFs({
+            'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
+                'dependencies-218': {},
+                'dependencies-220': {},
+                'dependencies-222': {},
+                'dependencies-224': {}
+            }
+        });
+
+        project = new Project('/Users/arya/dev/myproject');
     });
 
     afterEach(() => {
-        delete process.env.LOCALDEV_PORT;
-        delete process.env.PROJECT_ROOT;
-        delete process.env.LOCALDEV_VENDOR_VERSION;
-        delete process.env.PROJECT_LWC_MODULES;
-
         mockFs.restore();
     });
 
-    describe('constructor', () => {
-        it('should export env variables for webruntime config', () => {
-            const project = mockProject({
-                projectPath: '/path/to/project'
-            });
+    it('should create a default LWR server', () => {
+        new LocalDevServer(project);
 
-            new LocalDevServer(project);
+        expect(Server).toHaveBeenCalledTimes(1);
 
-            expect(process.env.LOCALDEV_PORT).toEqual('3000');
-            expect(process.env.PROJECT_ROOT).toEqual(project.directory);
-            expect(process.env.LOCALDEV_VENDOR_VERSION).toEqual('218');
-            expect(process.env.PROJECT_NAMESPACE).toEqual('c');
-            expect(process.env.PROJECT_LWC_MODULES).toEqual(
-                path.join(project.modulesSourceDirectory, 'main', 'default')
-            );
-        });
-
-        it('should fallback to the latest supported core version', () => {
-            const project = mockProject({
-                projectPath: '/path/to/project',
-                version: '49.0'
-            });
-
-            new LocalDevServer(project);
-
-            expect(process.env.LOCALDEV_VENDOR_VERSION).toEqual('224');
-        });
-
-        it('adds /localdev/{{sessionNonce}}/localdev.js route', async () => {
-            const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({
-                projectPath
-            });
-
-            const localDevServer = new LocalDevServer(project);
-
-            // @ts-ignore
-            const result = localDevServer.server.app.get.mock.calls[0][0];
-
-            expect(result).toBe(
-                // @ts-ignore
-                `/localdev/${localDevServer.sessionNonce}/localdev.js`
-            );
-        });
-
-        it('adds /localdev/{{sessionNonce}}/show route', async () => {
-            const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({
-                projectPath
-            });
-
-            const localDevServer = new LocalDevServer(project);
-
-            // @ts-ignore
-            const result = localDevServer.server.app.get.mock.calls[1][0];
-
-            expect(result).toBe(
-                // @ts-ignore
-                `/localdev/${localDevServer.sessionNonce}/show`
-            );
-        });
-
-        it('server passes projectDir', async () => {
-            const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({
-                projectPath
-            });
-            const server = require('@webruntime/server').Server;
-            server.mockClear();
-
-            const localDevServer = new LocalDevServer(project);
-
-            // @ts-ignore
-            const result = server;
-
-            expect(result).toBeCalledWith(
-                expect.objectContaining({
-                    projectDir: path.join(__dirname, '..', '..', '..')
-                })
-            );
-        });
-
-        it('registers the locals provider', async () => {
-            const res = {
-                locals: {
-                    sessionNonce: ''
-                }
-            };
-            const next = () => {};
-            const projectPath = '/Users/arya/dev/myproject';
-            const project = mockProject({
-                projectPath
-            });
-
-            const localDevServer = new LocalDevServer(project);
-            // @ts-ignore
-            localDevServer.sessionNonce = 'sessionNonce';
-
-            // @ts-ignore
-            const result = localDevServer.server.app.use.mock.calls[0][0];
-            result(undefined, res, next);
-
-            expect(res.locals.sessionNonce).toBe('sessionNonce');
-        });
+        const args = Server.mock.calls[0][0];
+        expect(args).toBeUndefined();
     });
 
-    describe('start', () => {
-        it('should start a webruntime server', async () => {
-            const project = mockProject({
-                projectPath: '/path/to/project'
-            });
+    it('should create a session nonce', () => {
+        const server = new LocalDevServer(project);
 
-            const localDevServer = new LocalDevServer(project);
-
-            await localDevServer.start();
-
-            expect(initialize).toBeCalledTimes(1);
-            expect(start).toBeCalledTimes(1);
-        });
+        // @ts-ignore
+        expect(server.sessionNonce).toBeDefined();
     });
 
-    describe('close', () => {
-        it('should close the webruntime server', async () => {
-            const project = mockProject({
-                projectPath: '/path/to/project'
-            });
+    it('should set the vendor version', () => {
+        const server = new LocalDevServer(project);
 
-            const localDevServer = new LocalDevServer(project);
+        // @ts-ignore
+        expect(server.vendorVersion).toEqual('218');
+    });
 
-            await localDevServer.start();
+    it('should fallback to latest available vendor version', () => {
+        project.configuration.api_version = '52.0';
 
-            expect(initialize).toBeCalledTimes(1);
-            expect(start).toBeCalledTimes(1);
+        const server = new LocalDevServer(project);
 
-            await localDevServer.close();
+        // @ts-ignore
+        expect(server.vendorVersion).toEqual('224');
+    });
 
-            expect(shutdown).toBeCalledTimes(1);
-        });
+    it('should add middleware to the config', () => {
+        const server = new LocalDevServer(project);
+
+        expect(server.config.addMiddleware).toHaveBeenCalledTimes(1);
+    });
+
+    it('should add routes to the config', () => {
+        const server = new LocalDevServer(project);
+
+        expect(server.config.addRoutes).toHaveBeenCalledTimes(1);
+    });
+
+    it('should add modules with the correct vendor version to the config', () => {
+        const server = new LocalDevServer(project);
+
+        expect(server.config.addModules).toHaveBeenCalledTimes(1);
+
+        const modules = server.config.addModules.mock.calls[0][0];
+
+        expect(modules).toEqual([
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg`,
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg`
+        ]);
+    });
+
+    it('should add compiler plugins to the config', () => {
+        const server = new LocalDevServer(project);
+
+        expect(server.config.addPlugins).toHaveBeenCalledTimes(1);
+    });
+
+    it('should override the default config', () => {
+        const localDevServer = new LocalDevServer(project);
+        const lwrServer = new Server();
+
+        // override the options and config
+        expect(lwrServer.options).not.toEqual(localDevServer.options);
+        expect(lwrServer.config).not.toEqual(localDevServer.config);
+
+        // create a new container with the updated config
+        expect(Container).toHaveBeenCalledTimes(1);
     });
 });
