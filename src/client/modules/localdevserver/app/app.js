@@ -8,10 +8,6 @@ registerWireService(register);
 
 const router = createRouter({ routes });
 
-router.addPostNavigate(data => {
-    console.debug('post navigate event', data);
-});
-
 router.addErrorNavigate(e => {
     console.error(
         `There was a problem during navigation: ${e.code} :: ${e.message}`

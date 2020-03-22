@@ -1,8 +1,10 @@
+import path from 'path';
 import mockFs from 'mock-fs';
 import { Server, Container } from '@webruntime/server';
 import LocalDevServer from '../LocalDevServer';
 import Project from '../../common/Project';
 import WebruntimeConfig from '../config/WebruntimeConfig';
+import * as fileUtils from '../../common/fileUtils';
 
 jest.mock('@webruntime/server');
 jest.mock('../config/WebruntimeConfig');
@@ -20,7 +22,6 @@ describe('LocalDevServer', () => {
         Server.mockClear();
         // @ts-ignore
         Container.mockClear();
-
         mockFs({
             'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
                 'dependencies-218': {},
@@ -94,12 +95,6 @@ describe('LocalDevServer', () => {
         ]);
     });
 
-    it('should add compiler plugins to the config', () => {
-        const server = new LocalDevServer(project);
-
-        expect(server.config.addPlugins).toHaveBeenCalledTimes(1);
-    });
-
     it('should override the default config', () => {
         const localDevServer = new LocalDevServer(project);
         const lwrServer = new Server();
@@ -110,5 +105,39 @@ describe('LocalDevServer', () => {
 
         // create a new container with the updated config
         expect(Container).toHaveBeenCalledTimes(1);
+    });
+
+    it('copies app static assets to the server assets directory', async () => {
+        const server = new LocalDevServer(project);
+        server.config.buildDir = path.join(
+            project.directory,
+            '.localdevserver'
+        );
+
+        await server.initialize();
+
+        const copiedFromPath = path.join(__dirname, '../../../dist/assets/*');
+        const copiedToPath = path.join(server.config.buildDir, 'assets');
+
+        expect(fileUtils.copyFiles).toBeCalledWith(
+            copiedFromPath,
+            copiedToPath
+        );
+    });
+
+    it('throws an error if copying static assets fails', async () => {
+        jest.spyOn(fileUtils, 'copyFiles').mockImplementation(() => {
+            throw new Error('test error');
+        });
+
+        const server = new LocalDevServer(project);
+        server.config.buildDir = path.join(
+            project.directory,
+            '.localdevserver'
+        );
+
+        await expect(server.initialize()).rejects.toThrow(
+            'Unable to copy assets: test error'
+        );
     });
 });

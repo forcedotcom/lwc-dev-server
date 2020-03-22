@@ -56,7 +56,7 @@ export default class ComponentIndex {
                 const jsName = `${namespace}/${name}`;
                 const decamelizedName = decamelize(name, '-');
                 const htmlName = `${namespace}-${decamelizedName}`;
-                const url = `/lwc/preview/${namespace}/${name}`;
+                const url = `/preview/${namespace}/${name}`;
 
                 files.push({
                     jsName,

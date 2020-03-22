@@ -123,6 +123,10 @@ export default class WebruntimeConfig {
         ];
     }
 
+    /**
+     * Add AddressableService classes to the LWR configuration.
+     * @param services - An array of service classes.
+     */
     addServices(services: any[]) {
         this.services = [...this.services, ...services];
     }
