@@ -5,6 +5,7 @@ import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
 import { sessionNonce, projectMetadata, liveReload } from './extensions';
 import { getCustomComponentService } from './services/CustomComponentService';
+import { copyFiles } from '../common/fileUtils';
 
 const { Server, Container } = require('@webruntime/server');
 
@@ -68,6 +69,25 @@ export default class LocalDevServer extends Server {
         this.options = options;
         this.config = config;
         this.container = new Container(this.config);
+    }
+
+    async initialize() {
+        await super.initialize();
+        this.copyStaticAssets();
+    }
+
+    private copyStaticAssets() {
+        // copy app static resources
+        const distAssetsPath = path.join(this.rootDir, 'dist', 'assets');
+        const serverAssetsPath = path.join(this.config.buildDir, 'assets');
+
+        try {
+            copyFiles(path.join(distAssetsPath, '*'), serverAssetsPath);
+        } catch (e) {
+            throw new Error(`Unable to copy assets: ${e.message || e}`);
+        }
+
+        // TODO: copy assets from project.staticResourcesDirectory
     }
 
     /**

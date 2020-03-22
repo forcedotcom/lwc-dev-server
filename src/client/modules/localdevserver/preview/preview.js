@@ -21,7 +21,7 @@ export default class Preview extends LightningElement {
                 this.loadHostedComponent(jsName);
             } else {
                 console.error(
-                    'There was a problem loading the component preview. The component namespace and name was not found in the route:',
+                    'There was a problem loading the component preview. The component namespace and name was not found in the route attributes:',
                     route
                 );
             }
@@ -29,8 +29,12 @@ export default class Preview extends LightningElement {
     }
 
     async loadHostedComponent(jsName) {
-        console.info('Loading component preview', jsName);
         this.metadata = await getComponentMetadata(jsName);
+        if (!this.metadata) {
+            throw new Error(
+                `The component named '${jsName}' was not found. Only components within the project namespace can be previewed.`
+            );
+        }
 
         try {
             const module = await import(jsName);

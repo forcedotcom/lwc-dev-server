@@ -28,7 +28,7 @@ describe('WebruntimeConfig', () => {
 
         const { moduleDir, buildDir } = config;
 
-        expect(moduleDir).toEqual('/Users/arya/dev/myproject');
+        expect(moduleDir).toEqual('src/modules');
         expect(buildDir).toEqual(
             path.join('/Users/arya/dev/myproject', '.localdevserver')
         );
@@ -127,6 +127,17 @@ describe('WebruntimeConfig', () => {
 
             expect(plugins).toHaveLength(1);
             expect(plugins[0]).toBe(plugin);
+        });
+    });
+
+    describe('addServices', () => {
+        it('should append services', () => {
+            const testService = class TestService {};
+            const config = new WebruntimeConfig({}, project);
+
+            config.addServices([testService]);
+
+            expect(config.services).toContain(testService);
         });
     });
 });

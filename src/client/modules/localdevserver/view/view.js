@@ -3,7 +3,7 @@ import { NavigationContext, subscribe } from 'webruntime_navigation/navigation';
 
 /**
  * Copied from the LWR custom application. This should be removed once
- * this RFC is implemented: https://rfcs.lwc.dev/rfcs/lwc/0000-dynamic-import-hints
+ * this RFC is implemented: https://rfcs.lwc.dev/rfcs/lws/0000-router-views
  */
 export default class LocalDevServerView extends LightningElement {
     @track message;
@@ -37,11 +37,10 @@ export default class LocalDevServerView extends LightningElement {
             }
             this.customCtor = module.default;
         } catch (e) {
-            // eslint-disable-next-line no-console
             console.error(
                 `Problem loading component "${specifier}": ${e.message || e}`
             );
-            this.message = `Something went wrong :\\`;
+            this.message = `An unexpected error occurred.`;
         }
     }
 
