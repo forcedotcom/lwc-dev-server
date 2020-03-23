@@ -10,5 +10,12 @@
         class="slds-assistive-text slds-assistive-text_focus skip-link">
         Skip to Main Content
     </a> -->
-    <localdevserver-view></localdevserver-view>
+    <localdevserver-layout>
+        <slot name="header">
+            <localdevserver-header></localdevserver-header>
+        </slot>
+        <main>
+            <localdevserver-view></localdevserver-view>
+        </main>
+    </localdevserver-layout>
 </template>

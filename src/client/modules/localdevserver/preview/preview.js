@@ -60,7 +60,7 @@ export default class Preview extends LightningElement {
     }
 
     get href() {
-        // TODO generate url client side
+        // TODO: generate url client side
         return this.metadata ? this.metadata.url : 'javascript:void(0);';
     }
 

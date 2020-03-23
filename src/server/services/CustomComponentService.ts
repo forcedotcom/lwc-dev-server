@@ -2,10 +2,15 @@ import path from 'path';
 import debugLogger from 'debug';
 import { resolveModules } from '@lwc/module-resolver';
 import { compile } from '@webruntime/compiler';
-
-// TODO: change to import and remove workaround for webruntime typescript support
-const { AddressableService, RequestOutputTypes } = require('@webruntime/api');
-export { AddressableService };
+import {
+    AddressableService,
+    ContainerContext,
+    PublicConfig,
+    RequestOutput,
+    RequestOutputTypes,
+    RequestParams,
+    RequestService
+} from '@webruntime/api';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 
@@ -17,9 +22,9 @@ const debug = debugLogger('localdevserver:customcomponents');
 /**
  * Returns a Service which will resolve custom components from an SFDX project.
  *
- * The custom components live in a directory (`lwc`) that differs from the
- * namespace referenced in code (usually `c`). This maps references to that
- * namespace to the actual directory the compiler expects.
+ * In SFDX projects, the custom components live in a directory (`lwc`) that
+ * differs from the namespace referenced in code (usually `c`). This maps
+ * references to that namespace to the actual directory the compiler expects.
  *
  * @param customModulesNamespace The custom components namespace, e.g., `c`.
  * @param modulesDirectory Absolute path to the parent of the 'lwc' directory.
@@ -27,9 +32,11 @@ const debug = debugLogger('localdevserver:customcomponents');
 export function getCustomComponentService(
     customModulesNamespace: string,
     modulesDirectory: string
-) {
-    return class CustomComponentService extends AddressableService {
-        constructor(config: any) {
+): new (config: PublicConfig) => AddressableService & RequestService {
+    // TODO we can probably simplify this by extending LWR's ComponentService
+    return class CustomComponentService extends AddressableService
+        implements RequestService {
+        constructor(config: PublicConfig) {
             super(URI);
         }
 
@@ -41,7 +48,7 @@ export function getCustomComponentService(
             for (const mapping of modules) {
                 const { specifier } = mapping;
                 if (specifier) {
-                    const name = extractNameFromSpecifier(specifier);
+                    const name = this.extractNameFromSpecifier(specifier);
                     if (!name) {
                         throw new Error(
                             `Invalid specifier for custom component: ${specifier}`
@@ -60,14 +67,14 @@ export function getCustomComponentService(
             return `${namespace}/${name}`;
         }
 
+        async initialize() {}
+
         async request(
             specifier: string,
-            pivots: any,
-            { compilerConfig }: any
-        ): Promise<any> {
-            debug(`Received request for ${specifier}`);
-
-            const name = extractNameFromSpecifier(specifier);
+            params: RequestParams,
+            { compilerConfig }: ContainerContext
+        ): Promise<RequestOutput> {
+            const name = this.extractNameFromSpecifier(specifier);
             if (!name) {
                 throw new Error(
                     `Invalid specifier for custom component: ${specifier}`
@@ -92,7 +99,7 @@ export function getCustomComponentService(
             };
         }
 
-        resolveCustomModules() {
+        private resolveCustomModules() {
             const lwcModulesDirectory = path.join(
                 modulesDirectory,
                 SFDX_LWC_DIRECTORY
@@ -104,13 +111,13 @@ export function getCustomComponentService(
 
             return customModules;
         }
-    };
-}
 
-function extractNameFromSpecifier(specifier: string) {
-    const split = specifier.split('/');
-    if (!split || split.length !== 2) {
-        return null;
-    }
-    return split[1];
+        private extractNameFromSpecifier(specifier: string) {
+            const split = specifier.split('/');
+            if (!split || split.length !== 2) {
+                return null;
+            }
+            return split[1];
+        }
+    };
 }

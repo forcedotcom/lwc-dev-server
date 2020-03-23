@@ -6,14 +6,12 @@ import routes from './routes';
 
 registerWireService(register);
 
-const router = createRouter({ routes });
-
-router.addErrorNavigate(e => {
-    console.error(
-        `There was a problem during navigation: ${e.code} :: ${e.message}`
-    );
-});
-
-router.connect();
+createRouter({ routes })
+    .addErrorNavigate(e => {
+        console.error(
+            `There was a problem during navigation: ${e.code} :: ${e.message}`
+        );
+    })
+    .connect();
 
 export default class LocalDevServerApp extends LightningElement {}

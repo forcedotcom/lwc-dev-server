@@ -3,33 +3,31 @@
 exports[`home.js renders 1`] = `
 <localdevserver-home>
   #shadow-root(open)
-    <main>
-      <localdevserver-layout-section
-        class="main-content"
+    <localdevserver-layout-section
+      class="main-content"
+    >
+      #shadow-root(open)
+        <slot />
+      <div
+        class="slds-grid slds-gutters slds-gutters_x-small slds-wrap slds-grid_vertical-stretch"
       >
-        #shadow-root(open)
-          <slot />
         <div
-          class="slds-grid slds-gutters slds-gutters_x-small slds-wrap slds-grid_vertical-stretch"
+          class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3 slds-large-size_9-of-12"
         >
-          <div
-            class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3 slds-large-size_9-of-12"
-          >
-            <localdevserver-components-panel>
-              #shadow-root(open)
-                (components panel)
-            </localdevserver-components-panel>
-          </div>
-          <div
-            class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_3-of-12"
-          >
-            <localdevserver-resources-panel>
-              #shadow-root(open)
-                (resources panel)
-            </localdevserver-resources-panel>
-          </div>
+          <localdevserver-components-panel>
+            #shadow-root(open)
+              (components panel)
+          </localdevserver-components-panel>
         </div>
-      </localdevserver-layout-section>
-    </main>
+        <div
+          class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_3-of-12"
+        >
+          <localdevserver-resources-panel>
+            #shadow-root(open)
+              (resources panel)
+          </localdevserver-resources-panel>
+        </div>
+      </div>
+    </localdevserver-layout-section>
 </localdevserver-home>
 `;
