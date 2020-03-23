@@ -2,11 +2,11 @@ import path from 'path';
 import Project from '../../common/Project';
 import { LocalDevApp } from './LocalDevApp';
 
-const {
+import {
     ComponentService,
     ImportMapService,
     AppBootstrapService
-} = require('@webruntime/services');
+} from '@webruntime/services';
 
 export default class WebruntimeConfig {
     /** Root project directory */

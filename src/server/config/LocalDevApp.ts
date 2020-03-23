@@ -1,7 +1,4 @@
-const { WebruntimeAppDefinition, WebruntimePage } = require('@webruntime/api');
-
-// workaround for webruntime typescript support
-export { WebruntimeAppDefinition, WebruntimePage };
+import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {

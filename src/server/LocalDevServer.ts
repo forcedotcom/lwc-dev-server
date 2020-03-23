@@ -5,10 +5,7 @@ import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
 import { sessionNonce, projectMetadata, liveReload } from './extensions';
 import { customComponentPlugin } from './plugins/custom-components';
-
-const { Server, Container } = require('@webruntime/server');
-
-export { Server, Container };
+import { Server, Container } from '@webruntime/server';
 
 export default class LocalDevServer extends Server {
     private rootDir: string;
