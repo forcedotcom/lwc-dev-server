@@ -33,8 +33,7 @@ export function getCustomComponentService(
     customModulesNamespace: string,
     modulesDirectory: string
 ): new (config: PublicConfig) => AddressableService & RequestService {
-    return class CustomComponentService extends AddressableService
-        implements RequestService {
+    return class extends AddressableService implements RequestService {
         constructor(config: PublicConfig) {
             super(URI);
         }
@@ -59,11 +58,6 @@ export function getCustomComponentService(
             }
             debug(`mappings: ${JSON.stringify(mappings, null, 2)}`);
             return mappings;
-        }
-
-        toSpecifier(url: string): string {
-            const { namespace, name } = this.parseUrl(url);
-            return `${namespace}/${name}`;
         }
 
         async initialize() {}
@@ -96,6 +90,11 @@ export function getCustomComponentService(
                 success,
                 diagnostics
             };
+        }
+
+        toSpecifier(url: string): string {
+            const { namespace, name } = this.parseUrl(url);
+            return `${namespace}/${name}`;
         }
 
         private resolveCustomModules() {
