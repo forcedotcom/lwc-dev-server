@@ -33,7 +33,6 @@ export function getCustomComponentService(
     customModulesNamespace: string,
     modulesDirectory: string
 ): new (config: PublicConfig) => AddressableService & RequestService {
-    // TODO we can probably simplify this by extending LWR's ComponentService
     return class CustomComponentService extends AddressableService
         implements RequestService {
         constructor(config: PublicConfig) {
