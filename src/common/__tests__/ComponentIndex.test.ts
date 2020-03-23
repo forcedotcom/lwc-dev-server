@@ -45,7 +45,7 @@ describe('ComponentIndex getModules()', () => {
                 jsName: 'namespace/module',
                 namespace: 'namespace',
                 name: 'module',
-                url: '/lwc/preview/namespace/module',
+                url: '/preview/namespace/module',
                 path: path.normalize(
                     'my-project/src/namespace/module/module.js'
                 )
@@ -55,7 +55,7 @@ describe('ComponentIndex getModules()', () => {
                 jsName: 'namespace/module2',
                 namespace: 'namespace',
                 name: 'module2',
-                url: '/lwc/preview/namespace/module2',
+                url: '/preview/namespace/module2',
                 path: path.normalize(
                     'my-project/src/namespace/module2/module2.js'
                 )
@@ -116,7 +116,7 @@ describe('ComponentIndex getModules()', () => {
                 jsName: 'c/module',
                 namespace: 'c',
                 name: 'module',
-                url: '/lwc/preview/c/module',
+                url: '/preview/c/module',
                 path: path.normalize(
                     'my-project/force-app/main/default/lwc/module/module.js'
                 )
@@ -126,7 +126,7 @@ describe('ComponentIndex getModules()', () => {
                 jsName: 'c/module2',
                 namespace: 'c',
                 name: 'module2',
-                url: '/lwc/preview/c/module2',
+                url: '/preview/c/module2',
                 path: path.normalize(
                     'my-project/force-app/main/default/lwc/module2/module2.js'
                 )
@@ -199,7 +199,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             jsName: 'c/module',
                             namespace: 'c',
                             name: 'module',
-                            url: '/lwc/preview/c/module',
+                            url: '/preview/c/module',
                             path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module/module.js'
                             )
@@ -209,7 +209,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             jsName: 'c/module2',
                             namespace: 'c',
                             name: 'module2',
-                            url: '/lwc/preview/c/module2',
+                            url: '/preview/c/module2',
                             path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module2/module2.js'
                             )
@@ -300,7 +300,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             jsName: 'c/module',
                             namespace: 'c',
                             name: 'module',
-                            url: '/lwc/preview/c/module',
+                            url: '/preview/c/module',
                             path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module/module.js'
                             )
@@ -310,7 +310,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             jsName: 'c/module2',
                             namespace: 'c',
                             name: 'module2',
-                            url: '/lwc/preview/c/module2',
+                            url: '/preview/c/module2',
                             path: path.normalize(
                                 'my-project/force-app/main/default/lwc/module2/module2.js'
                             )
