@@ -3,6 +3,7 @@ import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
         const {
+            // @ts-ignore
             locals: { sessionNonce },
             config: {
                 server: { basePath }

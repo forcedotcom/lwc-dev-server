@@ -41,6 +41,7 @@ describe('CustomComponentService', () => {
     });
 
     afterEach(() => {
+        // @ts-ignore
         compile.mockReset();
     });
 
@@ -115,6 +116,7 @@ describe('CustomComponentService', () => {
                 }
             };
 
+            // @ts-ignore
             compile.mockReturnValue({
                 result: {},
                 metadata: {},

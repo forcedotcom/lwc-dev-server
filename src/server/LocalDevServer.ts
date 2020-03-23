@@ -40,6 +40,7 @@ export default class LocalDevServer extends Server {
             resourceRoot: '/webruntime'
         };
 
+        // @ts-ignore
         const config = new WebruntimeConfig(this.config, this.project);
 
         config.addMiddleware([sessionNonce(this.sessionNonce)]);
@@ -63,8 +64,11 @@ export default class LocalDevServer extends Server {
         }
 
         // override LWR defaults
+        // @ts-ignore
         this.options = options;
+        // @ts-ignore
         this.config = config;
+        // @ts-ignore
         this.container = new Container(this.config);
     }
 
@@ -76,6 +80,7 @@ export default class LocalDevServer extends Server {
     private copyStaticAssets() {
         // copy app static resources
         const distAssetsPath = path.join(this.rootDir, 'dist', 'assets');
+        // @ts-ignore
         const serverAssetsPath = path.join(this.config.buildDir, 'assets');
 
         try {

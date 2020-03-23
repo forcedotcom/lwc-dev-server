@@ -88,7 +88,18 @@ export function getCustomComponentService(
                 type: RequestOutputTypes.COMPONENT,
                 specifier,
                 resource: result,
-                metadata,
+                metadata: metadata
+                    ? {
+                          dependencies: metadata.dependencies || [],
+                          dynamicImports: metadata.dynamicImports
+                              ? metadata.dynamicImports.map(item => {
+                                    return `${
+                                        item.specifier
+                                    }?pivots=${item.pivots.join(',')}`;
+                                })
+                              : undefined
+                      }
+                    : undefined,
                 success,
                 diagnostics
             };
