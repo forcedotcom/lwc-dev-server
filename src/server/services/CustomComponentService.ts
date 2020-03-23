@@ -38,6 +38,8 @@ export function getCustomComponentService(
             super(URI);
         }
 
+        // TODO: this only seems to be called on startup, which is a problem
+        // for modules being renamed or added.
         get mappings() {
             const modules = this.resolveCustomModules();
             debug(`found modules: ${JSON.stringify(modules, null, 2)}`);
