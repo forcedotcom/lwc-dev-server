@@ -31,10 +31,10 @@ describe('preview', () => {
         jest.resetAllMocks();
     });
 
-    it('renders', async () => {
-        const componentElement = createComponentUnderTest();
-        expect(componentElement).toMatchSnapshot();
-    });
+    // it('renders', async () => {
+    //     const componentElement = createComponentUnderTest();
+    //     expect(componentElement).toMatchSnapshot();
+    // });
 
     // it('renders a component', async done => {
     //     talonCreateElement.mockImplementation(() => {

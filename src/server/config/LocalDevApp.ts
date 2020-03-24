@@ -3,6 +3,7 @@ import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
         const {
+            // @ts-ignore
             locals: { sessionNonce },
             config: {
                 server: { basePath }
@@ -10,7 +11,7 @@ export class LocalDevPage extends WebruntimePage {
         } = this.pageContext;
 
         // TODO: The version key needs to be calculated until LWR provides it in 228.
-        const versionKey = '123456';
+        const versionKey = '1';
 
         // Matches of {key} or { key } in the template will get replaced with
         // values from this map.

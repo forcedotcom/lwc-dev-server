@@ -36,10 +36,11 @@
             <div
                 class="preview-content slds-grid slds-grid_vertical-align-center slds-grid_align-center"
             >
-                <div
-                    lwc:dom="manual"
-                    class="container slds-scrollable slds-m-around_large"
-                ></div>
+                <div class="container slds-scrollable slds-m-around_large">
+                    <localdevserver-dynamic
+                        lwc:dynamic={dynamicCtor}
+                    ></localdevserver-dynamic>
+                </div>
                 <template if:true={isLoading}>
                     <lightning-spinner
                         alternative-text="Loading"

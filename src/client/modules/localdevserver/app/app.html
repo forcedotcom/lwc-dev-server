@@ -1,5 +1,21 @@
 <template>
-    <main>
-        <div>Hello World</div>
-    </main>
+    <!-- TODO: need to implement targets -->
+    <!-- <a
+        href="#skip-target-nav"
+        class="slds-assistive-text slds-assistive-text_focus skip-link">
+        Skip to Navigation
+    </a>
+    <a
+        href="#skip-target-content"
+        class="slds-assistive-text slds-assistive-text_focus skip-link">
+        Skip to Main Content
+    </a> -->
+    <localdevserver-layout>
+        <slot name="header">
+            <localdevserver-header></localdevserver-header>
+        </slot>
+        <main>
+            <localdevserver-view></localdevserver-view>
+        </main>
+    </localdevserver-layout>
 </template>

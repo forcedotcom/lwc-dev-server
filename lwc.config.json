@@ -2,6 +2,7 @@
     "modules": [
         "@lwc/engine",
         "@lwc/wire-service",
+        "@webruntime/navigation",
         "src/client/modules"
     ]
 }
