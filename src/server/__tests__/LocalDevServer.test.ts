@@ -100,6 +100,26 @@ describe('LocalDevServer', () => {
         ]);
     });
 
+    it('should add custom component service for sfdx projects', () => {
+        // @ts-ignore
+        project.isSfdx = true;
+
+        const server = new LocalDevServer(project);
+
+        // @ts-ignore
+        expect(server.config.addServices).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not add custom component service for sfdx projects', () => {
+        // @ts-ignore
+        project.isSfdx = false;
+
+        const server = new LocalDevServer(project);
+
+        // @ts-ignore
+        expect(server.config.addServices).toHaveBeenCalledTimes(0);
+    });
+
     it('should override the default config', () => {
         const localDevServer = new LocalDevServer(project);
         const lwrServer = new Server();
