@@ -10,6 +10,7 @@ import {
     RequestParams,
     RequestService
 } from '@webruntime/api';
+import { CompilerResourceMetadata } from 'common/CompilerResourceMetadata';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 
@@ -69,18 +70,7 @@ export function getCustomComponentService(
                 type: RequestOutputTypes.COMPONENT,
                 specifier,
                 resource: result,
-                metadata: metadata
-                    ? {
-                          dependencies: metadata.dependencies || [],
-                          dynamicImports: metadata.dynamicImports
-                              ? metadata.dynamicImports.map(item => {
-                                    return `${
-                                        item.specifier
-                                    }?pivots=${item.pivots.join(',')}`;
-                                })
-                              : undefined
-                      }
-                    : undefined,
+                metadata: new CompilerResourceMetadata(metadata),
                 success,
                 diagnostics
             };
