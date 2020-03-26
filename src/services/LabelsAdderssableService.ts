@@ -18,13 +18,13 @@ import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
 import { CompilerResourceMetadata } from '../common/CompilerResourceMetadata';
 
-const NAMESPACE = '@salesforce/labels';
-const URI_PREFIX = `/label/:mode/:locale/:name/`;
+const NAMESPACE = '@salesforce/label';
+const URI_PREFIX = `/label/:mode/:locale/:name`;
 //const URI = [`${URI_PREFIX}:name`];
 const URI = `/label/:mode/:locale/:name/`;
 const PACKAGE_MAPPING = `${NAMESPACE}/`;
 
-const debug = debugLogger('localdevserver:labelsService');
+const debug = debugLogger('localdevserver:labelsservice');
 
 /**
  * Contains a map of label keys to label values.
@@ -83,8 +83,8 @@ export function getLabelService(
         toSpecifier(url: string) {
             const { name } = this.parseUrl(url);
 
-            debug(`labels toSpecifier(${url}) - ${NAMESPACE}${name}`);
-            return `${NAMESPACE}${name}`;
+            debug(`labels toSpecifier(${url}) - ${NAMESPACE}/${name}`);
+            return `${NAMESPACE}/${name}`;
         }
 
         private loadCustomLabels(labelsPath: string | undefined): LabelValues {
@@ -225,9 +225,6 @@ export function getLabelService(
                     ]
                 };
             }
-
-            debug('trace');
-            debug(compilerOutput);
 
             const { result, metadata, success, diagnostics } = compilerOutput;
             return {
