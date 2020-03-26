@@ -16,11 +16,15 @@ import {
 import { compile, RuntimeCompilerOutput } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
-import { CompilerResourceMetadata } from 'common/CompilerResourceMetadata';
+import { CompilerResourceMetadata } from '../common/CompilerResourceMetadata';
 
-const NAMESPACE = '@salesforce/label/';
-const URI = '@salesforce/label/:labelId';
-const debug = debugLogger('localdevserver');
+const NAMESPACE = '@salesforce/labels';
+const URI_PREFIX = `/label/:mode/:locale/:name/`;
+//const URI = [`${URI_PREFIX}:name`];
+const URI = `/label/:mode/:locale/:name/`;
+const PACKAGE_MAPPING = `${NAMESPACE}/`;
+
+const debug = debugLogger('localdevserver:labelsService');
 
 /**
  * Contains a map of label keys to label values.
@@ -34,18 +38,32 @@ export function getLabelService(
 ): new (config: PublicConfig) => AddressableService & RequestService {
     return class LabelService extends AddressableService
         implements RequestService {
-        private labels: { [key: string]: string | { [key: string]: string } };
+        private labels: { [key: string]: string };
         private moduleCache: Map<string, RuntimeCompilerOutput>;
 
+        /**
+         * Everything under @salesforce/label is handled by this service.
+         */
+        readonly mappings: { [key: string]: string };
+
         constructor() {
-            super(URI);
+            super(URI_PREFIX);
             this.labels = {};
+
+            this.mappings = {
+                [NAMESPACE]: URI_PREFIX
+            };
+
+            debug(this.mappings);
 
             // A cache of compiled labels.
             this.moduleCache = new Map();
         }
 
         async initialize() {
+            debug('labels initialize()');
+
+            // Handle error on no labels file found.
             this.labels = this.loadCustomLabels(customLabelsPath);
 
             // Watch for changes in the labels directory.
@@ -63,17 +81,10 @@ export function getLabelService(
          * @param url
          */
         toSpecifier(url: string) {
-            const { labelId } = this.parseUrl(url);
-            return `@salesforce/label/${labelId}`;
-        }
+            const { name } = this.parseUrl(url);
 
-        /**
-         * Everything under @salesforce/label is handled by this service.
-         */
-        get mappings() {
-            return {
-                '@salesforce/label/': '/salesforce/labels/:labelId'
-            };
+            debug(`labels toSpecifier(${url}) - ${NAMESPACE}${name}`);
+            return `${NAMESPACE}${name}`;
         }
 
         private loadCustomLabels(labelsPath: string | undefined): LabelValues {
@@ -111,22 +122,6 @@ export function getLabelService(
         }
 
         /**
-         * Find the correct language to pull labels from.
-         *
-         * @param {string} locale
-         */
-        private getLabelsForLocale(locale = 'en'): { [key: string]: string } {
-            // Try:
-            //  - the full locale
-            //  - language part of the locale, with country removed
-            //  - "en"
-            return (this.labels[locale] ||
-                this.labels[locale.substring(0, 2)] ||
-                this.labels.en ||
-                {}) as { [key: string]: string };
-        }
-
-        /**
          * Given a label specifier, compile the code needed to provide it.
          *
          * @param {string} specifier - The label specifier to compile
@@ -138,33 +133,32 @@ export function getLabelService(
             params: RequestParams,
             context: ContainerContext
         ): Promise<RuntimeCompilerOutput | undefined> {
+            debug(`compile label: ${specifier}`);
             const { mode, locale } = params;
-            const [section, name] = specifier.split('.');
-            const namespace = `${NAMESPACE}${section}`;
-            const descriptor = `${mode}/${namespace}/${name}@${locale}`;
+            const descriptor = `${mode}/${NAMESPACE}/${specifier}@${locale}`;
 
-            const labels:
-                | string
-                | { [key: string]: string } = this.getLabelsForLocale(
-                params.locale
-            );
             let moduleDef = this.moduleCache.get(descriptor);
             if (!moduleDef) {
-                const label: string | { [key: string]: string } =
-                    labels[specifier];
+                debug(
+                    `No cached module for label ${specifier}. Compiling now.`
+                );
+                const label: string = this.labels[specifier];
                 if (label) {
                     const files = {
-                        [`${namespace}/${name}.js`]: `export default "${label}"`
+                        [`${NAMESPACE}/${specifier}.js`]: `export default "${label}"`
                     };
                     moduleDef = await compile({
                         ...context,
-                        name,
-                        namespace,
+                        name: specifier,
+                        namespace: NAMESPACE,
                         files
                     });
 
-                    if (moduleDef) {
+                    if (moduleDef && moduleDef.success) {
                         this.moduleCache.set(`${descriptor}`, moduleDef);
+                        debug(`Compiling label ${specifier} succeeded.`);
+                    } else {
+                        debug(`Compiling label ${specifier} failed.`);
                     }
                 }
             }
@@ -189,9 +183,11 @@ export function getLabelService(
             params: RequestParams,
             context: ContainerContext
         ): Promise<RequestOutput> {
+            debug(`labels request(${specifier})`);
             // A locale is required.
             const locale = params.locale || 'en';
             if (!locale) {
+                debug('No locale detected, exiting');
                 return {
                     type: RequestOutputTypes.COMPONENT,
                     specifier,
@@ -208,107 +204,67 @@ export function getLabelService(
 
             // Parse the specifier for label information.
             const parts = specifier.split('/');
-            const section = parts[2];
-            const name = parts[3];
-            const ids = [];
-            const labels = this.getLabelsForLocale(locale);
+            const id = parts[2];
 
-            if ((!name || name === '') && section === '') {
-                // All labels
-                ids.push(...Object.keys(labels));
-            } else {
-                if (section && !name) {
-                    // All labels in a section
-                    ids.push(
-                        ...Object.keys(labels).filter(label =>
-                            label.startsWith(section)
-                        )
-                    );
-                } else {
-                    // A specific label
-                    ids.push(`${section}.${name}`);
-                }
+            const compilerOutput:
+                | RuntimeCompilerOutput
+                | undefined = await this.compileLabel(id, params, context);
+
+            if (!compilerOutput) {
+                debug(`Attempting to load label ${id} failed.`);
+                return {
+                    type: RequestOutputTypes.COMPONENT,
+                    specifier,
+                    success: false,
+                    diagnostics: [
+                        {
+                            code: -1,
+                            message: 'Compiler output undefined or null',
+                            level: DiagnosticLevel.Fatal
+                        }
+                    ]
+                };
             }
 
-            // Compile and list all requested label IDs.
-            const resources = [];
-            for (let i = 0; i < ids.length; i++) {
-                const id = ids[i];
-                const compilerOutput:
-                    | RuntimeCompilerOutput
-                    | undefined = await this.compileLabel(id, params, context);
+            debug('trace');
+            debug(compilerOutput);
 
-                if (!compilerOutput) {
-                    debugLogger(`Attempting to load label ${id} failed.`);
-                    continue;
-                }
-
-                /* eslint-disable-next-line no-await-in-loop */
-                const {
-                    result,
-                    metadata,
-                    success,
-                    diagnostics
-                } = compilerOutput;
-                if (result) {
-                    resources.push({
-                        type: RequestOutputTypes.COMPONENT as RequestOutputTypes.COMPONENT,
-                        specifier: `${NAMESPACE}${section}/${name}`,
-                        resource: result,
-                        metadata: new CompilerResourceMetadata(metadata),
-                        success,
-                        diagnostics
-                    });
-                }
-            }
-
-            return resources[0];
+            const { result, metadata, success, diagnostics } = compilerOutput;
+            return {
+                type: RequestOutputTypes.COMPONENT as RequestOutputTypes.COMPONENT,
+                specifier,
+                resource: result,
+                metadata: new CompilerResourceMetadata(metadata),
+                success,
+                diagnostics
+            };
         }
 
-        // async request(
-        //     specifier: string,
-        //     params: RequestParams,
-        //     context: ContainerContext
-        // ): Promise<RequestOutput> {
-        //     const { compilerConfig }: { compilerConfig?: any } = context;
-        //     //const { namespace, name } = getNameNamespaceFromSpecifier(specifier);
-        //     const namespace = 'c';
-        //     const name = 'name';
-        //     const label = this.labels.hasOwnProperty(name)
-        //         ? this.labels[name]
-        //         : `[${namespace}.${name}]`;
+        getPlugin(pivots = {}) {
+            const labels = this.labels;
+            return {
+                name: 'labels-addressable-service',
 
-        //     const files: { [key: string]: string } = {};
-        //     files[`${specifier}.js`] = `export default "${label}"`;
-
-        //     const { result, success, diagnostics, metadata } = await compile({
-        //         ...compilerConfig,
-        //         name,
-        //         namespace,
-        //         files
-        //     });
-
-        //     return {
-        //         type: RequestOutputTypes.COMPONENT,
-        //         specifier,
-        //         resource: result,
-        //         success,
-        //         metadata,
-        //         diagnostics
-        //     };
-        // }
-
-        // getPlugin(pivots = {}) {
-        //     return {
-        //         name: 'labels-addressable-service',
-
-        //         resolveId(specifier: string) {
-        //             return null;
-        //         },
-        //         load(specifier: string) {
-        //             return null;
-        //         }
-        //     };
-        // }
+                resolveId(specifier: string) {
+                    if (specifier.startsWith(PACKAGE_MAPPING)) {
+                        return `${specifier}.js`;
+                    }
+                    return null;
+                },
+                load(specifier: string) {
+                    if (specifier.startsWith(PACKAGE_MAPPING)) {
+                        const key = specifier
+                            .replace(PACKAGE_MAPPING, '')
+                            .replace('.js', '')
+                            .replace('/', '.');
+                        if (labels.hasOwnProperty(key)) {
+                            return `export default "${labels[key]}"`;
+                        }
+                        return `export default "[${key}]"`;
+                    }
+                    return null;
+                }
+            };
+        }
     };
 }

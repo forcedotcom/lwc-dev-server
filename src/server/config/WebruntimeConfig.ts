@@ -128,6 +128,7 @@ export default class WebruntimeConfig {
      * @param services - An array of service classes.
      */
     addServices(services: any[]) {
+        debugger;
         this.services = [...this.services, ...services];
     }
 }

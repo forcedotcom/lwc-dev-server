@@ -10,7 +10,7 @@ import {
     RequestParams,
     RequestService
 } from '@webruntime/api';
-import { CompilerResourceMetadata } from 'common/CompilerResourceMetadata';
+import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 

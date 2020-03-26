@@ -7,7 +7,7 @@ import { sessionNonce, projectMetadata, liveReload } from './extensions';
 import { Server, Container } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
-import { getLabelService } from 'services/LabelsAdderssableService';
+import { getLabelService } from '../services/LabelsAdderssableService';
 
 export default class LocalDevServer extends Server {
     private rootDir: string;
@@ -57,14 +57,19 @@ export default class LocalDevServer extends Server {
         ]);
 
         if (this.project.isSfdx) {
-            const CustomComponentService = getCustomComponentService(
-                project.configuration.namespace,
-                path.join(project.modulesSourceDirectory, 'main', 'default')
+            const services = [];
+            services.push(
+                getCustomComponentService(
+                    project.configuration.namespace,
+                    path.join(project.modulesSourceDirectory, 'main', 'default')
+                )
             );
-            const LabelsService = project.customLabelsPath
-                ? getLabelService(project.customLabelsPath)
-                : null;
-            config.addServices([CustomComponentService, LabelsService]);
+
+            if (project.customLabelsPath) {
+                services.push(getLabelService(project.customLabelsPath));
+            }
+
+            config.addServices(services);
         }
 
         // override LWR defaults
