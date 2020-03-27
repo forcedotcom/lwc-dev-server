@@ -7,7 +7,9 @@ import { sessionNonce, projectMetadata, liveReload } from './extensions';
 import { Server, Container } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
-import { getLabelService } from '../services/LabelsAdderssableService';
+import { getLabelService } from './services/LabelsAdderssableService';
+import { ComponentService } from './services/ComponentService';
+import { AddressableService } from '@webruntime/api';
 
 export default class LocalDevServer extends Server {
     private rootDir: string;
@@ -58,6 +60,7 @@ export default class LocalDevServer extends Server {
 
         if (this.project.isSfdx) {
             const services = [];
+            services.push(ComponentService);
             services.push(
                 getCustomComponentService(
                     project.configuration.namespace,

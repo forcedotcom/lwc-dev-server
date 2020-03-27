@@ -16,12 +16,10 @@ import {
 import { compile, RuntimeCompilerOutput } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
-import { CompilerResourceMetadata } from '../common/CompilerResourceMetadata';
+import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 
 const NAMESPACE = '@salesforce/label';
 const URI_PREFIX = `/label/:mode/:locale/:name`;
-//const URI = [`${URI_PREFIX}:name`];
-const URI = `/label/:mode/:locale/:name/`;
 const PACKAGE_MAPPING = `${NAMESPACE}/`;
 
 const debug = debugLogger('localdevserver:labelsservice');
@@ -112,7 +110,7 @@ export function getLabelService(
 
             const processed = labels.reduce((obj: LabelValues, label: any) => {
                 if (label.fullName && label.value) {
-                    obj[label.fullName] = label.value;
+                    obj['c.' + label.fullName] = label.value;
                 }
                 return obj;
             }, {});
@@ -183,7 +181,6 @@ export function getLabelService(
             params: RequestParams,
             context: ContainerContext
         ): Promise<RequestOutput> {
-            debug(`labels request(${specifier})`);
             // A locale is required.
             const locale = params.locale || 'en';
             if (!locale) {

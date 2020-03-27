@@ -2,11 +2,7 @@ import path from 'path';
 import Project from '../../common/Project';
 import { LocalDevApp } from './LocalDevApp';
 
-import {
-    ComponentService,
-    ImportMapService,
-    AppBootstrapService
-} from '@webruntime/services';
+import { ImportMapService, AppBootstrapService } from '@webruntime/services';
 
 export default class WebruntimeConfig {
     /** Root project directory */
@@ -51,11 +47,7 @@ export default class WebruntimeConfig {
             definition: LocalDevApp
         };
 
-        this.services = [
-            ComponentService,
-            ImportMapService,
-            AppBootstrapService
-        ];
+        this.services = [ImportMapService, AppBootstrapService];
 
         this.bundle = ['@webruntime/app', 'webruntime_navigation/*'];
 
