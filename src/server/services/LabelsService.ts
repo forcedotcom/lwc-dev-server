@@ -9,14 +9,13 @@ import {
     RequestParams,
     RequestOutput,
     RequestOutputTypes,
-    CompileService,
-    PublicConfig,
-    ComponentResource
+    PublicConfig
 } from '@webruntime/api';
 import { compile, RuntimeCompilerOutput } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
+import type { Mappings, LabelValues } from 'server/LocalDevServer';
 
 const NAMESPACE = '@salesforce/label';
 const URI_PREFIX = `/label/:mode/:locale/:name`;
@@ -24,25 +23,18 @@ const PACKAGE_MAPPING = `${NAMESPACE}/`;
 
 const debug = debugLogger('localdevserver:labelsservice');
 
-/**
- * Contains a map of label keys to label values.
- */
-interface LabelValues {
-    [name: string]: string;
-}
-
 export function getLabelService(
     customLabelsPath: string
 ): new (config: PublicConfig) => AddressableService & RequestService {
     return class LabelService extends AddressableService
         implements RequestService {
-        private labels: { [key: string]: string };
+        private labels: LabelValues;
         private moduleCache: Map<string, RuntimeCompilerOutput>;
 
         /**
          * Everything under @salesforce/label is handled by this service.
          */
-        readonly mappings: { [key: string]: string };
+        readonly mappings: Mappings;
 
         constructor() {
             super(URI_PREFIX);
@@ -52,15 +44,11 @@ export function getLabelService(
                 [NAMESPACE]: URI_PREFIX
             };
 
-            debug(this.mappings);
-
             // A cache of compiled labels.
             this.moduleCache = new Map();
         }
 
         async initialize() {
-            debug('labels initialize()');
-
             // Handle error on no labels file found.
             this.labels = this.loadCustomLabels(customLabelsPath);
 
@@ -70,6 +58,8 @@ export function getLabelService(
                 this.moduleCache.clear();
                 this.labels = this.loadCustomLabels(customLabelsPath);
             });
+
+            debug('Labels loaded', this.labels);
         }
 
         /**
@@ -80,14 +70,10 @@ export function getLabelService(
          */
         toSpecifier(url: string) {
             const { name } = this.parseUrl(url);
-
-            debug(`labels toSpecifier(${url}) - ${NAMESPACE}/${name}`);
             return `${NAMESPACE}/${name}`;
         }
 
         private loadCustomLabels(labelsPath: string | undefined): LabelValues {
-            debug('loading custom labels');
-
             if (!labelsPath || !fs.existsSync(labelsPath)) {
                 debug('custom labels file not specified or does not exist');
                 return {};

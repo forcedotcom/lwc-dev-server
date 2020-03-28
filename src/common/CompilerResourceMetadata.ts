@@ -6,6 +6,13 @@ interface ResourceMetadata {
     dynamicImports?: string[];
 }
 
+/**
+ * What the metadata from the compiler returns and what the
+ * AddressableService request() method expects as a return value are inconsistent.
+ * This class takes the compiler metadata and converts it to what request() expects.
+ *
+ * TODO: Should eventually be fixed in LWR. Lets file an issue
+ */
 export class CompilerResourceMetadata implements ResourceMetadata {
     readonly dependencies: string[];
     readonly dynamicImports: string[];

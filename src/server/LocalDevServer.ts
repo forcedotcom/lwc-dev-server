@@ -7,9 +7,36 @@ import { sessionNonce, projectMetadata, liveReload } from './extensions';
 import { Server, Container } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
-import { getLabelService } from './services/LabelsAdderssableService';
-import { ComponentService } from './services/ComponentService';
-import { AddressableService } from '@webruntime/api';
+import { getLabelService } from './services/LabelsService';
+import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
+
+/**
+ * Type for Addressable Service Modules
+ */
+export interface Module {
+    name: string;
+    namespace: string;
+    specifier: string;
+}
+
+/**
+ * Type of Addressable Service Mappings
+ */
+export interface Mappings {
+    [key: string]: string;
+}
+
+/**
+ * Contains a map of label keys to label values.
+ */
+export interface LabelValues {
+    [name: string]: string;
+}
+
+/**
+ * Types for LWR.
+ * Should be contributed back
+ */
 
 export default class LocalDevServer extends Server {
     private rootDir: string;
@@ -60,7 +87,7 @@ export default class LocalDevServer extends Server {
 
         if (this.project.isSfdx) {
             const services = [];
-            services.push(ComponentService);
+            services.push(ComponentServiceWithExclusions);
             services.push(
                 getCustomComponentService(
                     project.configuration.namespace,
@@ -118,7 +145,7 @@ export default class LocalDevServer extends Server {
 
         const vendoredModules = fs.readdirSync(vendoredModulesPath);
 
-        return vendoredModules.map(module => {
+        return vendoredModules.map((module) => {
             return module.split('-')[1];
         });
     }
