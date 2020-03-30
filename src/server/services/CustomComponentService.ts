@@ -11,7 +11,7 @@ import {
     RequestService
 } from '@webruntime/api';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
-import type { Mappings } from 'server/LocalDevServer';
+import { Mappings } from 'server/LocalDevServer';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 
@@ -34,7 +34,8 @@ export function getCustomComponentService(
     const uriPrefix = `/custom-component/:uid/:mode/:locale/${customModulesNamespace}/`;
     const uri = `${uriPrefix}:name`;
 
-    return class CustomComponentService extends AddressableService implements RequestService {
+    return class CustomComponentService extends AddressableService
+        implements RequestService {
         mappings: { [key: string]: any } = {};
 
         constructor(config: PublicConfig) {

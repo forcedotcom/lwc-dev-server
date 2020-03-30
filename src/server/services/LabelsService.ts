@@ -9,13 +9,14 @@ import {
     RequestParams,
     RequestOutput,
     RequestOutputTypes,
-    PublicConfig
+    PublicConfig,
+    CompileService
 } from '@webruntime/api';
 import { compile, RuntimeCompilerOutput } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
-import type { Mappings, LabelValues } from 'server/LocalDevServer';
+import { Mappings, LabelValues } from 'server/LocalDevServer';
 
 const NAMESPACE = '@salesforce/label';
 const URI_PREFIX = `/label/:mode/:locale/:name`;
@@ -24,8 +25,10 @@ const PACKAGE_MAPPING = `${NAMESPACE}/`;
 const debug = debugLogger('localdevserver:labelsservice');
 
 export function getLabelService(
-    customLabelsPath: string
-): new (config: PublicConfig) => AddressableService & RequestService {
+    customLabelsPath?: string
+): new (config?: PublicConfig) => AddressableService &
+    RequestService &
+    CompileService {
     return class LabelService extends AddressableService
         implements RequestService {
         private labels: LabelValues;
@@ -52,18 +55,20 @@ export function getLabelService(
             // Handle error on no labels file found.
             this.labels = this.loadCustomLabels(customLabelsPath);
 
-            // Watch for changes in the labels directory.
-            // Upon change, clear the cache and re-read the files.
-            watch(customLabelsPath).on('change', () => {
-                this.moduleCache.clear();
-                this.labels = this.loadCustomLabels(customLabelsPath);
-            });
+            if (customLabelsPath) {
+                // Watch for changes in the labels directory.
+                // Upon change, clear the cache and re-read the files.
+                watch(customLabelsPath).on('change', () => {
+                    this.moduleCache.clear();
+                    this.labels = this.loadCustomLabels(customLabelsPath);
+                });
+            }
 
             debug('Labels loaded', this.labels);
         }
 
         /**
-         * Convert from URI of /salesforce/labels/:labelId to
+         * Convert from URI of /salesforce/label/:labelId to
          * import scope address @salesforce/label/:labelId
          *
          * @param url
@@ -74,9 +79,12 @@ export function getLabelService(
         }
 
         private loadCustomLabels(labelsPath: string | undefined): LabelValues {
-            if (!labelsPath || !fs.existsSync(labelsPath)) {
+            if (!labelsPath) {
                 debug('custom labels file not specified or does not exist');
                 return {};
+            }
+            if (!fs.existsSync(labelsPath)) {
+                throw new Error(`Labels file '${labelsPath}' does not exist`);
             }
 
             const xmlContent = fs.readFileSync(labelsPath, 'utf8');
@@ -158,33 +166,13 @@ export function getLabelService(
          * @param {object} compilerConfig
          *
          * @example
-         * @salesforce/label                -- all labels for the locale
-         * @salesforce/label/section        -- a section of labels for a locale
-         * @salesforce/label/section.name   -- a single label for a locale
+         * /salesforce/label/section.name   -- a single label for a locale
          */
         async request(
             specifier: string,
             params: RequestParams,
             context: ContainerContext
         ): Promise<RequestOutput> {
-            // A locale is required.
-            const locale = params.locale || 'en';
-            if (!locale) {
-                debug('No locale detected, exiting');
-                return {
-                    type: RequestOutputTypes.COMPONENT,
-                    specifier,
-                    success: false,
-                    diagnostics: [
-                        {
-                            code: -1,
-                            message: 'A locale is required to fetch a label',
-                            level: DiagnosticLevel.Fatal
-                        }
-                    ]
-                };
-            }
-
             // Parse the specifier for label information.
             const parts = specifier.split('/');
             const id = parts[2];
@@ -220,7 +208,7 @@ export function getLabelService(
             };
         }
 
-        getPlugin(pivots = {}) {
+        getPlugin() {
             const labels = this.labels;
             return {
                 name: 'labels-addressable-service',
