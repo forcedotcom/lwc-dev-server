@@ -35,7 +35,7 @@ module.exports = async () => {
             chrome: {
                 // Load this URL to get the latest version.
                 // https://chromedriver.storage.googleapis.com/LATEST_RELEASE
-                version: '78.0.3904.105',
+                version: '80.0.3987.106',
                 arch: process.arch,
                 baseURL: 'https://chromedriver.storage.googleapis.com'
             }

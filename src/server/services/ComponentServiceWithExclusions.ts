@@ -11,9 +11,9 @@ const MODULE_EXCLUSIONS = new Set(['@salesforce/label']);
  */
 export class ComponentServiceWithExclusions extends ComponentService {
     async initialize() {
-        super.initialize();
+        await super.initialize();
 
-        MODULE_EXCLUSIONS.forEach((exclusion) => {
+        MODULE_EXCLUSIONS.forEach(exclusion => {
             if (this.mappings.hasOwnProperty(exclusion)) {
                 delete this.mappings[exclusion];
             }
