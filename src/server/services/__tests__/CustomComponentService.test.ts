@@ -47,7 +47,7 @@ describe('CustomComponentService', () => {
 
     it('should set the uri', () => {
         expect(customComponentService.uri).toEqual(
-            '/custom-component/:uid/:mode/:locale/:namespace/:name'
+            '/custom-component/:uid/:mode/:locale/c/:name'
         );
     });
 
@@ -83,8 +83,7 @@ describe('CustomComponentService', () => {
 
         it('returns mappings for lwc modules using the custom components namespace', () => {
             const expectedMappings = {
-                'c/moduleA': '/custom-component/:uid/:mode/:locale/c/moduleA',
-                'c/moduleB': '/custom-component/:uid/:mode/:locale/c/moduleB'
+                'c/': '/custom-component/:uid/:mode/:locale/c/'
             };
 
             expect(customComponentService.mappings).toEqual(expectedMappings);
