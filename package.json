@@ -84,6 +84,7 @@
         "lint-staged": "^9.2.0",
         "lwc": "1.2.2",
         "mock-fs": "^4.10.1",
+        "net": "^1.0.2",
         "prettier": "^1.18.2",
         "rimraf": "^2.6.3",
         "selenium-standalone": "^6.16.0",
