@@ -145,7 +145,7 @@ export default class LocalDevServer extends Server {
 
         const vendoredModules = fs.readdirSync(vendoredModulesPath);
 
-        return vendoredModules.map((module) => {
+        return vendoredModules.map(module => {
             return module.split('-')[1];
         });
     }
