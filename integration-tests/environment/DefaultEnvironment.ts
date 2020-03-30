@@ -3,6 +3,7 @@ import Project from '../../src/common/Project';
 import BaseEnvironment from './BaseEnvironment';
 import LocalDevServer from '../../src/server/LocalDevServer';
 import { defaultPort } from '../../src/user/LocalDevServerConfiguration';
+import { AddressInfo } from 'net';
 
 const debug = debugLogger('localdevserver:test');
 

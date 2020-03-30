@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';
 import NodeEnvironment from 'jest-environment-node';
-import { defaultOutputDirectory } from '../../src/server/LocalDevServer';
 import { EnvironmentContext } from '@jest/environment';
 import { Config, Circus } from '@jest/types';
 import { BrowserObject } from 'webdriverio';
@@ -45,7 +44,7 @@ export default class BaseEnvironment extends NodeEnvironment {
         }
 
         // remove outputDirectory in project if it's there...
-        const outputDir = path.join(this.projectPath, defaultOutputDirectory);
+        const outputDir = path.join(this.projectPath, '.localdevserver');
         shell.rm('-rf', outputDir);
     }
 
