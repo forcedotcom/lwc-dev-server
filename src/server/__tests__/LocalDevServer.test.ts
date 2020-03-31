@@ -22,6 +22,7 @@ describe('LocalDevServer', () => {
         Server.mockClear();
         // @ts-ignore
         Container.mockClear();
+
         mockFs({
             'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
                 'dependencies-218': {},
@@ -31,6 +32,16 @@ describe('LocalDevServer', () => {
             }
         });
 
+        // @ts-ignore
+        WebruntimeConfig.mockImplementation(() => {
+            return {
+                buildDir: 'Users/arya/dev/myproject/.localdevserver',
+                addMiddleware: jest.fn(),
+                addModules: jest.fn(),
+                addRoutes: jest.fn(),
+                addServices: jest.fn()
+            };
+        });
         project = new Project('/Users/arya/dev/myproject');
     });
 
