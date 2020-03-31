@@ -8,8 +8,10 @@ import {
     RequestOutput,
     RequestOutputTypes,
     RequestParams,
-    RequestService
+    RequestService,
+    ImportMapObject
 } from '@webruntime/api';
+import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 
@@ -32,8 +34,9 @@ export function getCustomComponentService(
     const uriPrefix = `/custom-component/:uid/:mode/:locale/${customModulesNamespace}/`;
     const uri = `${uriPrefix}:name`;
 
-    return class extends AddressableService implements RequestService {
-        mappings: { [key: string]: any } = {};
+    return class CustomComponentService extends AddressableService
+        implements RequestService {
+        mappings: ImportMapObject<string> = {};
 
         constructor(config: PublicConfig) {
             super(uri);
@@ -69,18 +72,7 @@ export function getCustomComponentService(
                 type: RequestOutputTypes.COMPONENT,
                 specifier,
                 resource: result,
-                metadata: metadata
-                    ? {
-                          dependencies: metadata.dependencies || [],
-                          dynamicImports: metadata.dynamicImports
-                              ? metadata.dynamicImports.map(item => {
-                                    return `${
-                                        item.specifier
-                                    }?pivots=${item.pivots.join(',')}`;
-                                })
-                              : undefined
-                      }
-                    : undefined,
+                metadata: new CompilerResourceMetadata(metadata),
                 success,
                 diagnostics
             };

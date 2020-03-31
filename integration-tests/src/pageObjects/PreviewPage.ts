@@ -19,7 +19,7 @@ export default class PreviewPage implements Page {
 
     public async open() {
         await browser.url(
-            `http://localhost:${global.serverPort}/lwc/preview/${this.namespace}/${this.name}`
+            `http://localhost:${global.serverPort}/preview/${this.namespace}/${this.name}`
         );
 
         return this.container;

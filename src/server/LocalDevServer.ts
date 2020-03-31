@@ -7,6 +7,29 @@ import { sessionNonce, projectMetadata, liveReload } from './extensions';
 import { Server, Container } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
+import { getLabelService } from './services/LabelsService';
+import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
+
+/**
+ * Type for Addressable Service Modules
+ */
+export interface Module {
+    name: string;
+    namespace: string;
+    specifier: string;
+}
+
+/**
+ * Contains a map of label keys to label values.
+ */
+export interface LabelValues {
+    [name: string]: string;
+}
+
+/**
+ * Types for LWR.
+ * Should be contributed back
+ */
 
 export default class LocalDevServer extends Server {
     private rootDir: string;
@@ -55,13 +78,22 @@ export default class LocalDevServer extends Server {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`
         ]);
 
+        const services: any[] = [ComponentServiceWithExclusions];
+
         if (this.project.isSfdx) {
-            const CustomComponentService = getCustomComponentService(
-                project.configuration.namespace,
-                path.join(project.modulesSourceDirectory, 'main', 'default')
+            services.push(
+                getCustomComponentService(
+                    project.configuration.namespace,
+                    path.join(project.modulesSourceDirectory, 'main', 'default')
+                )
             );
-            config.addServices([CustomComponentService]);
         }
+
+        if (project.customLabelsPath) {
+            services.push(getLabelService(project.customLabelsPath));
+        }
+
+        config.addServices(services);
 
         // override LWR defaults
         // @ts-ignore

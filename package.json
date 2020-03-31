@@ -119,6 +119,7 @@
         "debug": "^4.1.1",
         "decamelize": "^3.2.0",
         "fast-glob": "^3.2.2",
+        "fast-xml-parser": "^3.16.0",
         "fs-extra": "^8.1.0",
         "reload": "^3.0.4",
         "shelljs": "^0.8.3",
