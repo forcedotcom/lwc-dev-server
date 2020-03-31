@@ -3,11 +3,11 @@ import { ComponentService } from '@webruntime/services';
 const MODULE_EXCLUSIONS = new Set(['@salesforce/label']);
 
 /**
- * We're extending the ComponentService from @webruntime/services as it imports
- * resolvers from the lightning base components package.
- * One of those resolvers is for @salesforce/labels which prevents us
- * from adding a resolver for that later.
+ * The ComponentService from webruntime provides mappings for
+ * resolutions it encounters when scanning the package dependencies.
  *
+ * We want to be able to provide mappings later for those dependencies so we need to remove
+ * any earlier resolved mappings that we care about (specified in the MODULE_EXCLUSIONS set).
  */
 export class ComponentServiceWithExclusions extends ComponentService {
     async initialize() {

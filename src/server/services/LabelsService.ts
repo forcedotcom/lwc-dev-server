@@ -10,13 +10,14 @@ import {
     RequestOutput,
     RequestOutputTypes,
     PublicConfig,
-    CompileService
+    CompileService,
+    ImportMapObject
 } from '@webruntime/api';
 import { compile, RuntimeCompilerOutput } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
-import { Mappings, LabelValues } from 'server/LocalDevServer';
+import { LabelValues } from 'server/LocalDevServer';
 
 const NAMESPACE = '@salesforce/label';
 const URI_PREFIX = `/label/:mode/:locale/:name`;
@@ -37,7 +38,7 @@ export function getLabelService(
         /**
          * Everything under @salesforce/label is handled by this service.
          */
-        readonly mappings: Mappings;
+        readonly mappings: ImportMapObject<string>;
 
         constructor() {
             super(URI_PREFIX);

@@ -8,7 +8,8 @@ import {
     RequestOutput,
     RequestOutputTypes,
     RequestParams,
-    RequestService
+    RequestService,
+    ImportMapObject
 } from '@webruntime/api';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 import { Mappings } from 'server/LocalDevServer';
@@ -36,7 +37,7 @@ export function getCustomComponentService(
 
     return class CustomComponentService extends AddressableService
         implements RequestService {
-        mappings: { [key: string]: any } = {};
+        mappings: ImportMapObject<string> = {};
 
         constructor(config: PublicConfig) {
             super(uri);

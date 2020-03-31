@@ -5,6 +5,9 @@ import LocalDevServer from '../LocalDevServer';
 import Project from '../../common/Project';
 import WebruntimeConfig from '../config/WebruntimeConfig';
 import * as fileUtils from '../../common/fileUtils';
+import { ComponentServiceWithExclusions } from '../services/ComponentServiceWithExclusions';
+import { getCustomComponentService } from '../services/CustomComponentService';
+import { getLabelService } from '../services/LabelsService';
 
 jest.mock('@webruntime/server');
 jest.mock('../config/WebruntimeConfig');
@@ -117,7 +120,9 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
 
         // @ts-ignore
-        expect(server.config.addServices).toHaveBeenCalledTimes(0);
+        expect(server.config.addServices.mock.calls[0][0]).not.toContain(
+            getCustomComponentService('', '')
+        );
     });
 
     it('should override the default config', () => {
@@ -169,5 +174,97 @@ describe('LocalDevServer', () => {
         await expect(server.initialize()).rejects.toThrow(
             'Unable to copy assets: test error'
         );
+    });
+
+    describe('services added to the LocalDevServer', () => {
+        it('should add the ComponentServiceWithExclusions', async () => {
+            const server = new LocalDevServer(project);
+
+            expect(
+                // @ts-ignore
+                server.config.addServices.mock.calls[0][0]
+            ).toContain(ComponentServiceWithExclusions);
+        });
+
+        it('should add the ComponentServiceWithExclusions when project isSFDX', async () => {
+            // @ts-ignore
+            project.isSfdx = true;
+
+            const server = new LocalDevServer(project);
+
+            expect(
+                // @ts-ignore
+                server.config.addServices.mock.calls[0][0]
+            ).toContain(ComponentServiceWithExclusions);
+        });
+
+        it('should add the CustomComponentService when project isSFDX', async () => {
+            // @ts-ignore
+            project.isSfdx = true;
+
+            const ctor = getCustomComponentService('', '').constructor;
+            const server = new LocalDevServer(project);
+
+            expect(
+                // @ts-ignore
+                server.config.addServices.mock.calls[0][0][1]
+            ).toBeInstanceOf(ctor);
+        });
+
+        it('should not add the CustomComponentService when the project is not isSFDX', async () => {
+            // @ts-ignore
+            project.isSfdx = false;
+
+            const ctor = getCustomComponentService('', '').constructor;
+            const server = new LocalDevServer(project);
+
+            expect(
+                // @ts-ignore
+                server.config.addServices.mock.calls[0][0][1]
+            ).not.toBeInstanceOf(ctor);
+        });
+
+        it('should add the LabelService when a customLabelsPath is specified', async () => {
+            // @ts-ignore
+            project.isSfdx = true;
+            // @ts-ignore
+            project.customLabelsPath = 'my/labelsFile.xml';
+
+            const LabelService = getLabelService('my/labelFile.xml')
+                .constructor;
+            const server = new LocalDevServer(project);
+
+            expect(
+                // @ts-ignore
+                server.config.addServices.mock.calls[0][0][2]
+            ).toBeInstanceOf(LabelService);
+        });
+
+        it('should add the LabelService when a customLabelsPath is specified in non sfdx project', async () => {
+            // @ts-ignore
+            project.isSfdx = false;
+            // @ts-ignore
+            project.customLabelsPath = 'my/labelsFile.xml';
+
+            const LabelService = getLabelService('my/labelFile.xml')
+                .constructor;
+            const server = new LocalDevServer(project);
+
+            expect(
+                // @ts-ignore
+                server.config.addServices.mock.calls[0][0][1]
+            ).toBeInstanceOf(LabelService);
+        });
+
+        it('should not add the LabelService when a customLabelsPath is not specified', async () => {
+            const LabelService = getLabelService('my/labelFile.xml')
+                .constructor;
+            const server = new LocalDevServer(project);
+
+            expect(
+                // @ts-ignore
+                server.config.addServices.mock.calls[0][0][1]
+            ).not.toBeInstanceOf(LabelService);
+        });
     });
 });

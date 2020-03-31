@@ -20,13 +20,6 @@ export interface Module {
 }
 
 /**
- * Type of Addressable Service Mappings
- */
-export interface Mappings {
-    [key: string]: string;
-}
-
-/**
  * Contains a map of label keys to label values.
  */
 export interface LabelValues {
@@ -85,22 +78,22 @@ export default class LocalDevServer extends Server {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`
         ]);
 
+        const services: any[] = [ComponentServiceWithExclusions];
+
         if (this.project.isSfdx) {
-            const services = [];
-            services.push(ComponentServiceWithExclusions);
             services.push(
                 getCustomComponentService(
                     project.configuration.namespace,
                     path.join(project.modulesSourceDirectory, 'main', 'default')
                 )
             );
-
-            if (project.customLabelsPath) {
-                services.push(getLabelService(project.customLabelsPath));
-            }
-
-            config.addServices(services);
         }
+
+        if (project.customLabelsPath) {
+            services.push(getLabelService(project.customLabelsPath));
+        }
+
+        config.addServices(services);
 
         // override LWR defaults
         // @ts-ignore
