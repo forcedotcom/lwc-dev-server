@@ -98,7 +98,7 @@
         "@babel/core": "^7.5.4",
         "@babel/runtime": "^7.5.4",
         "@lwc/engine": "1.2.2",
-        "@lwc/module-resolver": "1.2.2",
+        "@lwc/wire-service": "1.2.2",
         "@oclif/command": "^1.5.16",
         "@oclif/config": "^1.13.1",
         "@oclif/plugin-help": "^2.2.0",
