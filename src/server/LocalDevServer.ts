@@ -70,7 +70,7 @@ export default class LocalDevServer extends Server {
 
         config.addRoutes([
             projectMetadata(this.sessionNonce, this.project),
-            liveReload(path.join(this.rootDir, 'cache-data', 'metadata.json'))
+            liveReload(path.join(config.buildDir, 'metadata.json'))
         ]);
 
         config.addModules([
