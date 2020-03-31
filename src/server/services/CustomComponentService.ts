@@ -12,7 +12,6 @@ import {
     ImportMapObject
 } from '@webruntime/api';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
-import { Mappings } from 'server/LocalDevServer';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 
