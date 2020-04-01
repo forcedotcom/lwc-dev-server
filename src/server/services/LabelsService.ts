@@ -139,7 +139,7 @@ export function getLabelService(
             componentService.modules.forEach((mapping: any) => {
                 if (mapping.specifier.startsWith('@salesforce/label/')) {
                     // @ts-ignore
-                    labelResolutions[mapping.specifier] = entry;
+                    labelResolutions[mapping.specifier + '.js'] = mapping.entry;
                 }
             });
 
