@@ -10,27 +10,6 @@ import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 
-/**
- * Type for Addressable Service Modules
- */
-export interface Module {
-    name: string;
-    namespace: string;
-    specifier: string;
-}
-
-/**
- * Contains a map of label keys to label values.
- */
-export interface LabelValues {
-    [name: string]: string;
-}
-
-/**
- * Types for LWR.
- * Should be contributed back
- */
-
 export default class LocalDevServer extends Server {
     private rootDir: string;
     private project: Project;
@@ -51,7 +30,7 @@ export default class LocalDevServer extends Server {
             !this.vendorVersion ||
             !supportedCoreVersions.includes(this.vendorVersion)
         ) {
-            // fallback to latest support core version
+            // fallback to latest supported core version
             this.vendorVersion =
                 supportedCoreVersions[supportedCoreVersions.length - 1];
         }
@@ -90,7 +69,7 @@ export default class LocalDevServer extends Server {
         }
 
         if (project.customLabelsPath) {
-            services.push(getLabelService(project.customLabelsPath));
+            services.push(getLabelService(project.customLabelsPath, []));
         }
 
         config.addServices(services);

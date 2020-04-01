@@ -1,4 +1,5 @@
 import { ComponentService } from '@webruntime/services';
+import { PublicConfig } from '@webruntime/api';
 
 const MODULE_EXCLUSIONS = new Set(['@salesforce/label']);
 

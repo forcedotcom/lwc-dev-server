@@ -16,8 +16,15 @@ import {
 import { compile, RuntimeCompilerOutput } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
+import { ComponentServiceWithExclusions } from './ComponentServiceWithExclusions';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
-import { LabelValues } from 'server/LocalDevServer';
+
+/**
+ * Contains a map of label keys to label values.
+ */
+export interface LabelValues {
+    [name: string]: string;
+}
 
 const NAMESPACE = '@salesforce/label';
 const URI_PREFIX = `/label/:mode/:locale/:name`;
@@ -26,23 +33,27 @@ const PACKAGE_MAPPING = `${NAMESPACE}/`;
 const debug = debugLogger('localdevserver:labelsservice');
 
 export function getLabelService(
-    customLabelsPath?: string
+    customLabelsPath: string = '',
+    modulePaths: string[] = []
 ): new (config?: PublicConfig) => AddressableService &
     RequestService &
     CompileService {
     return class LabelService extends AddressableService
         implements RequestService {
-        private labels: LabelValues;
+        private customLabels: LabelValues;
+        private moduleLabels: LabelValues;
         private moduleCache: Map<string, RuntimeCompilerOutput>;
 
         /**
          * Everything under @salesforce/label is handled by this service.
          */
         readonly mappings: ImportMapObject<string>;
+        private readonly publicConfig: PublicConfig | undefined;
 
-        constructor() {
+        constructor(publicConfig?: PublicConfig) {
             super(URI_PREFIX);
-            this.labels = {};
+            this.customLabels = {};
+            this.moduleLabels = {};
 
             this.mappings = {
                 [NAMESPACE]: URI_PREFIX
@@ -50,22 +61,24 @@ export function getLabelService(
 
             // A cache of compiled labels.
             this.moduleCache = new Map();
+            this.publicConfig = publicConfig;
         }
 
         async initialize() {
             // Handle error on no labels file found.
-            this.labels = this.loadCustomLabels(customLabelsPath);
+            this.customLabels = this.loadCustomLabels(customLabelsPath);
+            this.moduleLabels = await this.loadModuleLabels(modulePaths);
 
             if (customLabelsPath) {
                 // Watch for changes in the labels directory.
                 // Upon change, clear the cache and re-read the files.
                 watch(customLabelsPath).on('change', () => {
                     this.moduleCache.clear();
-                    this.labels = this.loadCustomLabels(customLabelsPath);
+                    this.customLabels = this.loadCustomLabels(customLabelsPath);
                 });
             }
 
-            debug('Labels loaded', this.labels);
+            debug('Labels loaded', this.customLabels);
         }
 
         /**
@@ -114,6 +127,25 @@ export function getLabelService(
             return processed;
         }
 
+        private async loadModuleLabels(modulePaths: string[]) {
+            const componentService = new ComponentServiceWithExclusions(
+                // @ts-ignore -- For a second, to verify
+                this.publicConfig
+            );
+
+            await componentService.initialize();
+
+            const labelResolutions = {};
+            componentService.modules.forEach((mapping: any) => {
+                if (mapping.specifier.startsWith('@salesforce/label/')) {
+                    // @ts-ignore
+                    labelResolutions[mapping.specifier] = entry;
+                }
+            });
+
+            return labelResolutions;
+        }
+
         /**
          * Given a label specifier, compile the code needed to provide it.
          *
@@ -135,7 +167,7 @@ export function getLabelService(
                 debug(
                     `No cached module for label ${specifier}. Compiling now.`
                 );
-                const label: string = this.labels[specifier];
+                const label: string = this.customLabels[specifier];
                 if (label) {
                     const files = {
                         [`${NAMESPACE}/${specifier}.js`]: `export default "${label}"`
@@ -210,7 +242,8 @@ export function getLabelService(
         }
 
         getPlugin() {
-            const labels = this.labels;
+            const customlabels = this.customLabels;
+            const moduleLabels = this.moduleLabels;
             return {
                 name: 'labels-addressable-service',
 
@@ -222,12 +255,18 @@ export function getLabelService(
                 },
                 load(specifier: string) {
                     if (specifier.startsWith(PACKAGE_MAPPING)) {
+                        if (moduleLabels.hasOwnProperty(specifier)) {
+                            return fs.readFileSync(
+                                moduleLabels[specifier],
+                                'utf-8'
+                            );
+                        }
                         const key = specifier
                             .replace(PACKAGE_MAPPING, '')
                             .replace('.js', '')
                             .replace('/', '.');
-                        if (labels.hasOwnProperty(key)) {
-                            return `export default "${labels[key]}"`;
+                        if (customlabels.hasOwnProperty(key)) {
+                            return `export default "${customlabels[key]}"`;
                         }
                         return `export default "[${key}]"`;
                     }
