@@ -13,11 +13,16 @@ import {
     CompileService,
     ImportMapObject
 } from '@webruntime/api';
-import { compile, RuntimeCompilerOutput } from '@webruntime/compiler';
+import {
+    compile,
+    RuntimeCompilerOutput,
+    LoadingCache
+} from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
 import { ComponentServiceWithExclusions } from './ComponentServiceWithExclusions';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
+import { resolveModules } from '@lwc/module-resolver';
 
 /**
  * Contains a map of label keys to label values.
@@ -33,8 +38,7 @@ const PACKAGE_MAPPING = `${NAMESPACE}/`;
 const debug = debugLogger('localdevserver:labelsservice');
 
 export function getLabelService(
-    customLabelsPath: string = '',
-    modulePaths: string[] = []
+    customLabelsPath: string = ''
 ): new (config?: PublicConfig) => AddressableService &
     RequestService &
     CompileService {
@@ -43,6 +47,7 @@ export function getLabelService(
         private customLabels: LabelValues;
         private moduleLabels: LabelValues;
         private moduleCache: Map<string, RuntimeCompilerOutput>;
+        private moduleLabelsCache: LoadingCache;
 
         /**
          * Everything under @salesforce/label is handled by this service.
@@ -62,12 +67,15 @@ export function getLabelService(
             // A cache of compiled labels.
             this.moduleCache = new Map();
             this.publicConfig = publicConfig;
+            this.moduleLabelsCache = new LoadingCache(
+                this.loadModuleLabel.bind(this)
+            );
         }
 
         async initialize() {
             // Handle error on no labels file found.
             this.customLabels = this.loadCustomLabels(customLabelsPath);
-            this.moduleLabels = await this.loadModuleLabels(modulePaths);
+            this.moduleLabels = await this.loadModuleLabels();
 
             if (customLabelsPath) {
                 // Watch for changes in the labels directory.
@@ -127,23 +135,64 @@ export function getLabelService(
             return processed;
         }
 
-        private async loadModuleLabels(modulePaths: string[]) {
-            const componentService = new ComponentServiceWithExclusions(
-                // @ts-ignore -- For a second, to verify
-                this.publicConfig
+        private resolveAllModules(
+            projectDir: string | undefined,
+            moduleDir: string | undefined,
+            customModuleDirs: string[] = []
+        ) {
+            if (projectDir === undefined || moduleDir === undefined) {
+                return [];
+            }
+            return resolveModules({
+                rootDir: projectDir,
+                modules: moduleDir
+                    ? [moduleDir, ...customModuleDirs]
+                    : customModuleDirs
+            });
+        }
+
+        private async loadModuleLabels(): Promise<LabelValues> {
+            if (!this.publicConfig) {
+                return {};
+            }
+
+            // Get all the label dependencies for the project
+            // specified in the configuration files
+            // uses @lwc/module-resolver
+            const lwcOptions = this.publicConfig.compilerConfig.lwcOptions || {
+                modules: []
+            };
+            const modules = this.resolveAllModules(
+                this.publicConfig.projectDir,
+                this.publicConfig.moduleDir,
+                lwcOptions.modules
             );
 
-            await componentService.initialize();
-
-            const labelResolutions = {};
-            componentService.modules.forEach((mapping: any) => {
-                if (mapping.specifier.startsWith('@salesforce/label/')) {
-                    // @ts-ignore
-                    labelResolutions[mapping.specifier + '.js'] = mapping.entry;
+            const labelResolutions: { [key: string]: string } = {};
+            modules.forEach((mapping: any) => {
+                if (mapping.specifier.startsWith(PACKAGE_MAPPING)) {
+                    labelResolutions[specifierToCacheKey(mapping.specifier)] =
+                        mapping.entry;
                 }
             });
 
             return labelResolutions;
+        }
+
+        /**
+         * Used by LoadingCache to load the contents
+         * of a label from the file system when it is needed.
+         *
+         * File based dependencies do not change and are not watched
+         * so memoizing them for the length of the session is acceptable.
+         *
+         * @param specifier label import reference. @salesforce/label/Lightning.MyLabel
+         */
+        private loadModuleLabel(specifier: string): string {
+            return fs.readFileSync(
+                this.moduleLabels[specifierToCacheKey(specifier)],
+                'utf-8'
+            );
         }
 
         /**
@@ -244,6 +293,7 @@ export function getLabelService(
         getPlugin() {
             const customlabels = this.customLabels;
             const moduleLabels = this.moduleLabels;
+            const moduleLabelsCache = this.moduleLabelsCache;
             return {
                 name: 'labels-addressable-service',
 
@@ -255,16 +305,15 @@ export function getLabelService(
                 },
                 load(specifier: string) {
                     if (specifier.startsWith(PACKAGE_MAPPING)) {
-                        if (moduleLabels.hasOwnProperty(specifier)) {
-                            return fs.readFileSync(
-                                moduleLabels[specifier],
-                                'utf-8'
-                            );
+                        const key = specifierToCacheKey(specifier);
+
+                        if (moduleLabels.hasOwnProperty(key)) {
+                            return moduleLabelsCache.get(key) as string;
                         }
-                        const key = specifier
-                            .replace(PACKAGE_MAPPING, '')
-                            .replace('.js', '')
-                            .replace('/', '.');
+
+                        // We do not want to use the moduleLabelsCache since
+                        // that is cached for the length of the session
+                        // and custom label changes would not get reloaded.
                         if (customlabels.hasOwnProperty(key)) {
                             return `export default "${customlabels[key]}"`;
                         }
@@ -275,4 +324,11 @@ export function getLabelService(
             };
         }
     };
+}
+
+function specifierToCacheKey(specifier: string) {
+    return specifier
+        .replace(PACKAGE_MAPPING, '')
+        .replace('.js', '')
+        .replace('/', '.');
 }

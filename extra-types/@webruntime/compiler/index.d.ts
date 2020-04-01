@@ -114,3 +114,16 @@ export declare const compilerMessages: {
         url: string;
     };
 };
+
+export declare class LoadingCache {
+    constructor(loader?: Function);
+    get(key: string, loader?: Function): any;
+    getValues(): any[];
+    invalidateAll(): void;
+}
+
+export declare class CompilerResourceMetadata {
+    constructor(metadata: RuntimeCompilerMetadata | undefined);
+    dependencies: string[];
+    dynamicImports: string[];
+}

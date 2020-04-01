@@ -69,7 +69,7 @@ export default class LocalDevServer extends Server {
         }
 
         if (project.customLabelsPath) {
-            services.push(getLabelService(project.customLabelsPath, []));
+            services.push(getLabelService(project.customLabelsPath));
         }
 
         config.addServices(services);
