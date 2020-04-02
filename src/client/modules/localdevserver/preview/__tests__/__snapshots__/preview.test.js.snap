@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`preview renders a component 1`] = `
+exports[`preview renders the component 1`] = `
 <localdevserver-preview>
   #shadow-root(open)
     <localdevserver-layout-section

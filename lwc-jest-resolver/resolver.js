@@ -18,6 +18,9 @@ const {
 
 const { getInfoFromId } = require('./utils/module.js');
 
+const debugLogger = require('debug');
+const debug = debugLogger('localdevserver:test');
+
 function isFile(file) {
     let result;
 
@@ -126,7 +129,7 @@ module.exports = function(modulePath, options) {
                 `${options.basedir}/__mocks__/${ns}/${name}/${name}.js`
             );
             if (fs.existsSync(mockPath)) {
-                console.log(
+                debug(
                     `replacing module '${modulePath}' with __mocks__ version '${mockPath}'`
                 );
                 return lwcResolver(mockPath, options);
@@ -144,7 +147,7 @@ module.exports = function(modulePath, options) {
                 `${options.basedir}/__mocks__/${ns}/${name}/${name}.js`
             );
             if (fs.existsSync(mockPath)) {
-                console.log(
+                debug(
                     `replacing module '${modulePath}' with __mocks__ version '${mockPath}'`
                 );
                 return lwcResolver(mockPath, options);

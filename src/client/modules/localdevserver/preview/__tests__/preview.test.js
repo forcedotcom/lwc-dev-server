@@ -40,11 +40,24 @@ function createComponentUnderTest(props) {
 }
 
 describe('preview', () => {
-    afterEach(() => {
+    let mockSubscription;
+
+    beforeEach(() => {
         jest.resetAllMocks();
+
+        console.error = jest.fn();
+        console.group = jest.fn();
+
+        mockSubscription = {
+            unsubscribe: jest.fn()
+        };
     });
 
-    it('renders a component', async () => {
+    it('renders the component', async () => {
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve(mockComponentMetadata('c', 'button'));
+        });
+
         const route = {
             attributes: {
                 namespace: 'c',
@@ -54,11 +67,7 @@ describe('preview', () => {
 
         subscribe.mockImplementation((context, callback) => {
             callback(route);
-            return { unsubscribe: jest.fn() };
-        });
-
-        getComponentMetadata.mockImplementation(() => {
-            return Promise.resolve(mockComponentMetadata('c', 'button'));
+            return mockSubscription;
         });
 
         const element = createComponentUnderTest();
@@ -67,25 +76,152 @@ describe('preview', () => {
         expect(element).toMatchSnapshot();
     });
 
-    it.todo(
-        'should show the loading indicator before the component has rendered'
-    );
+    it('should show a loading indicator', async () => {
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve(mockComponentMetadata('c', 'button'));
+        });
 
-    it.todo('should remove the loading indicator after the component renders');
+        const route = {
+            attributes: {
+                namespace: 'c',
+                name: 'button'
+            }
+        };
 
-    it.todo('should show an error message if the route is missing attributes');
+        subscribe.mockImplementation((context, callback) => {
+            callback(route);
+            return mockSubscription;
+        });
 
-    it.todo('should show an error message if the route has invalid attributes');
+        const element = createComponentUnderTest();
 
-    it.todo('should show an error message if the component does not exist');
+        let spinner = element.shadowRoot.querySelector('lightning-spinner');
+        expect(spinner).toBeTruthy();
 
-    it.todo('should show an error message for non custom components');
+        await flushPromises();
 
-    it.todo('should show an error message if the component does not compile');
+        spinner = element.shadowRoot.querySelector('lightning-spinner');
+        expect(spinner).toBeFalsy();
+    });
 
-    it.todo(
-        'should show an error message if the component does not have a default export'
-    );
+    it('should show an error message if the route is missing the attributes', async () => {
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve(mockComponentMetadata('c', 'button'));
+        });
 
-    it.todo('should show the component name on the page');
+        const route = {
+            state: {
+                namespace: 'c',
+                name: 'button'
+            }
+        };
+
+        subscribe.mockImplementation((context, callback) => {
+            callback(route);
+            return mockSubscription;
+        });
+
+        const element = createComponentUnderTest();
+        await flushPromises();
+
+        const errorEl = element.shadowRoot.querySelector(
+            'localdevserver-error'
+        );
+        expect(errorEl).toBeTruthy();
+
+        const errorText = errorEl.shadowRoot.textContent;
+        expect(errorText).toContain(
+            'The component to preview was not specified'
+        );
+    });
+
+    it('should show an error message if the route has invalid attributes', async () => {
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve(mockComponentMetadata('c', 'button'));
+        });
+
+        const route = {
+            attributes: {
+                specifier: 'c/button'
+            }
+        };
+
+        subscribe.mockImplementation((context, callback) => {
+            callback(route);
+            return mockSubscription;
+        });
+
+        const element = createComponentUnderTest();
+        await flushPromises();
+
+        const errorEl = element.shadowRoot.querySelector(
+            'localdevserver-error'
+        );
+        expect(errorEl).toBeTruthy();
+
+        const errorText = errorEl.shadowRoot.textContent;
+        expect(errorText).toContain(
+            'The component to preview was not specified'
+        );
+    });
+
+    it('should show an error message if the component is not found in the metadata', async () => {
+        getComponentMetadata.mockImplementation(() => {
+            throw new Error('not found');
+        });
+
+        const route = {
+            attributes: {
+                namespace: 'c',
+                name: 'foo'
+            }
+        };
+
+        subscribe.mockImplementation((context, callback) => {
+            callback(route);
+            return mockSubscription;
+        });
+
+        const element = createComponentUnderTest();
+        await flushPromises();
+
+        const errorEl = element.shadowRoot.querySelector(
+            'localdevserver-error'
+        );
+        expect(errorEl).toBeTruthy();
+
+        const errorText = errorEl.shadowRoot.textContent;
+        expect(errorText).toContain(
+            `The component named 'c/foo' was not found`
+        );
+    });
+
+    it.todo('should show an error message if the component has compile errors');
+
+    it('should call unsubscribe when disconnected', () => {
+        getComponentMetadata.mockImplementation(() => {
+            return Promise.resolve(mockComponentMetadata('c', 'button'));
+        });
+
+        const route = {
+            attributes: {
+                namespace: 'c',
+                name: 'button'
+            }
+        };
+
+        subscribe.mockImplementation((context, callback) => {
+            callback(route);
+            return mockSubscription;
+        });
+
+        const element = createComponentUnderTest();
+        element.parentNode.removeChild(element);
+
+        expect(mockSubscription.unsubscribe).toBeCalledTimes(1);
+    });
+
+    it.todo('renders a link to the homepage in the breadcrumbs');
+
+    it.todo('renders a link to the component in the breadcrumbs');
 });

@@ -1,8 +1,7 @@
 import { LightningElement, register } from 'lwc';
 import { registerWireService } from 'wire-service';
 import { createRouter } from 'webruntime_navigation/navigation';
-
-import routes from './routes';
+import { routes } from 'localdevserver/routerLib';
 
 registerWireService(register);
 

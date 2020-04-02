@@ -73,7 +73,7 @@ describe('localdevserver-project-metadata-lib', () => {
 
         it('rejects the promise when window.LocalDev is not set', async () => {
             expect(lib.getProjectMetadata()).rejects.toEqual(
-                new Error('project metadata not set')
+                new Error('project metadata not set on the window')
             );
         });
     });
@@ -171,7 +171,9 @@ describe('localdevserver-project-metadata-lib', () => {
             window.LocalDev = createProjectMetadata();
 
             expect(lib.getComponentMetadata('c/xxx')).rejects.toEqual(
-                new Error("Unable to find component 'c/xxx'")
+                new Error(
+                    "Unable to find component 'c/xxx' in the project metadata"
+                )
             );
         });
 
@@ -179,7 +181,9 @@ describe('localdevserver-project-metadata-lib', () => {
             window.LocalDev = createProjectMetadata();
 
             expect(lib.getComponentMetadata('c/xxx', 'xxx')).rejects.toEqual(
-                new Error("Unable to find package 'xxx'")
+                new Error(
+                    "Unable to find package 'xxx' in the project metadata"
+                )
             );
         });
     });
