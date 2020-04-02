@@ -202,26 +202,28 @@ describe('LocalDevServer', () => {
             // @ts-ignore
             project.isSfdx = true;
 
-            const ctor = getCustomComponentService('', '').constructor;
+            const componentService = getCustomComponentService('', '');
             const server = new LocalDevServer(project);
+            // @ts-ignore
+            const serviceNames = server.config.addServices.mock.calls[0][0].map(
+                (service: Function) => service.name
+            );
 
-            expect(
-                // @ts-ignore
-                server.config.addServices.mock.calls[0][0][1]
-            ).toBeInstanceOf(ctor);
+            expect(serviceNames).toContain(componentService.name);
         });
 
         it('should not add the CustomComponentService when the project is not isSFDX', async () => {
             // @ts-ignore
             project.isSfdx = false;
 
-            const ctor = getCustomComponentService('', '').constructor;
+            const componentService = getCustomComponentService('', '');
             const server = new LocalDevServer(project);
+            // @ts-ignore
+            const serviceNames = server.config.addServices.mock.calls[0][0].map(
+                (service: Function) => service.name
+            );
 
-            expect(
-                // @ts-ignore
-                server.config.addServices.mock.calls[0][0][1]
-            ).not.toBeInstanceOf(ctor);
+            expect(serviceNames).not.toContain(componentService.name);
         });
 
         it('should add the LabelService when a customLabelsPath is specified', async () => {
@@ -230,14 +232,14 @@ describe('LocalDevServer', () => {
             // @ts-ignore
             project.customLabelsPath = 'my/labelsFile.xml';
 
-            const LabelService = getLabelService('my/labelFile.xml')
-                .constructor;
+            const LabelService = getLabelService('my/labelFile.xml');
             const server = new LocalDevServer(project);
+            // @ts-ignore
+            const serviceNames = server.config.addServices.mock.calls[0][0].map(
+                (service: Function) => service.name
+            );
 
-            expect(
-                // @ts-ignore
-                server.config.addServices.mock.calls[0][0][2]
-            ).toBeInstanceOf(LabelService);
+            expect(serviceNames).toContain(LabelService.name);
         });
 
         it('should add the LabelService when a customLabelsPath is specified in non sfdx project', async () => {
@@ -246,25 +248,24 @@ describe('LocalDevServer', () => {
             // @ts-ignore
             project.customLabelsPath = 'my/labelsFile.xml';
 
-            const LabelService = getLabelService('my/labelFile.xml')
-                .constructor;
+            const LabelService = getLabelService('my/labelFile.xml');
             const server = new LocalDevServer(project);
+            // @ts-ignore
+            const serviceNames = server.config.addServices.mock.calls[0][0].map(
+                (service: Function) => service.name
+            );
 
-            expect(
-                // @ts-ignore
-                server.config.addServices.mock.calls[0][0][1]
-            ).toBeInstanceOf(LabelService);
+            expect(serviceNames).toContain(LabelService.name);
         });
 
-        it('should not add the LabelService when a customLabelsPath is not specified', async () => {
-            const LabelService = getLabelService('my/labelFile.xml')
-                .constructor;
+        it('should add the LabelService when a customLabelsPath is not specified', async () => {
+            const LabelService = getLabelService('my/labelFile.xml');
             const server = new LocalDevServer(project);
-
-            expect(
-                // @ts-ignore
-                server.config.addServices.mock.calls[0][0][1]
-            ).not.toBeInstanceOf(LabelService);
+            // @ts-ignore
+            const serviceNames = server.config.addServices.mock.calls[0][0].map(
+                (service: Function) => service.name
+            );
+            expect(serviceNames).toContain(LabelService.name);
         });
     });
 });

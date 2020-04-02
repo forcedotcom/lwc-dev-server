@@ -20,7 +20,6 @@ import {
 } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
-import { ComponentServiceWithExclusions } from './ComponentServiceWithExclusions';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 import { resolveModules } from '@lwc/module-resolver';
 
@@ -38,7 +37,7 @@ const PACKAGE_MAPPING = `${NAMESPACE}/`;
 const debug = debugLogger('localdevserver:labelsservice');
 
 export function getLabelService(
-    customLabelsPath: string = ''
+    customLabelsPath?: string
 ): new (config?: PublicConfig) => AddressableService &
     RequestService &
     CompileService {
@@ -140,7 +139,7 @@ export function getLabelService(
             moduleDir: string | undefined,
             customModuleDirs: string[] = []
         ) {
-            if (projectDir === undefined || moduleDir === undefined) {
+            if (projectDir === undefined) {
                 return [];
             }
             return resolveModules({
@@ -168,7 +167,7 @@ export function getLabelService(
                 lwcOptions.modules
             );
 
-            const labelResolutions: { [key: string]: string } = {};
+            const labelResolutions: LabelValues = {};
             modules.forEach((mapping: any) => {
                 if (mapping.specifier.startsWith(PACKAGE_MAPPING)) {
                     labelResolutions[specifierToCacheKey(mapping.specifier)] =

@@ -57,7 +57,10 @@ export default class LocalDevServer extends Server {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`
         ]);
 
-        const services: any[] = [ComponentServiceWithExclusions];
+        const services: any[] = [
+            ComponentServiceWithExclusions,
+            getLabelService(project.customLabelsPath)
+        ];
 
         if (this.project.isSfdx) {
             services.push(
@@ -66,10 +69,6 @@ export default class LocalDevServer extends Server {
                     path.join(project.modulesSourceDirectory, 'main', 'default')
                 )
             );
-        }
-
-        if (project.customLabelsPath) {
-            services.push(getLabelService(project.customLabelsPath));
         }
 
         config.addServices(services);
