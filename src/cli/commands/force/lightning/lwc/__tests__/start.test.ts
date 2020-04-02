@@ -10,8 +10,15 @@ import colors from 'colors';
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
 
+// suppress noise from tests. there should be a better way to do this...
+const unhandledRejectionListener = function(event: any) {};
+process.addListener('unhandledRejection', unhandledRejectionListener);
+
 describe('start', () => {
     let start: Start;
+    let consoleLogMock: any;
+    let consoleWarnMock: any;
+    let consoleErrorMock: any;
 
     beforeEach(() => {
         start = new Start([], new Config.Config(<Config.Options>{}));
@@ -33,6 +40,23 @@ describe('start', () => {
                 return _configuration;
             }
         });
+
+        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
+        consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+    });
+
+    afterEach(() => {
+        consoleLogMock.mockRestore();
+        consoleWarnMock.mockRestore();
+        consoleErrorMock.mockRestore();
+    });
+
+    afterAll(() => {
+        process.removeListener(
+            'unhandledRejection',
+            unhandledRejectionListener
+        );
     });
 
     function setupAllDev() {
