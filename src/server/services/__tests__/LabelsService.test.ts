@@ -1,9 +1,22 @@
 import mockFs from 'mock-fs';
 import { getLabelService } from '../LabelsService';
 import { compile } from '@webruntime/compiler';
-import { RequestParams, ContainerContext } from '@webruntime/api';
+import { RequestParams, ContainerContext, PublicConfig } from '@webruntime/api';
+import { resolveModules } from '@lwc/module-resolver';
+import { LoadingCache } from '@webruntime/compiler';
+import { watch } from 'chokidar';
 
 jest.mock('@webruntime/compiler');
+jest.mock('@lwc/module-resolver');
+jest.mock('chokidar', () => {
+    return {
+        watch: jest.fn(() => {
+            return {
+                on: jest.fn()
+            };
+        })
+    };
+});
 
 const CUSTOM_LABELS_PATH = 'labels/CustomLabels.labels-meta.xml';
 const SAMPLE_CUSTOM_LABELS = `
@@ -49,13 +62,12 @@ describe('getLabelService', () => {
         mockFs({
             [CUSTOM_LABELS_PATH]: SAMPLE_CUSTOM_LABELS
         });
+        jest.clearAllMocks();
     });
 
     afterEach(() => {
         mockFs.restore();
         jest.restoreAllMocks();
-        // @ts-ignore
-        compile.mockReset();
     });
 
     describe('customLabelsFile', () => {
@@ -76,7 +88,7 @@ describe('getLabelService', () => {
         });
 
         it('doesnt throw an error if a custom label file is undefined', async () => {
-            const Service = getLabelService(CUSTOM_LABELS_PATH);
+            const Service = getLabelService();
             const labelsService = new Service();
             await labelsService.initialize();
             // no error
@@ -94,11 +106,120 @@ describe('getLabelService', () => {
         const labelsService = new Service();
         await labelsService.initialize();
 
-        debugger;
         const specifier = labelsService.toSpecifier(
             '/salesforce/label/dev/en/c.labelId'
         );
         expect(specifier).toBe('@salesforce/label/c.labelId');
+    });
+
+    it('should fail gracefully on empty custom labels file', async () => {
+        mockFs({
+            [CUSTOM_LABELS_PATH]: '<html></html>'
+        });
+
+        console.warn = jest.fn();
+
+        const Service = getLabelService(CUSTOM_LABELS_PATH);
+        const labelsService = new Service();
+        await labelsService.initialize();
+
+        expect(
+            // @ts-ignore
+            Object.keys(labelsService.customLabels)
+        ).toHaveLength(0);
+    });
+
+    describe('watch', () => {
+        it('should watch for changes to the custom labels path when present', async () => {
+            expect(watch).toBeCalledTimes(0);
+            const Service = getLabelService(CUSTOM_LABELS_PATH);
+            const labelsService = new Service();
+            await labelsService.initialize();
+
+            expect(watch).toBeCalledTimes(1);
+            expect(watch).toBeCalledWith(CUSTOM_LABELS_PATH);
+        });
+
+        it('should watch for onchange', async () => {
+            let ACTUAL;
+
+            // @ts-ignore
+            watch.mockImplementation(() => {
+                return {
+                    on: (watchType: string) => {
+                        ACTUAL = watchType;
+                    }
+                };
+            });
+            const Service = getLabelService(CUSTOM_LABELS_PATH);
+            const labelsService = new Service();
+            await labelsService.initialize();
+
+            expect(ACTUAL).toEqual('change');
+        });
+
+        it('should clear the module cache on change', async () => {
+            let callback: Function = function() {};
+
+            // @ts-ignore
+            watch.mockImplementation(() => {
+                return {
+                    on: (watchType: string, watchCallback: Function) => {
+                        callback = watchCallback;
+                    }
+                };
+            });
+
+            const Service = getLabelService(CUSTOM_LABELS_PATH);
+            const labelsService = new Service();
+            await labelsService.initialize();
+
+            // @ts-ignore
+            const clearSpy = jest.spyOn(labelsService.moduleCache, 'clear');
+            callback();
+
+            expect(clearSpy).toBeCalled();
+        });
+        it('should reload the custom labels on change', async () => {
+            let callback: Function = function() {};
+            mockFs({
+                [CUSTOM_LABELS_PATH]: `
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+                        <labels>
+                            <fullName>nathan_name</fullName>
+                            <categories>test</categories>
+                            <language>en_US</language>
+                            <protected>true</protected>
+                            <shortDescription>Nathan&#39;s Name</shortDescription>
+                            <value>Nathan McWilliams Updated</value>
+                        </labels>
+                    </CustomLabels>
+                    `
+            });
+
+            // @ts-ignore
+            watch.mockImplementation(() => {
+                return {
+                    on: (watchType: string, watchCallback: Function) => {
+                        callback = watchCallback;
+                    }
+                };
+            });
+
+            const Service = getLabelService(CUSTOM_LABELS_PATH);
+            const labelsService = new Service();
+            await labelsService.initialize();
+            const plugin = labelsService.getPlugin({});
+
+            callback();
+
+            // @ts-ignore
+            expect(plugin.load('@salesforce/label/c.nathan_name.js')).toEqual(
+                'export default "Nathan McWilliams Updated"'
+            );
+        });
+        it('should not watch for changes when no custom labels path is specified', async () => {});
     });
 
     describe('request()', () => {
@@ -229,12 +350,6 @@ describe('getLabelService', () => {
         });
     });
 
-    describe('namespace support', () => {
-        it.todo(
-            'should resolve label requests using the namespace of the project'
-        );
-    });
-
     describe('getPlugin', () => {
         describe('resolveId()', () => {
             it('Returns null for non @salesforce/label scoped values', async () => {
@@ -308,6 +423,52 @@ describe('getLabelService', () => {
                     // @ts-ignore
                     plugin.load('@salesforce/label/c.toString.js')
                 ).toEqual('export default "[c.toString]"');
+            });
+
+            it('should load labels from module dependencies', async () => {
+                // Mock the @lwc/module-resolver to return one label found
+                // @ts-ignore
+                resolveModules.mockImplementation(() => {
+                    return [
+                        {
+                            specifier: '@salesforce/label/namespace.myLabel',
+                            entry:
+                                '/Dev/Project/@salesforce-label-namespace.myLabel.js'
+                        }
+                    ];
+                });
+
+                // Mock the LoadingCache so it always finds the label we're trying to load
+                // as long as we request the appropriate label.
+                // @ts-ignore
+                LoadingCache.mockImplementation(() => {
+                    return {
+                        get: function(key: string) {
+                            if (key === 'namespace.myLabel') {
+                                return "export default 'myLabelValue';";
+                            }
+                            return undefined;
+                        }
+                    };
+                });
+
+                const Service = getLabelService();
+                const config = {
+                    projectDir: __dirname,
+                    compilerConfig: {
+                        lwcOptions: {
+                            modules: ['myDependency']
+                        }
+                    }
+                };
+                const labelsService = new Service(config as PublicConfig);
+                await labelsService.initialize();
+                const plugin = labelsService.getPlugin({});
+
+                expect(
+                    // @ts-ignore
+                    plugin.load('@salesforce/label/namespace.myLabel.js')
+                ).toEqual("export default 'myLabelValue';");
             });
         });
     });
