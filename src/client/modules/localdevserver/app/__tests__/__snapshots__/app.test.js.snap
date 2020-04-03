@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`app.js renders 1`] = `
+<localdevserver-app>
+  #shadow-root(open)
+    <localdevserver-layout>
+      #shadow-root(open)
+        <slot
+          name="header"
+        />
+        <slot />
+        <slot
+          name="footer"
+        />
+      <slot
+        name="header"
+      >
+        <localdevserver-header>
+          #shadow-root(open)
+            (header)
+        </localdevserver-header>
+      </slot>
+      <main>
+        <localdevserver-view>
+          #shadow-root(open)
+            (view)
+        </localdevserver-view>
+      </main>
+    </localdevserver-layout>
+</localdevserver-app>
+`;

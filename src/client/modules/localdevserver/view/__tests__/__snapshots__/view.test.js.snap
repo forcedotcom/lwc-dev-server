@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`view.js renders 1`] = `
+<localdevserver-view>
+  #shadow-root(open)
+</localdevserver-view>
+`;
+
+exports[`view.js shows 404 message when the route is not defined 1`] = `
+<localdevserver-view>
+  #shadow-root(open)
+    <div
+      class="slds-box slds-theme_error slds-theme_alert-texture slds-text-align_center"
+    >
+      <h2
+        class="slds-text-heading_large"
+      >
+        404: Not Found
+      </h2>
+    </div>
+</localdevserver-view>
+`;
