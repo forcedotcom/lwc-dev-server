@@ -40,17 +40,26 @@ function createComponentUnderTest(props) {
 }
 
 describe('preview', () => {
-    let mockSubscription;
+    let subscriptionMock;
+    let consoleLogMock;
+    let consoleWarnMock;
+    let consoleErrorMock;
 
     beforeEach(() => {
-        jest.resetAllMocks();
-
-        console.error = jest.fn();
-        console.group = jest.fn();
-
-        mockSubscription = {
+        subscriptionMock = {
             unsubscribe: jest.fn()
         };
+
+        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
+        consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+    });
+
+    afterEach(() => {
+        jest.resetAllMocks();
+        consoleLogMock.mockRestore();
+        consoleWarnMock.mockRestore();
+        consoleErrorMock.mockRestore();
     });
 
     it('renders the component', async () => {
@@ -67,7 +76,7 @@ describe('preview', () => {
 
         subscribe.mockImplementation((context, callback) => {
             callback(route);
-            return mockSubscription;
+            return subscriptionMock;
         });
 
         const element = createComponentUnderTest();
@@ -90,7 +99,7 @@ describe('preview', () => {
 
         subscribe.mockImplementation((context, callback) => {
             callback(route);
-            return mockSubscription;
+            return subscriptionMock;
         });
 
         const element = createComponentUnderTest();
@@ -118,7 +127,7 @@ describe('preview', () => {
 
         subscribe.mockImplementation((context, callback) => {
             callback(route);
-            return mockSubscription;
+            return subscriptionMock;
         });
 
         const element = createComponentUnderTest();
@@ -148,7 +157,7 @@ describe('preview', () => {
 
         subscribe.mockImplementation((context, callback) => {
             callback(route);
-            return mockSubscription;
+            return subscriptionMock;
         });
 
         const element = createComponentUnderTest();
@@ -179,7 +188,7 @@ describe('preview', () => {
 
         subscribe.mockImplementation((context, callback) => {
             callback(route);
-            return mockSubscription;
+            return subscriptionMock;
         });
 
         const element = createComponentUnderTest();
@@ -212,12 +221,12 @@ describe('preview', () => {
 
         subscribe.mockImplementation((context, callback) => {
             callback(route);
-            return mockSubscription;
+            return subscriptionMock;
         });
 
         const element = createComponentUnderTest();
         element.parentNode.removeChild(element);
 
-        expect(mockSubscription.unsubscribe).toBeCalledTimes(1);
+        expect(subscriptionMock.unsubscribe).toBeCalledTimes(1);
     });
 });

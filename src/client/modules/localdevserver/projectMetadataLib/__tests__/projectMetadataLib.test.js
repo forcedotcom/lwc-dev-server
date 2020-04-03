@@ -1,4 +1,5 @@
 import * as lib from '../projectMetadataLib';
+import { mockComponentMetadata } from '../../../__tests__/testutils';
 
 function createProjectMetadata() {
     return {
@@ -10,30 +11,9 @@ function createProjectMetadata() {
                     isDefault: true,
                     key: 'package1',
                     components: [
-                        {
-                            namespace: 'c',
-                            name: 'foo',
-                            jsName: 'c/foo',
-                            htmlName: 'c-foo',
-                            url: 'test/c/foo',
-                            path: '/Users/arya/dev/test/src/foo/foo.js'
-                        },
-                        {
-                            namespace: 'c',
-                            name: 'fooBar',
-                            jsName: 'c/fooBar',
-                            htmlName: 'c-foo-bar',
-                            url: 'test/c/fooBar',
-                            path: '/Users/arya/dev/test/src/fooBar/fooBar.js'
-                        },
-                        {
-                            namespace: 'c',
-                            name: 'fooBaz',
-                            jsName: 'c/fooBaz',
-                            htmlName: 'c-foo-baz',
-                            url: 'test/c/fooBaz',
-                            path: '/Users/arya/dev/test/src/foo/fooBaz.js'
-                        }
+                        mockComponentMetadata('c', 'foo'),
+                        mockComponentMetadata('c', 'fooBar'),
+                        mockComponentMetadata('c', 'fooBaz')
                     ]
                 }
             ]
@@ -84,23 +64,8 @@ describe('localdevserver-project-metadata-lib', () => {
         });
 
         it('finds the metadata from the default package', async () => {
-            const cmp1 = {
-                namespace: 'c',
-                name: 'foo',
-                jsName: 'c/foo',
-                htmlName: 'c-foo',
-                url: 'test/c/foo',
-                path: '/Users/arya/dev/test/src/foo/foo.js'
-            };
-
-            const cmp2 = {
-                namespace: 'c',
-                name: 'foo2',
-                jsName: 'c/foo2',
-                htmlName: 'c-foo2',
-                url: 'test/c/foo2',
-                path: '/Users/arya/dev/test/src/foo2/foo2.js'
-            };
+            const cmp1 = mockComponentMetadata('c', 'foo');
+            const cmp2 = mockComponentMetadata('c', 'foo2');
 
             window.LocalDev = {
                 project: {
@@ -126,23 +91,8 @@ describe('localdevserver-project-metadata-lib', () => {
         });
 
         it('finds the metadata from the specifed package', async () => {
-            const cmp1 = {
-                namespace: 'c',
-                name: 'foo',
-                jsName: 'c/foo',
-                htmlName: 'c-foo',
-                url: 'test/c/foo',
-                path: '/Users/arya/dev/test/src/foo/foo.js'
-            };
-
-            const cmp2 = {
-                namespace: 'c',
-                name: 'foo2',
-                jsName: 'c/foo2',
-                htmlName: 'c-foo2',
-                url: 'test/c/foo2',
-                path: '/Users/arya/dev/test/src/foo2/foo2.js'
-            };
+            const cmp1 = mockComponentMetadata('c', 'foo');
+            const cmp2 = mockComponentMetadata('c', 'foo2');
 
             window.LocalDev = {
                 project: {
