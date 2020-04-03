@@ -220,8 +220,4 @@ describe('preview', () => {
 
         expect(mockSubscription.unsubscribe).toBeCalledTimes(1);
     });
-
-    it.todo('renders a link to the homepage in the breadcrumbs');
-
-    it.todo('renders a link to the component in the breadcrumbs');
 });
