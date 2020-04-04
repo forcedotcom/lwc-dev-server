@@ -15,7 +15,7 @@ export default class LocalDevServerView extends LightningElement {
 
     connectedCallback() {
         // Subscribe to updates on the current state.
-        this.subscription = subscribe(this.navContext, (_, routeDef) =>
+        this.subscription = subscribe(this.navContext, (_route, routeDef) =>
             this.renderComponent(routeDef || {})
         );
     }
@@ -23,7 +23,7 @@ export default class LocalDevServerView extends LightningElement {
     async renderComponent({ component: specifier } = {}) {
         // Show an error if the component was not resolved.
         if (!specifier) {
-            this.message = '404';
+            this.message = '404: Not Found';
             return;
         }
 

@@ -18,6 +18,9 @@ const {
 
 const { getInfoFromId } = require('./utils/module.js');
 
+const debugLogger = require('debug');
+const debug = debugLogger('localdevserver:test');
+
 function isFile(file) {
     let result;
 
@@ -97,15 +100,17 @@ module.exports = function(modulePath, options) {
     if (modulePath === 'lwc') {
         return require.resolve('@lwc/engine');
     }
+
     /**
      * NOTE: lwc-dev-tools changes
      */
-    if (modulePath.startsWith('webruntime')) {
+
+    if (modulePath.startsWith('webruntime_navigation')) {
         modulePath = modulePath.replace(
-            /(webruntime)\/(.+)$/,
+            /(webruntime_navigation)\/(.+)$/,
             path.join(
                 __dirname,
-                '../node_modules/@webruntime/framework/src/modules/$1/$2/$2'
+                '../node_modules/@webruntime/navigation/src/modules/$1/$2/$2'
             )
         );
         const resolved = resolver.call(null, modulePath, options);
@@ -113,9 +118,9 @@ module.exports = function(modulePath, options) {
             return resolved;
         }
     }
-    // allow overrides of local modules in tests
+
+    // allow overrides of local modules in tests, under the __mocks__ folder in the module
     if (modulePath.includes('localdevserver')) {
-        // Use the mock in the sibling __mocks__ directory if it exists
         const split = modulePath.split(path.sep);
         if (split.length > 3) {
             const ns = split[split.length - 3];
@@ -124,7 +129,25 @@ module.exports = function(modulePath, options) {
                 `${options.basedir}/__mocks__/${ns}/${name}/${name}.js`
             );
             if (fs.existsSync(mockPath)) {
-                console.log(
+                debug(
+                    `replacing module '${modulePath}' with __mocks__ version '${mockPath}'`
+                );
+                return lwcResolver(mockPath, options);
+            }
+        }
+    }
+
+    // allow mocks for custom components in tests, under the __mocks__ folder in the module
+    if (modulePath.startsWith('c/')) {
+        const split = modulePath.split('/');
+        if (split.length == 2) {
+            const ns = split[0];
+            const name = split[1];
+            const mockPath = path.normalize(
+                `${options.basedir}/__mocks__/${ns}/${name}/${name}.js`
+            );
+            if (fs.existsSync(mockPath)) {
+                debug(
                     `replacing module '${modulePath}' with __mocks__ version '${mockPath}'`
                 );
                 return lwcResolver(mockPath, options);

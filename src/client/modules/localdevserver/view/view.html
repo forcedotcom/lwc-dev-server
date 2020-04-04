@@ -1,4 +1,7 @@
 <template>
-    <h2 if:true={message}>{message}</h2>
+    <div if:true={message} class="slds-box slds-theme_error slds-theme_alert-texture slds-text-align_center">
+        <h2 class="slds-text-heading_large">{message}</h2>
+    </div>
+
     <localdevserver-dynamic lwc:dynamic={customCtor}></localdevserver-dynamic>
 </template>

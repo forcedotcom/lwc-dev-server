@@ -10,8 +10,15 @@ import colors from 'colors';
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
 
+// suppress noise from tests. there should be a better way to do this...
+const unhandledRejectionListener = function(event: any) {};
+process.addListener('unhandledRejection', unhandledRejectionListener);
+
 describe('start', () => {
     let start: Start;
+    let consoleLogMock: any;
+    let consoleWarnMock: any;
+    let consoleErrorMock: any;
 
     beforeEach(() => {
         start = new Start([], new Config.Config(<Config.Options>{}));
@@ -33,6 +40,23 @@ describe('start', () => {
                 return _configuration;
             }
         });
+
+        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
+        consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+    });
+
+    afterEach(() => {
+        consoleLogMock.mockRestore();
+        consoleWarnMock.mockRestore();
+        consoleErrorMock.mockRestore();
+    });
+
+    afterAll(() => {
+        process.removeListener(
+            'unhandledRejection',
+            unhandledRejectionListener
+        );
     });
 
     function setupAllDev() {
@@ -212,29 +236,29 @@ describe('start', () => {
         //     expect(configuredPort).toBe(5151);
         // });
 
-        // test('outputs legal message', async () => {
-        //     setupAllDev();
-        //     const log = jest.fn();
-        //     const error = jest.fn();
-        //     Object.defineProperty(start, 'ux', {
-        //         get: () => {
-        //             return {
-        //                 log,
-        //                 error
-        //             };
-        //         },
-        //         configurable: true,
-        //         enumerable: true
-        //     });
+        test('outputs legal message', async () => {
+            setupAllDev();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                },
+                configurable: true,
+                enumerable: true
+            });
 
-        //     const expected = colors.gray(
-        //         'Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n'
-        //     );
+            const expected = colors.gray(
+                'Use of this plugin is subject to the Salesforce.com Program Agreement. \nBy installing this plugin, you agree to the Salesforce.com Program Agreement<https://trailblazer.me/terms> \nand acknowledge the Salesforce Privacy Policy<https://www.salesforce.com/company/privacy.jsp>.\n'
+            );
 
-        //     await start.run();
+            await start.run();
 
-        //     expect(log.mock.calls[0][0]).toEqual(expected);
-        // });
+            expect(log.mock.calls[0][0]).toEqual(expected);
+        });
 
         // test('uses port from flags', async () => {
         //     setupUX();

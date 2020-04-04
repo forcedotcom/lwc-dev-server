@@ -1,78 +1,108 @@
-import { LightningElement, track, wire } from 'lwc';
-import { getComponentMetadata } from 'localdevserver/projectMetadataLib';
+import { LightningElement, wire } from 'lwc';
 import { NavigationContext, subscribe } from 'webruntime_navigation/navigation';
+import { getComponentMetadata } from 'localdevserver/projectMetadataLib';
+import { getPreviewUrl } from 'localdevserver/routerLib';
 
 export default class Preview extends LightningElement {
     @wire(NavigationContext)
     navContext;
 
-    @track error;
-    @track metadata;
-    @track dynamicCtor;
-    @track isLoading = true;
-
+    isLoading = true;
+    dynamicCtor;
     subscription;
+    error;
+
+    _href;
+    _vscodeHref;
+    _componentLabel;
 
     connectedCallback() {
         this.subscription = subscribe(this.navContext, route => {
+            if (!route.attributes) {
+                const error = new Error(
+                    'The component to preview was not specified - The attributes property was not found in the url route.'
+                );
+                this.showError(error);
+                this.isLoading = false;
+                return;
+            }
+
             const { namespace, name } = route.attributes;
-            if (namespace && name) {
-                const jsName = `${namespace}/${name}`;
-                this.loadHostedComponent(jsName);
-            } else {
-                console.error(
-                    'There was a problem loading the component preview. The component namespace and name was not found in the route attributes:',
-                    route
+
+            if (!namespace || !name) {
+                const error = new Error(
+                    'The component to preview was not specified - The component name and namespace were not found in the url route.'
                 );
+                this.showError(error);
+                this.isLoading = false;
+                return;
             }
+
+            const specifier = `${namespace}/${name}`;
+            this.loadHostedComponent(specifier)
+                .catch(error => {
+                    this.showError(error, specifier);
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                });
         });
-    }
-
-    async loadHostedComponent(jsName) {
-        this.metadata = await getComponentMetadata(jsName);
-        if (!this.metadata) {
-            throw new Error(
-                `The component named '${jsName}' was not found. Only components within the project namespace can be previewed.`
-            );
-        }
-
-        try {
-            const module = await import(jsName);
-            if (!module.default || typeof module.default !== 'function') {
-                throw new Error(
-                    `"${jsName}" is not a valid LWC module or it could not be found.`
-                );
-            }
-            this.dynamicCtor = module.default;
-            this.isLoading = false;
-        } catch (error) {
-            console.error(
-                `There was a problem loading the component preview for "${jsName}".`,
-                error
-            );
-            this.error = error;
-            this.isLoading = false;
-        }
-    }
-
-    get componentLabel() {
-        return this.metadata ? this.metadata.htmlName : undefined;
-    }
-
-    get href() {
-        // TODO: generate url client side
-        return this.metadata ? this.metadata.url : 'javascript:void(0);';
-    }
-
-    get vscodeHref() {
-        return this.metadata && this.metadata.path
-            ? `vscode://file/${this.metadata.path}`
-            : 'javascript:void(0);';
     }
 
     disconnectedCallback() {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+    }
+
+    async loadHostedComponent(specifier) {
+        // load custom component metadata
+        let metadata;
+        try {
+            metadata = await getComponentMetadata(specifier);
+        } catch (e) {
+            // we only want allow previews for components found in the project metadata
+            const error = new Error(
+                `The component named '${specifier}' was not found. Only components within the project namespace can be previewed.`
+            );
+            error.cause = e;
+            throw error;
+        }
+        this._componentLabel = metadata.htmlName;
+        this._vscodeHref = `vscode://file/${metadata.path}`;
+        this._href = await getPreviewUrl(
+            this.navContext,
+            metadata.namespace,
+            metadata.name
+        );
+
+        // dynamically load the component
+        // TODO: compile errors are not surfaced properly anymore
+        const module = await import(specifier);
+        this.dynamicCtor = module.default;
+    }
+
+    showError(error, specifier = 'unknown') {
+        this.error = error;
+        console.group(
+            `There was a problem loading the component preview for '${specifier}'`
+        );
+        console.error(error);
+        if (error.cause) {
+            console.error(error.cause);
+        }
+        console.groupEnd();
+    }
+
+    get componentLabel() {
+        return this._componentLabel || 'unknown';
+    }
+
+    get href() {
+        return this._href || 'javascript:void(0);';
+    }
+
+    get vscodeHref() {
+        return this._vscodeHref || 'javascript:void(0);';
     }
 }
