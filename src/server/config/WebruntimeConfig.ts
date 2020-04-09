@@ -12,6 +12,8 @@ import {
 } from '@webruntime/api';
 import { ImportMapService, AppBootstrapService } from '@webruntime/services';
 import { Plugin } from 'rollup';
+import { ApexService } from '@communities-webruntime/services';
+import alias from '@rollup/plugin-alias';
 
 export default class WebruntimeConfig implements Config {
     /** Root project directory */
@@ -64,26 +66,46 @@ export default class WebruntimeConfig implements Config {
             definition: LocalDevApp
         };
 
-        this.services = [ImportMapService, AppBootstrapService];
+        this.services = [ImportMapService, AppBootstrapService, ApexService];
 
         this.bundle = ['@webruntime/app', 'webruntime_navigation/*'];
 
         this.preloadModules = [];
 
-        this.externals = ['webruntime_loader/loader'];
+        this.externals = [
+            'webruntime_loader/loader',
+            '@app/basePath',
+            '@app/csrfToken'
+        ];
 
         this.compilerConfig = {
             formatConfig: {
                 amd: { define: 'Webruntime.define' }
             },
             lwcOptions: {
+                exclude: [/@salesforce\/(?!lwc-dev-server).*/],
                 experimentalDynamicComponent: {
                     loader: 'webruntime_loader/loader',
                     strictSpecifier: false
                 },
                 modules: []
             },
-            plugins: [],
+            plugins: [
+                alias({
+                    entries: [
+                        {
+                            find: 'forceChatterApi/util',
+                            replacement:
+                                '@webruntime/connect-gen/dist/forceChatterApi/util/util.js'
+                        },
+                        {
+                            find: 'transport',
+                            replacement:
+                                '@communities-webruntime/client/src/modules/webruntime/transport/transport.js'
+                        }
+                    ]
+                })
+            ],
             inlineConfig: [
                 {
                     descriptor: '*/*',

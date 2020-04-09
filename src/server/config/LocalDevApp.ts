@@ -1,5 +1,11 @@
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 
+function define([key, value]: any) {
+    return `Webruntime.define('${key}', [], function() { return ${JSON.stringify(
+        value
+    )}; })`;
+}
+
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
         const {
@@ -31,6 +37,24 @@ export class LocalDevPage extends WebruntimePage {
                     : originalValue;
             }
         );
+    }
+
+    get experimental_scripts() {
+        const { request: req } = this.pageContext as any;
+        const modules = {
+            '@app/basePath': '/',
+            '@app/csrfToken': req.csrfToken && req.csrfToken(),
+            '@salesforce/user/isGuest': true,
+            '@salesforce/client/formFactor': 'Large'
+        };
+
+        return [
+            {
+                code: Object.entries(modules)
+                    .map(define)
+                    .join('\n')
+            }
+        ];
     }
 }
 
