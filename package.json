@@ -110,6 +110,7 @@
         "@salesforce/lwc-dev-server-dependencies": "1.0.62",
         "@salesforce/telemetry": "^1.2.2",
         "@salesforce/ts-types": "^1.1.4",
+        "@wdio/sync": "^6.0.15",
         "@webruntime/api": "0.29.17",
         "@webruntime/compiler": "0.29.17",
         "@webruntime/navigation": "0.29.17",

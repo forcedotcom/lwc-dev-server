@@ -1836,6 +1836,16 @@
     loglevel-plugin-prefix "^0.8.4"
     strip-ansi "^6.0.0"
 
+"@wdio/logger@6.0.12":
+  version "6.0.12"
+  resolved "https://registry.yarnpkg.com/@wdio/logger/-/logger-6.0.12.tgz#9b4430e47f4ce5edfc0cbb05279a7ac604c2b908"
+  integrity sha512-qROnV6vHsLT2CI+k9hGbO4qXjW313BZW8HodWhBMlu391lt4RLLHqZAW0na1eTG7BeazKQGP/QtBLbLycQzrFg==
+  dependencies:
+    chalk "^3.0.0"
+    loglevel "^1.6.0"
+    loglevel-plugin-prefix "^0.8.4"
+    strip-ansi "^6.0.0"
+
 "@wdio/protocols@5.22.1":
   version "5.22.1"
   resolved "https://registry.yarnpkg.com/@wdio/protocols/-/protocols-5.22.1.tgz#51fde0acb57d4ddf07d078fef0ad9c91d227229d"
@@ -1847,6 +1857,14 @@
   integrity sha512-z9UPBk/Uee0l9g0ijnOatU3WP7TcpIyNtRj9AGsJVbYZFwqMWBqPkO4nblldyNQIuqdgXAPsDo8lPGDno12/oA==
   dependencies:
     "@wdio/utils" "5.18.6"
+
+"@wdio/sync@^6.0.15":
+  version "6.0.15"
+  resolved "https://registry.yarnpkg.com/@wdio/sync/-/sync-6.0.15.tgz#f7d1e32b13d2e46e6316f1226e738fb92b3e4746"
+  integrity sha512-QjFnfBXbW8GX9PI1Z2yN2eLtgCjdf9+hHvkjGLodc+kjUxQBQrjMS6g6JEtLeFE5KshDfUCNYj4wKPw2wy5Qtg==
+  dependencies:
+    "@wdio/logger" "6.0.12"
+    fibers "^4.0.1"
 
 "@wdio/utils@5.18.6":
   version "5.18.6"
@@ -3973,6 +3991,11 @@ detect-indent@^6.0.0:
   resolved "https://registry.yarnpkg.com/detect-indent/-/detect-indent-6.0.0.tgz#0abd0f549f69fc6659a254fe96786186b6f528fd"
   integrity sha512-oSyFlqaTHCItVRGK5RmrmjB+CmaMOW7IaNA/kdxqhoa6d17j/5ce9O9eWXmV/KEdRwqpQA+Vqe8a8Bsybu4YnA==
 
+detect-libc@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
+  integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
+
 detect-newline@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-2.1.0.tgz#f41f1c10be4b00e87b5f13da680759f2c5bfd3e2"
@@ -4710,6 +4733,13 @@ feature-policy@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/feature-policy/-/feature-policy-0.3.0.tgz#7430e8e54a40da01156ca30aaec1a381ce536069"
   integrity sha512-ZtijOTFN7TzCujt1fnNhfWPFPSHeZkesff9AXZj+UEjYBynWNUIYpC87Ve4wHzyexQsImicLu7WsC2LHq7/xrQ==
+
+fibers@^4.0.1:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/fibers/-/fibers-4.0.2.tgz#d04f9ccd0aba179588202202faeb4fed65d497f5"
+  integrity sha512-FhICi1K4WZh9D6NC18fh2ODF3EWy1z0gzIdV9P7+s2pRjfRBnCkMDJ6x3bV1DkVymKH8HGrQa/FNOBjYvnJ/tQ==
+  dependencies:
+    detect-libc "^1.0.3"
 
 figures@^1.7.0:
   version "1.7.0"
