@@ -124,6 +124,7 @@
         "fast-glob": "^3.2.2",
         "fast-xml-parser": "^3.16.0",
         "fs-extra": "^8.1.0",
+        "get-port": "^5.1.1",
         "reload": "^3.0.4",
         "shelljs": "^0.8.3",
         "uuidv4": "5.0.0"

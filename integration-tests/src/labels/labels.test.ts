@@ -1,6 +1,9 @@
 import PreviewTestComponentPage from '../pageObjects/PreviewTestComponentPage';
 
-describe('Labels', () => {
+/**
+ * This is skipped since we don't support namespaces right yet.
+ */
+describe.skip('Labels', () => {
     it('displays the known label', async () => {
         await PreviewTestComponentPage.open();
         const labelEl = await PreviewTestComponentPage.testComponent.then(el =>
