@@ -3,7 +3,12 @@ import fs from 'fs';
 import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
-import { sessionNonce, projectMetadata, liveReload } from './extensions';
+import {
+    sessionNonce,
+    apexMiddleware,
+    projectMetadata,
+    liveReload
+} from './extensions';
 import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
@@ -12,6 +17,7 @@ import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 import colors from 'colors';
 import { AddressInfo } from 'net';
+import { Connection } from '@salesforce/core';
 
 export default class LocalDevServer {
     private server: Server;
@@ -41,6 +47,13 @@ export default class LocalDevServer {
         const config = new WebruntimeConfig(this.project);
 
         config.addMiddleware([sessionNonce(this.sessionNonce)]);
+
+        config.addMiddleware([
+            apexMiddleware({
+                instanceUrl: connection.instanceUrl,
+                accessToken: connection.accessToken
+            })
+        );
 
         const routes: ContainerAppExtension[] = [
             projectMetadata(this.sessionNonce, this.project)
