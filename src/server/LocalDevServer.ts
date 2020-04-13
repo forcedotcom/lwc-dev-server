@@ -9,6 +9,7 @@ import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
+import colors from 'colors';
 
 export default class LocalDevServer extends Server {
     private rootDir: string;
@@ -93,6 +94,14 @@ export default class LocalDevServer extends Server {
     private async exitHandler() {
         this.shutdown();
         process.exit();
+    }
+
+    async start() {
+        await super.start();
+
+        console.log(
+            colors.magenta.bold(`Server up on http://localhost:${this.port}`)
+        );
     }
 
     private copyStaticAssets() {
