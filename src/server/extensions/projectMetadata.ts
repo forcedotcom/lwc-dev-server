@@ -31,7 +31,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
             (app as Application).get(
                 `/localdev/${sessionNonce}/show`,
                 (req: Request, res: Response, next: NextFunction) => {
-                    const file = req.query.file;
+                    const file = req.query.file as string;
                     const extension = path.extname(file);
                     const normalizedFile = path.normalize(file);
                     if (
