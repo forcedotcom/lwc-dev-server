@@ -85,6 +85,14 @@ export default class LocalDevServer extends Server {
     async initialize() {
         await super.initialize();
         this.copyStaticAssets();
+        // graceful shutdown
+        process.on('SIGINT', async () => this.exitHandler());
+        process.on('SIGTERM', async () => this.exitHandler());
+    }
+
+    private async exitHandler() {
+        this.shutdown();
+        process.exit();
     }
 
     private copyStaticAssets() {

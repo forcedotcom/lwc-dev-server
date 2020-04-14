@@ -170,6 +170,34 @@ describe('LocalDevServer', () => {
         );
     });
 
+    it('should handle graceful shutdown (SIGTERM)', async () => {
+        const server = new LocalDevServer(project);
+        const mockShutdown = jest.spyOn(server, 'shutdown');
+        const mockExit = jest.spyOn(process, 'exit');
+        // @ts-ignore
+        mockExit.mockImplementation(() => {});
+
+        await server.initialize();
+        process.emit('SIGTERM', 'SIGTERM');
+
+        expect(mockExit).toBeCalled();
+        expect(mockShutdown).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle graceful shutdown (SIGINT)', async () => {
+        const server = new LocalDevServer(project);
+        const mockShutdown = jest.spyOn(server, 'shutdown');
+        const mockExit = jest.spyOn(process, 'exit');
+        // @ts-ignore
+        mockExit.mockImplementation(() => {});
+
+        await server.initialize();
+        process.emit('SIGINT', 'SIGINT');
+
+        expect(mockExit).toBeCalled();
+        expect(mockShutdown).toHaveBeenCalledTimes(1);
+    });
+
     it('throws an error if copying static assets fails', async () => {
         jest.spyOn(fileUtils, 'copyFiles').mockImplementation(() => {
             throw new Error('test error');
