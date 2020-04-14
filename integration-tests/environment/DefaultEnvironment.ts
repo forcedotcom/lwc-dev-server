@@ -1,11 +1,10 @@
-import debug from 'debug';
+import debugLogger from 'debug';
 import Project from '../../src/common/Project';
 import BaseEnvironment from './BaseEnvironment';
 import LocalDevServer from '../../src/server/LocalDevServer';
 import { defaultPort } from '../../src/user/LocalDevServerConfiguration';
-import { AddressInfo } from 'net';
 
-const log = debug('localdevserver');
+const debug = debugLogger('localdevserver');
 
 /**
  * Starts the dev server programmatically.
@@ -34,7 +33,7 @@ export default class DefaultEnvironment extends BaseEnvironment {
 
         const project = new Project(this.projectPath);
         if (!project.configuration.api_version) {
-            log('no api version specified, using 48.0');
+            debug('no api version specified, using 48.0');
             project.configuration.api_version = '48.0';
         }
         if (
@@ -51,13 +50,13 @@ export default class DefaultEnvironment extends BaseEnvironment {
         await this.server.start();
         this.global.serverPort = this.server.serverPort;
 
-        log(`started server on port ${this.global.serverPort}`);
+        debug(`started server on port ${this.global.serverPort}`);
     }
 
     async teardown() {
         if (this.server) {
             await this.server.shutdown();
-            log('stopped server');
+            debug('stopped server');
         }
         await super.teardown();
     }
