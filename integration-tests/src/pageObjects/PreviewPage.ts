@@ -1,5 +1,4 @@
 import Page from './Page';
-import decamelize from 'decamelize';
 
 export default class PreviewPage implements Page {
     private _container: WebdriverIO.Element | undefined;
@@ -38,12 +37,12 @@ export default class PreviewPage implements Page {
         );
     }
 
-    public get testComponent() {
+    public get testComponent(): Promise<WebdriverIO.Element> {
         if (this._container) {
             // const webComponentName = decamelize(this.name, '-');
             //return Promise.resolve(
             //this._container.shadow$(`${this.namespace}-${webComponentName}`)
-            return this._container.$('localdevserver-dynamic');
+            return Promise.resolve(this._container.$('localdevserver-dynamic'));
             //);
         }
         throw new Error('container not initialized first, call open() first');

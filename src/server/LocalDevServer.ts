@@ -19,7 +19,6 @@ import { ComponentServiceWithExclusions } from './services/ComponentServiceWithE
 import colors from 'colors';
 import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
-
 export default class LocalDevServer {
     private server: Server;
     private config: WebruntimeConfig;
