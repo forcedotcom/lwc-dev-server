@@ -8,7 +8,7 @@ describe('Auto Reload', () => {
         'project/force-app/main/default/lwc'
     );
 
-    it.skip('should reload the page when a component is updated', async () => {
+    it('should reload the page when a component is updated', async () => {
         // copy autoreload to autoreloadtesting
         const testingTargetDir = path.join(lwcFolder, 'autoreloadtestingcopy');
         const testingTargetHtml = path.join(
@@ -58,7 +58,7 @@ describe('Auto Reload', () => {
         }, 10000);
     });
 
-    it.skip('should not reload the page when an ignored file is updated', async () => {
+    it('should not reload the page when an ignored file is updated', async () => {
         const testingTargetFile = path.join(lwcFolder, 'jsconfig.json');
 
         // TODO: copy project to tmp directory for safe file modification.

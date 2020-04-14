@@ -38,7 +38,7 @@
         "test:watch": "yarn test --watch",
         "test:debug": "node --inspect node_modules/.bin/jest src --runInBand",
         "test:ci": "yarn test --ci --runInBand",
-        "test:e2e": "HEADLESS=true yarn jest --runInBand --config integration-tests/jest.config.integration-test.js --detectOpenHandles",
+        "test:e2e": "HEADLESS=false yarn jest --runInBand --config integration-tests/jest.config.integration-test.js --detectOpenHandles",
         "test:e2e-debug": "HEADLESS=false node --inspect-brk node_modules/.bin/jest --runInBand --config integration-tests/jest.config.integration-test.js",
         "test:e2e-ci": "yarn jest --runInBand --force-exit --config integration-tests/jest.config.integration-test.js",
         "format": "prettier --write \"src/**/*.ts\"",

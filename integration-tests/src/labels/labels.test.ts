@@ -15,7 +15,6 @@ describe.skip('Labels', () => {
 
     it('displays a placeholder for unknown labels', async () => {
         await PreviewTestComponentPage.open();
-        debugger;
         const labelEl = await PreviewTestComponentPage.testComponent.then(el =>
             el.shadow$('.label-unknown')
         );
