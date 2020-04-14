@@ -12,9 +12,20 @@ export const WAIT_FOR_ONE_APP_LOAD = 20000;
 
 let cachedConfig: any = null;
 
-/**
- * FIXME: better implementation for GA
- */
+export interface ConnectionParams {
+    instanceUrl: string;
+    accessToken: string;
+}
+
+interface ApexRequest {
+    namespace: string;
+    classname: string;
+    method: string;
+    cacheable: boolean;
+    params?: any;
+}
+
+// Avoid needing to hit the org for the Framework ID before GA
 export class ApexResourceLoader extends ResourceLoader {
     constructor(
         private readonly orgRequest: RequestPromiseAPI,
@@ -48,18 +59,6 @@ export class ApexResourceLoader extends ResourceLoader {
         log(`skipped external url: ${url}`);
         return null;
     }
-}
-
-export interface ConnectionParams {
-    instanceUrl: string;
-    accessToken: string;
-}
-interface ApexRequest {
-    namespace: string;
-    classname: string;
-    method: string;
-    cacheable: boolean;
-    params?: any;
 }
 
 export function apexMiddleware(connectionParams: ConnectionParams) {
