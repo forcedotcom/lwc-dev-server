@@ -1,7 +1,7 @@
 import PreviewPage from '../pageObjects/PreviewPage';
 
 describe('previewing an LWC bundle', () => {
-    it('renders expected content', async () => {
+    it.skip('renders expected content', async () => {
         const page = new PreviewPage('test', 'testComponent');
         await page.open();
 
