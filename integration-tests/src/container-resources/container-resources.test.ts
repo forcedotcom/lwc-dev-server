@@ -4,7 +4,7 @@ import HomePage from '../pageObjects/HomePage';
 import PreviewTestComponentPage from '../pageObjects/PreviewTestComponentPage';
 
 // TODO gather and check for all resources in head
-describe('Serving container default static resources', () => {
+describe.skip('Serving container default static resources', () => {
     it('responds with code 200 for the SLDS CSS', async done => {
         await HomePage.open();
 
@@ -24,7 +24,7 @@ describe('Serving container default static resources', () => {
         });
     });
 
-    it('responds with code 200 for the utility icon sprite', async done => {
+    it.skip('responds with code 200 for the utility icon sprite', async done => {
         await PreviewTestComponentPage.open();
 
         const href = await PreviewTestComponentPage.lightningIconHref;

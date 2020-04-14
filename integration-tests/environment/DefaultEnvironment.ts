@@ -49,10 +49,8 @@ export default class DefaultEnvironment extends BaseEnvironment {
         this.server = new LocalDevServer(project);
         await this.server.initialize(); //-- Not sure if its necessary.
         await this.server.start();
-        if (this.server.httpServer) {
-            const addressInfo: AddressInfo = this.server.httpServer.address() as AddressInfo;
-            this.global.serverPort = addressInfo.port;
-        }
+        this.global.serverPort = this.server.serverPort;
+
         log(`started server on port ${this.global.serverPort}`);
     }
 

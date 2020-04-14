@@ -10,6 +10,7 @@ import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 import colors from 'colors';
+import { AddressInfo } from 'net';
 
 export default class LocalDevServer extends Server {
     private rootDir: string;
@@ -100,8 +101,22 @@ export default class LocalDevServer extends Server {
         await super.start();
 
         console.log(
-            colors.magenta.bold(`Server up on http://localhost:${this.port}`)
+            colors.magenta.bold(
+                `Server up on http://localhost:${this.serverPort}`
+            )
         );
+    }
+
+    /**
+     * Attempts to resolve the port from the server.
+     * the port property only returns the configured port to use.
+     */
+    get serverPort() {
+        if (this.httpServer) {
+            const addressInfo: AddressInfo = this.httpServer.address() as AddressInfo;
+            return addressInfo.port;
+        }
+        return this.port;
     }
 
     private copyStaticAssets() {

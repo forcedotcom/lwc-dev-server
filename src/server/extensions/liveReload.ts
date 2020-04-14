@@ -18,7 +18,8 @@ export function liveReload(metadataPath: string) {
             debug(`Listening on port: ${availablePort}`);
 
             const reloadReturned = await reload(app, {
-                port: availablePort
+                port: availablePort,
+                verbose: debugLogger.enabled('localdevserver')
             });
 
             const fileWatcher = chokidar.watch(metadataPath, {

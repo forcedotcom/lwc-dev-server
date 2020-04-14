@@ -1,21 +1,21 @@
 /**
- * @jest-environment ./environment/AuthenticatedEnvironment.js
+ * @-jest-environment ./environment/AuthenticatedEnvironment.js
  */
 
 import path from 'path';
 import { upload } from '../../utils/upload-metadata';
 import ApexPage from './ApexPage';
 
-beforeAll(async () => {
-    const packagePath = path.join(__dirname, 'project/force-app/main/default');
-    await upload({
-        packagePath,
-        connection: global.jsforceConnection,
-        apex: true
-    });
-});
+// beforeAll(async () => {
+//     const packagePath = path.join(__dirname, 'project/force-app/main/default');
+//     await upload({
+//         packagePath,
+//         connection: global.jsforceConnection,
+//         apex: true
+//     });
+// });
 
-describe('apex', () => {
+describe.skip('apex', () => {
     it('can wire data to a property', async () => {
         const page = new ApexPage('c', 'wireToProp');
         await page.open();
