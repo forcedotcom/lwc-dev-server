@@ -99,6 +99,32 @@ describe('LocalDevServer', () => {
         expect(server.config.addRoutes).toHaveBeenCalledTimes(1);
     });
 
+    it('should add the live reload route when the configuration is true', () => {
+        const server = new LocalDevServer(project);
+
+        // @ts-ignore
+        const routes = server.config.addRoutes.mock.calls[0][0];
+
+        expect(routes).toHaveLength(2);
+
+        // @ts-ignore
+        expect(server.liveReload).toBeDefined();
+    });
+
+    it('should not add the live reload route when the configuration is false', () => {
+        project.configuration.liveReload = false;
+
+        const server = new LocalDevServer(project);
+
+        // @ts-ignore
+        const routes = server.config.addRoutes.mock.calls[0][0];
+
+        expect(routes).toHaveLength(1);
+
+        // @ts-ignore
+        expect(server.liveReload).toBeUndefined();
+    });
+
     it('should add modules with the correct vendor version to the config', () => {
         const server = new LocalDevServer(project);
 
@@ -305,6 +331,19 @@ describe('LocalDevServer', () => {
                 (service: Function) => service.name
             );
             expect(serviceNames).toContain(LabelService.name);
+        });
+    });
+
+    describe('shutdown', () => {
+        it('should close live reload', async () => {
+            const server = new LocalDevServer(project);
+
+            // @ts-ignore
+            const mockClose = jest.spyOn(server.liveReload, 'close');
+
+            await server.shutdown();
+
+            expect(mockClose).toBeCalledTimes(1);
         });
     });
 });
