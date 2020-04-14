@@ -10,6 +10,8 @@ import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
+import colors from 'colors';
+import { AddressInfo } from 'net';
 
 export default class LocalDevServer {
     private server: Server;
@@ -89,12 +91,26 @@ export default class LocalDevServer {
         process.on('SIGTERM', async () => this.exitHandler());
     }
 
+    /*
     async start() {
-        await this.server.start();
-    }
+        await super.start();
 
-    async shutdown() {
-        await this.server.shutdown();
+        if (this.httpServer) {
+            this.httpServer.listen(this.port, () => {
+                console.log(
+                    // TODO - base path?
+                    colors.magenta.bold(
+                        `Server up on http://localhost:${this.port}`
+                    )
+                );
+            });
+        }
+
+        // TODO - do we still need the other config and onclose logic?
+    }*/
+
+    async start() {
+        await this.start();
 
         if (this.liveReload) {
             this.liveReload.close();
@@ -102,7 +118,7 @@ export default class LocalDevServer {
     }
 
     private async exitHandler() {
-        await this.shutdown();
+        await this.server.shutdown();
         process.exit();
     }
 
