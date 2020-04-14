@@ -1,6 +1,6 @@
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 
-function define([key, value]: any) {
+function define([key, value]: [string, any]) {
     return `Webruntime.define('${key}', [], function() { return ${JSON.stringify(
         value
     )}; })`;
