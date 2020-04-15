@@ -1,11 +1,11 @@
 import path from 'path';
-import debug from 'debug';
+import debugLogger from 'debug';
 import BaseEnvironment from './BaseEnvironment';
 import { spawn, ChildProcess } from 'child_process';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
 
-const log = debug('localdevserver');
+const debug = debugLogger('localdevserver:test');
 
 /**
  * Starts the dev server by spawning a child process that runs the `bin/run`
@@ -74,6 +74,7 @@ export default class CliEnvironment extends BaseEnvironment {
 
     async setup(): Promise<void> {
         await super.setup();
+        debug(`Setting up CliEnvironment for: ${this.projectPath}`);
 
         const portArg = this.commandArgs.find(arg => arg.startsWith('--port'));
         if (portArg === undefined) {
@@ -82,7 +83,7 @@ export default class CliEnvironment extends BaseEnvironment {
         }
 
         const serverStartup = new Promise<void>(async (resolve, reject) => {
-            log('spawning new server');
+            debug('spawning new server');
             // process.env.DEBUG = 'localdevserver*';
             const serverProcess = spawn(
                 this.execPath,
@@ -96,9 +97,9 @@ export default class CliEnvironment extends BaseEnvironment {
 
             serverProcess.stdout.on('data', data => {
                 const stdout = data.toString('utf8');
-                log(stdout);
+                debug(stdout);
                 if (/server up/i.test(stdout)) {
-                    log('server up');
+                    debug('server up');
                     const match = stdout.match(/:([0-9]+)/);
                     if (match === null) {
                         reject(new Error('unable to determine server port'));
@@ -117,7 +118,7 @@ export default class CliEnvironment extends BaseEnvironment {
             });
 
             serverProcess.on('error', err => {
-                log('failed to start/run server');
+                debug('failed to start/run server');
                 reject(err);
             });
 
@@ -138,8 +139,8 @@ export default class CliEnvironment extends BaseEnvironment {
 
     async teardown() {
         if (this.serverProcess) {
-            this.serverProcess.kill();
-            log('killed server process');
+            this.serverProcess.kill('SIGINT');
+            debug('killed server process');
         }
         await super.teardown();
     }

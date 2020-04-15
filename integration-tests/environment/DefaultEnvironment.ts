@@ -4,7 +4,7 @@ import BaseEnvironment from './BaseEnvironment';
 import LocalDevServer from '../../src/server/LocalDevServer';
 import { defaultPort } from '../../src/user/LocalDevServerConfiguration';
 
-const debug = debugLogger('localdevserver');
+const debug = debugLogger('localdevserver:test');
 
 /**
  * Starts the dev server programmatically.
@@ -30,6 +30,8 @@ export default class DefaultEnvironment extends BaseEnvironment {
 
     async setup() {
         await super.setup();
+
+        debug(`Setting up DefaultEnvironment for: ${this.projectPath}`);
 
         const project = new Project(this.projectPath);
         if (!project.configuration.api_version) {

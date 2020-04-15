@@ -29,6 +29,10 @@ export function liveReload(metadataPath: string) {
             fileWatcher.on('change', () => {
                 reloadReturned.reload();
             });
+
+            app.on('close', () => {
+                fileWatcher.close();
+            });
         }
     };
 }

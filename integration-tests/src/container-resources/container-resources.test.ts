@@ -24,7 +24,7 @@ describe.skip('Serving container default static resources', () => {
         });
     });
 
-    it.skip('responds with code 200 for the utility icon sprite', async done => {
+    it('responds with code 200 for the utility icon sprite', async done => {
         await PreviewTestComponentPage.open();
 
         const href = await PreviewTestComponentPage.lightningIconHref;

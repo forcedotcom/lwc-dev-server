@@ -18,7 +18,7 @@ import {
     RuntimeCompilerOutput,
     LoadingCache
 } from '@webruntime/compiler';
-import { watch } from 'chokidar';
+import { watch, FSWatcher } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
 import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 import { resolveModules } from '@lwc/module-resolver';
@@ -47,6 +47,7 @@ export function getLabelService(
         private moduleLabels: LabelValues;
         private moduleCache: Map<string, RuntimeCompilerOutput>;
         private moduleLabelsCache: LoadingCache;
+        private watcher: FSWatcher | undefined;
 
         /**
          * Everything under @salesforce/label is handled by this service.
@@ -79,13 +80,19 @@ export function getLabelService(
             if (customLabelsPath) {
                 // Watch for changes in the labels directory.
                 // Upon change, clear the cache and re-read the files.
-                watch(customLabelsPath).on('change', () => {
+                this.watcher = watch(customLabelsPath).on('change', () => {
                     this.moduleCache.clear();
                     this.customLabels = this.loadCustomLabels(customLabelsPath);
                 });
             }
 
             debug('Labels loaded', this.customLabels);
+        }
+
+        async shutdown() {
+            if (this.watcher) {
+                await this.watcher.close();
+            }
         }
 
         /**
