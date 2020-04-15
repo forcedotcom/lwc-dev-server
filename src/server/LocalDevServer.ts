@@ -4,7 +4,7 @@ import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
 import { sessionNonce, projectMetadata, liveReload } from './extensions';
-import { ServiceDefinitionCtor } from '@webruntime/api';
+import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
@@ -40,7 +40,7 @@ export default class LocalDevServer {
 
         config.addMiddleware([sessionNonce(this.sessionNonce)]);
 
-        const routes: any[] = [
+        const routes: ContainerAppExtension[] = [
             projectMetadata(this.sessionNonce, this.project)
         ];
 
