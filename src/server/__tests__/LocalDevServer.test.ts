@@ -8,6 +8,7 @@ import * as fileUtils from '../../common/fileUtils';
 import { ComponentServiceWithExclusions } from '../services/ComponentServiceWithExclusions';
 import { getCustomComponentService } from '../services/CustomComponentService';
 import { getLabelService } from '../services/LabelsService';
+import colors from 'colors';
 
 jest.mock('@webruntime/server');
 jest.mock('../config/WebruntimeConfig');
@@ -224,6 +225,29 @@ describe('LocalDevServer', () => {
             'Unable to copy assets: test error'
         );
     });
+
+    /*
+    it('prints server up message on start', async () => {
+        const expected = colors.magenta.bold(
+            `Server up on http://localhost:${3333}`
+        );
+        let consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        const server = new LocalDevServer(project);
+        Object.defineProperty(server, 'ux', {
+            get: () => {
+                return {
+                    log: consoleLogMock
+                };
+            },
+            configurable: true,
+            enumerable: true
+        });
+        // TODO - mock httpServer, httpServer.address(), and the port configured.
+
+        await server.start();
+
+        expect(consoleLogMock.mock.calls[0][0]).toEqual(expected);
+    }); */
 
     describe('services added to the LocalDevServer', () => {
         it('should add the ComponentServiceWithExclusions', async () => {

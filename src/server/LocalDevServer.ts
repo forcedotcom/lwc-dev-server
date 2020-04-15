@@ -91,29 +91,21 @@ export default class LocalDevServer {
         process.on('SIGTERM', async () => this.exitHandler());
     }
 
-    /*
-    async start() {
-        await super.start();
-
-        if (this.httpServer) {
-            this.httpServer.listen(this.port, () => {
-                console.log(
-                    // TODO - base path?
-                    colors.magenta.bold(
-                        `Server up on http://localhost:${this.port}`
-                    )
-                );
-            });
-        }
-
-        // TODO - do we still need the other config and onclose logic?
-    }*/
-
+    /**
+     * Starts the server. Prints the server up message if the server is up and
+     * contains an address. The configured port is not necessarily the port that
+     * is being used by the server, so print the server port.
+     */
     async start() {
         await this.start();
 
-        if (this.liveReload) {
-            this.liveReload.close();
+        if (this.server.httpServer && this.server.httpServer.address()) {
+            const addressInfo: AddressInfo = this.server.httpServer.address() as AddressInfo;
+            console.log(
+                colors.magenta.bold(
+                    `Server up on http://localhost:${addressInfo.port}`
+                )
+            );
         }
     }
 
