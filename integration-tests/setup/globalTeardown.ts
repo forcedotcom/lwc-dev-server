@@ -10,6 +10,6 @@ declare global {
 }
 
 module.exports = async () => {
-    global.seleniumProcess.kill();
+    global.seleniumProcess.kill('SIGINT');
     process.env.SFDX_DISABLE_INSIGHTS = global._SFDX_DISABLE_INSIGHTS;
 };

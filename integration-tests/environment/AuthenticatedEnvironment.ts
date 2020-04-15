@@ -1,11 +1,11 @@
-import debug from 'debug';
+import debugLogger from 'debug';
 import CliEnvironment from './CliEnvironment';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
 import jsforce from 'jsforce';
 import { AuthInfo } from '@salesforce/core';
 
-const log = debug('localdevserver');
+const debug = debugLogger('localdevserver:test');
 
 /**
  * Starts the dev server programmatically.
@@ -54,6 +54,9 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
 
     async setup(): Promise<void> {
         if (this.token === null) {
+            debug(
+                `Setting up AuthenticatedEnvironment for: ${this.projectPath}`
+            );
             const connection = new jsforce.Connection({});
             this.global.jsforceConnection = connection;
             const user: string | undefined = process.env.SFDC_USER;
@@ -84,6 +87,10 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
             });
             authInfo.save();
             this.commandArgs.push(`--targetusername=${user}`);
+        } else {
+            debug(
+                `No Authentication Token specified when setting up AuthenticatedEnvironment for: ${this.projectPath}`
+            );
         }
 
         return super.setup();
