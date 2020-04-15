@@ -1,8 +1,8 @@
 import path from 'path';
-import { Request, Response, NextFunction } from 'express';
+import { Application, Request, Response, NextFunction } from 'express';
 import ComponentIndex from '../../common/ComponentIndex';
 import Project from '../../common/Project';
-import { AppExtensionConfig } from '@webruntime/api';
+import { AppExtensionConfig, ApplicationConfig } from '@webruntime/api';
 
 const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
     '.html': true,
@@ -13,8 +13,7 @@ const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
 export function projectMetadata(sessionNonce: string, project: Project) {
     return {
         extendApp: ({ app }: AppExtensionConfig) => {
-            // @ts-ignore
-            app.get(
+            (app as Application).get(
                 `/localdev/${sessionNonce}/localdev.js`,
                 (req: Request, res: Response, next: NextFunction) => {
                     const componentIndex = new ComponentIndex(project);
@@ -29,8 +28,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                 }
             );
 
-            // @ts-ignore
-            app.get(
+            (app as Application).get(
                 `/localdev/${sessionNonce}/show`,
                 (req: Request, res: Response, next: NextFunction) => {
                     const file = req.query.file;
