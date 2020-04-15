@@ -18,6 +18,7 @@ jest.mock('../../common/ComponentIndex');
 
 describe('LocalDevServer', () => {
     let project: Project;
+    let consoleLogMock: any;
 
     beforeEach(() => {
         // @ts-ignore
@@ -47,10 +48,12 @@ describe('LocalDevServer', () => {
             };
         });
         project = new Project('/Users/arya/dev/myproject');
+        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
     });
 
     afterEach(() => {
         mockFs.restore();
+        consoleLogMock.mockRestore();
     });
 
     it('should create a webruntime server', () => {
@@ -226,28 +229,36 @@ describe('LocalDevServer', () => {
         );
     });
 
-    /*
     it('prints server up message on start', async () => {
         const expected = colors.magenta.bold(
             `Server up on http://localhost:${3333}`
         );
-        let consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         const server = new LocalDevServer(project);
         Object.defineProperty(server, 'ux', {
             get: () => {
-                return {
-                    log: consoleLogMock
-                };
-            },
-            configurable: true,
-            enumerable: true
+                return { log: consoleLogMock };
+            }
         });
-        // TODO - mock httpServer, httpServer.address(), and the port configured.
+        jest.spyOn(server, 'serverPort', 'get').mockReturnValue(3333);
 
         await server.start();
 
         expect(consoleLogMock.mock.calls[0][0]).toEqual(expected);
-    }); */
+    });
+
+    it('do not print server up message if server address is unavailable', async () => {
+        const server = new LocalDevServer(project);
+        Object.defineProperty(server, 'ux', {
+            get: () => {
+                return { log: consoleLogMock };
+            }
+        });
+        jest.spyOn(server, 'serverPort', 'get').mockReturnValue(undefined);
+
+        await server.start();
+
+        expect(consoleLogMock.mock.calls[0]).toBeUndefined();
+    });
 
     describe('services added to the LocalDevServer', () => {
         it('should add the ComponentServiceWithExclusions', async () => {
