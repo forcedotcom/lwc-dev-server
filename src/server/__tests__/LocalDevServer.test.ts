@@ -19,6 +19,7 @@ jest.mock('../../common/ComponentIndex');
 describe('LocalDevServer', () => {
     let project: Project;
     let consoleLogMock: any;
+    let consoleErrorMock: any;
 
     beforeEach(() => {
         // @ts-ignore
@@ -49,11 +50,13 @@ describe('LocalDevServer', () => {
         });
         project = new Project('/Users/arya/dev/myproject');
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
     });
 
     afterEach(() => {
         mockFs.restore();
         consoleLogMock.mockRestore();
+        consoleErrorMock.mockRestore();
     });
 
     it('should create a webruntime server', () => {
@@ -236,7 +239,7 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
         Object.defineProperty(server, 'ux', {
             get: () => {
-                return { log: consoleLogMock };
+                return { log: consoleLogMock, error: consoleErrorMock };
             }
         });
         jest.spyOn(server, 'serverPort', 'get').mockReturnValue(3333);
@@ -244,13 +247,15 @@ describe('LocalDevServer', () => {
         await server.start();
 
         expect(consoleLogMock.mock.calls[0][0]).toEqual(expected);
+        expect(consoleErrorMock.mock.calls[0]).toBeUndefined();
     });
 
-    it('do not print server up message if server address is unavailable', async () => {
+    it('do not print server up message if server port is undefined', async () => {
+        const expected = 'Server start up failed.';
         const server = new LocalDevServer(project);
         Object.defineProperty(server, 'ux', {
             get: () => {
-                return { log: consoleLogMock };
+                return { log: consoleLogMock, error: consoleErrorMock };
             }
         });
         jest.spyOn(server, 'serverPort', 'get').mockReturnValue(undefined);
@@ -258,6 +263,7 @@ describe('LocalDevServer', () => {
         await server.start();
 
         expect(consoleLogMock.mock.calls[0]).toBeUndefined();
+        expect(consoleErrorMock.mock.calls[0][0]).toEqual(expected);
     });
 
     describe('services added to the LocalDevServer', () => {

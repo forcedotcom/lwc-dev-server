@@ -108,6 +108,8 @@ export default class LocalDevServer {
             console.log(
                 colors.magenta.bold(`Server up on http://localhost:${port}`)
             );
+        } else {
+            console.error(`Server start up failed.`);
         }
     }
 
