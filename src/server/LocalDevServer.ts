@@ -4,7 +4,8 @@ import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
 import { sessionNonce, projectMetadata, liveReload } from './extensions';
-import { Server, Container } from '@webruntime/server';
+import { ServiceDefinitionCtor } from '@webruntime/api';
+import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
@@ -48,7 +49,8 @@ export default class LocalDevServer {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`
         ]);
 
-        const services: any[] = [
+        const services: ServiceDefinitionCtor[] = [
+            // @ts-ignore
             ComponentServiceWithExclusions,
             getLabelService(project.customLabelsPath)
         ];
