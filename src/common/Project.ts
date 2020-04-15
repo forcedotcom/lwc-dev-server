@@ -72,17 +72,8 @@ export default class Project {
         );
     }
 
-    public get staticResourcesDirectory(): string | null {
-        if (path.isAbsolute(this.configuration.staticResourcesDirectory)) {
-            return this.configuration.staticResourcesDirectory;
-        }
-        if (this.configuration.staticResourcesDirectory !== '') {
-            return path.join(
-                this.rootDirectory,
-                this.configuration.staticResourcesDirectory
-            );
-        }
-        return null;
+    public get staticResourcesDirectories(): string[] {
+        return this.configuration.staticResourcesDirectories;
     }
 
     public get customLabelsPath(): string | undefined {
@@ -191,13 +182,25 @@ export default class Project {
                     packageDirectories[0];
             }
 
-            if (!this.configuration.staticResourcesDirectory) {
+            if (
+                this.configuration.staticResourcesDirectories &&
+                this.configuration.staticResourcesDirectories.length === 0
+            ) {
                 // Figure out where the static resources are from the configuration as well.
-                const resourcePath = path.join(
-                    packageDirectories[0],
-                    'main/default/staticresources'
-                );
-                this.configuration.staticResourcesDirectory = resourcePath;
+                let resourcePaths: string[] = [];
+                packageDirectories.forEach(item => {
+                    // TODO: handle projects who do not follow the /main/default convention
+                    resourcePaths.push(
+                        path.join(
+                            _path,
+                            item,
+                            'main',
+                            'default',
+                            'staticresources'
+                        )
+                    );
+                });
+                this.configuration.staticResourcesDirectories = resourcePaths;
             }
 
             if (!this.configuration.customLabelsFile) {

@@ -108,15 +108,15 @@ export default class LocalDevServerConfiguration {
     /**
      * To specify in json file, use
      * {
-     *  "staticResourcesDirectory": "..."
+     *  "staticResourcesDirectories": "..."
      * }
      */
-    public get staticResourcesDirectory(): string {
-        return this.configFromJson.staticResourcesDirectory || '';
+    public get staticResourcesDirectories(): string[] {
+        return this.configFromJson.staticResourcesDirectories || [];
     }
 
-    public set staticResourcesDirectory(directory: string) {
-        this.configFromJson.staticResourcesDirectory = directory;
+    public set staticResourcesDirectories(directory: string[]) {
+        this.configFromJson.staticResourcesDirectories = directory;
     }
 
     /**
