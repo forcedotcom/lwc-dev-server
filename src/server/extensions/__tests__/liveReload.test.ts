@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import reload from 'reload';
 import chokidar from 'chokidar';
 import { liveReload } from '../liveReload';
+import { ExtensionOptions } from '@webruntime/api';
 
 jest.mock('chokidar', () => {
     return {
@@ -39,6 +40,7 @@ describe('liveReload', () => {
 
     describe('extendApp', () => {
         let app: Application;
+        let options: ExtensionOptions;
 
         beforeEach(() => {
             reload.mockClear();
@@ -51,7 +53,7 @@ describe('liveReload', () => {
         it('should start reload server', async () => {
             const extension = liveReload('/Users/arya/dev/myproject');
 
-            await extension.extendApp({ app });
+            await extension.extendApp({ app, options });
 
             expect(reload).toHaveBeenCalledTimes(1);
         });
@@ -59,7 +61,7 @@ describe('liveReload', () => {
         it('should start a file watcher', async () => {
             const extension = liveReload('/Users/arya/dev/myproject');
 
-            await extension.extendApp({ app });
+            await extension.extendApp({ app, options });
 
             expect(chokidar.watch).toHaveBeenCalledTimes(1);
 

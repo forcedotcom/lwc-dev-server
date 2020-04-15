@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import { sessionNonce } from '../sessionNonce';
+import { ExtensionOptions } from '@webruntime/api';
 
 jest.mock('express', () => {
     return jest.fn(() => {
@@ -21,6 +22,7 @@ describe('sessionNonce', () => {
 
     describe('extendApp', () => {
         let app: Application;
+        let options: ExtensionOptions;
 
         beforeEach(() => {
             app = express();
@@ -29,7 +31,7 @@ describe('sessionNonce', () => {
         it('should add the session nonce to response locals', () => {
             const extension = sessionNonce(nonce);
 
-            extension.extendApp({ app });
+            extension.extendApp({ app, options });
 
             // @ts-ignore
             const callback = app.use.mock.calls[0][0];
