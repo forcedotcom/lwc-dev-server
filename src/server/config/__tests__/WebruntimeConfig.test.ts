@@ -95,15 +95,48 @@ describe('WebruntimeConfig', () => {
             expect(modules).toContain('module1');
             expect(modules).toContain('module2');
         });
+
+        it('should handle config with undefined lwcOptions', () => {
+            const config = new WebruntimeConfig(project);
+
+            delete config.compilerConfig.lwcOptions;
+
+            config.addModules(['module1', 'module2']);
+
+            // @ts-ignore
+            const { modules } = config.compilerConfig.lwcOptions;
+
+            expect(modules).toHaveLength(2);
+            expect(modules).toContain('module1');
+            expect(modules).toContain('module2');
+        });
     });
 
     describe('addPlugins', () => {
-        it('should append compiler plugins', () => {
-            const plugin: Plugin = {
+        let plugin: Plugin;
+
+        beforeEach(() => {
+            plugin = {
                 name: 'testPlugin'
             };
+        });
 
+        it('should append compiler plugins', () => {
             const config = new WebruntimeConfig(project);
+
+            config.addPlugins([plugin]);
+
+            const { plugins } = config.compilerConfig;
+
+            expect(plugins).toHaveLength(1);
+            // @ts-ignore
+            expect(plugins[0]).toBe(plugin);
+        });
+
+        it('should handle config with undefined plugins', () => {
+            const config = new WebruntimeConfig(project);
+
+            delete config.compilerConfig.plugins;
 
             config.addPlugins([plugin]);
 

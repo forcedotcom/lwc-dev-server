@@ -293,4 +293,28 @@ describe('LocalDevServer', () => {
             expect(serviceNames).toContain(LabelService.name);
         });
     });
+
+    describe('start', () => {
+        it('should call webruntime server start', async () => {
+            const server = new LocalDevServer(project);
+
+            const mockStart = jest.spyOn(server, 'start');
+
+            await server.start();
+
+            expect(mockStart).toBeCalledTimes(1);
+        });
+    });
+
+    describe('shutdown', () => {
+        it('should call webruntime server start', async () => {
+            const server = new LocalDevServer(project);
+
+            const mockShutdown = jest.spyOn(server, 'shutdown');
+
+            await server.shutdown();
+
+            expect(mockShutdown).toBeCalledTimes(1);
+        });
+    });
 });
