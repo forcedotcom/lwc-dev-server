@@ -5,6 +5,7 @@ import debug from 'debug';
 import { Cookie } from 'request';
 import parse from 'co-body';
 import { URL } from 'url';
+import { AppExtensionConfig } from '@webruntime/api';
 
 const log = debug('localdevserver');
 const ONE_APP_URL = '/one/one.app';
@@ -63,81 +64,94 @@ export class ApexResourceLoader extends ResourceLoader {
 
 export function apexMiddleware(connectionParams: ConnectionParams) {
     return {
-        extendApp: ({ app }: { app: Application }) => {
-            app.use(async (req: Request, res: Response, next: NextFunction) => {
-                if (
-                    req.url.startsWith('/webruntime/api/apex/execute') &&
-                    connectionParams
-                ) {
-                    const body = await parse.json(req);
-                    const classname = body.classname;
-                    if (typeof classname !== 'string') {
-                        return sendError(res, 'classname must be specified');
-                    }
-                    const method = body.method;
-                    if (typeof method !== 'string') {
-                        return sendError(res, 'method must be specified');
-                    }
-                    const namespace = body.namespace;
-                    if (typeof namespace !== 'string') {
-                        return sendError(res, 'namespace must be specified');
-                    }
-                    const cacheable = body.cacheable;
-                    if (typeof cacheable !== 'boolean') {
-                        return sendError(res, 'cacheable must be specified');
-                    }
-                    // Note: params are optional
-                    const params = body.params;
-                    if (!cachedConfig) {
-                        try {
-                            cachedConfig = await getConfig(connectionParams);
-                            if (cachedConfig == null) {
-                                res.status(500).send(
-                                    'error parsing or finding aura config: window.Aura not found'
+        extendApp: ({ app }: AppExtensionConfig) => {
+            (app as Application).use(
+                async (req: Request, res: Response, next: NextFunction) => {
+                    if (
+                        req.url.startsWith('/webruntime/api/apex/execute') &&
+                        connectionParams
+                    ) {
+                        const body = await parse.json(req);
+                        const classname = body.classname;
+                        if (typeof classname !== 'string') {
+                            return sendError(
+                                res,
+                                'classname must be specified'
+                            );
+                        }
+                        const method = body.method;
+                        if (typeof method !== 'string') {
+                            return sendError(res, 'method must be specified');
+                        }
+                        const namespace = body.namespace;
+                        if (typeof namespace !== 'string') {
+                            return sendError(
+                                res,
+                                'namespace must be specified'
+                            );
+                        }
+                        const cacheable = body.cacheable;
+                        if (typeof cacheable !== 'boolean') {
+                            return sendError(
+                                res,
+                                'cacheable must be specified'
+                            );
+                        }
+                        // Note: params are optional
+                        const params = body.params;
+                        if (!cachedConfig) {
+                            try {
+                                cachedConfig = await getConfig(
+                                    connectionParams
                                 );
+                                if (cachedConfig == null) {
+                                    res.status(500).send(
+                                        'error parsing or finding aura config: window.Aura not found'
+                                    );
+                                    return;
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                res.status(500).send(e.message);
                                 return;
                             }
-                        } catch (e) {
-                            console.error(e);
-                            res.status(500).send(e.message);
-                            return;
                         }
-                    }
 
-                    const apexRequest: ApexRequest = {
-                        namespace,
-                        classname,
-                        method,
-                        cacheable,
-                        params
-                    };
+                        const apexRequest: ApexRequest = {
+                            namespace,
+                            classname,
+                            method,
+                            cacheable,
+                            params
+                        };
 
-                    const response = await callAuraApexRequest(
-                        connectionParams,
-                        cachedConfig,
-                        apexRequest
-                    );
-
-                    try {
-                        const parsed = JSON.parse(response);
-                        const actionResult = parsed.actions[0];
-                        if (actionResult.state === 'ERROR') {
-                            res.status(500)
-                                .type('json')
-                                .send({ error: actionResult.error });
-                        } else {
-                            res.type('json').send(actionResult.returnValue);
-                        }
-                    } catch (e) {
-                        log(`invalid apex response: ${response}`);
-                        res.status(500).send(
-                            `error parsing apex response: ${e.message}`
+                        const response = await callAuraApexRequest(
+                            connectionParams,
+                            cachedConfig,
+                            apexRequest
                         );
+
+                        try {
+                            const parsed = JSON.parse(response);
+                            const actionResult = parsed.actions[0];
+                            if (actionResult.state === 'ERROR') {
+                                res.status(500)
+                                    .type('json')
+                                    .send({ error: actionResult.error });
+                            } else {
+                                res.type('json').send(actionResult.returnValue);
+                            }
+                        } catch (e) {
+                            log(`invalid apex response: ${response}`);
+                            res.status(500).send(
+                                `error parsing apex response: ${e.message}`
+                            );
+                        }
+                        return;
                     }
-                    return;
+                    next();
                 }
-                next();
-            });
+            );
         }
     };
 }

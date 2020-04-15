@@ -773,12 +773,12 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@communities-webruntime/client@0.29.18", "@communities-webruntime/client@^0.29.18":
+"@communities-webruntime/client@0.29.18":
   version "0.29.18"
   resolved "https://registry.yarnpkg.com/@communities-webruntime/client/-/client-0.29.18.tgz#b81c23c966a4e91f0b3b2dd011338b7016c4b4fc"
   integrity sha512-9lDFDUcwLV38GQyQP6qJ6MS1ZObfESDJgkp4JUA4AasDb59KPJ/LKG26zVHbFJ6X93R3gigPioADw47ZvYf/NQ==
 
-"@communities-webruntime/common@0.29.18", "@communities-webruntime/common@^0.29.18":
+"@communities-webruntime/common@0.29.18":
   version "0.29.18"
   resolved "https://registry.yarnpkg.com/@communities-webruntime/common/-/common-0.29.18.tgz#51e2f9b1819f7189716666f760865d164d13410d"
   integrity sha512-+zDMXsstFxAZNVE3AoqOYZdo8ruSLGYy2LKGJKcyx8RjPl2maZDxhLdoUiIwpl39Uli5gdcK0/xF57NN86JhEA==
@@ -796,7 +796,7 @@
     ajv "^6.9.2"
     yamljs "^0.3.0"
 
-"@communities-webruntime/services@^0.29.18":
+"@communities-webruntime/services@0.29.18":
   version "0.29.18"
   resolved "https://registry.yarnpkg.com/@communities-webruntime/services/-/services-0.29.18.tgz#c152e03d9748e6372ec0cc342349b9f01f15a43a"
   integrity sha512-gfoieuwgh6OKDMDJsg/nwMCuV8yzIoIbplX+tAus4arL7laDg+ZURTm9BWnemk518WBVnG+BAfsQlF7YR2bMpw==
