@@ -20,7 +20,6 @@ import {
 } from '@webruntime/compiler';
 import { watch } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
-import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 import { resolveModules } from '@lwc/module-resolver';
 
 /**
@@ -280,10 +279,10 @@ export function getLabelService(
 
             const { result, metadata, success, diagnostics } = compilerOutput;
             return {
-                type: RequestOutputTypes.COMPONENT as RequestOutputTypes.COMPONENT,
+                type: RequestOutputTypes.COMPONENT,
                 specifier,
                 resource: result,
-                metadata: new CompilerResourceMetadata(metadata),
+                metadata,
                 success,
                 diagnostics
             };
