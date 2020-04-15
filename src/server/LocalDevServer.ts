@@ -91,17 +91,25 @@ export default class LocalDevServer {
         process.on('SIGTERM', async () => this.exitHandler());
     }
 
+    async shutdown() {
+        await this.server.shutdown();
+
+        if (this.liveReload) {
+            this.liveReload.close();
+        }
+    }
+
     private async exitHandler() {
-        this.server.shutdown();
+        this.shutdown();
         process.exit();
     }
 
     /**
      * Starts the server. If the server successfully started and contains
-     * an address, print that the server is up.
+     * an address, print the server up message.
      */
     async start() {
-        await this.start();
+        await this.server.start();
 
         let port = `${this.serverPort}`;
         if (port && port !== 'undefined') {
@@ -114,9 +122,9 @@ export default class LocalDevServer {
     }
 
     /**
-     * Verify the server is up and contains an address. Retrieve the port from
-     * this address for console logging. The configured port may not what the server
-     * is using, so retrieve the port directly from the server address.
+     * Verify the server is up and contains an address. Return the port from
+     * this address. Do not use the configured port, as the server may not be
+     * using the same value.
      */
     get serverPort() {
         if (this.server.httpServer && this.server.httpServer.address()) {
