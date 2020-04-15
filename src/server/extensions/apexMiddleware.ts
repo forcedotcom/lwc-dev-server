@@ -268,7 +268,6 @@ async function getConfig(connectionParams: ConnectionParams) {
             waitForInitConfig,
             waitForInitConfigTimeout
         ]);
-        log(`initConfig Contents = ${JSON.stringify(config)}`);
         return config;
     } catch (e) {
         console.log(e);
