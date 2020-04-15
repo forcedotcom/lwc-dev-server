@@ -13,6 +13,7 @@ import { ComponentServiceWithExclusions } from './services/ComponentServiceWithE
 export default class LocalDevServer extends Server {
     private rootDir: string;
     private project: Project;
+    private liveReload?: any;
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
 
@@ -47,10 +48,18 @@ export default class LocalDevServer extends Server {
 
         config.addMiddleware([sessionNonce(this.sessionNonce)]);
 
-        config.addRoutes([
-            projectMetadata(this.sessionNonce, this.project),
-            liveReload(path.join(config.buildDir, 'metadata.json'))
-        ]);
+        const routes: any[] = [
+            projectMetadata(this.sessionNonce, this.project)
+        ];
+
+        if (this.project.configuration.liveReload) {
+            this.liveReload = liveReload(
+                path.join(config.buildDir, 'metadata.json')
+            );
+            routes.push(this.liveReload);
+        }
+
+        config.addRoutes(routes);
 
         config.addModules([
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-pkg`,
@@ -88,6 +97,14 @@ export default class LocalDevServer extends Server {
         // graceful shutdown
         process.on('SIGINT', async () => this.exitHandler());
         process.on('SIGTERM', async () => this.exitHandler());
+    }
+
+    async shutdown() {
+        await super.shutdown();
+
+        if (this.liveReload) {
+            this.liveReload.close();
+        }
     }
 
     private async exitHandler() {
