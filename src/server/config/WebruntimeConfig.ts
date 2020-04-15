@@ -1,10 +1,19 @@
 import path from 'path';
 import Project from '../../common/Project';
 import { LocalDevApp } from './LocalDevApp';
-
+import {
+    Config,
+    ApplicationConfig,
+    CompilerConfig,
+    BundleConfigEntry,
+    CompileMode,
+    ServiceDefinitionCtor,
+    ContainerAppExtension
+} from '@webruntime/api';
 import { ImportMapService, AppBootstrapService } from '@webruntime/services';
+import { Plugin } from 'rollup';
 
-export default class WebruntimeConfig {
+export default class WebruntimeConfig implements Config {
     /** Root project directory */
     projectDir: string;
     /** Default directory for the build output */
@@ -14,28 +23,36 @@ export default class WebruntimeConfig {
     /** Runtime server settings */
     server: any;
     /** Runtime application configuration */
-    app?: any;
+    app?: ApplicationConfig;
     /** Array of addressable services used by the container. */
-    services: any[];
+    services: ServiceDefinitionCtor[];
     /** A list of resources which should bundle their dependencies on request. */
-    bundle: any[];
+    bundle: BundleConfigEntry[];
     /** A list of modules to be treated as external, and preloaded during bootstrap */
     preloadModules: string[];
     /** A list of module specifiers which are provided external to the webruntime compiler/bundler. */
     externals?: string[];
     /** Compiler options including -- the list of resources to inline during compiliation. */
-    compilerConfig: any;
+    compilerConfig: CompilerConfig;
+    /** Default mode for LWR runtime and compiler, must be one of [CompileMode](docs/enums/_config_.compilemode) */
+    defaultMode: CompileMode;
+    // TODO enums for locales
+    /** Default locale for LWR runtime and compiler */
+    defaultLocale: string;
 
-    constructor(baseConfig: any, project: Project) {
-        Object.assign(this, baseConfig);
-
+    constructor(project: Project) {
         this.projectDir = path.join(__dirname, '..', '..', '..');
         this.buildDir = path.join(project.directory, '.localdevserver');
         this.moduleDir = project.modulesSourceDirectory;
 
+        this.defaultMode = CompileMode.dev;
+        this.defaultLocale = 'en_US';
+
         this.server = {
-            ...baseConfig.server,
-            port: project.configuration.port.toString()
+            port: project.configuration.port,
+            resourceRoot: '/webruntime',
+            basePath: '',
+            extensions: []
         };
 
         this.app = {
@@ -56,7 +73,6 @@ export default class WebruntimeConfig {
         this.externals = ['webruntime_loader/loader'];
 
         this.compilerConfig = {
-            ...baseConfig.compilerConfig,
             formatConfig: {
                 amd: { define: 'Webruntime.define' }
             },
@@ -81,7 +97,7 @@ export default class WebruntimeConfig {
      * Prepend the LWR server extensions with middleware
      * @param middleware - An array of LWR extensions
      */
-    addMiddleware(middleware: any[]) {
+    addMiddleware(middleware: ContainerAppExtension[]) {
         this.server.extensions = [...middleware, ...this.server.extensions];
     }
 
@@ -89,7 +105,7 @@ export default class WebruntimeConfig {
      * Append the LWR server extensions with routes
      * @param routes - An array of LWR extensions
      */
-    addRoutes(routes: any[]) {
+    addRoutes(routes: ContainerAppExtension[]) {
         this.server.extensions = [...this.server.extensions, ...routes];
     }
 
@@ -98,6 +114,14 @@ export default class WebruntimeConfig {
      * @param modules - An array of paths to LWC components
      */
     addModules(modules: string[]) {
+        if (!this.compilerConfig.lwcOptions) {
+            this.compilerConfig.lwcOptions = {};
+        }
+
+        if (!this.compilerConfig.lwcOptions.modules) {
+            this.compilerConfig.lwcOptions.modules = [];
+        }
+
         this.compilerConfig.lwcOptions.modules = [
             ...this.compilerConfig.lwcOptions.modules,
             ...modules
@@ -108,7 +132,11 @@ export default class WebruntimeConfig {
      * Add rollup plugins to the LWR compiler configuration
      * @param plugins - An array of rollup plugins
      */
-    addPlugins(plugins: any[]) {
+    addPlugins(plugins: Plugin[]) {
+        if (!this.compilerConfig.plugins) {
+            this.compilerConfig.plugins = [];
+        }
+
         this.compilerConfig.plugins = [
             ...this.compilerConfig.plugins,
             ...plugins
@@ -119,7 +147,7 @@ export default class WebruntimeConfig {
      * Add AddressableService classes to the LWR configuration.
      * @param services - An array of service classes.
      */
-    addServices(services: any[]) {
+    addServices(services: ServiceDefinitionCtor[]) {
         this.services = [...this.services, ...services];
     }
 }

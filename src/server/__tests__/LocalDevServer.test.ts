@@ -52,14 +52,14 @@ describe('LocalDevServer', () => {
         mockFs.restore();
     });
 
-    it('should create a default LWR server', () => {
+    it('should create a webruntime server', () => {
         new LocalDevServer(project);
 
         expect(Server).toHaveBeenCalledTimes(1);
 
         // @ts-ignore
         const args = Server.mock.calls[0][0];
-        expect(args).toBeUndefined();
+        expect(args).toHaveProperty('config');
     });
 
     it('should create a session nonce', () => {
@@ -134,20 +134,6 @@ describe('LocalDevServer', () => {
         expect(server.config.addServices.mock.calls[0][0]).not.toContain(
             getCustomComponentService('', '')
         );
-    });
-
-    it('should override the default config', () => {
-        const localDevServer = new LocalDevServer(project);
-        const lwrServer = new Server();
-
-        // override the options and config
-        // @ts-ignore
-        expect(lwrServer.options).not.toEqual(localDevServer.options);
-        // @ts-ignore
-        expect(lwrServer.config).not.toEqual(localDevServer.config);
-
-        // create a new container with the updated config
-        expect(Container).toHaveBeenCalledTimes(1);
     });
 
     it('copies app static assets to the server assets directory', async () => {

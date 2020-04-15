@@ -1,8 +1,10 @@
-import { Application, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { AppExtensionConfig } from '@webruntime/api';
 
 export function sessionNonce(sessionNonce: string) {
     return {
-        extendApp: ({ app }: { app: Application }) => {
+        extendApp: ({ app }: AppExtensionConfig) => {
+            // @ts-ignore
             app.use((req: Request, res: Response, next: NextFunction) => {
                 res.locals.sessionNonce = sessionNonce;
                 next();

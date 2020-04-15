@@ -1,6 +1,8 @@
 import path from 'path';
 import WebruntimeConfig from '../WebruntimeConfig';
 import Project from '../../../common/Project';
+import { PublicConfig } from '@webruntime/api';
+import { Plugin } from 'rollup';
 
 jest.mock('../../../common/Project');
 
@@ -12,19 +14,13 @@ describe('WebruntimeConfig', () => {
     });
 
     it('should build from a base config', () => {
-        const base = {
-            server: {
-                resourceRoot: '/webruntime'
-            }
-        };
-
-        const config = new WebruntimeConfig(base, project);
+        const config = new WebruntimeConfig(project);
 
         expect(config.server.resourceRoot).toEqual('/webruntime');
     });
 
     it('should set directories based on the project', () => {
-        const config = new WebruntimeConfig({}, project);
+        const config = new WebruntimeConfig(project);
 
         const { moduleDir, buildDir } = config;
 
@@ -35,9 +31,9 @@ describe('WebruntimeConfig', () => {
     });
 
     it('should use port from project configurations', () => {
-        const config = new WebruntimeConfig({}, project);
+        const config = new WebruntimeConfig(project);
 
-        expect(config.server.port).toEqual('3000');
+        expect(config.server.port).toEqual(3000);
     });
 
     describe('addMiddleware', () => {
@@ -46,19 +42,13 @@ describe('WebruntimeConfig', () => {
                 extendApp: () => {}
             };
 
-            const config = new WebruntimeConfig(
+            const config = new WebruntimeConfig(project);
+
+            config.server.extensions = [
                 {
-                    server: {
-                        extensions: [
-                            {
-                                extendApp: () => {},
-                                bootstrap: () => {}
-                            }
-                        ]
-                    }
-                },
-                project
-            );
+                    bootstrap: () => {}
+                }
+            ];
 
             config.addMiddleware([extension]);
 
@@ -75,19 +65,13 @@ describe('WebruntimeConfig', () => {
                 extendApp: () => {}
             };
 
-            const config = new WebruntimeConfig(
+            const config = new WebruntimeConfig(project);
+
+            config.server.extensions = [
                 {
-                    server: {
-                        extensions: [
-                            {
-                                extendApp: () => {},
-                                bootstrap: () => {}
-                            }
-                        ]
-                    }
-                },
-                project
-            );
+                    bootstrap: () => {}
+                }
+            ];
 
             config.addRoutes([extension]);
 
@@ -100,10 +84,11 @@ describe('WebruntimeConfig', () => {
 
     describe('addModules', () => {
         it('should append lwc modules', () => {
-            const config = new WebruntimeConfig({}, project);
+            const config = new WebruntimeConfig(project);
 
             config.addModules(['module1', 'module2']);
 
+            // @ts-ignore
             const { modules } = config.compilerConfig.lwcOptions;
 
             expect(modules).toHaveLength(2);
@@ -114,26 +99,36 @@ describe('WebruntimeConfig', () => {
 
     describe('addPlugins', () => {
         it('should append compiler plugins', () => {
-            const plugin = {
-                name: 'test-plugin',
-                resolveId: () => {}
+            const plugin: Plugin = {
+                name: 'testPlugin'
             };
 
-            const config = new WebruntimeConfig({}, project);
+            const config = new WebruntimeConfig(project);
 
             config.addPlugins([plugin]);
 
             const { plugins } = config.compilerConfig;
 
             expect(plugins).toHaveLength(1);
+            // @ts-ignore
             expect(plugins[0]).toBe(plugin);
         });
     });
 
     describe('addServices', () => {
         it('should append services', () => {
-            const testService = class TestService {};
-            const config = new WebruntimeConfig({}, project);
+            const testService = class TestService {
+                constructor(serviceConfig: PublicConfig) {}
+                async initialize() {}
+                async shutdown() {}
+                getPlugin() {
+                    return {
+                        name: 'testPlugin'
+                    };
+                }
+            };
+
+            const config = new WebruntimeConfig(project);
 
             config.addServices([testService]);
 

@@ -10,16 +10,15 @@ import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 
-export default class LocalDevServer extends Server {
+export default class LocalDevServer {
+    private server: Server;
+    private config: WebruntimeConfig;
     private rootDir: string;
     private project: Project;
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
 
     constructor(project: Project) {
-        // create a default LWR server
-        super();
-
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
@@ -35,15 +34,7 @@ export default class LocalDevServer extends Server {
                 supportedCoreVersions[supportedCoreVersions.length - 1];
         }
 
-        const options = {
-            basePath: '',
-            projectDir: this.rootDir,
-            port: project.configuration.port.toString(),
-            resourceRoot: '/webruntime'
-        };
-
-        // @ts-ignore
-        const config = new WebruntimeConfig(this.config, this.project);
+        const config = new WebruntimeConfig(this.project);
 
         config.addMiddleware([sessionNonce(this.sessionNonce)]);
 
@@ -73,21 +64,26 @@ export default class LocalDevServer extends Server {
 
         config.addServices(services);
 
-        // override LWR defaults
-        // @ts-ignore
-        this.options = options;
-        // @ts-ignore
         this.config = config;
-        // @ts-ignore
-        this.container = new Container(this.config);
+        this.server = new Server({
+            config
+        });
     }
 
     async initialize() {
-        await super.initialize();
+        await this.server.initialize();
         this.copyStaticAssets();
         // graceful shutdown
         process.on('SIGINT', async () => this.exitHandler());
         process.on('SIGTERM', async () => this.exitHandler());
+    }
+
+    async start() {
+        await this.server.start();
+    }
+
+    async shutdown() {
+        await this.server.shutdown();
     }
 
     private async exitHandler() {
