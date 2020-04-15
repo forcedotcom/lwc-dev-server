@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import reload from 'reload';
 import chokidar from 'chokidar';
 import { liveReload } from '../liveReload';
+import { ExtensionOptions } from '@webruntime/api';
 
 jest.mock('chokidar', () => {
     return {
@@ -41,6 +42,7 @@ describe('liveReload', () => {
 
     describe('extendApp', () => {
         let app: Application;
+        let options: ExtensionOptions;
 
         beforeEach(() => {
             // @ts-ignore
@@ -54,7 +56,7 @@ describe('liveReload', () => {
         it('should start reload server', async () => {
             const extension = liveReload('/Users/arya/dev/myproject');
 
-            await extension.extendApp({ app });
+            await extension.extendApp({ app, options });
 
             expect(reload).toHaveBeenCalledTimes(1);
         });
@@ -62,7 +64,7 @@ describe('liveReload', () => {
         it('should start a file watcher', async () => {
             const extension = liveReload('/Users/arya/dev/myproject');
 
-            await extension.extendApp({ app });
+            await extension.extendApp({ app, options });
 
             expect(chokidar.watch).toHaveBeenCalledTimes(1);
 
@@ -81,6 +83,7 @@ describe('liveReload', () => {
 
     describe('close', () => {
         let app: Application;
+        let options: ExtensionOptions;
 
         beforeEach(() => {
             // @ts-ignore
@@ -94,7 +97,7 @@ describe('liveReload', () => {
         it('should close the reload server', async () => {
             const extension = liveReload('/Users/arya/dev/myproject');
 
-            await extension.extendApp({ app });
+            await extension.extendApp({ app, options });
 
             // @ts-ignore
             const reloadReturned = await reload.mock.results[0].value;
@@ -107,7 +110,7 @@ describe('liveReload', () => {
         it('should close the file watcher', async () => {
             const extension = liveReload('/Users/arya/dev/myproject');
 
-            await extension.extendApp({ app });
+            await extension.extendApp({ app, options });
 
             // @ts-ignore
             const fileWatcher = chokidar.watch.mock.results[0].value;

@@ -4,13 +4,16 @@ import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
 import { sessionNonce, projectMetadata, liveReload } from './extensions';
-import { Server, Container } from '@webruntime/server';
+import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
+import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 
-export default class LocalDevServer extends Server {
+export default class LocalDevServer {
+    private server: Server;
+    private config: WebruntimeConfig;
     private rootDir: string;
     private project: Project;
     private liveReload?: any;
@@ -18,9 +21,6 @@ export default class LocalDevServer extends Server {
     private readonly vendorVersion: string | undefined;
 
     constructor(project: Project) {
-        // create a default LWR server
-        super();
-
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
@@ -36,19 +36,11 @@ export default class LocalDevServer extends Server {
                 supportedCoreVersions[supportedCoreVersions.length - 1];
         }
 
-        const options = {
-            basePath: '',
-            projectDir: this.rootDir,
-            port: project.configuration.port.toString(),
-            resourceRoot: '/webruntime'
-        };
-
-        // @ts-ignore
-        const config = new WebruntimeConfig(this.config, this.project);
+        const config = new WebruntimeConfig(this.project);
 
         config.addMiddleware([sessionNonce(this.sessionNonce)]);
 
-        const routes: any[] = [
+        const routes: ContainerAppExtension[] = [
             projectMetadata(this.sessionNonce, this.project)
         ];
 
@@ -66,7 +58,8 @@ export default class LocalDevServer extends Server {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`
         ]);
 
-        const services: any[] = [
+        const services: ServiceDefinitionCtor[] = [
+            // @ts-ignore
             ComponentServiceWithExclusions,
             getLabelService(project.customLabelsPath)
         ];
@@ -82,25 +75,26 @@ export default class LocalDevServer extends Server {
 
         config.addServices(services);
 
-        // override LWR defaults
-        // @ts-ignore
-        this.options = options;
-        // @ts-ignore
         this.config = config;
-        // @ts-ignore
-        this.container = new Container(this.config);
+        this.server = new Server({
+            config
+        });
     }
 
     async initialize() {
-        await super.initialize();
+        await this.server.initialize();
         this.copyStaticAssets();
         // graceful shutdown
         process.on('SIGINT', async () => this.exitHandler());
         process.on('SIGTERM', async () => this.exitHandler());
     }
 
+    async start() {
+        await this.server.start();
+    }
+
     async shutdown() {
-        await super.shutdown();
+        await this.server.shutdown();
 
         if (this.liveReload) {
             this.liveReload.close();

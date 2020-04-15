@@ -1,13 +1,13 @@
 import reload from 'reload';
 import chokidar from 'chokidar';
-import { Application } from 'express';
+import { AppExtensionConfig } from '@webruntime/api';
 
 export function liveReload(metadataPath: string) {
     let reloadReturned: any;
     let fileWatcher: chokidar.FSWatcher;
 
     return {
-        extendApp: async ({ app }: { app: Application }) => {
+        extendApp: async ({ app }: AppExtensionConfig) => {
             reloadReturned = await reload(app);
 
             fileWatcher = chokidar.watch(metadataPath, {
