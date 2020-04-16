@@ -773,40 +773,40 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@communities-webruntime/client@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@communities-webruntime/client/-/client-0.29.21.tgz#c7250bdc7c6e1814324000604772cf1770e0e307"
-  integrity sha512-rAEvJdsPruVZ+E6fQK5F+rXfIrg/8mGD7Z6CxynOF0CVoGSiUcO+Lcw+zgCIoGXYpgVra2rHOpIByBzlc6UF9A==
+"@communities-webruntime/client@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@communities-webruntime/client/-/client-0.29.22.tgz#98c6d151f8d2924e838a08b76ad48f73cd3a725b"
+  integrity sha512-q2uFOZamlqZjSmHOgoIMJKqsG40KpJxupoJA8C7jjND8ucQNu52hsYED+sQSSX1zlPXutZ+msNS00oYO1g+pXw==
 
-"@communities-webruntime/common@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@communities-webruntime/common/-/common-0.29.21.tgz#fcdce72351968d91f160dd85aeb687db51e0d077"
-  integrity sha512-0c7beaB5PifupMefxvtTPkz0Kztjf1lnTBYKViC+uIVzFXbB5cqH3kCptxZZsCQro1Cu2DcdsKtWb4tb0ijzrQ==
+"@communities-webruntime/common@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@communities-webruntime/common/-/common-0.29.22.tgz#b1663711adb7b91c769c6af07d6a87835dbb784f"
+  integrity sha512-rbgsqoGwCPztOMBzBwaCPqa0Mr0vaa9EqhKlXSHvcHU+hwG2em3rUcdk/RBtMEjhmRFYjeWmDMqIwibKlS2jZQ==
 
-"@communities-webruntime/design@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@communities-webruntime/design/-/design-0.29.21.tgz#fee18ff432b051020f068568722564bf546d5fb0"
-  integrity sha512-v0i33g9RsaHR6CZxUgEZlB4pt8lCKEaoB9F6NL2fSAiEsS3HACkSL5z8wTys/+9OSg+QuJ09wqY8+kWvVNRApQ==
+"@communities-webruntime/design@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@communities-webruntime/design/-/design-0.29.22.tgz#ab6ea6eeac9e6fd836e2787142d3fa137bae7af3"
+  integrity sha512-58nHY2cQ1hY2ykUWbpyi9cGsaUUiBM2Ngx+ZNi7F+9pVS4JWj7O36m3A8UDgr0y7zfa2dKme0AEERZ2xDNW9Iw==
 
-"@communities-webruntime/metadata-schema@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@communities-webruntime/metadata-schema/-/metadata-schema-0.29.21.tgz#977fc57db774695c836320646eb6f092fda2fe2e"
-  integrity sha512-gesyUkygKQiWrZ5GuW4O96mKVj3js2ZccwG2VDSOUBHDgS0s47pKS7Ffo3bhbEJLhnTzrBOtOCOOD10LXwn6Zw==
+"@communities-webruntime/metadata-schema@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@communities-webruntime/metadata-schema/-/metadata-schema-0.29.22.tgz#15d23c92379a9442fa2ed76c51b91cd696ae3539"
+  integrity sha512-nY7IDfyng+mPHsiTm+9nFtvUBisUV5kOjPzoqaPDPFY29RAOdw3h8PGBqagiMxvKKos/wzSWXh7jVKpFdwSw2w==
   dependencies:
     ajv "^6.9.2"
     yamljs "^0.3.0"
 
-"@communities-webruntime/services@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@communities-webruntime/services/-/services-0.29.21.tgz#6b95d440544b1ed56f0d245475e2be1b260deee8"
-  integrity sha512-segXn6dsHX46VbVW4+h/C0lKW+IdWH9qRHHYJU+fIiRhXenBJuP5AoK7LG/xeSEVf4NTKZ17PdY+VYb4IEmhrg==
+"@communities-webruntime/services@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@communities-webruntime/services/-/services-0.29.22.tgz#297067fca499ddb1238653799fd75bafaa49a7ec"
+  integrity sha512-rhG3DnE3GniGh5x95aoB+458u4j5M6mleHeDwVG2cU46+DVe/yT73mKlRaAWdHA4Uzr79y2VvYh0CpySinle4A==
   dependencies:
-    "@communities-webruntime/client" "0.29.21"
-    "@communities-webruntime/common" "0.29.21"
-    "@communities-webruntime/design" "0.29.21"
-    "@communities-webruntime/metadata-schema" "0.29.21"
-    "@webruntime/api" "0.29.21"
-    "@webruntime/compiler" "0.29.21"
+    "@communities-webruntime/client" "0.29.22"
+    "@communities-webruntime/common" "0.29.22"
+    "@communities-webruntime/design" "0.29.22"
+    "@communities-webruntime/metadata-schema" "0.29.22"
+    "@webruntime/api" "0.29.22"
+    "@webruntime/compiler" "0.29.22"
     chokidar "^3.2.2"
     colors "^1.4.0"
     folder-hash "^3.0.0"
@@ -1440,10 +1440,10 @@
     "@salesforce/ts-types" "^1.2.2"
     tslib "^1.10.0"
 
-"@salesforce/lwc-dev-server-dependencies@1.0.62":
-  version "1.0.62"
-  resolved "https://registry.yarnpkg.com/@salesforce/lwc-dev-server-dependencies/-/lwc-dev-server-dependencies-1.0.62.tgz#39c0c1f3e2d90ee3917298b6de18503a1fa33591"
-  integrity sha512-zuVSf183iL2NkDBctY6mgcChzvWqBRGSzLuoRN9Wvg89JoL0+cIiLrM9vTMaL+O/KKOiAelpR5ipKTEGKgzgRA==
+"@salesforce/lwc-dev-server-dependencies@1.0.64":
+  version "1.0.64"
+  resolved "https://registry.yarnpkg.com/@salesforce/lwc-dev-server-dependencies/-/lwc-dev-server-dependencies-1.0.64.tgz#431cbca363dd141ab7bb1fc83614974381ec97b0"
+  integrity sha512-PiCulzpwxmF6U0sXrcJLFJJO50hlIZH2FrTRavXJh1ObvA2a/qveJ6GI/IdEWBZfU9gpR+kqeXt5lAS6l1OYzg==
 
 "@salesforce/lwc-jest@^0.5.1":
   version "0.5.5"
@@ -2026,28 +2026,28 @@
     "@wdio/logger" "5.16.10"
     deepmerge "^4.0.0"
 
-"@webruntime/api@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@webruntime/api/-/api-0.29.21.tgz#c320478c10def7463691cf341aefab6386f53f9a"
-  integrity sha512-amqmIf592NChyeOZATimROej08TC8APzHJclcUsW6M8lhg+LGB8CSOdMx95L5g7CYn+oOIpM4YhgT5281/wNTg==
+"@webruntime/api@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@webruntime/api/-/api-0.29.22.tgz#f5488b339ee5e0ac29c000c362fd2c234c1a11db"
+  integrity sha512-ZBRKBhog6Wp1yoEw96R8Nse2q6BsvpmXgJyKD0ynkeT6KXiAUeNsRRzLm8traqkOnPAKQ+v/WUshUIxTABAXpw==
   dependencies:
     "@lwc/compiler" "1.2.2"
     "@lwc/errors" "1.2.2"
-    "@webruntime/compiler" "0.29.21"
+    "@webruntime/compiler" "0.29.22"
     deepmerge "^3.2.0"
     express "^4.16.4"
     path-to-regexp "^6.0.0"
     rollup "^1.7.4"
 
-"@webruntime/compiler@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@webruntime/compiler/-/compiler-0.29.21.tgz#4099b414b3dac90bc4780dd10d0b37e9efed150d"
-  integrity sha512-E0/uqSKJ7CC89/x55guqrcObBi6SAhoD9DOg0VKP65dTfNryXr78z9T2l+D5rP0xRmPAfFs842a4UaIVswd0Uw==
+"@webruntime/compiler@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@webruntime/compiler/-/compiler-0.29.22.tgz#866dbad681a919e5a6a72687902ce5d28efa68dd"
+  integrity sha512-IszH1d9O+iH5qz4QJ48xAE7iB3fQkYID1l6vkuX18gGXbOCtI83Cl++UtLgqbpSLePPPW32g/nAYZIhaSv67vg==
   dependencies:
     "@babel/core" "^7.5.5"
     "@lwc/compiler" "1.2.2"
     "@lwc/rollup-plugin" "1.2.2"
-    "@webruntime/performance" "0.29.21"
+    "@webruntime/performance" "0.29.22"
     body-parser "^1.19.0"
     chokidar "^3.2.2"
     colors "^1.4.0"
@@ -2061,25 +2061,25 @@
     rollup-pluginutils "^2.3.3"
     terser "^3.16.1"
 
-"@webruntime/navigation@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@webruntime/navigation/-/navigation-0.29.21.tgz#2546f51a360a2696ac20ecb218d927a853e62e3b"
-  integrity sha512-ZkhOuo95XzC7K/2fFW41Lz/4Q7ZrmGFopWTjlWbSgPwYcKFEa3ONk3ZSO9TqCCpaxlEaOS+YF3O6nCztb4BBLw==
+"@webruntime/navigation@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@webruntime/navigation/-/navigation-0.29.22.tgz#a0d83f17160e9235a2b4f6f1f70031975f468d30"
+  integrity sha512-1FBFEAH0qS6jm7U7grH4QWCAcSFx8uwYEzygvyBYtTBGFjoRpNu18UXWYsYzBhrtQ1GER622CkvzGpbcbFPDUQ==
 
-"@webruntime/performance@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@webruntime/performance/-/performance-0.29.21.tgz#ab4af6b92747264c55bdbce1c3cec07dafb430b2"
-  integrity sha512-QLtjdQ0KNVLWIJiqk643QiN1GGP9OMRDbytMWoURszKe5nc2F543cRrYEY2aKtatTMuXZ5OWlbdR4n7I7zU8hQ==
+"@webruntime/performance@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@webruntime/performance/-/performance-0.29.22.tgz#fa9aaf0c79ee2d7ae38726c14db88e10d7e699e9"
+  integrity sha512-g8UIL/Ue2f6gzl9HrgzVGPYgxUcoYfpAwjj4tOFaZUZvXJMAQVbOMWuWQQUhe+knTz0FxhZM5SBIzyMP6YZI6Q==
 
-"@webruntime/server@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@webruntime/server/-/server-0.29.21.tgz#aeb86faf35370a300ba81566eec8b8edfc84d1cb"
-  integrity sha512-SEeZbuK2L2oeWtiHT6Ue17s+ObxNJjkNH7/+TCVN1D9c4k8FLq16mD95ybUZK/C9TByV8zSMWjJ7HTwplUV2Eg==
+"@webruntime/server@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@webruntime/server/-/server-0.29.22.tgz#4b557a37fa3fcabf9e44de7b5702a490492415f6"
+  integrity sha512-PfpUZhcPb4+nAWxUj+/bbFStQiFcW3iBNYh6zdtE9UXOUhtsvGzSZYZRY7t+E4vS25kVuRduZa48MOXda2y35w==
   dependencies:
     "@lwc/errors" "1.2.2"
-    "@webruntime/api" "0.29.21"
-    "@webruntime/performance" "0.29.21"
-    "@webruntime/webruntime-shim" "0.29.21"
+    "@webruntime/api" "0.29.22"
+    "@webruntime/performance" "0.29.22"
+    "@webruntime/webruntime-shim" "0.29.22"
     chokidar "^3.2.2"
     compression "^1.7.4"
     express "^4.16.4"
@@ -2092,22 +2092,22 @@
     rollup "^1.7.4"
     uuidv4 "^4.0.0"
 
-"@webruntime/services@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@webruntime/services/-/services-0.29.21.tgz#9d75a0d26e295046e999f3a88c0eb86b30118eea"
-  integrity sha512-jgZKsEXCa0a/RyYJys1iyq6h1eBm0OqjKvcydfg31UkkxXXSl7uV5xjbLOmMFCCSjoCIPKn3UsHZHMZLQ9QvVw==
+"@webruntime/services@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@webruntime/services/-/services-0.29.22.tgz#b9730f003135884fdfdc4e180005f5acaa8a33d1"
+  integrity sha512-MUXWpPekgt02+Xzen7fHSu5ko5j4wHf0s2EcyrweeKgzlidtTXm2SqSUFZTQSpgyLhIUzygnRW8iVFVry/aD5A==
   dependencies:
     "@lwc/errors" "1.2.2"
     "@lwc/module-resolver" "1.2.2"
-    "@webruntime/api" "0.29.21"
-    "@webruntime/compiler" "0.29.21"
-    "@webruntime/performance" "0.29.21"
+    "@webruntime/api" "0.29.22"
+    "@webruntime/compiler" "0.29.22"
+    "@webruntime/performance" "0.29.22"
     chokidar "^3.2.2"
 
-"@webruntime/webruntime-shim@0.29.21":
-  version "0.29.21"
-  resolved "https://registry.yarnpkg.com/@webruntime/webruntime-shim/-/webruntime-shim-0.29.21.tgz#02f831897023b3e63a65053d407ab3434c768311"
-  integrity sha512-xQ1SF2VUuxASx6ttfnBQ6ruTPyRp5f427SM1vipe1YuS9u7KgBL4n6+i0js7LDp+iK5qSVynxMDX6ypufYN3/Q==
+"@webruntime/webruntime-shim@0.29.22":
+  version "0.29.22"
+  resolved "https://registry.yarnpkg.com/@webruntime/webruntime-shim/-/webruntime-shim-0.29.22.tgz#8078413554f60f5845b654c21f6e136abca63b44"
+  integrity sha512-3M49n+xUULbUZEMio6sfzq4UY5inDlv1z43fqu1KyUi254wuUHE9ehtvoyuHmMhhc6D6JHqhvLp1IhRmovgr/w==
 
 abab@^2.0.0:
   version "2.0.3"
