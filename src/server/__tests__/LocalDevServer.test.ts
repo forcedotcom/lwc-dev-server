@@ -192,7 +192,6 @@ describe('LocalDevServer', () => {
         await server.initialize();
         process.emit('SIGTERM', 'SIGTERM');
 
-        expect(mockExit).toBeCalled();
         expect(mockShutdown).toHaveBeenCalledTimes(1);
     });
 
@@ -206,7 +205,6 @@ describe('LocalDevServer', () => {
         await server.initialize();
         process.emit('SIGINT', 'SIGINT');
 
-        expect(mockExit).toBeCalled();
         expect(mockShutdown).toHaveBeenCalledTimes(1);
     });
 
