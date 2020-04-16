@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
+import { findFolders } from './fileUtils';
 
 /**
  * The project object describes two things.
@@ -186,19 +187,17 @@ export default class Project {
                 this.configuration.staticResourcesDirectories &&
                 this.configuration.staticResourcesDirectories.length === 0
             ) {
-                // Figure out where the static resources are from the configuration as well.
+                // Figure out where the static resources are located
                 let resourcePaths: string[] = [];
                 packageDirectories.forEach(item => {
-                    // TODO: handle projects who do not follow the /main/default convention
-                    resourcePaths.push(
-                        path.join(
-                            _path,
-                            item,
-                            'main',
-                            'default',
-                            'staticresources'
-                        )
+                    const srFolders = findFolders(
+                        path.join(_path, item),
+                        'staticresources',
+                        []
                     );
+                    const rpIndex =
+                        resourcePaths.length > 0 ? resourcePaths.length - 1 : 0;
+                    resourcePaths.splice(rpIndex, 0, ...srFolders);
                 });
                 this.configuration.staticResourcesDirectories = resourcePaths;
             }
