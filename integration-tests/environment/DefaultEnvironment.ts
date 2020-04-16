@@ -48,7 +48,6 @@ export default class DefaultEnvironment extends BaseEnvironment {
         }
 
         this.server = new LocalDevServer(project);
-        await this.server.initialize(); //-- Not sure if its necessary.
         await this.server.start();
         this.global.serverPort = this.server.serverPort;
 

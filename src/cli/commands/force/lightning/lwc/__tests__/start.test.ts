@@ -139,14 +139,10 @@ describe('start', () => {
         test('run will launch local dev server', async () => {
             setupAllDev();
 
-            let initializeCalled = false;
             let startCalled = false;
             // @ts-ignore
             LocalDevServer.mockImplementation(() => {
                 return {
-                    initialize: () => {
-                        initializeCalled = true;
-                    },
                     start: () => {
                         startCalled = true;
                     }
@@ -160,7 +156,6 @@ describe('start', () => {
                 expect(result['api_version']).toEqual('99.0');
                 expect(result['port']).toEqual(3333);
 
-                expect(initializeCalled).toBeTruthy();
                 expect(startCalled).toBeTruthy();
             } else {
                 fail('result was nothing');

@@ -20,6 +20,7 @@ describe('LocalDevServer', () => {
     let project: Project;
     let consoleLogMock: any;
     let consoleErrorMock: any;
+    let fileUtilsCopyMock: any;
 
     beforeEach(() => {
         // @ts-ignore
@@ -51,12 +52,16 @@ describe('LocalDevServer', () => {
         project = new Project('/Users/arya/dev/myproject');
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+        fileUtilsCopyMock = jest
+            .spyOn(fileUtils, 'copyFiles')
+            .mockImplementation();
     });
 
     afterEach(() => {
         mockFs.restore();
         consoleLogMock.mockRestore();
         consoleErrorMock.mockRestore();
+        fileUtilsCopyMock.mockRestore();
     });
 
     it('should create a webruntime server', () => {
@@ -177,7 +182,7 @@ describe('LocalDevServer', () => {
             '.localdevserver'
         );
 
-        await server.initialize();
+        await server.start();
 
         const copiedFromPath = path.join(__dirname, '../../../dist/assets/*');
         // @ts-ignore
@@ -196,7 +201,7 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         mockExit.mockImplementation(() => {});
 
-        await server.initialize();
+        await server.start();
         process.emit('SIGTERM', 'SIGTERM');
 
         expect(mockShutdown).toHaveBeenCalledTimes(1);
@@ -209,14 +214,14 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         mockExit.mockImplementation(() => {});
 
-        await server.initialize();
+        await server.start();
         process.emit('SIGINT', 'SIGINT');
 
         expect(mockShutdown).toHaveBeenCalledTimes(1);
     });
 
     it('throws an error if copying static assets fails', async () => {
-        jest.spyOn(fileUtils, 'copyFiles').mockImplementation(() => {
+        fileUtilsCopyMock.mockImplementation(() => {
             throw new Error('test error');
         });
 
@@ -227,7 +232,7 @@ describe('LocalDevServer', () => {
             '.localdevserver'
         );
 
-        await expect(server.initialize()).rejects.toThrow(
+        await expect(server.start()).rejects.toThrow(
             'Unable to copy assets: test error'
         );
     });
