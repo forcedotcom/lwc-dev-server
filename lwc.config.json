@@ -4,7 +4,6 @@
         "@lwc/wire-service",
         "@webruntime/navigation",
         "@communities-webruntime/client",
-        "@webruntime/connect-gen",
         "src/client/modules"
     ]
 }
