@@ -102,7 +102,7 @@ export default class LocalDevServer {
     }
 
     private async exitHandler() {
-        this.shutdown();
+        await this.shutdown();
         process.exit();
     }
 
