@@ -6,7 +6,7 @@ import { routes } from 'localdevserver/routerLib';
 import { defineModules } from 'webruntime_loader/loader';
 import * as auraInstrumentation from 'webruntime/auraInstrumentation';
 import * as transport from 'webruntime/transport';
-import * as logger from 'webruntime/logger'; // ? why do we have to add this but the communities app doesn't...
+import * as logger from 'webruntime/logger';
 import * as webruntimeAura from 'webruntime/aura';
 import auraStorage from 'webruntime/auraStorage';
 

@@ -1,5 +1,10 @@
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 
+/**
+ * Returns JavaScript code that will add a module with the given name and constant value to the registry.
+ *
+ * This is meant to be injected in the HTML to define app config modules.
+ */
 function define([key, value]: [string, any]) {
     return `Webruntime.define('${key}', [], function() { return ${JSON.stringify(
         value
@@ -41,6 +46,7 @@ export class LocalDevPage extends WebruntimePage {
 
     get experimental_scripts() {
         const { request: req } = this.pageContext as any;
+
         const modules = {
             '@app/basePath': '',
             '@app/csrfToken': req.csrfToken && req.csrfToken(),
