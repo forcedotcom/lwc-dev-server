@@ -147,8 +147,9 @@ describe('LocalDevServer', () => {
         const modules = server.config.addModules.mock.calls[0][0];
 
         expect(modules).toEqual([
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg`
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/connect-gen-pkg'
         ]);
     });
 
