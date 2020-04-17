@@ -1,10 +1,10 @@
-import debug from 'debug';
+import debugLogger from 'debug';
 import Project from '../../src/common/Project';
 import BaseEnvironment from './BaseEnvironment';
 import LocalDevServer from '../../src/server/LocalDevServer';
 import { defaultPort } from '../../src/user/LocalDevServerConfiguration';
 
-const log = debug('localdevserver');
+const debug = debugLogger('localdevserver:test');
 
 /**
  * Starts the dev server programmatically.
@@ -31,10 +31,12 @@ export default class DefaultEnvironment extends BaseEnvironment {
     async setup() {
         await super.setup();
 
+        debug(`Setting up DefaultEnvironment for: ${this.projectPath}`);
+
         const project = new Project(this.projectPath);
         if (!project.configuration.api_version) {
-            log('no api version specified, using 46.0');
-            project.configuration.api_version = '46.0';
+            debug('no api version specified, using 48.0');
+            project.configuration.api_version = '48.0';
         }
         if (
             project.configuration.port === undefined ||
@@ -45,16 +47,17 @@ export default class DefaultEnvironment extends BaseEnvironment {
             project.configuration.port = port;
         }
 
-        this.server = new LocalDevServer();
-        await this.server.start(project);
-        this.global.serverPort = this.server.port;
-        log('started server');
+        this.server = new LocalDevServer(project);
+        await this.server.start();
+        this.global.serverPort = this.server.serverPort;
+
+        debug(`started server on port ${this.global.serverPort}`);
     }
 
     async teardown() {
         if (this.server) {
-            await this.server.stop();
-            log('stopped server');
+            await this.server.shutdown();
+            debug('stopped server');
         }
         await super.teardown();
     }

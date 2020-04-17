@@ -10,6 +10,8 @@ import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
+import colors from 'colors';
+import { AddressInfo } from 'net';
 
 export default class LocalDevServer {
     private server: Server;
@@ -81,18 +83,6 @@ export default class LocalDevServer {
         });
     }
 
-    async initialize() {
-        await this.server.initialize();
-        this.copyStaticAssets();
-        // graceful shutdown
-        process.on('SIGINT', async () => this.exitHandler());
-        process.on('SIGTERM', async () => this.exitHandler());
-    }
-
-    async start() {
-        await this.server.start();
-    }
-
     async shutdown() {
         await this.server.shutdown();
 
@@ -104,6 +94,34 @@ export default class LocalDevServer {
     private async exitHandler() {
         await this.shutdown();
         process.exit();
+    }
+
+    /**
+     * Starts the server. If the server successfully started and contains
+     * an address, print the server up message.
+     */
+    async start() {
+        try {
+            await this.server.initialize();
+            this.copyStaticAssets();
+            await this.server.start();
+
+            let port = `${this.serverPort}`;
+            if (port && port !== 'undefined') {
+                console.log(
+                    colors.magenta.bold(`Server up on http://localhost:${port}`)
+                );
+            } else {
+                console.error(`Server start up failed.`);
+            }
+        } catch (e) {
+            console.error(`Server start up failed.`);
+            throw e;
+        }
+
+        // graceful shutdown
+        process.on('SIGINT', async () => this.exitHandler());
+        process.on('SIGTERM', async () => this.exitHandler());
     }
 
     private copyStaticAssets() {
@@ -119,6 +137,18 @@ export default class LocalDevServer {
         }
 
         // TODO: copy assets from project.staticResourcesDirectory
+    }
+
+    /**
+     * Verify the server is up and contains an address. Return the port from
+     * this address. Do not use the configured port, as the server may not be
+     * using the same value.
+     */
+    get serverPort() {
+        if (this.server.httpServer && this.server.httpServer.address()) {
+            const addressInfo: AddressInfo = this.server.httpServer.address() as AddressInfo;
+            return addressInfo.port;
+        }
     }
 
     /**
