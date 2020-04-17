@@ -137,6 +137,17 @@ describe('LocalDevServer', () => {
         expect(server.liveReload).toBeUndefined();
     });
 
+    it('should add apex middleware when connection is available', () => {
+        const connection = {};
+        // @ts-ignore
+        const server = new LocalDevServer(project, connection);
+
+        // @ts-ignore
+        const extensions = server.config.addMiddleware.mock.calls[0][0];
+
+        expect(extensions).toHaveLength(2);
+    });
+
     it('should add modules with the correct vendor version to the config', () => {
         const server = new LocalDevServer(project);
 
