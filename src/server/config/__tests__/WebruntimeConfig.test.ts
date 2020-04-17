@@ -124,6 +124,8 @@ describe('WebruntimeConfig', () => {
         it('should append compiler plugins', () => {
             const config = new WebruntimeConfig(project);
 
+            config.compilerConfig.plugins = [];
+
             config.addPlugins([plugin]);
 
             const { plugins } = config.compilerConfig;

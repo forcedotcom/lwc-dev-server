@@ -98,11 +98,6 @@ export default class WebruntimeConfig implements Config {
                 alias({
                     entries: [
                         {
-                            find: 'forceChatterApi/util',
-                            replacement:
-                                '@webruntime/connect-gen/dist/forceChatterApi/util/util.js'
-                        },
-                        {
                             find: 'transport',
                             replacement:
                                 '@communities-webruntime/client/src/modules/webruntime/transport/transport.js'

@@ -28,7 +28,7 @@ export default class LocalDevServer {
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
 
-    constructor(project: Project, connection: Connection) {
+    constructor(project: Project, connection?: Connection) {
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
@@ -46,13 +46,20 @@ export default class LocalDevServer {
 
         const config = new WebruntimeConfig(this.project);
 
-        config.addMiddleware([
-            sessionNonce(this.sessionNonce),
-            apexMiddleware({
-                instanceUrl: connection.instanceUrl,
-                accessToken: connection.accessToken
-            })
-        ]);
+        const middleware: ContainerAppExtension[] = [
+            sessionNonce(this.sessionNonce)
+        ];
+
+        if (connection) {
+            middleware.push(
+                apexMiddleware({
+                    instanceUrl: connection.instanceUrl,
+                    accessToken: connection.accessToken
+                })
+            );
+        }
+
+        config.addMiddleware(middleware);
 
         const routes: ContainerAppExtension[] = [
             projectMetadata(this.sessionNonce, this.project)
