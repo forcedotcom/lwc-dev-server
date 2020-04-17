@@ -101,9 +101,9 @@ export default class LocalDevServer {
      * an address, print the server up message.
      */
     async start() {
-        await this.server.initialize();
-        this.copyStaticAssets();
         try {
+            await this.server.initialize();
+            this.copyStaticAssets();
             await this.server.start();
 
             let port = `${this.serverPort}`;
@@ -115,7 +115,8 @@ export default class LocalDevServer {
                 console.error(`Server start up failed.`);
             }
         } catch (e) {
-            console.error(`Server start up failed: ${e.message || e}`);
+            console.error(`Server start up failed.`);
+            throw e;
         }
 
         // graceful shutdown
