@@ -66,10 +66,14 @@ export default class WebruntimeConfig implements Config {
             definition: LocalDevApp
         };
 
-        // @ts-ignore
-        // TODO: ApexService needs to be updated to implement the
-        // ServiceDefinitionCtor interface
-        this.services = [ImportMapService, AppBootstrapService, ApexService];
+        this.services = [
+            ImportMapService,
+            AppBootstrapService,
+            // @ts-ignore
+            // TODO: ApexService needs to be updated to implement the
+            // ServiceDefinitionCtor interface
+            ApexService
+        ];
 
         this.bundle = ['@webruntime/app', 'webruntime_navigation/*'];
 
