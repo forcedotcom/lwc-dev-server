@@ -9,13 +9,14 @@ import { AppExtensionConfig } from '@webruntime/api';
 
 const log = debug('localdevserver');
 const ONE_APP_URL = '/one/one.app';
-export const WAIT_FOR_ONE_APP_LOAD = 20000;
+const DEFAULT_TIMEOUT = 20000;
 
 let cachedConfig: any = null;
 
 export interface ConnectionParams {
     instanceUrl: string;
     accessToken: string;
+    timeout?: number;
 }
 
 interface ApexRequest {
@@ -272,9 +273,14 @@ async function getConfig(connectionParams: ConnectionParams) {
     });
 
     const waitForInitConfigTimeout = new Promise((resolve, reject) => {
-        setTimeout(() => {
-            reject('Timed out waiting for initConfig');
-        }, WAIT_FOR_ONE_APP_LOAD);
+        setTimeout(
+            () => {
+                reject('Timed out waiting for initConfig');
+            },
+            connectionParams.timeout === undefined
+                ? DEFAULT_TIMEOUT
+                : connectionParams.timeout
+        );
     });
 
     try {
