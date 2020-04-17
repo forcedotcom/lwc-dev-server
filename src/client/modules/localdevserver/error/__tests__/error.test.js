@@ -3,15 +3,6 @@ import ErrorStacks from 'localdevserver/error';
 
 jest.useFakeTimers();
 
-// this is indirectly imported by talon framework stuff, and needs to be mocked!
-jest.mock(
-    '@webruntime/connect-gen/dist/forceChatterApi/util/util',
-    () => ({}),
-    {
-        virtual: true
-    }
-);
-
 const errors = {};
 errors.simple = new Error('simple error');
 errors.arraystack = new Error('array stack');
