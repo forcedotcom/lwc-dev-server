@@ -110,3 +110,4 @@ workflows:
         jobs:
             - build-and-test-linux
             - build-and-test-win
+                  context: vscode-test
