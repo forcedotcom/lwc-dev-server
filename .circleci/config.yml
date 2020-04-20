@@ -1,4 +1,9 @@
 ---
+# The following environment variables are required in the 'vscode-test' context
+# when running tests for Windows:
+#     SFDX_CI_LOCALDEV_CLIENTID -- connected app client ID for localdev org
+#     SFDX_CI_LOCALDEV_JWTKEY   -- private key for the connected app (base64 encoded)
+#     SFDX_CI_LOCALDEV_USERNAME -- username of an authorized user of the localdev org
 version: 2.1
 
 orbs:
@@ -68,6 +73,14 @@ jobs:
                       node --version
                       npm install -g sfdx-cli@latest
                       sfdx --version
+            - run:
+                  name: 'Authenticate to local dev testing org'
+                  shell: bash.exe
+                  command: |
+                      echo $SFDX_CI_LOCALDEV_JWTKEY | base64 --decode > localdev.key
+                      sfdx force:auth:jwt:grant --clientid ${SFDX_CI_LOCALDEV_CLIENTID} --username ${SFDX_CI_LOCALDEV_USERNAME} --jwtkeyfile localdev.key --setdefaultusername --setalias localdev
+                      rm localdev.key
+                      sfdx force:auth:list
             - run:
                   shell: bash.exe
                   command: |
