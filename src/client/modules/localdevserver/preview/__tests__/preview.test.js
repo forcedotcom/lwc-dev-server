@@ -44,6 +44,7 @@ describe('preview', () => {
     let consoleLogMock;
     let consoleWarnMock;
     let consoleErrorMock;
+    let consoleGroupMock;
 
     beforeEach(() => {
         subscriptionMock = {
@@ -53,6 +54,7 @@ describe('preview', () => {
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+        consoleGroupMock = jest.spyOn(console, 'group').mockImplementation();
     });
 
     afterEach(() => {
@@ -60,6 +62,7 @@ describe('preview', () => {
         consoleLogMock.mockRestore();
         consoleWarnMock.mockRestore();
         consoleErrorMock.mockRestore();
+        consoleGroupMock.mockRestore();
     });
 
     it('renders the component', async () => {

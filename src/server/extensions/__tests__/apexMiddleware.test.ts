@@ -67,6 +67,8 @@ describe('apexMiddleware', () => {
     let mockConnection: ConnectionParams;
     let app: Application;
     let options: ExtensionOptions;
+    let consoleLogMock: any;
+    let consoleErrorMock: any;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -78,6 +80,14 @@ describe('apexMiddleware', () => {
         };
 
         app = express();
+
+        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+    });
+
+    afterEach(() => {
+        consoleLogMock.mockRestore();
+        consoleErrorMock.mockRestore();
     });
 
     it('ignores non apex call ', async () => {
