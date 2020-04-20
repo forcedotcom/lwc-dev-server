@@ -1,7 +1,8 @@
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 
 /**
- * Returns JavaScript code that will add a module with the given name and constant value to the registry.
+ * Returns JavaScript code that will add a module with the given name and
+ * constant value to the registry.
  *
  * This is meant to be injected in the HTML to define app config modules.
  */
@@ -13,13 +14,8 @@ function define([key, value]: [string, any]) {
 
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
-        const {
-            // @ts-ignore
-            locals: { sessionNonce },
-            config: {
-                server: { basePath }
-            }
-        } = this.pageContext;
+        const { sessionNonce }: any = this.pageContext.locals;
+        const { basePath } = this.pageContext.config.server;
 
         // TODO: The version key needs to be calculated until LWR provides it in 228.
         const versionKey = '1';
