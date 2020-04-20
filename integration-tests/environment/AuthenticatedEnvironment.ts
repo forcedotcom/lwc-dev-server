@@ -56,13 +56,18 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
         if (this.token === null) {
             const connection = new jsforce.Connection({});
             this.global.jsforceConnection = connection;
-            const user: string | undefined = process.env.SFDC_USER;
+            const user: string | undefined = process.env.SFDX_CI_LOCALDEV_USERNAME;
             if (!user) {
                 throw new Error(
-                    'Required SFDC_USER environment variable not provided'
+                    'Required SFDX_CI_LOCALDEV_USERNAME environment variable not provided'
                 );
             }
             console.log(`Logging in as ${user}`);
+            const authInfo = await AuthInfo.create({ username: user });
+            const authInfoFields = authInfo.getFields();
+            this.token = authInfoFields.accessToken;
+            console.log(`Logged in ${user} using JWT`);
+/*
             this.token = await (async function() {
                 return new Promise<string>((resolve, reject) => {
                     connection.login(user, process.env.SFDC_PWD || '', err => {
@@ -83,6 +88,7 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
                 }
             });
             authInfo.save();
+*/
             this.commandArgs.push(`--targetusername=${user}`);
         }
 
