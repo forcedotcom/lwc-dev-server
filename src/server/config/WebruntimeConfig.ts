@@ -12,7 +12,7 @@ import {
 } from '@webruntime/api';
 import { ImportMapService, AppBootstrapService } from '@webruntime/services';
 import { Plugin } from 'rollup';
-import { ApexService } from '@communities-webruntime/services';
+import { ApexService, SchemaService } from '@communities-webruntime/services';
 import alias from '@rollup/plugin-alias';
 
 export default class WebruntimeConfig implements Config {
@@ -66,7 +66,12 @@ export default class WebruntimeConfig implements Config {
             definition: LocalDevApp
         };
 
-        this.services = [ImportMapService, AppBootstrapService, ApexService];
+        this.services = [
+            ImportMapService,
+            AppBootstrapService,
+            ApexService,
+            SchemaService
+        ];
 
         this.bundle = ['@webruntime/app', 'webruntime_navigation/*'];
 
