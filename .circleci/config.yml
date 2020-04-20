@@ -109,5 +109,5 @@ workflows:
     build_and_test:
         jobs:
             - build-and-test-linux
-            - build-and-test-win
+            - build-and-test-win:
                   context: vscode-test
