@@ -3,7 +3,7 @@ import CliEnvironment from './CliEnvironment';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
 import jsforce from 'jsforce';
-import { AuthInfo } from '@salesforce/core';
+import { AuthInfo, Connection } from '@salesforce/core';
 
 const log = debug('localdevserver');
 
@@ -54,9 +54,10 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
 
     async setup(): Promise<void> {
         if (this.token === null) {
-            const connection = new jsforce.Connection({});
-            this.global.jsforceConnection = connection;
-            const user: string | undefined = process.env.SFDX_CI_LOCALDEV_USERNAME;
+            // const connection = new jsforce.Connection({});
+            // this.global.jsforceConnection = connection;
+            const user: string | undefined =
+                process.env.SFDX_CI_LOCALDEV_USERNAME;
             if (!user) {
                 throw new Error(
                     'Required SFDX_CI_LOCALDEV_USERNAME environment variable not provided'
@@ -65,9 +66,12 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
             console.log(`Logging in as ${user}`);
             const authInfo = await AuthInfo.create({ username: user });
             const authInfoFields = authInfo.getFields();
-            this.token = authInfoFields.accessToken;
+            this.token = authInfoFields.accessToken || '';
+            this.global.jsforceConnection = await Connection.create({
+                authInfo
+            });
             console.log(`Logged in ${user} using JWT`);
-/*
+            /*
             this.token = await (async function() {
                 return new Promise<string>((resolve, reject) => {
                     connection.login(user, process.env.SFDC_PWD || '', err => {
