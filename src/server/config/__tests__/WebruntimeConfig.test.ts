@@ -3,6 +3,8 @@ import WebruntimeConfig from '../WebruntimeConfig';
 import Project from '../../../common/Project';
 import { PublicConfig } from '@webruntime/api';
 import { Plugin } from 'rollup';
+import { ImportMapService, AppBootstrapService } from '@webruntime/services';
+import { ApexService, SchemaService } from '@communities-webruntime/services';
 
 jest.mock('../../../common/Project');
 
@@ -34,6 +36,28 @@ describe('WebruntimeConfig', () => {
         const config = new WebruntimeConfig(project);
 
         expect(config.server.port).toEqual(3000);
+    });
+
+    describe('default services', () => {
+        it('should include ImportMapService', () => {
+            const config = new WebruntimeConfig(project);
+            expect(config.services).toContain(ImportMapService);
+        });
+
+        it('should include AppBootstrapService', () => {
+            const config = new WebruntimeConfig(project);
+            expect(config.services).toContain(AppBootstrapService);
+        });
+
+        it('should include ApexService', () => {
+            const config = new WebruntimeConfig(project);
+            expect(config.services).toContain(ApexService);
+        });
+
+        it('should include SchemaService', () => {
+            const config = new WebruntimeConfig(project);
+            expect(config.services).toContain(SchemaService);
+        });
     });
 
     describe('addMiddleware', () => {
