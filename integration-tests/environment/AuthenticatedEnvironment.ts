@@ -63,6 +63,7 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
                     'Required SFDX_CI_LOCALDEV_USERNAME environment variable not provided'
                 );
             }
+
             console.log(`Logging in as ${user}`);
             const authInfo = await AuthInfo.create({ username: user });
             const authInfoFields = authInfo.getFields();
@@ -71,6 +72,7 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
                 authInfo
             });
             console.log(`Logged in ${user} using JWT`);
+
             /*
             this.token = await (async function() {
                 return new Promise<string>((resolve, reject) => {
