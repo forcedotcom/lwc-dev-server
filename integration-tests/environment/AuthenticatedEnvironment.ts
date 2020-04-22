@@ -65,9 +65,12 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
             }
 
             console.log(`Logging in as ${user}`);
+            console.log('  Creating authinfo...');
             const authInfo = await AuthInfo.create({ username: user });
+            console.log('  Accessing authinfo...');
             const authInfoFields = authInfo.getFields();
             this.token = authInfoFields.accessToken || '';
+            console.log('  Creating a connection...');
             this.global.jsforceConnection = await Connection.create({
                 authInfo
             });
