@@ -30,6 +30,13 @@ jobs:
                   replace-existing: true
             - run: yarn install --frozen-lockfile
             - run: yarn build
+            - run:
+                  name: 'Authenticate to local dev testing org'
+                  shell: bash.exe
+                  command: |
+                      echo $SFDX_CI_LOCALDEV_JWTKEY | base64 --decode > localdev.key
+                      sfdx force:auth:jwt:grant --clientid ${SFDX_CI_LOCALDEV_CLIENTID} --username ${SFDX_CI_LOCALDEV_USERNAME} --jwtkeyfile $PWD/localdev.key --setdefaultusername --setalias localdev
+                      sfdx force:auth:list
             - run: yarn lint:ci
             - run: yarn test:ci
             - run: yarn test:e2e-ci
