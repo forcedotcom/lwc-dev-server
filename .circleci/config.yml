@@ -28,15 +28,19 @@ jobs:
                   key: dependency-cache-linux-{{ checksum "yarn.lock" }}
             - browser-tools/install-chrome:
                   replace-existing: true
+            - run:
+                  command: |
+                      npm install -g sfdx-cli@latest
+                      sfdx --version
             - run: yarn install --frozen-lockfile
             - run: yarn build
+            - run: yarn lint:ci
             - run:
                   name: 'Authenticate to local dev testing org'
                   command: |
                       echo $SFDX_CI_LOCALDEV_JWTKEY | base64 --decode > localdev.key
                       sfdx force:auth:jwt:grant --clientid ${SFDX_CI_LOCALDEV_CLIENTID} --username ${SFDX_CI_LOCALDEV_USERNAME} --jwtkeyfile $PWD/localdev.key --setdefaultusername --setalias localdev
                       sfdx force:auth:list
-            - run: yarn lint:ci
             - run: yarn test:ci
             - run: yarn test:e2e-ci
             - codecov/upload:
