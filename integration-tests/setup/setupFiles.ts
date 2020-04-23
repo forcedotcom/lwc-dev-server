@@ -51,7 +51,7 @@ afterEach(async () => {
     // but jest doesn't provide test info/state info to afterEach.
     const test = global.failedTest;
     if (test) {
-        console.log('attempting to save screenshot for test failure');
+        console.log('attempting to save screenshot in case of test failure');
 
         try {
             const screenshot = await global.browser.takeScreenshot();

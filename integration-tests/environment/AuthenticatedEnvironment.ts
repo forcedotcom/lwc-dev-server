@@ -62,7 +62,9 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
             const user: string | undefined = process.env.SFDC_USER;
             if (!user) {
                 throw new Error(
-                    'Required SFDC_USER environment variable not provided'
+                    'Required SFDC_USER environment variable not provided.\n' +
+                        `See 'developer account' in the team's LastPass account.\n` +
+                        `To set: 'export SFDC_USER=<LastPassUsername>' and 'export SFDC_PWD=<LastPassSitePassword>'`
                 );
             }
             console.log(`Logging in as ${user}`);
