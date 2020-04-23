@@ -30,7 +30,8 @@ jobs:
                   key: dependency-cache-linux-{{ checksum "yarn.lock" }}
             - browser-tools/install-chrome:
                   replace-existing: true
-            - sfdx/install
+            - sfdx/install:
+                  version: latest
             - sfdx/auth:
                   consumerKey: SFDX_CI_LOCALDEV_CLIENTID
                   jwtKey: SFDX_CI_LOCALDEV_JWTKEY
