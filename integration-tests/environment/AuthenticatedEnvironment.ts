@@ -55,7 +55,9 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
     async setup(): Promise<void> {
         const useJwt = process.env.USE_JWT ? true : false;
         if (this.token === null) {
-            const user = useJwt ? this.initJwtFlow() : this.initPasswordFlow();
+            const user = useJwt
+                ? await this.initJwtFlow()
+                : await this.initPasswordFlow();
             this.commandArgs.push(`--targetusername=${user}`);
         }
         return super.setup();
