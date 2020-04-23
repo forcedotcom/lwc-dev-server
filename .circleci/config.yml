@@ -63,6 +63,8 @@ jobs:
             #           - lib
     build-and-test-win:
         executor: win/default
+        environment:
+            - USE_JWT: true
         steps:
             - checkout
             - restore_cache:
@@ -90,6 +92,7 @@ jobs:
             - run:
                   shell: bash.exe
                   command: |
+                      sfdx force:auth:list
                       yarn test:e2e-ci
             - store_test_results:
                   path: reports
