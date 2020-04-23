@@ -69,8 +69,11 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
             const authInfo = await AuthInfo.create({ username: user });
             console.log('  Accessing authinfo...');
             const authInfoFields = authInfo.getFields();
-            this.token = authInfoFields.accessToken || '';
-            console.log('  Creating a connection...');
+            const instanceUrl = authInfoFields.instanceUrl || 'NO-URL';
+            this.token = authInfoFields.accessToken || 'NO-ACCESS-TOKEN';
+            const isJwt = authInfo.isJwt();
+            console.log(`  Creating a connection to: ${instanceUrl}...`);
+            console.log(`  [isJwt=${isJwt}, accessToken=${this.token}]`);
             this.global.jsforceConnection = await Connection.create({
                 authInfo
             });
