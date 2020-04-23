@@ -104,11 +104,10 @@ export default class LocalDevServer {
     }
 
     async shutdown() {
-        await this.server.shutdown();
-
         if (this.liveReload) {
-            this.liveReload.close();
+            await this.liveReload.close();
         }
+        await this.server.shutdown();
     }
 
     private async exitHandler() {
