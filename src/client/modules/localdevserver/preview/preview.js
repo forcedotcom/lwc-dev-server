@@ -79,6 +79,18 @@ export default class Preview extends LightningElement {
         // dynamically load the component
         // TODO: compile errors are not surfaced properly anymore
         const module = await import(specifier);
+        console.log(' preview component ====> ');
+        console.log('module output : ');
+        console.log(module);
+        console.log(module.default);
+        if (!module.default) {
+            console.log('there seems there was an error');
+            let err = new Error();
+            err.message = 'Custom unexpected error';
+            err.filename =
+                '/Users/lcamposguajardo/github/DevTools/lwc-recipes/.localdevserver/webruntime/custom-component/dev/en-US/c/clock.js';
+            throw err;
+        }
         this.dynamicCtor = module.default;
     }
 

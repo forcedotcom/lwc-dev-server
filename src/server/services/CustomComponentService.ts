@@ -61,11 +61,22 @@ export function getCustomComponentService(
 
             compilerConfig.baseDir = modulesDirectory;
 
-            const { result, metadata, success, diagnostics } = await compile({
+            let { result, metadata, success, diagnostics } = await compile({
                 ...compilerConfig,
                 namespace: SFDX_LWC_DIRECTORY,
                 name
             });
+
+            if (diagnostics && diagnostics.length > 0) {
+                const jsonss = JSON.stringify(diagnostics[0]);
+                return {
+                    type: RequestOutputTypes.JSON,
+                    resource: { json: JSON.parse(jsonss) },
+                    specifier,
+                    diagnostics,
+                    success
+                };
+            }
 
             return {
                 type: RequestOutputTypes.COMPONENT,

@@ -2,7 +2,8 @@ import path from 'path';
 import { Application, Request, Response, NextFunction } from 'express';
 import ComponentIndex from '../../common/ComponentIndex';
 import Project from '../../common/Project';
-import { AppExtensionConfig, ApplicationConfig } from '@webruntime/api';
+import { AppExtensionConfig } from '@webruntime/api';
+import fs from 'fs';
 
 const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
     '.html': true,
@@ -34,14 +35,22 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     const file = req.query.file as string;
                     const extension = path.extname(file);
                     const normalizedFile = path.normalize(file);
-                    if (
+                    console.log('normalized file => ', normalizedFile);
+                    /* const fileContent = fs.createReadStream(normalizedFile);
+                    fileContent.pipe(res);
+                    */
+                    const content = fs.readFileSync(normalizedFile);
+                    const stringContent = content.toString();
+
+                    res.json(JSON.parse(stringContent));
+                    /*if (
                         normalizedFile.startsWith(
                             path.normalize(project.modulesSourceDirectory)
                         ) &&
                         ALLOWED_SHOW_EXTENSIONS[extension]
                     ) {
                         res.sendFile(file);
-                    }
+                    } */
                 }
             );
         }
