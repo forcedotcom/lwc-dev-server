@@ -3,25 +3,32 @@ import fs from 'fs';
 import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
-import { sessionNonce, projectMetadata, liveReload } from './extensions';
-import { Server, Container } from '@webruntime/server';
+import {
+    sessionNonce,
+    apexMiddleware,
+    projectMetadata,
+    liveReload
+} from './extensions';
+import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
+import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { copyFiles } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 import colors from 'colors';
 import { AddressInfo } from 'net';
+import { Connection } from '@salesforce/core';
 
-export default class LocalDevServer extends Server {
+export default class LocalDevServer {
+    private server: Server;
+    private config: WebruntimeConfig;
     private rootDir: string;
     private project: Project;
+    private liveReload?: any;
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
 
-    constructor(project: Project) {
-        // create a default LWR server
-        super();
-
+    constructor(project: Project, connection?: Connection) {
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
@@ -37,29 +44,44 @@ export default class LocalDevServer extends Server {
                 supportedCoreVersions[supportedCoreVersions.length - 1];
         }
 
-        const options = {
-            basePath: '',
-            projectDir: this.rootDir,
-            port: project.configuration.port.toString(),
-            resourceRoot: '/webruntime'
-        };
+        const config = new WebruntimeConfig(this.project);
 
-        // @ts-ignore
-        const config = new WebruntimeConfig(this.config, this.project);
+        const middleware: ContainerAppExtension[] = [
+            sessionNonce(this.sessionNonce)
+        ];
 
-        config.addMiddleware([sessionNonce(this.sessionNonce)]);
+        if (connection) {
+            middleware.push(
+                apexMiddleware({
+                    instanceUrl: connection.instanceUrl,
+                    accessToken: connection.accessToken
+                })
+            );
+        }
 
-        config.addRoutes([
-            projectMetadata(this.sessionNonce, this.project),
-            liveReload(path.join(config.buildDir, 'metadata.json'))
-        ]);
+        config.addMiddleware(middleware);
+
+        const routes: ContainerAppExtension[] = [
+            projectMetadata(this.sessionNonce, this.project)
+        ];
+
+        if (this.project.configuration.liveReload) {
+            this.liveReload = liveReload(
+                path.join(config.buildDir, 'metadata.json')
+            );
+            routes.push(this.liveReload);
+        }
+
+        config.addRoutes(routes);
 
         config.addModules([
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`,
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`
         ]);
 
-        const services: any[] = [
+        const services: ServiceDefinitionCtor[] = [
+            // @ts-ignore
             ComponentServiceWithExclusions,
             getLabelService(project.customLabelsPath)
         ];
@@ -75,48 +97,50 @@ export default class LocalDevServer extends Server {
 
         config.addServices(services);
 
-        // override LWR defaults
-        // @ts-ignore
-        this.options = options;
-        // @ts-ignore
         this.config = config;
-        // @ts-ignore
-        this.container = new Container(this.config);
+        this.server = new Server({
+            config
+        });
     }
 
-    async initialize() {
-        await super.initialize();
-        this.copyStaticAssets();
-        // graceful shutdown
-        process.on('SIGINT', async () => this.exitHandler());
-        process.on('SIGTERM', async () => this.exitHandler());
+    async shutdown() {
+        if (this.liveReload) {
+            await this.liveReload.close();
+        }
+        await this.server.shutdown();
     }
 
     private async exitHandler() {
-        this.shutdown();
+        await this.shutdown();
         process.exit();
     }
 
-    async start() {
-        await super.start();
-
-        console.log(
-            colors.magenta.bold(
-                `Server up on http://localhost:${this.serverPort}`
-            )
-        );
-    }
-
     /**
-     * Attempts to resolve the port from the server.
-     * the port property only returns the configured port to use.
+     * Starts the server. If the server successfully started and contains
+     * an address, print the server up message.
      */
-    get serverPort() {
-        if (this.httpServer) {
-            const addressInfo: AddressInfo = this.httpServer.address() as AddressInfo;
-            return addressInfo.port;
+    async start() {
+        try {
+            await this.server.initialize();
+            this.copyStaticAssets();
+            await this.server.start();
+
+            let port = `${this.serverPort}`;
+            if (port && port !== 'undefined') {
+                console.log(
+                    colors.magenta.bold(`Server up on http://localhost:${port}`)
+                );
+            } else {
+                console.error(`Server start up failed.`);
+            }
+        } catch (e) {
+            console.error(`Server start up failed.`);
+            throw e;
         }
-        return this.port;
+
+        // graceful shutdown
+        process.on('SIGINT', async () => this.exitHandler());
+        process.on('SIGTERM', async () => this.exitHandler());
     }
 
     private copyStaticAssets() {
@@ -132,6 +156,18 @@ export default class LocalDevServer extends Server {
         }
 
         // TODO: copy assets from project.staticResourcesDirectory
+    }
+
+    /**
+     * Verify the server is up and contains an address. Return the port from
+     * this address. Do not use the configured port, as the server may not be
+     * using the same value.
+     */
+    get serverPort() {
+        if (this.server.httpServer && this.server.httpServer.address()) {
+            const addressInfo: AddressInfo = this.server.httpServer.address() as AddressInfo;
+            return addressInfo.port;
+        }
     }
 
     /**

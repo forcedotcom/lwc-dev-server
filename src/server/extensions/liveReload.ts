@@ -1,38 +1,31 @@
 import reload from 'reload';
 import chokidar from 'chokidar';
-import { Application } from 'express';
-import getPort from 'get-port';
-import debugLogger from 'debug';
-
-const debug = debugLogger('localdevserver:livereload');
+import { AppExtensionConfig } from '@webruntime/api';
 
 export function liveReload(metadataPath: string) {
+    let reloadReturned: any;
+    let fileWatcher: chokidar.FSWatcher;
+
     return {
-        extendApp: async ({ app }: { app: Application }) => {
-            /**
-             * We are using getPort() since reload will always try to use default
-             * port. If we have two LocalDev servers going at the same time
-             * the server would fail here unless we start reload on a new unused port.
-             */
-            const availablePort = await getPort();
-            debug(`Listening on port: ${availablePort}`);
+        extendApp: async ({ app }: AppExtensionConfig) => {
+            reloadReturned = await reload(app);
 
-            const reloadReturned = await reload(app, {
-                port: availablePort,
-                verbose: debugLogger.enabled('localdevserver')
-            });
-
-            const fileWatcher = chokidar.watch(metadataPath, {
+            fileWatcher = chokidar.watch(metadataPath, {
                 ignoreInitial: true
             });
 
             fileWatcher.on('change', () => {
                 reloadReturned.reload();
             });
+        },
+        close: async () => {
+            if (reloadReturned) {
+                await reloadReturned.closeServer();
+            }
 
-            app.on('close', () => {
-                fileWatcher.close();
-            });
+            if (fileWatcher) {
+                await fileWatcher.close();
+            }
         }
     };
 }

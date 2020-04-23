@@ -177,9 +177,8 @@ export default class Start extends SfdxCommand {
         debug(JSON.stringify({ ...retValue, token: undefined }));
 
         // Start local dev server
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, conn);
 
-        await server.initialize();
         await server.start();
 
         return retValue;

@@ -1,14 +1,21 @@
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 
+/**
+ * Returns JavaScript code that will add a module with the given name and
+ * constant value to the registry.
+ *
+ * This is meant to be injected in the HTML to define app config modules.
+ */
+function define([key, value]: [string, any]) {
+    return `Webruntime.define('${key}', [], function() { return ${JSON.stringify(
+        value
+    )}; })`;
+}
+
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
-        const {
-            // @ts-ignore
-            locals: { sessionNonce },
-            config: {
-                server: { basePath }
-            }
-        } = this.pageContext;
+        const { sessionNonce }: any = this.pageContext.locals;
+        const { basePath } = this.pageContext.config.server;
 
         // TODO: The version key needs to be calculated until LWR provides it in 228.
         const versionKey = '1';
@@ -31,6 +38,25 @@ export class LocalDevPage extends WebruntimePage {
                     : originalValue;
             }
         );
+    }
+
+    get experimental_scripts() {
+        const { request: req } = this.pageContext as any;
+
+        const modules = {
+            '@app/basePath': '',
+            '@app/csrfToken': req.csrfToken && req.csrfToken(),
+            '@salesforce/user/isGuest': true,
+            '@salesforce/client/formFactor': 'Large'
+        };
+
+        return [
+            {
+                code: Object.entries(modules)
+                    .map(define)
+                    .join('\n')
+            }
+        ];
     }
 }
 

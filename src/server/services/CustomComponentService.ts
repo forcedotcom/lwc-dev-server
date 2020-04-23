@@ -11,7 +11,6 @@ import {
     RequestService,
     ImportMapObject
 } from '@webruntime/api';
-import { CompilerResourceMetadata } from '../../common/CompilerResourceMetadata';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 
@@ -72,7 +71,7 @@ export function getCustomComponentService(
                 type: RequestOutputTypes.COMPONENT,
                 specifier,
                 resource: result,
-                metadata: new CompilerResourceMetadata(metadata),
+                metadata,
                 success,
                 diagnostics
             };

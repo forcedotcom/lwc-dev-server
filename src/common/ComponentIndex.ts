@@ -73,6 +73,9 @@ export default class ComponentIndex {
 
     private findSubdirectories(dir: string): string[] {
         const subdirs: string[] = [];
+        if (!fs.existsSync(dir)) {
+            return subdirs;
+        }
         const dirs = fs.readdirSync(dir);
         for (const file of dirs) {
             const subdir = path.join(dir, file);

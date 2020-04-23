@@ -8,6 +8,7 @@ import * as fileUtils from '../../common/fileUtils';
 import { ComponentServiceWithExclusions } from '../services/ComponentServiceWithExclusions';
 import { getCustomComponentService } from '../services/CustomComponentService';
 import { getLabelService } from '../services/LabelsService';
+import colors from 'colors';
 
 jest.mock('@webruntime/server');
 jest.mock('../config/WebruntimeConfig');
@@ -17,6 +18,9 @@ jest.mock('../../common/ComponentIndex');
 
 describe('LocalDevServer', () => {
     let project: Project;
+    let consoleLogMock: any;
+    let consoleErrorMock: any;
+    let fileUtilsCopyMock: any;
 
     beforeEach(() => {
         // @ts-ignore
@@ -46,20 +50,28 @@ describe('LocalDevServer', () => {
             };
         });
         project = new Project('/Users/arya/dev/myproject');
+        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+        fileUtilsCopyMock = jest
+            .spyOn(fileUtils, 'copyFiles')
+            .mockImplementation();
     });
 
     afterEach(() => {
         mockFs.restore();
+        consoleLogMock.mockRestore();
+        consoleErrorMock.mockRestore();
+        fileUtilsCopyMock.mockRestore();
     });
 
-    it('should create a default LWR server', () => {
+    it('should create a webruntime server', () => {
         new LocalDevServer(project);
 
         expect(Server).toHaveBeenCalledTimes(1);
 
         // @ts-ignore
         const args = Server.mock.calls[0][0];
-        expect(args).toBeUndefined();
+        expect(args).toHaveProperty('config');
     });
 
     it('should create a session nonce', () => {
@@ -99,6 +111,43 @@ describe('LocalDevServer', () => {
         expect(server.config.addRoutes).toHaveBeenCalledTimes(1);
     });
 
+    it('should add the live reload route when the configuration is true', () => {
+        const server = new LocalDevServer(project);
+
+        // @ts-ignore
+        const routes = server.config.addRoutes.mock.calls[0][0];
+
+        expect(routes).toHaveLength(2);
+
+        // @ts-ignore
+        expect(server.liveReload).toBeDefined();
+    });
+
+    it('should not add the live reload route when the configuration is false', () => {
+        project.configuration.liveReload = false;
+
+        const server = new LocalDevServer(project);
+
+        // @ts-ignore
+        const routes = server.config.addRoutes.mock.calls[0][0];
+
+        expect(routes).toHaveLength(1);
+
+        // @ts-ignore
+        expect(server.liveReload).toBeUndefined();
+    });
+
+    it('should add apex middleware when connection is available', () => {
+        const connection = {};
+        // @ts-ignore
+        const server = new LocalDevServer(project, connection);
+
+        // @ts-ignore
+        const extensions = server.config.addMiddleware.mock.calls[0][0];
+
+        expect(extensions).toHaveLength(2);
+    });
+
     it('should add modules with the correct vendor version to the config', () => {
         const server = new LocalDevServer(project);
 
@@ -109,8 +158,9 @@ describe('LocalDevServer', () => {
         const modules = server.config.addModules.mock.calls[0][0];
 
         expect(modules).toEqual([
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg`
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/connect-gen-pkg'
         ]);
     });
 
@@ -136,20 +186,6 @@ describe('LocalDevServer', () => {
         );
     });
 
-    it('should override the default config', () => {
-        const localDevServer = new LocalDevServer(project);
-        const lwrServer = new Server();
-
-        // override the options and config
-        // @ts-ignore
-        expect(lwrServer.options).not.toEqual(localDevServer.options);
-        // @ts-ignore
-        expect(lwrServer.config).not.toEqual(localDevServer.config);
-
-        // create a new container with the updated config
-        expect(Container).toHaveBeenCalledTimes(1);
-    });
-
     it('copies app static assets to the server assets directory', async () => {
         const server = new LocalDevServer(project);
         // @ts-ignore
@@ -158,7 +194,7 @@ describe('LocalDevServer', () => {
             '.localdevserver'
         );
 
-        await server.initialize();
+        await server.start();
 
         const copiedFromPath = path.join(__dirname, '../../../dist/assets/*');
         // @ts-ignore
@@ -177,10 +213,9 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         mockExit.mockImplementation(() => {});
 
-        await server.initialize();
+        await server.start();
         process.emit('SIGTERM', 'SIGTERM');
 
-        expect(mockExit).toBeCalled();
         expect(mockShutdown).toHaveBeenCalledTimes(1);
     });
 
@@ -191,15 +226,14 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         mockExit.mockImplementation(() => {});
 
-        await server.initialize();
+        await server.start();
         process.emit('SIGINT', 'SIGINT');
 
-        expect(mockExit).toBeCalled();
         expect(mockShutdown).toHaveBeenCalledTimes(1);
     });
 
     it('throws an error if copying static assets fails', async () => {
-        jest.spyOn(fileUtils, 'copyFiles').mockImplementation(() => {
+        fileUtilsCopyMock.mockImplementation(() => {
             throw new Error('test error');
         });
 
@@ -210,9 +244,43 @@ describe('LocalDevServer', () => {
             '.localdevserver'
         );
 
-        await expect(server.initialize()).rejects.toThrow(
+        await expect(server.start()).rejects.toThrow(
             'Unable to copy assets: test error'
         );
+    });
+
+    it('prints server up message on start', async () => {
+        const expected = colors.magenta.bold(
+            `Server up on http://localhost:${3333}`
+        );
+        const server = new LocalDevServer(project);
+        Object.defineProperty(server, 'ux', {
+            get: () => {
+                return { log: consoleLogMock, error: consoleErrorMock };
+            }
+        });
+        jest.spyOn(server, 'serverPort', 'get').mockReturnValue(3333);
+
+        await server.start();
+
+        expect(consoleLogMock.mock.calls[0][0]).toEqual(expected);
+        expect(consoleErrorMock.mock.calls[0]).toBeUndefined();
+    });
+
+    it('do not print server up message if server port is undefined', async () => {
+        const expected = 'Server start up failed.';
+        const server = new LocalDevServer(project);
+        Object.defineProperty(server, 'ux', {
+            get: () => {
+                return { log: consoleLogMock, error: consoleErrorMock };
+            }
+        });
+        jest.spyOn(server, 'serverPort', 'get').mockReturnValue(undefined);
+
+        await server.start();
+
+        expect(consoleLogMock.mock.calls[0]).toBeUndefined();
+        expect(consoleErrorMock.mock.calls[0][0]).toEqual(expected);
     });
 
     describe('services added to the LocalDevServer', () => {
@@ -305,6 +373,41 @@ describe('LocalDevServer', () => {
                 (service: Function) => service.name
             );
             expect(serviceNames).toContain(LabelService.name);
+        });
+    });
+
+    describe('start', () => {
+        it('should call webruntime server start', async () => {
+            const server = new LocalDevServer(project);
+
+            const mockStart = jest.spyOn(server, 'start');
+
+            await server.start();
+
+            expect(mockStart).toBeCalledTimes(1);
+        });
+    });
+
+    describe('shutdown', () => {
+        it('should call webruntime server start', async () => {
+            const server = new LocalDevServer(project);
+
+            const mockShutdown = jest.spyOn(server, 'shutdown');
+
+            await server.shutdown();
+
+            expect(mockShutdown).toBeCalledTimes(1);
+        });
+
+        it('should close live reload', async () => {
+            const server = new LocalDevServer(project);
+
+            // @ts-ignore
+            const mockClose = jest.spyOn(server.liveReload, 'close');
+
+            await server.shutdown();
+
+            expect(mockClose).toBeCalledTimes(1);
         });
     });
 });

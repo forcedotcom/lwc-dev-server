@@ -3,6 +3,7 @@
         "@lwc/engine",
         "@lwc/wire-service",
         "@webruntime/navigation",
+        "@communities-webruntime/client",
         "src/client/modules"
     ]
 }

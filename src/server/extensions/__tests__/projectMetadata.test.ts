@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import { projectMetadata } from '../projectMetadata';
 import Project from '../../../common/Project';
+import { ExtensionOptions } from '@webruntime/api';
 
 jest.mock('../../../common/Project');
 
@@ -29,6 +30,7 @@ describe('projectMetadata', () => {
 
     describe('extendApp', () => {
         let app: Application;
+        let options: ExtensionOptions;
 
         beforeEach(() => {
             app = express();
@@ -37,7 +39,7 @@ describe('projectMetadata', () => {
         it('should add the /localdev/{{sessionNonce}}/localdev.js route', () => {
             const extension = projectMetadata(nonce, project);
 
-            extension.extendApp({ app });
+            extension.extendApp({ app, options });
 
             // @ts-ignore
             const route = app.get.mock.calls[0][0];
@@ -48,7 +50,7 @@ describe('projectMetadata', () => {
         it('should add the /localdev/{{sessionNonce}}/show route', async () => {
             const extension = projectMetadata(nonce, project);
 
-            extension.extendApp({ app });
+            extension.extendApp({ app, options });
 
             // @ts-ignore
             const route = app.get.mock.calls[1][0];
