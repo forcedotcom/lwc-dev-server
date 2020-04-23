@@ -120,6 +120,7 @@ workflows:
     version: 2.1
     build_and_test:
         jobs:
-            - build-and-test-linux
+            - build-and-test-linux:
+                  context: vscode-test
             - build-and-test-win:
                   context: vscode-test
