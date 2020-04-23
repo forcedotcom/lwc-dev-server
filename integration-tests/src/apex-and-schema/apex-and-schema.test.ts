@@ -15,7 +15,7 @@ beforeAll(async () => {
     });
 });
 
-describe.skip('apex', () => {
+describe('apex', () => {
     it('can wire data to a property', async () => {
         const page = new ApexPage('c', 'wireToProp');
         await page.open();

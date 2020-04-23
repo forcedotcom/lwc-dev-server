@@ -1,9 +1,6 @@
 import reload from 'reload';
 import chokidar from 'chokidar';
 import { AppExtensionConfig } from '@webruntime/api';
-import debugLogger from 'debug';
-
-const debug = debugLogger('localdevserver:livereload');
 
 export function liveReload(metadataPath: string) {
     let reloadReturned: any;
@@ -12,6 +9,7 @@ export function liveReload(metadataPath: string) {
     return {
         extendApp: async ({ app }: AppExtensionConfig) => {
             reloadReturned = await reload(app);
+
             fileWatcher = chokidar.watch(metadataPath, {
                 ignoreInitial: true
             });

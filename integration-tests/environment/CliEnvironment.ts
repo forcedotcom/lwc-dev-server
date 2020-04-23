@@ -4,8 +4,14 @@ import BaseEnvironment from './BaseEnvironment';
 import { spawn, ChildProcess } from 'child_process';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
+import { Messages } from '@salesforce/core';
+import LocalDevServer from '../../src/server/LocalDevServer';
+
+// Initialize Messages with the current plugin directory
+Messages.importMessagesDirectory(__dirname);
 
 const debug = debugLogger('localdevserver:test');
+const messages = Messages.loadMessages('@salesforce/lwc-dev-server', 'start');
 
 /**
  * Starts the dev server by spawning a child process that runs the `bin/run`
@@ -32,6 +38,8 @@ const debug = debugLogger('localdevserver:test');
  *
  * This environment makes the following global values available:
  * - `global.serverPort` - the port the server was started on.
+ *
+ * Setting a default org within the test's project may be required.
  *
  * @see https://jestjs.io/docs/en/configuration#testenvironment-string
  */
@@ -107,6 +115,10 @@ export default class CliEnvironment extends BaseEnvironment {
                     const port = match[1];
                     this.global.serverPort = port;
                     resolve();
+                } else if (
+                    stdout.includes(messages.getMessage('error:noscratchorg'))
+                ) {
+                    console.debug(stdout);
                 }
             });
 
