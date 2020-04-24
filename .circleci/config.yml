@@ -38,7 +38,11 @@ jobs:
                   consumerKey: SFDX_CI_LOCALDEV_CLIENTID
                   jwtKey: SFDX_CI_LOCALDEV_JWTKEY
                   defaultusername: ${SFDX_CI_LOCALDEV_USERNAME}
-            - run: sfdx force:auth:list
+            - run:
+                  name: 'Verify authentication to local dev testing org'
+                  command: |
+                      sfdx force:auth:list
+                      sfdx force:data:soql:query -q "select id from account" -u ${SFDX_CI_LOCALDEV_USERNAME}
             - run: yarn install --frozen-lockfile
             - run: yarn build
             - run: yarn lint:ci
@@ -75,6 +79,8 @@ jobs:
             #           - lib
     build-and-test-win:
         executor: win/default
+        environment:
+            - USE_JWT: true
         steps:
             - checkout
             - restore_cache:
@@ -103,6 +109,7 @@ jobs:
                   shell: bash.exe
                   command: |
                       sfdx force:auth:list
+                      sfdx force:data:soql:query -q "select id from account" -u ${SFDX_CI_LOCALDEV_USERNAME}
                       yarn test:e2e-ci
             - store_test_results:
                   path: reports
