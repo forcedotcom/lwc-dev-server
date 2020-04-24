@@ -7,7 +7,8 @@ import {
     sessionNonce,
     apexMiddleware,
     projectMetadata,
-    liveReload
+    liveReload,
+    apiMiddleware
 } from './extensions';
 import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
@@ -55,6 +56,12 @@ export default class LocalDevServer {
                 apexMiddleware({
                     instanceUrl: connection.instanceUrl,
                     accessToken: connection.accessToken
+                }),
+                apiMiddleware({
+                    apiEndpoint: project.configuration.endpoint,
+                    apiEndpointHeaders: project.configuration.endpointHeaders,
+                    apiVersion: project.configuration.api_version,
+                    recordDir: path.join(config.buildDir, 'api')
                 })
             );
         }

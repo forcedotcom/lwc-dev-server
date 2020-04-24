@@ -278,18 +278,18 @@ describe('LocalDevServerConfiguration', () => {
         expect(configuration.endpoint).toBe('http://mobile1.t.salesforce.com');
     });
 
-    test('able to store the onProxyReq on the config ', () => {
+    test('able to store the endpoint headers on the config ', () => {
         mock({
             'config.json': JSON.stringify({})
         });
 
-        const handler = function handleOnProxyReq() {};
+        const headers = ['Authorization: Bearer 123456'];
         const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
             'config.json'
         );
-        configuration.onProxyReq = handler;
+        configuration.endpointHeaders = headers;
 
-        expect(configuration.onProxyReq).toBe(handler);
+        expect(configuration.endpointHeaders).toBe(headers);
     });
 
     test('setting of the config from the parsing of the CLI flags', () => {

@@ -1,9 +1,10 @@
 import fs from 'fs';
 
 export const defaultPort = 3333;
+
 export default class LocalDevServerConfiguration {
-    private _onProxyReq: Function = function() {};
     private _liveReload: boolean = true;
+    private _endpointHeaders: string[] = [];
     private entryPoint: string = '';
     private readonly configFromJson: any;
 
@@ -180,12 +181,12 @@ export default class LocalDevServerConfiguration {
         this.configFromJson.endpoint = endpoint;
     }
 
-    public get onProxyReq(): Function {
-        return this._onProxyReq || function() {};
+    public get endpointHeaders(): string[] {
+        return this._endpointHeaders || [];
     }
 
-    public set onProxyReq(onProxyReq: Function) {
-        this._onProxyReq = onProxyReq;
+    public set endpointHeaders(endpointHeaders: string[]) {
+        this._endpointHeaders = endpointHeaders;
     }
 
     public get liveReload(): boolean {
