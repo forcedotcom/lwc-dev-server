@@ -17,6 +17,7 @@ module.exports = async () => {
     // Without this, we get an error if the keychain hasn't been setup already (through a previous sfdx force:auth:web:login):
     // 'GenericKeychainServiceError: The service and account specified in key.json do not match the version of the toolbelt.'
     if (process.platform === 'win32' && process.env.CI) {
+        /*
         const key = crypto.randomBytes(Math.ceil(16)).toString('hex');
 
         let newKeyChain = await KeychainConfig.create(
@@ -28,6 +29,8 @@ module.exports = async () => {
             account: 'local',
             key
         });
+        */
+        console.log('Skipping setup of key.json - not necessary for JWT.');
     }
 
     // Install Selenium if required.
