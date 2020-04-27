@@ -126,10 +126,10 @@ describe('LocalDevServerConfiguration', () => {
         expect(configuration.modulesSourceDirectory).toBe('/my/directory');
     });
 
-    test('loading of staticResourcesDirectory from config json', () => {
+    test('loading of staticResourcesDirectories from config json', () => {
         mock({
             'config.json': JSON.stringify({
-                staticResourcesDirectory: '/static/resources/directory'
+                staticResourcesDirectories: ['/static/resources/directory']
             })
         });
 
@@ -137,9 +137,9 @@ describe('LocalDevServerConfiguration', () => {
             'config.json'
         );
 
-        expect(configuration.staticResourcesDirectory).toBe(
+        expect(configuration.staticResourcesDirectories).toStrictEqual([
             '/static/resources/directory'
-        );
+        ]);
     });
 
     test('loading of customLabelsFile from config json', () => {

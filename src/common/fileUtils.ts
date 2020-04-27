@@ -29,36 +29,28 @@ export function removeFile(file: string) {
 }
 
 /**
- * Collection of folder names we ignore
- * when searching for a folder in a project
- */
-const foldersToIgnore = new Set([
-    'aura',
-    'lwc',
-    'classes',
-    'triggers',
-    'layouts',
-    'objects'
-]);
-
-/**
  * Find specific folder by iterate over rootPath's children
  *
  * @param rootPath Parent path where to start looking for a folder
  * @param folderName Name of the folder we're looking for
  * @param folderArray Paths where we've found the folderName
+ * @param foldersToIgnore Set of folders to ignore scanning
  */
 export function findFolders(
     rootPath: string,
     folderName: string,
-    folderArray: string[]
+    folderArray: string[] = [],
+    foldersToIgnore: Set<string> = new Set([])
 ) {
+    if (!fs.statSync(rootPath).isDirectory()) {
+        return folderArray;
+    }
+
     const dirChildren = fs.readdirSync(rootPath);
     // avoid scanning elements from foldersToIgnore set
     const filteredDirChildren = dirChildren.filter(item => {
         return !foldersToIgnore.has(item);
     });
-    folderArray = folderArray || [];
 
     for (let i = 0; i < filteredDirChildren.length; i++) {
         const file = filteredDirChildren[i];

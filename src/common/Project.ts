@@ -74,7 +74,21 @@ export default class Project {
     }
 
     public get staticResourcesDirectories(): string[] {
-        return this.configuration.staticResourcesDirectories;
+        const staticResourceDirectoriesResults: string[] = [];
+        this.configuration.staticResourcesDirectories.forEach(
+            staticResourceDirectory => {
+                if (path.isAbsolute(staticResourceDirectory)) {
+                    staticResourceDirectoriesResults.push(
+                        staticResourceDirectory
+                    );
+                } else {
+                    staticResourceDirectoriesResults.push(
+                        path.join(this.rootDirectory, staticResourceDirectory)
+                    );
+                }
+            }
+        );
+        return staticResourceDirectoriesResults;
     }
 
     public get customLabelsPath(): string | undefined {
@@ -190,14 +204,26 @@ export default class Project {
                 // Figure out where the static resources are located
                 let resourcePaths: string[] = [];
                 packageDirectories.forEach(item => {
-                    const srFolders = findFolders(
+                    const staticResourceFolders = findFolders(
                         path.join(_path, item),
                         'staticresources',
-                        []
+                        [],
+                        new Set([
+                            'aura',
+                            'lwc',
+                            'classes',
+                            'triggers',
+                            'layouts',
+                            'objects'
+                        ])
                     );
-                    const rpIndex =
+                    const resourcePathIndex =
                         resourcePaths.length > 0 ? resourcePaths.length - 1 : 0;
-                    resourcePaths.splice(rpIndex, 0, ...srFolders);
+                    resourcePaths.splice(
+                        resourcePathIndex,
+                        0,
+                        ...staticResourceFolders
+                    );
                 });
                 this.configuration.staticResourcesDirectories = resourcePaths;
             }
