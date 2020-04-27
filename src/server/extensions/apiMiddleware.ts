@@ -3,8 +3,8 @@ import { Application } from 'express';
 import { AppExtensionConfig } from '@webruntime/api';
 import { apiMiddleware as webruntimeApiMiddleware } from '@communities-webruntime/extensions/dist/commonjs/api-middleware';
 
-const API_PATH_PREFIX = '/webruntime/api';
-const DEFAULT_API_VERSION = '48.0';
+export const API_PATH_PREFIX = '/webruntime/api';
+export const DEFAULT_API_VERSION = '48.0';
 
 const debug = debugLogger('localdevserver');
 
@@ -14,7 +14,7 @@ export interface ProxyEventListener {
 }
 
 // the ApiConfig interface in webruntime needs to be exported, and the version
-// rewrite option added, then we can just use that
+// rewrite option added, then we can just use that directly
 export interface ApiConfig {
     readonly apiPathPrefix?: string;
     readonly apiEndpoint?: string;
@@ -44,7 +44,7 @@ export function apiMiddleware({
                 recordApiCalls,
                 recordDir,
                 onProxyReq,
-                pathRewrite: rewriteApiPath(apiVersion)
+                pathRewrite: getApiPathRewrite(apiVersion)
             });
             (app as Application).use(middleware);
         }
@@ -57,7 +57,7 @@ export function apiMiddleware({
  *
  * @param version Replace the api version in the url with this version.
  */
-function rewriteApiPath(version: string) {
+function getApiPathRewrite(version: string) {
     return (originalPath: string) => {
         let newPath = originalPath;
         if (originalPath.startsWith(API_PATH_PREFIX)) {
