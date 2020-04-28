@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
+import { findFolders } from './fileUtils';
 
 /**
  * The project object describes two things.
@@ -72,17 +73,22 @@ export default class Project {
         );
     }
 
-    public get staticResourcesDirectory(): string | null {
-        if (path.isAbsolute(this.configuration.staticResourcesDirectory)) {
-            return this.configuration.staticResourcesDirectory;
-        }
-        if (this.configuration.staticResourcesDirectory !== '') {
-            return path.join(
-                this.rootDirectory,
-                this.configuration.staticResourcesDirectory
-            );
-        }
-        return null;
+    public get staticResourcesDirectories(): string[] {
+        const staticResourceDirectoriesResults: string[] = [];
+        this.configuration.staticResourcesDirectories.forEach(
+            staticResourceDirectory => {
+                if (path.isAbsolute(staticResourceDirectory)) {
+                    staticResourceDirectoriesResults.push(
+                        staticResourceDirectory
+                    );
+                } else {
+                    staticResourceDirectoriesResults.push(
+                        path.join(this.rootDirectory, staticResourceDirectory)
+                    );
+                }
+            }
+        );
+        return staticResourceDirectoriesResults;
     }
 
     public get customLabelsPath(): string | undefined {
@@ -191,13 +197,35 @@ export default class Project {
                     packageDirectories[0];
             }
 
-            if (!this.configuration.staticResourcesDirectory) {
-                // Figure out where the static resources are from the configuration as well.
-                const resourcePath = path.join(
-                    packageDirectories[0],
-                    'main/default/staticresources'
-                );
-                this.configuration.staticResourcesDirectory = resourcePath;
+            if (
+                this.configuration.staticResourcesDirectories &&
+                this.configuration.staticResourcesDirectories.length === 0
+            ) {
+                // Figure out where the static resources are located
+                let resourcePaths: string[] = [];
+                packageDirectories.forEach(item => {
+                    const staticResourceFolders = findFolders(
+                        path.join(_path, item),
+                        'staticresources',
+                        [],
+                        new Set([
+                            'aura',
+                            'lwc',
+                            'classes',
+                            'triggers',
+                            'layouts',
+                            'objects'
+                        ])
+                    );
+                    const resourcePathIndex =
+                        resourcePaths.length > 0 ? resourcePaths.length - 1 : 0;
+                    resourcePaths.splice(
+                        resourcePathIndex,
+                        0,
+                        ...staticResourceFolders
+                    );
+                });
+                this.configuration.staticResourcesDirectories = resourcePaths;
             }
 
             if (!this.configuration.customLabelsFile) {

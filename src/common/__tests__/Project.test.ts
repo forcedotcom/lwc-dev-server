@@ -1,6 +1,8 @@
 import Project from '../Project';
 import mock from 'mock-fs';
 import path from 'path';
+import fs from 'fs';
+import * as fileUtils from '../fileUtils';
 
 describe('project', () => {
     // Stop mocking 'fs' after each test
@@ -188,6 +190,22 @@ describe('project', () => {
     });
 
     describe('when creating with sfdx-project.json', () => {
+        // @ts-ignore
+        let mockFindFolders;
+
+        beforeEach(() => {
+            mockFindFolders = jest
+                .spyOn(fileUtils, 'findFolders')
+                .mockReturnValue([
+                    path.join('force-app', 'main', 'default', 'staticresources')
+                ]);
+        });
+
+        afterEach(() => {
+            // @ts-ignore
+            mockFindFolders.mockRestore();
+        });
+
         test('then resolve to the sfdx-project directory', () => {
             mock({
                 'my-project': {
@@ -237,16 +255,17 @@ describe('project', () => {
                     'package.json': '{}'
                 }
             });
-
             const project = new Project('my-project');
-            const expected = path.join(
-                'my-project',
-                'force-app',
-                'main',
-                'default',
-                'staticresources'
-            );
-            expect(project.staticResourcesDirectory).toBe(expected);
+            const expected = [
+                path.join(
+                    'my-project',
+                    'force-app',
+                    'main',
+                    'default',
+                    'staticresources'
+                )
+            ];
+            expect(project.staticResourcesDirectories).toStrictEqual(expected);
         });
 
         test('configures the custom labels file if it exists', () => {
@@ -346,15 +365,17 @@ describe('project', () => {
             });
 
             const project = new Project('my-project');
-            const expected = path.join(
-                'my-project',
-                'force-app',
-                'main',
-                'default',
-                'staticresources'
-            );
+            const expected = [
+                path.join(
+                    'my-project',
+                    'force-app',
+                    'main',
+                    'default',
+                    'staticresources'
+                )
+            ];
 
-            expect(project.staticResourcesDirectory).toBe(expected);
+            expect(project.staticResourcesDirectories).toStrictEqual(expected);
         });
 
         test('then detect the modules source directory from sfdx-project.json', () => {
@@ -398,6 +419,7 @@ describe('project', () => {
                 }
             });
 
+            jest.spyOn(fileUtils, 'findFolders').mockReturnValue([]);
             const project = new Project('my-project/');
             const expected = path.join(
                 'my-project',
@@ -409,7 +431,7 @@ describe('project', () => {
             expect(project.modulesSourceDirectory).toBe(expected);
         });
 
-        test('when staticResourcesDirectory is specified in the config json file, it takes precedence over sfdx-project.json', () => {
+        test('when staticResourcesDirectories is specified in the config json file, it takes precedence over sfdx-project.json', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify({
@@ -421,53 +443,51 @@ describe('project', () => {
                         ]
                     }),
                     'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectory: path.normalize(
-                            'specified/directory/assets/'
-                        )
+                        staticResourcesDirectories: [
+                            path.normalize('specified/directory/assets/')
+                        ]
                     })
                 }
             });
 
             const project = new Project('my-project');
-            const expected = path.join(
-                'my-project',
-                'specified',
-                'directory',
-                'assets',
-                '/'
-            );
+            const expected = [
+                path.join('my-project', 'specified', 'directory', 'assets', '/')
+            ];
 
-            expect(project.staticResourcesDirectory).toBe(expected);
+            expect(project.staticResourcesDirectories).toStrictEqual(expected);
         });
 
-        test('when staticResourcesDirectory is specified as empty in the config json file, staticResourcesDirectory property returns null', () => {
+        test('when staticResourcesDirectories is specified as empty in the config json file, staticResourcesDirectories property returns null', () => {
             mock({
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectory: ''
+                        staticResourcesDirectories: []
                     })
                 }
             });
-
+            jest.spyOn(fileUtils, 'findFolders').mockReturnValue([]);
             const project = new Project('my-project');
 
-            expect(project.staticResourcesDirectory).toBeNull();
+            expect(project.staticResourcesDirectories).toStrictEqual([]);
         });
 
-        test('when staticResourcesDirectory is specified as absolute in the config json file, staticResourcesDirectory uses the specified file unchanged', () => {
+        test('when staticResourcesDirectories is specified as absolute in the config json file, staticResourcesDirectories uses the specified file unchanged', () => {
             mock({
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectory: '/tmp/absolute/path'
+                        staticResourcesDirectories: ['/tmp/absolute/path']
                     })
                 }
             });
 
             const project = new Project('my-project');
 
-            expect(project.staticResourcesDirectory).toBe('/tmp/absolute/path');
+            expect(project.staticResourcesDirectories).toStrictEqual([
+                '/tmp/absolute/path'
+            ]);
         });
     });
 });

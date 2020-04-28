@@ -1,27 +1,27 @@
 {
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "npm.packageManager": "yarn",
-  "npm.exclude": [
-    "**/integration-tests/**"
-  ],
-  "eslint.validate": [
-    "javascript",
-    {
-      "language": "typescript",
-      "autoFix": true
-    }
-  ],
-  "salesforcedx-vscode-lightning.activationMode": "always",
-  "workbench.colorCustomizations": {
-    "activityBar.background": "#0C3600",
-    "titleBar.activeBackground": "#114B00",
-    "titleBar.activeForeground": "#EDFFE8"
-  }
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "npm.packageManager": "yarn",
+    "npm.exclude": ["**/integration-tests/**"],
+    "eslint.validate": [
+        "javascript",
+        {
+            "language": "typescript",
+            "autoFix": true
+        }
+    ],
+    "salesforcedx-vscode-lightning.activationMode": "always",
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#0C3600",
+        "titleBar.activeBackground": "#114B00",
+        "titleBar.activeForeground": "#EDFFE8"
+    },
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true
 }

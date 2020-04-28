@@ -148,6 +148,11 @@ export default class LocalDevServer {
         const distAssetsPath = path.join(this.rootDir, 'dist', 'assets');
         // @ts-ignore
         const serverAssetsPath = path.join(this.config.buildDir, 'assets');
+        const staticResourcesAssetsPath = path.join(
+            // @ts-ignore
+            this.config.buildDir,
+            'assets'
+        );
 
         try {
             copyFiles(path.join(distAssetsPath, '*'), serverAssetsPath);
@@ -155,7 +160,20 @@ export default class LocalDevServer {
             throw new Error(`Unable to copy assets: ${e.message || e}`);
         }
 
-        // TODO: copy assets from project.staticResourcesDirectory
+        try {
+            if (
+                this.project.staticResourcesDirectories &&
+                this.project.staticResourcesDirectories.length > 0
+            ) {
+                this.project.staticResourcesDirectories.forEach(item => {
+                    copyFiles(path.join(item, '*'), staticResourcesAssetsPath);
+                });
+            }
+        } catch (e) {
+            throw new Error(
+                `Unable to copy static resources: ${e.message || e}`
+            );
+        }
     }
 
     /**
