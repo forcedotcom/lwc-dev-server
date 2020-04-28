@@ -151,7 +151,6 @@ export default class LocalDevServer {
         const staticResourcesAssetsPath = path.join(
             // @ts-ignore
             this.config.buildDir,
-            'public',
             'assets'
         );
 
