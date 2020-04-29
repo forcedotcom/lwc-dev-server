@@ -1,10 +1,5 @@
 import express, { Application } from 'express';
-import {
-    apiMiddleware,
-    ApiConfig,
-    API_PATH_PREFIX,
-    DEFAULT_API_VERSION
-} from '../apiMiddleware';
+import { apiMiddleware, ApiConfig, API_PATH_PREFIX } from '../apiMiddleware';
 import { ExtensionOptions } from '@webruntime/api';
 import { apiMiddleware as webruntimeApiMiddleware } from '@communities-webruntime/extensions/dist/commonjs/api-middleware';
 
@@ -20,8 +15,15 @@ jest.mock('express', () => {
 jest.mock('@communities-webruntime/extensions/dist/commonjs/api-middleware');
 
 describe('apiMiddleware', () => {
+    let consoleLogMock: any;
+
     beforeEach(() => {
         jest.clearAllMocks();
+        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+    });
+
+    afterEach(() => {
+        consoleLogMock.mockRestore();
     });
 
     it('should return a LWR extension', () => {
@@ -141,26 +143,6 @@ describe('apiMiddleware', () => {
             );
         });
 
-        it('should rewrite the api path with the default api version', () => {
-            const apiConfig: ApiConfig = {
-                recordDir: '/project/.localdevserver/api'
-            };
-
-            const extension = apiMiddleware(apiConfig);
-            extension.extendApp({ app, options });
-
-            // @ts-ignore
-            const config = webruntimeApiMiddleware.mock.calls[0][0];
-            const apiPath = config.pathRewrite(
-                '/webruntime/api/services/data/v49.0/ui-api/records'
-            );
-            const newApiPath = config.pathRewrite(apiPath);
-
-            expect(newApiPath).toBe(
-                `/services/data/v${DEFAULT_API_VERSION}/ui-api/records`
-            );
-        });
-
         it('should rewrite the api path with the specified api version', () => {
             const apiVersion = '40.0';
 
@@ -181,6 +163,36 @@ describe('apiMiddleware', () => {
 
             expect(newApiPath).toBe(
                 `/services/data/v${apiVersion}/ui-api/records`
+            );
+        });
+
+        it('should rewrite the api path with the default api version from package.json', () => {
+            const packageJson = require('../../../../package.json');
+            expect(packageJson.defaultApiVersion).toBeTruthy();
+            expect(packageJson.defaultApiVersion).toMatch(
+                /[0-9]+\.[0-9]+(\.[0-9]+)?/
+            );
+
+            const expectedDefaultVersion = `${
+                packageJson.defaultApiVersion.trim().split('.')[0]
+            }.0`;
+
+            const apiConfig: ApiConfig = {
+                recordDir: '/project/.localdevserver/api'
+            };
+
+            const extension = apiMiddleware(apiConfig);
+            extension.extendApp({ app, options });
+
+            // @ts-ignore
+            const config = webruntimeApiMiddleware.mock.calls[0][0];
+            const apiPath = config.pathRewrite(
+                '/webruntime/api/services/data/v40.0/ui-api/records'
+            );
+            const newApiPath = config.pathRewrite(apiPath);
+
+            expect(newApiPath).toBe(
+                `/services/data/v${expectedDefaultVersion}/ui-api/records`
             );
         });
     });
