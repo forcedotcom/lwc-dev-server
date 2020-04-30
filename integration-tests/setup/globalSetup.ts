@@ -16,15 +16,15 @@ module.exports = async () => {
     // Without this, we get an error if the keychain hasn't been setup already (through a previous sfdx force:auth:web:login):
     // 'GenericKeychainServiceError: The service and account specified in key.json do not match the version of the toolbelt.'
     if (process.platform === 'win32' && process.env.SFDC_KEY) {
-        let newKeyChain = await KeychainConfig.create(
-            KeychainConfig.getDefaultOptions()
-        );
-        let keychainPath = newKeyChain.getPath();
-        await newKeyChain.write({
-            service: 'sfdx',
-            account: 'local',
-            key: process.env.SFDC_KEY
-        });
+        // let newKeyChain = await KeychainConfig.create(
+        //     KeychainConfig.getDefaultOptions()
+        // );
+        // let keychainPath = newKeyChain.getPath();
+        // await newKeyChain.write({
+        //     service: 'sfdx',
+        //     account: 'local',
+        //     key: process.env.SFDC_KEY
+        // });
     }
 
     // Install Selenium if required.
