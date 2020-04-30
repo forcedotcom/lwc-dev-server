@@ -146,21 +146,13 @@ export default class Start extends SfdxCommand {
 
         const accessToken = conn.accessToken;
 
-        // custom onProxyReq function to inject into Talon's proxy
-        // this will insert the Authorization header to have the requests be authenticated
-        const onProxyReq = function(
-            proxyReq: http.ClientRequest,
-            req: http.IncomingMessage,
-            res: http.ServerResponse
-        ) {
-            proxyReq.setHeader('Authorization', `Bearer ${accessToken}`);
-        };
-
         const project = new Project(this.project.getPath());
 
         project.configuration.api_version = api_version;
         project.configuration.endpoint = conn.instanceUrl;
-        project.configuration.onProxyReq = onProxyReq;
+        project.configuration.endpointHeaders = [
+            `Authorization: Bearer ${accessToken}`
+        ];
         project.configuration.port = port;
         project.configuration.namespace = <string>(
             (await this.project.resolveProjectConfig()).namespace
@@ -170,11 +162,17 @@ export default class Start extends SfdxCommand {
             orgId: this.org.getOrgId(),
             api_version: project.configuration.api_version,
             endpoint: project.configuration.endpoint,
-            onProxyReq: JSON.stringify(project.configuration.onProxyReq),
+            endpointHeaders: project.configuration.endpointHeaders,
             port,
             token: accessToken
         };
-        debug(JSON.stringify({ ...retValue, token: undefined }));
+        debug(
+            JSON.stringify({
+                ...retValue,
+                token: undefined,
+                endpointHeaders: undefined
+            })
+        );
 
         // Start local dev server
         const server = new LocalDevServer(project, conn);

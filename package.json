@@ -1,6 +1,7 @@
 {
     "name": "@salesforce/lwc-dev-server",
     "version": "1.0.10",
+    "defaultApiVersion": "48.0",
     "description": "Salesforce CLI plugin for Local Development (Beta)",
     "license": "MIT",
     "repository": "forcedotcom/lwc-dev-server-feedback",
@@ -103,6 +104,7 @@
         "@communities-webruntime/client": "0.29.25",
         "@communities-webruntime/common": "0.29.25",
         "@communities-webruntime/services": "0.29.25",
+        "@communities-webruntime/extensions": "0.29.25",
         "@lwc/engine": "1.2.2",
         "@lwc/module-resolver": "1.2.2",
         "@lwc/wire-service": "1.2.2",

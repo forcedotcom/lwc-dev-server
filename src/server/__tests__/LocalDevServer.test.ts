@@ -9,12 +9,18 @@ import { ComponentServiceWithExclusions } from '../services/ComponentServiceWith
 import { getCustomComponentService } from '../services/CustomComponentService';
 import { getLabelService } from '../services/LabelsService';
 import colors from 'colors';
+import { apexMiddleware } from '../extensions/apexMiddleware';
+import { apiMiddleware } from '../extensions/apiMiddleware';
+import { Connection } from '@salesforce/core';
+import { mock } from 'ts-mockito';
 
 jest.mock('@webruntime/server');
 jest.mock('../config/WebruntimeConfig');
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
 jest.mock('../../common/ComponentIndex');
+jest.mock('../extensions/apexMiddleware');
+jest.mock('../extensions/apiMiddleware');
 
 describe('LocalDevServer', () => {
     let project: Project;
@@ -23,12 +29,7 @@ describe('LocalDevServer', () => {
     let fileUtilsCopyMock: any;
 
     beforeEach(() => {
-        // @ts-ignore
-        WebruntimeConfig.mockClear();
-        // @ts-ignore
-        Server.mockClear();
-        // @ts-ignore
-        Container.mockClear();
+        jest.clearAllMocks();
 
         mockFs({
             'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
@@ -137,15 +138,26 @@ describe('LocalDevServer', () => {
         expect(server.liveReload).toBeUndefined();
     });
 
+    it('should not add apex middleware when connection is not present', () => {
+        new LocalDevServer(project);
+        expect(apexMiddleware).toBeCalledTimes(0);
+    });
+
     it('should add apex middleware when connection is available', () => {
-        const connection = {};
-        // @ts-ignore
-        const server = new LocalDevServer(project, connection);
+        const connection: Connection = mock(Connection);
+        new LocalDevServer(project, connection);
+        expect(apexMiddleware).toBeCalledTimes(1);
+    });
 
-        // @ts-ignore
-        const extensions = server.config.addMiddleware.mock.calls[0][0];
+    it('should not add api middleware when connection is not present', () => {
+        new LocalDevServer(project);
+        expect(apiMiddleware).toBeCalledTimes(0);
+    });
 
-        expect(extensions).toHaveLength(2);
+    it('should add api middleware when connection is available', () => {
+        const connection: Connection = mock(Connection);
+        new LocalDevServer(project, connection);
+        expect(apiMiddleware).toBeCalledTimes(1);
     });
 
     it('should add modules with the correct vendor version to the config', () => {
