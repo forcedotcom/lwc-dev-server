@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import PreviewPage from '../pageObjects/PreviewPage';
 
-describe('Auto Reload', () => {
+describe.skip('Auto Reload', () => {
     const lwcFolder = path.join(
         __dirname,
         'project/force-app/main/default/lwc'
@@ -103,7 +103,7 @@ describe('Auto Reload', () => {
 
         // verify the page did not reload
         // the time element should not change since the page is not reloaded.
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(resolve, 20000));
         const newTime = await (await pageContainer.shadow$('.time')).getText();
         expect(newTime).toBe(originalTime);
     });
