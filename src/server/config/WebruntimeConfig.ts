@@ -13,6 +13,7 @@ import {
 import { ImportMapService, AppBootstrapService } from '@webruntime/services';
 import { Plugin } from 'rollup';
 import { ApexService, SchemaService } from '@communities-webruntime/services';
+import { ResourceUrlService } from '../services/ResourceUrlService';
 import alias from '@rollup/plugin-alias';
 
 export default class WebruntimeConfig implements Config {
@@ -70,7 +71,8 @@ export default class WebruntimeConfig implements Config {
             ImportMapService,
             AppBootstrapService,
             ApexService,
-            SchemaService
+            SchemaService,
+            ResourceUrlService
         ];
 
         this.bundle = ['@webruntime/app', 'webruntime_navigation/*'];

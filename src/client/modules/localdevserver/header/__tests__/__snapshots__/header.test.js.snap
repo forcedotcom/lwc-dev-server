@@ -13,7 +13,7 @@ exports[`localdevserver-header renders 1`] = `
           alt="Salesforce Logo"
           class="logo"
           height="44"
-          src="/assets/images/logo.svg"
+          src="/assets/localdev/images/logo.svg"
           width="142"
         />
         <h1>

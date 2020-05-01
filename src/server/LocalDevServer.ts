@@ -8,7 +8,8 @@ import {
     apexMiddleware,
     projectMetadata,
     liveReload,
-    apiMiddleware
+    apiMiddleware,
+    resourceUrl
 } from './extensions';
 import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
@@ -48,7 +49,8 @@ export default class LocalDevServer {
         const config = new WebruntimeConfig(this.project);
 
         const middleware: ContainerAppExtension[] = [
-            sessionNonce(this.sessionNonce)
+            sessionNonce(this.sessionNonce),
+            resourceUrl(config.server.resourceRoot)
         ];
 
         if (connection) {
@@ -153,16 +155,11 @@ export default class LocalDevServer {
     private copyStaticAssets() {
         // copy app static resources
         const distAssetsPath = path.join(this.rootDir, 'dist', 'assets');
-        // @ts-ignore
         const serverAssetsPath = path.join(this.config.buildDir, 'assets');
-        const staticResourcesAssetsPath = path.join(
-            // @ts-ignore
-            this.config.buildDir,
-            'assets'
-        );
 
         try {
-            copyFiles(path.join(distAssetsPath, '*'), serverAssetsPath);
+            const localDevAssetsPath = path.join(serverAssetsPath, 'localdev');
+            copyFiles(path.join(distAssetsPath, '*'), localDevAssetsPath);
         } catch (e) {
             throw new Error(`Unable to copy assets: ${e.message || e}`);
         }
@@ -172,6 +169,10 @@ export default class LocalDevServer {
                 this.project.staticResourcesDirectories &&
                 this.project.staticResourcesDirectories.length > 0
             ) {
+                const staticResourcesAssetsPath = path.join(
+                    serverAssetsPath,
+                    'project'
+                );
                 this.project.staticResourcesDirectories.forEach(item => {
                     copyFiles(path.join(item, '*'), staticResourcesAssetsPath);
                 });

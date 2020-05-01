@@ -209,8 +209,13 @@ describe('LocalDevServer', () => {
         await server.start();
 
         const copiedFromPath = path.join(__dirname, '../../../dist/assets/*');
-        // @ts-ignore
-        const copiedToPath = path.join(server.config.buildDir, 'assets');
+
+        const copiedToPath = path.join(
+            // @ts-ignore
+            server.config.buildDir,
+            'assets',
+            'localdev'
+        );
 
         expect(fileUtils.copyFiles).toBeCalledWith(
             copiedFromPath,
