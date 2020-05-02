@@ -38,9 +38,6 @@ describe('localdevserver-code-highlighter', () => {
         expect(componentElement).toMatchSnapshot();
 
         const pre = componentElement.shadowRoot.querySelector('pre');
-        expect(pre.getAttribute('data-line')).toMatch('undefined');
-        expect(pre.getAttribute('data-start')).toMatch('1');
-        expect(pre.classList.contains('line-numbers')).toBe(true);
         expect(pre.classList.contains('language-javascript')).toBe(true);
     });
     it('renders - code, with line info', async () => {
@@ -53,9 +50,6 @@ describe('localdevserver-code-highlighter', () => {
         expect(componentElement).toMatchSnapshot();
 
         const pre = componentElement.shadowRoot.querySelector('pre');
-        expect(pre.getAttribute('data-line')).toMatch('undefined');
-        expect(pre.getAttribute('data-start')).toMatch('3');
-        expect(pre.classList.contains('line-numbers')).toBe(true);
         expect(pre.classList.contains('language-javascript')).toBe(true);
     });
 });
