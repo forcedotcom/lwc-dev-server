@@ -11,7 +11,7 @@ import {
     RequestService,
     ImportMapObject
 } from '@webruntime/api';
-
+import { CompilerDiagnostic } from '@lwc/errors';
 const SFDX_LWC_DIRECTORY = 'lwc';
 
 const debug = debugLogger('localdevserver:customcomponents');
@@ -68,10 +68,9 @@ export function getCustomComponentService(
             });
 
             if (diagnostics && diagnostics.length > 0) {
-                const jsonss = JSON.stringify(diagnostics[0]);
                 return {
                     type: RequestOutputTypes.JSON,
-                    resource: { json: JSON.parse(jsonss) },
+                    resource: { json: this.formatDiagnostics(diagnostics) },
                     specifier,
                     diagnostics,
                     success
@@ -100,6 +99,27 @@ export function getCustomComponentService(
                 return null;
             }
             return split[1];
+        }
+
+        // Clean up Diagnostics since they are provided in a format suitable for the command line
+        // but not for being displayed by the app's error component
+        private formatDiagnostics(diagnostics: CompilerDiagnostic[]) {
+            let resultJSON = { errors: [] };
+            diagnostics.forEach(diagnostic => {
+                const msgTitle = diagnostic.message.split('\n')[0];
+                const msgBody = diagnostic.message
+                    .replace(msgTitle, '')
+                    .replace(/\u001b\[.*?m/g, '');
+                const err = {
+                    filename: diagnostic.filename,
+                    location: diagnostic.location,
+                    code: msgBody,
+                    message: msgTitle
+                };
+                // @ts-ignore
+                resultJSON.errors.push(err);
+            });
+            return resultJSON;
         }
     };
 }

@@ -35,22 +35,36 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     const file = req.query.file as string;
                     const extension = path.extname(file);
                     const normalizedFile = path.normalize(file);
-                    console.log('normalized file => ', normalizedFile);
-                    /* const fileContent = fs.createReadStream(normalizedFile);
-                    fileContent.pipe(res);
-                    */
-                    const content = fs.readFileSync(normalizedFile);
-                    const stringContent = content.toString();
-
-                    res.json(JSON.parse(stringContent));
-                    /*if (
+                    if (
                         normalizedFile.startsWith(
                             path.normalize(project.modulesSourceDirectory)
                         ) &&
                         ALLOWED_SHOW_EXTENSIONS[extension]
                     ) {
                         res.sendFile(file);
-                    } */
+                    }
+                }
+            );
+
+            (app as Application).get(
+                `/localdev/${sessionNonce}/errorDetails`,
+                (req: Request, res: Response, next: NextFunction) => {
+                    const specifier = req.query.specifier as string;
+                    // NOTE: Some of the info here is set on WebRuntimeConfig.ts
+                    // but not available here, might want to move some of it to Project.ts config
+                    const normalizedFile = path.join(
+                        project.directory,
+                        '.localdevserver',
+                        'webruntime',
+                        'custom-component',
+                        'dev',
+                        'en-US',
+                        `${specifier}.js`
+                    );
+                    const content = fs.readFileSync(normalizedFile);
+                    const stringContent = content.toString();
+
+                    res.json(JSON.parse(stringContent));
                 }
             );
         }
