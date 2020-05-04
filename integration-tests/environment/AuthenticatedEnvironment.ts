@@ -1,11 +1,11 @@
-import debug from 'debug';
+import debugLogger from 'debug';
 import CliEnvironment from './CliEnvironment';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
 import jsforce from 'jsforce';
 import { AuthInfo, Org } from '@salesforce/core';
 
-const log = debug('localdevserver');
+const debug = debugLogger('localdevserver:test');
 
 /**
  * Starts the dev server programmatically.
@@ -59,6 +59,10 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
                 ? await this.initJwtFlow()
                 : await this.initPasswordFlow();
             this.commandArgs.push(`--targetusername=${user}`);
+        } else {
+            debug(
+                `No Authentication Token specified when setting up AuthenticatedEnvironment for: ${this.projectPath}`
+            );
         }
         return super.setup();
     }
@@ -70,7 +74,9 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
         const user: string | undefined = process.env.SFDC_USER;
         if (!user) {
             throw new Error(
-                'Required SFDC_USER environment variable not provided'
+                'Required SFDC_USER environment variable not provided.\n' +
+                    `See 'developer account' in the team's LastPass account.\n` +
+                    `To set: 'export SFDC_USER=<LastPassUsername>' and 'export SFDC_PWD=<LastPassSitePassword>'`
             );
         }
         console.log(`Logging in as ${user}`);

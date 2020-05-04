@@ -20,7 +20,7 @@ declare global {
 
 beforeEach(async () => {
     // Configure the browser via BROWSER_NAME environment variable.
-    // Setting HEADLESS to not be "false" will run the browser in headless mode for chrome.
+    // Setting HEADLESS to "true" will run the browser in headless mode for chrome.
     const browser: BrowserObject = await remote({
         capabilities: {
             browserName: process.env.BROWSER_NAME || 'chrome',
@@ -51,7 +51,7 @@ afterEach(async () => {
     // but jest doesn't provide test info/state info to afterEach.
     const test = global.failedTest;
     if (test) {
-        console.log('attempting to save screenshot for test failure');
+        console.log('attempting to save screenshot in case of test failure');
 
         try {
             const screenshot = await global.browser.takeScreenshot();

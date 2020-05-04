@@ -20,7 +20,7 @@ jobs:
             - run: yarn build
             - run: yarn lint:ci
             - run: yarn test:ci
-            # - run: yarn test:e2e-ci
+            - run: yarn test:e2e-ci
             - codecov/upload:
                   file: reports/coverage/*.json
                   flags: frontend,backend

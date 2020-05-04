@@ -8,10 +8,10 @@ class HomePage implements Page {
         await browser.url(`http://localhost:${global.serverPort}`);
         let self = this;
         return browser
-            .$('webruntime-app')
+            .$('localdevserver-app')
             .then(el => el.shadow$('localdevserver-layout'))
-            .then(el => el.$('webruntime-router-container'))
-            .then(el => el.shadow$('localdevserver-home'))
+            .then(el => el.$('localdevserver-view'))
+            .then(el => el.shadow$('localdevserver-dynamic'))
             .then(el => (self.container = el));
     }
 

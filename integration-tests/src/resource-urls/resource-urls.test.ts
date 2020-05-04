@@ -1,10 +1,10 @@
 /**
- * @jest-environment ./environment/AuthenticatedEnvironment.js
+ * @-jest-environment ./environment/AuthenticatedEnvironment.js
  */
 
 import PreviewPage from '../pageObjects/PreviewPage';
 
-describe('Static Resources', () => {
+describe.skip('Static Resources', () => {
     it('Test Images', async () => {
         // static resources page from lwc-recipes
         let page = new PreviewPage('c', 'miscStaticResource');
