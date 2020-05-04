@@ -44,6 +44,9 @@ describe('LocalDevServer', () => {
         WebruntimeConfig.mockImplementation(() => {
             return {
                 buildDir: 'Users/arya/dev/myproject/.localdevserver',
+                server: {
+                    resourceRoot: '/webruntime'
+                },
                 addMiddleware: jest.fn(),
                 addModules: jest.fn(),
                 addRoutes: jest.fn(),

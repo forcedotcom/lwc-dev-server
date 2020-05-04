@@ -1,5 +1,6 @@
 import { CompileService, PublicConfig } from '@webruntime/api';
 import debugLogger from 'debug';
+import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
 
 const RESOURCE_URL_PREFIX = '@salesforce/resourceUrl/';
 const debug = debugLogger('localdevserver:resource');
@@ -10,14 +11,16 @@ function isResourceUrlScopedModule(id: string) {
 
 /**
  * Rollup plugin to resolve @salesforce/resourceUrl imports.
+ *
+ * @param buildDir Absolute path to the webruntime output directory.
  */
-function plugin(basePath: string) {
+function plugin(buildDir: string) {
     return {
         name: 'rollup-plugin-salesforce-resource-urls',
 
         load(id: string) {
             if (isResourceUrlScopedModule(id)) {
-                const versionKey = '1'; // TODO: read from lib
+                const versionKey = getLatestVersion(buildDir);
                 const resourceName = id.substring(RESOURCE_URL_PREFIX.length);
                 const replacement = `/assets/project/${versionKey}/${resourceName}`;
 
@@ -34,18 +37,15 @@ function plugin(basePath: string) {
     };
 }
 
-/**
- * Handles compiling @salesforce/resourceUrl imports.
- */
 export class ResourceUrlService implements CompileService {
-    readonly basePath: string;
+    buildDir: string;
 
-    constructor({ server: { basePath = '' } }: PublicConfig) {
-        this.basePath = basePath;
+    constructor({ buildDir }: PublicConfig) {
+        this.buildDir = buildDir;
     }
 
     getPlugin() {
-        return plugin(this.basePath);
+        return plugin(this.buildDir);
     }
 
     async initialize() {}

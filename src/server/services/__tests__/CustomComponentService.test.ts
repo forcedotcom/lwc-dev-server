@@ -41,8 +41,7 @@ describe('CustomComponentService', () => {
     });
 
     afterEach(() => {
-        // @ts-ignore
-        compile.mockReset();
+        (compile as jest.Mock).mockReset();
     });
 
     it('should set the uri', () => {
@@ -115,8 +114,7 @@ describe('CustomComponentService', () => {
                 }
             };
 
-            // @ts-ignore
-            compile.mockReturnValue({
+            (compile as jest.Mock).mockReturnValue({
                 result: {},
                 metadata: {},
                 diagnostics: [],

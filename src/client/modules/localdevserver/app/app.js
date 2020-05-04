@@ -2,22 +2,10 @@ import { LightningElement, register } from 'lwc';
 import { registerWireService } from 'wire-service';
 import { createRouter } from 'webruntime_navigation/navigation';
 import { routes } from 'localdevserver/routerLib';
-
-import { defineModules } from 'webruntime_loader/loader';
-import * as auraInstrumentation from 'webruntime/auraInstrumentation';
-import * as transport from 'webruntime/transport';
-import * as logger from 'webruntime/logger';
-import * as webruntimeAura from 'webruntime/aura';
+import * as aura from 'webruntime/aura';
 import auraStorage from 'webruntime/auraStorage';
-
-defineModules({
-    'aura-instrumentation': auraInstrumentation,
-    'aura-storage': auraStorage,
-    'instrumentation/service': auraInstrumentation,
-    aura: webruntimeAura,
-    transport,
-    logger
-});
+import * as auraInstrumentation from 'webruntime/auraInstrumentation';
+import * as logger from 'webruntime/logger';
 
 registerWireService(register);
 
@@ -29,4 +17,43 @@ createRouter({ routes })
     })
     .connect();
 
-export default class LocalDevServerApp extends LightningElement {}
+export default class LocalDevServerApp extends LightningElement {
+    constructor() {
+        super();
+
+        this.defineModules({
+            // Modules referenced by LDS from core. Some of these may removable once we
+            // switch to off-core LDS.
+            aura,
+            logger,
+            'aura-storage': auraStorage,
+            'instrumentation/service': auraInstrumentation,
+
+            // Hardcoded values for salesforce-scoped imports. As these modules become
+            // officially supported they can be removed from here.
+            '@salesforce/user/isGuest': true,
+            '@salesforce/client/formFactor': 'Large'
+        });
+    }
+
+    /**
+     * Define AMD modules using Webruntime's loader.
+     *
+     * The modules should have the module id as the key and the loaded module or
+     * return valuemodule or resolved module or return value as the value.
+     *
+     * @param {Object.<string, module>} modules - An object where the key is the
+     * module id and the value is the module or return value.
+     */
+    defineModules(modules) {
+        if (!window.Webruntime || !window.Webruntime.define) {
+            throw new Error('Webruntime.define is not defined.');
+        }
+
+        Object.entries(modules).forEach(([name, value]) => {
+            window.Webruntime.define(name, [], function() {
+                return value;
+            });
+        });
+    }
+}

@@ -1,10 +1,11 @@
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
+import { getWebAppVersionKey } from '../../common/versionUtils';
 
 /**
  * Returns JavaScript code that will add a module with the given name and
  * constant value to the registry.
  *
- * This is meant to be injected in the HTML to define app config modules.
+ * This is meant to be injected in the HTML to define `@app/*` modules.
  */
 function define([key, value]: [string, any]) {
     return `Webruntime.define('${key}', [], function() { return ${JSON.stringify(
@@ -17,8 +18,8 @@ export class LocalDevPage extends WebruntimePage {
         const { sessionNonce }: any = this.pageContext.locals;
         const { basePath } = this.pageContext.config.server;
 
-        // TODO: The version key needs to be calculated until LWR provides it in 228.
-        const versionKey = '1';
+        // calculate our own version key until LWR provides one
+        const versionKey = getWebAppVersionKey();
 
         // Matches of {key} or { key } in the template will get replaced with
         // values from this map.
@@ -41,20 +42,21 @@ export class LocalDevPage extends WebruntimePage {
     }
 
     get experimental_scripts() {
-        const { request: req } = this.pageContext as any;
+        const { request: req }: any = this.pageContext;
+        const { basePath } = this.pageContext.config.server;
 
         const modules = {
-            '@app/basePath': '',
-            '@app/csrfToken': req.csrfToken && req.csrfToken(),
-            '@salesforce/user/isGuest': true,
-            '@salesforce/client/formFactor': 'Large'
+            '@app/basePath': basePath,
+            '@app/csrfToken': req.csrfToken && req.csrfToken()
         };
+
+        const defineModulesScript = Object.entries(modules)
+            .map(define)
+            .join('\n');
 
         return [
             {
-                code: Object.entries(modules)
-                    .map(define)
-                    .join('\n')
+                code: defineModulesScript
             }
         ];
     }

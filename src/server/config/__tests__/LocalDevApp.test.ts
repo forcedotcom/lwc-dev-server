@@ -1,11 +1,14 @@
 import mockFs from 'mock-fs';
 import { Request as ExpressRequest } from 'express';
 import { LocalDevPage, LocalDevApp } from '../LocalDevApp';
+import { getWebAppVersionKey } from '../../../common/versionUtils';
 import {
     ApplicationConfig,
     PublicConfig,
     DEFAULT_CONFIG
 } from '@webruntime/api';
+
+jest.mock('../../../common/versionUtils');
 
 describe('LocalDevApp.ts', () => {
     let appConfig: ApplicationConfig;
@@ -33,7 +36,10 @@ describe('LocalDevApp.ts', () => {
         publicConfig = Object.assign({}, DEFAULT_CONFIG);
     });
 
-    afterEach(mockFs.restore);
+    afterEach(() => {
+        mockFs.restore();
+        jest.restoreAllMocks();
+    });
 
     describe('The LocalDevApp class', () => {
         it('the pages method returns at least one route', () => {
@@ -113,8 +119,10 @@ describe('LocalDevApp.ts', () => {
                 </html>`
             });
 
-            // this should be fixed when version key is the package.json version
-            const expectedVersionKey = 1;
+            const expectedVersionKey = '123123';
+            (getWebAppVersionKey as jest.Mock).mockReturnValue(
+                expectedVersionKey
+            );
 
             const app = new LocalDevApp(appConfig);
             const page = new LocalDevPage(app, req, locals, publicConfig);
@@ -122,7 +130,7 @@ describe('LocalDevApp.ts', () => {
             const content = page.experimental_content;
 
             expect(content).toMatch(
-                '<link rel="stylesheet" href="/css/foo.css?1" />'
+                `<link rel="stylesheet" href="/css/foo.css?${expectedVersionKey}" />`
             );
         });
     });

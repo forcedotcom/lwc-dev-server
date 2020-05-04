@@ -103,10 +103,10 @@ export default class WebruntimeConfig implements Config {
             plugins: [
                 alias({
                     entries: [
+                        // Used by talon-connect-gen. Once we use off-core LDS we can remove this.
                         {
                             find: 'transport',
-                            replacement:
-                                '@communities-webruntime/client/src/modules/webruntime/transport/transport.js'
+                            replacement: 'webruntime/transport'
                         }
                     ]
                 })
