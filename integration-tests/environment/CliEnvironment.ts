@@ -1,11 +1,17 @@
 import path from 'path';
-import debug from 'debug';
+import debugLogger from 'debug';
 import BaseEnvironment from './BaseEnvironment';
 import { spawn, ChildProcess } from 'child_process';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
+import { Messages } from '@salesforce/core';
+import LocalDevServer from '../../src/server/LocalDevServer';
 
-const log = debug('localdevserver');
+// Initialize Messages with the current plugin directory
+Messages.importMessagesDirectory(__dirname);
+
+const debug = debugLogger('localdevserver:test');
+const messages = Messages.loadMessages('@salesforce/lwc-dev-server', 'start');
 
 /**
  * Starts the dev server by spawning a child process that runs the `bin/run`
@@ -32,6 +38,8 @@ const log = debug('localdevserver');
  *
  * This environment makes the following global values available:
  * - `global.serverPort` - the port the server was started on.
+ *
+ * Setting a default org within the test's project may be required.
  *
  * @see https://jestjs.io/docs/en/configuration#testenvironment-string
  */
@@ -74,6 +82,7 @@ export default class CliEnvironment extends BaseEnvironment {
 
     async setup(): Promise<void> {
         await super.setup();
+        debug(`Setting up CliEnvironment for: ${this.projectPath}`);
 
         const portArg = this.commandArgs.find(arg => arg.startsWith('--port'));
         if (portArg === undefined) {
@@ -82,7 +91,7 @@ export default class CliEnvironment extends BaseEnvironment {
         }
 
         const serverStartup = new Promise<void>(async (resolve, reject) => {
-            log('spawning new server');
+            debug('spawning new server');
             // process.env.DEBUG = 'localdevserver*';
             const serverProcess = spawn(
                 this.execPath,
@@ -96,9 +105,9 @@ export default class CliEnvironment extends BaseEnvironment {
 
             serverProcess.stdout.on('data', data => {
                 const stdout = data.toString('utf8');
-                log(stdout);
+                debug(stdout);
                 if (/server up/i.test(stdout)) {
-                    log('server up');
+                    debug('server up');
                     const match = stdout.match(/:([0-9]+)/);
                     if (match === null) {
                         reject(new Error('unable to determine server port'));
@@ -106,6 +115,10 @@ export default class CliEnvironment extends BaseEnvironment {
                     const port = match[1];
                     this.global.serverPort = port;
                     resolve();
+                } else if (
+                    stdout.includes(messages.getMessage('error:noscratchorg'))
+                ) {
+                    console.debug(stdout);
                 }
             });
 
@@ -117,7 +130,7 @@ export default class CliEnvironment extends BaseEnvironment {
             });
 
             serverProcess.on('error', err => {
-                log('failed to start/run server');
+                debug('failed to start/run server');
                 reject(err);
             });
 
@@ -138,8 +151,8 @@ export default class CliEnvironment extends BaseEnvironment {
 
     async teardown() {
         if (this.serverProcess) {
-            this.serverProcess.kill();
-            log('killed server process');
+            this.serverProcess.kill('SIGINT');
+            debug('killed server process');
         }
         await super.teardown();
     }
