@@ -29,8 +29,9 @@ export default class LocalDevServerApp extends LightningElement {
             'aura-storage': auraStorage,
             'instrumentation/service': auraInstrumentation,
 
-            // Hardcoded values for salesforce-scoped imports. As these modules become
-            // officially supported they can be removed from here.
+            // Hardcoded values for salesforce-scoped imports. As these modules
+            // become officially supported they can be removed from here. We
+            // could also do this through stub implementations too.
             '@salesforce/user/isGuest': true,
             '@salesforce/client/formFactor': 'Large'
         });
@@ -39,21 +40,16 @@ export default class LocalDevServerApp extends LightningElement {
     /**
      * Define AMD modules using Webruntime's loader.
      *
-     * The modules should have the module id as the key and the loaded module or
-     * return valuemodule or resolved module or return value as the value.
-     *
      * @param {Object.<string, module>} modules - An object where the key is the
      * module id and the value is the module or return value.
      */
     defineModules(modules) {
         if (!window.Webruntime || !window.Webruntime.define) {
-            throw new Error('Webruntime.define is not defined.');
+            throw new Error('Webruntime.define is not defined');
         }
 
         Object.entries(modules).forEach(([name, value]) => {
-            window.Webruntime.define(name, [], function() {
-                return value;
-            });
+            window.Webruntime.define(name, [], () => value);
         });
     }
 }

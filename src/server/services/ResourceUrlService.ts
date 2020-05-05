@@ -25,7 +25,7 @@ function plugin(buildDir: string) {
                 const replacement = `/assets/project/${versionKey}/${resourceName}`;
 
                 debug(`resolving ${id} as ${replacement}`);
-                return `export default \`${replacement}\`;`;
+                return `export default '${replacement}';`;
             }
 
             return null;

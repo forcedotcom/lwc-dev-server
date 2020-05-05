@@ -17,13 +17,7 @@ describe('ResourceUrlService', () => {
                 basePath: '',
                 resourceRoot: '/webruntime'
             },
-            compilerConfig: {
-                format: 'amd',
-                formatConfig: {
-                    amd: { define: 'Webruntime.define' }
-                },
-                inlineConfig: []
-            }
+            compilerConfig: {}
         };
     });
 
@@ -38,16 +32,44 @@ describe('ResourceUrlService', () => {
 
     describe('rollup plugin', () => {
         describe('resolveId', () => {
-            it.todo('should resolve ids starting with @salesforce/resourceUrl');
-            it.todo(
-                'should return null for ids not starting with @salesforce/resourceUrl'
-            );
+            it('should resolve ids starting with @salesforce/resourceUrl', () => {
+                const service = new ResourceUrlService(config);
+                const plugin = service.getPlugin();
+
+                const resolved = plugin.resolveId(
+                    '@salesforce/resourceUrl/chartJs'
+                );
+                expect(resolved).toBe('@salesforce/resourceUrl/chartJs');
+            });
+
+            it('should return null for ids not starting with @salesforce/resourceUrl', () => {
+                const service = new ResourceUrlService(config);
+                const plugin = service.getPlugin();
+
+                const resolved = plugin.resolveId('resourceUrl/chartJs');
+                expect(resolved).toBeNull();
+            });
         });
         describe('load', () => {
-            it.todo('should replace @salesforce/resourceUrl imports');
-            it.todo(
-                'should not replace ids not starting with @salesforce/resourceUrl'
-            );
+            it('should replace @salesforce/resourceUrl imports', () => {
+                (getLatestVersion as jest.Mock).mockReturnValue('158104e2eb');
+
+                const service = new ResourceUrlService(config);
+                const plugin = service.getPlugin();
+                const resolved = plugin.load('@salesforce/resourceUrl/chartJs');
+
+                expect(resolved).toBe(
+                    `export default '/assets/project/158104e2eb/chartJs';`
+                );
+            });
+
+            it('should not replace ids not starting with @salesforce/resourceUrl', () => {
+                const service = new ResourceUrlService(config);
+                const plugin = service.getPlugin();
+                const resolved = plugin.load('resourceUrl/chartJs');
+
+                expect(resolved).toBeNull();
+            });
         });
     });
 });

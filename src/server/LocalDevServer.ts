@@ -50,7 +50,7 @@ export default class LocalDevServer {
 
         const middleware: ContainerAppExtension[] = [
             sessionNonce(this.sessionNonce),
-            resourceUrl(config.server.resourceRoot)
+            resourceUrl()
         ];
 
         if (connection) {
