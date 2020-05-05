@@ -1,14 +1,12 @@
+import path from 'path';
 import mockFs from 'mock-fs';
 import { Request as ExpressRequest } from 'express';
 import { LocalDevPage, LocalDevApp } from '../LocalDevApp';
-import { getWebAppVersionKey } from '../../../common/versionUtils';
 import {
     ApplicationConfig,
     PublicConfig,
     DEFAULT_CONFIG
 } from '@webruntime/api';
-
-jest.mock('../../../common/versionUtils');
 
 describe('LocalDevApp.ts', () => {
     let appConfig: ApplicationConfig;
@@ -38,7 +36,7 @@ describe('LocalDevApp.ts', () => {
 
     afterEach(() => {
         mockFs.restore();
-        jest.restoreAllMocks();
+        jest.resetAllMocks();
     });
 
     describe('The LocalDevApp class', () => {
@@ -109,7 +107,13 @@ describe('LocalDevApp.ts', () => {
         });
 
         it('replaces {versionKey} in experimental_content', () => {
+            const packageJsonPath = path.join(
+                __dirname,
+                '../../../package.json'
+            );
+
             mockFs({
+                [packageJsonPath]: '{"version": "1.0"}',
                 'src/index.html': `<!DOCTYPE html>
                 <html>
                     <head>
@@ -119,18 +123,13 @@ describe('LocalDevApp.ts', () => {
                 </html>`
             });
 
-            const expectedVersionKey = '123123';
-            (getWebAppVersionKey as jest.Mock).mockReturnValue(
-                expectedVersionKey
-            );
-
             const app = new LocalDevApp(appConfig);
             const page = new LocalDevPage(app, req, locals, publicConfig);
 
             const content = page.experimental_content;
 
             expect(content).toMatch(
-                `<link rel="stylesheet" href="/css/foo.css?${expectedVersionKey}" />`
+                '<link rel="stylesheet" href="/css/foo.css?1.0" />'
             );
         });
     });

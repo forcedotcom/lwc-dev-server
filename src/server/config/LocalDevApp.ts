@@ -1,5 +1,7 @@
+import fs from 'fs';
+import path from 'path';
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
-import { getWebAppVersionKey } from '../../common/versionUtils';
+import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
 
 /**
  * Returns JavaScript code that will add a module with the given name and
@@ -13,13 +15,34 @@ function define([key, value]: [string, any]) {
     )}; })`;
 }
 
+/**
+ * Returns the version key for the local dev app's static resources.
+ */
+function getVersionKey(buildDir: string): string {
+    // use the version from package.json
+    const packageJsonPath = path.join(__dirname, '../../package.json');
+    try {
+        const packageJson = JSON.parse(
+            fs.readFileSync(packageJsonPath, 'utf8')
+        );
+        if (packageJson.version) {
+            return packageJson.version;
+        }
+    } catch (e) {}
+
+    // fallback to the latest project version hash
+    return getLatestVersion(buildDir);
+}
+
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
         const { sessionNonce }: any = this.pageContext.locals;
-        const { basePath } = this.pageContext.config.server;
+        const {
+            buildDir,
+            server: { basePath }
+        } = this.pageContext.config;
 
-        // calculate our own version key until LWR provides one
-        const versionKey = getWebAppVersionKey();
+        const versionKey = getVersionKey(buildDir);
 
         // Matches of {key} or { key } in the template will get replaced with
         // values from this map.
