@@ -3,7 +3,7 @@ import CliEnvironment from './CliEnvironment';
 import { EnvironmentContext } from '@jest/environment';
 import { Config } from '@jest/types';
 import jsforce from 'jsforce';
-import { AuthInfo } from '@salesforce/core';
+import { AuthInfo, Org } from '@salesforce/core';
 
 const debug = debugLogger('localdevserver:test');
 
@@ -54,47 +54,75 @@ export default class AuthenticatedEnvironment extends CliEnvironment {
 
     async setup(): Promise<void> {
         if (this.token === null) {
-            debug(
-                `Setting up AuthenticatedEnvironment for: ${this.projectPath}`
-            );
-            const connection = new jsforce.Connection({});
-            this.global.jsforceConnection = connection;
-            const user: string | undefined = process.env.SFDC_USER;
-            if (!user) {
-                throw new Error(
-                    'Required SFDC_USER environment variable not provided.\n' +
-                        `See 'developer account' in the team's LastPass account.\n` +
-                        `To set: 'export SFDC_USER=<LastPassUsername>' and 'export SFDC_PWD=<LastPassSitePassword>'`
-                );
-            }
-            console.log(`Logging in as ${user}`);
-            this.token = await (async function() {
-                return new Promise<string>((resolve, reject) => {
-                    connection.login(user, process.env.SFDC_PWD || '', err => {
-                        if (!err) {
-                            return resolve(connection.accessToken);
-                        }
-                        console.error(JSON.stringify(err));
-                        reject(err);
-                    });
-                });
-            })();
-            const authInfo = await AuthInfo.create({
-                username: user,
-                accessTokenOptions: {
-                    instanceUrl: connection.instanceUrl,
-                    accessToken: connection.accessToken,
-                    loginUrl: 'https://login.salesforce.com'
-                }
-            });
-            authInfo.save();
+            const useJwt = process.env.SFDC_ALIAS ? true : false;
+            const user = useJwt
+                ? await this.initJwtFlow()
+                : await this.initPasswordFlow();
             this.commandArgs.push(`--targetusername=${user}`);
         } else {
             debug(
                 `No Authentication Token specified when setting up AuthenticatedEnvironment for: ${this.projectPath}`
             );
         }
-
         return super.setup();
+    }
+
+    private async initPasswordFlow(): Promise<string> {
+        const connection = new jsforce.Connection({});
+        this.global.jsforceConnection = connection;
+
+        const user: string | undefined = process.env.SFDC_USER;
+        if (!user) {
+            throw new Error(
+                'Required SFDC_USER environment variable not provided.\n' +
+                    `See 'developer account' in the team's LastPass account.\n` +
+                    `To set: 'export SFDC_USER=<LastPassUsername>' and 'export SFDC_PWD=<LastPassSitePassword>'`
+            );
+        }
+        console.log(`Logging in as ${user}`);
+
+        this.token = await (async function() {
+            return new Promise<string>((resolve, reject) => {
+                connection.login(user, process.env.SFDC_PWD || '', err => {
+                    if (!err) {
+                        return resolve(connection.accessToken);
+                    }
+                    console.error(JSON.stringify(err));
+                    reject(err);
+                });
+            });
+        })();
+
+        const authInfo = await AuthInfo.create({
+            username: user,
+            accessTokenOptions: {
+                instanceUrl: connection.instanceUrl,
+                accessToken: connection.accessToken,
+                loginUrl: 'https://login.salesforce.com'
+            }
+        });
+        authInfo.save();
+
+        console.log(`Logged in using user/password`);
+        return user;
+    }
+
+    private async initJwtFlow(): Promise<string> {
+        const alias: string | undefined = process.env.SFDC_ALIAS;
+        if (!alias) {
+            throw new Error(
+                'Required SFDC_ALIAS environment variable not provided'
+            );
+        }
+
+        console.log(`Creating a connection using alias: ${alias}...`);
+        const org = await Org.create({ aliasOrUsername: alias });
+        const conn = org.getConnection();
+
+        this.token = conn.getAuthInfoFields().accessToken || 'NO-ACCESS-TOKEN';
+        this.global.jsforceConnection = conn;
+
+        console.log(`Logged in using JWT`);
+        return alias;
     }
 }
