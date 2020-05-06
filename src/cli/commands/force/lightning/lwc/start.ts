@@ -17,7 +17,7 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/lwc-dev-server', 'start');
 
 // Error codes
-const errorCodes = {
+export const errorCodes = {
     EHOSTDOWN: 112
 };
 
