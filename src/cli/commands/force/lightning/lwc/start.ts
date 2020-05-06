@@ -16,6 +16,11 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('@salesforce/lwc-dev-server', 'start');
 
+// Error codes
+const errorCodes = {
+    EHOSTDOWN: 112
+};
+
 export default class Start extends SfdxCommand {
     public static description = messages.getMessage('commandDescription');
 
@@ -135,7 +140,8 @@ export default class Start extends SfdxCommand {
                 ),
                 colors.green(api_version)
             );
-            return { error: err };
+            err.exitCode = errorCodes.EHOSTDOWN;
+            throw err;
         }
 
         this.reportStatus(
