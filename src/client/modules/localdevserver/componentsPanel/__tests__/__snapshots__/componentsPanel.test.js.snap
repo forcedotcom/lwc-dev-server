@@ -7,7 +7,7 @@ exports[`localdevserver-components-panel render an illustration and message no c
   <img
     alt=""
     class="slds-illustration__svg"
-    src="/assets/images/empty-state.svg"
+    src="/assets/localdev/images/empty-state.svg"
   />
   <div
     class="slds-text-longform"
@@ -41,7 +41,7 @@ exports[`localdevserver-components-panel render an illustration and message when
   <img
     alt=""
     class="slds-illustration__svg"
-    src="/assets/images/empty-state.svg"
+    src="/assets/localdev/images/empty-state.svg"
   />
   <div
     class="slds-text-longform"
@@ -103,7 +103,7 @@ exports[`localdevserver-components-panel renders 1`] = `
                 class="search-icon slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default slds-icon_medium"
               >
                 <use
-                  xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#search"
+                  xlink:href="/assets/localdev/icons/utility-sprite/svg/symbols.svg#search"
                 />
               </svg>
               <input

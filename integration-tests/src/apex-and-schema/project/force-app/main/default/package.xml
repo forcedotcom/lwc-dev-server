@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    TODO: resources from different tests will conflict with each other... for
+    NOTE: Resources from different tests will conflict with each other... for
     now prefix resources with the test name.
 -->
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">

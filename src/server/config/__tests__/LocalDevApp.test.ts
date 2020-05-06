@@ -1,3 +1,4 @@
+import path from 'path';
 import mockFs from 'mock-fs';
 import { Request as ExpressRequest } from 'express';
 import { LocalDevPage, LocalDevApp } from '../LocalDevApp';
@@ -33,7 +34,10 @@ describe('LocalDevApp.ts', () => {
         publicConfig = Object.assign({}, DEFAULT_CONFIG);
     });
 
-    afterEach(mockFs.restore);
+    afterEach(() => {
+        mockFs.restore();
+        jest.resetAllMocks();
+    });
 
     describe('The LocalDevApp class', () => {
         it('the pages method returns at least one route', () => {
@@ -103,7 +107,13 @@ describe('LocalDevApp.ts', () => {
         });
 
         it('replaces {versionKey} in experimental_content', () => {
+            const packageJsonPath = path.join(
+                __dirname,
+                '../../../package.json'
+            );
+
             mockFs({
+                [packageJsonPath]: '{"version": "1.0"}',
                 'src/index.html': `<!DOCTYPE html>
                 <html>
                     <head>
@@ -113,16 +123,13 @@ describe('LocalDevApp.ts', () => {
                 </html>`
             });
 
-            // this should be fixed when version key is the package.json version
-            const expectedVersionKey = 1;
-
             const app = new LocalDevApp(appConfig);
             const page = new LocalDevPage(app, req, locals, publicConfig);
 
             const content = page.experimental_content;
 
             expect(content).toMatch(
-                '<link rel="stylesheet" href="/css/foo.css?1" />'
+                '<link rel="stylesheet" href="/css/foo.css?1.0" />'
             );
         });
     });

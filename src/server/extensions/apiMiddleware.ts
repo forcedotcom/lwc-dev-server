@@ -36,7 +36,6 @@ export function apiMiddleware({
 }: ApiConfig) {
     return {
         extendApp: ({ app }: AppExtensionConfig) => {
-            console.log(getDefaultApiVersion());
             const middleware = webruntimeApiMiddleware({
                 apiPathPrefix,
                 apiEndpoint,
@@ -60,7 +59,7 @@ export function apiMiddleware({
 function getApiPathRewrite(version?: string) {
     if (!version) {
         const defaultApiVersion = getDefaultApiVersion();
-        console.log(
+        console.warn(
             `Warning: The API version for the org could not be determined, using a default API version of '${defaultApiVersion}' which may not match the org`
         );
         version = defaultApiVersion;

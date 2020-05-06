@@ -15,15 +15,15 @@ jest.mock('express', () => {
 jest.mock('@communities-webruntime/extensions/dist/commonjs/api-middleware');
 
 describe('apiMiddleware', () => {
-    let consoleLogMock: any;
+    let consoleWarnMock: any;
 
     beforeEach(() => {
         jest.clearAllMocks();
-        consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
+        consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
     });
 
     afterEach(() => {
-        consoleLogMock.mockRestore();
+        consoleWarnMock.mockRestore();
     });
 
     it('should return a LWR extension', () => {

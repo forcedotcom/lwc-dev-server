@@ -1,10 +1,13 @@
+import fs from 'fs';
+import path from 'path';
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
+import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
 
 /**
  * Returns JavaScript code that will add a module with the given name and
  * constant value to the registry.
  *
- * This is meant to be injected in the HTML to define app config modules.
+ * This is meant to be injected in the HTML to define `@app/*` modules.
  */
 function define([key, value]: [string, any]) {
     return `Webruntime.define('${key}', [], function() { return ${JSON.stringify(
@@ -12,13 +15,34 @@ function define([key, value]: [string, any]) {
     )}; })`;
 }
 
+/**
+ * Returns the version key for the local dev app's static resources.
+ */
+function getVersionKey(buildDir: string): string {
+    // use the version from package.json
+    const packageJsonPath = path.join(__dirname, '../../package.json');
+    try {
+        const packageJson = JSON.parse(
+            fs.readFileSync(packageJsonPath, 'utf8')
+        );
+        if (packageJson.version) {
+            return packageJson.version;
+        }
+    } catch (e) {}
+
+    // fallback to the latest project version hash
+    return getLatestVersion(buildDir);
+}
+
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
         const { sessionNonce }: any = this.pageContext.locals;
-        const { basePath } = this.pageContext.config.server;
+        const {
+            buildDir,
+            server: { basePath }
+        } = this.pageContext.config;
 
-        // TODO: The version key needs to be calculated until LWR provides it in 228.
-        const versionKey = '1';
+        const versionKey = getVersionKey(buildDir);
 
         // Matches of {key} or { key } in the template will get replaced with
         // values from this map.
@@ -41,20 +65,21 @@ export class LocalDevPage extends WebruntimePage {
     }
 
     get experimental_scripts() {
-        const { request: req } = this.pageContext as any;
+        const { request: req }: any = this.pageContext;
+        const { basePath } = this.pageContext.config.server;
 
         const modules = {
-            '@app/basePath': '',
-            '@app/csrfToken': req.csrfToken && req.csrfToken(),
-            '@salesforce/user/isGuest': true,
-            '@salesforce/client/formFactor': 'Large'
+            '@app/basePath': basePath,
+            '@app/csrfToken': req.csrfToken && req.csrfToken()
         };
+
+        const defineModulesScript = Object.entries(modules)
+            .map(define)
+            .join('\n');
 
         return [
             {
-                code: Object.entries(modules)
-                    .map(define)
-                    .join('\n')
+                code: defineModulesScript
             }
         ];
     }
