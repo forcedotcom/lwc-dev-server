@@ -27,6 +27,7 @@ const debug = debugLogger('localdevserver:test');
  */
 export default class DefaultEnvironment extends BaseEnvironment {
     server?: LocalDevServer;
+    private processHandlers: { [key: string]: (...args: any[]) => void } = {};
 
     async setup() {
         await super.setup();
@@ -53,8 +54,11 @@ export default class DefaultEnvironment extends BaseEnvironment {
         this.global.serverPort = this.server.serverPort;
 
         // jest does not call teardown on interruption
-        process.on('SIGINT', async () => this.stopServer());
-        process.on('SIGTERM', async () => this.stopServer());
+        const exitHandler = async () => this.stopServer();
+        this.processHandlers['SIGINT'] = exitHandler;
+        this.processHandlers['SIGTERM'] = exitHandler;
+        process.on('SIGINT', exitHandler);
+        process.on('SIGTERM', exitHandler);
 
         debug(`started server on port ${this.global.serverPort}`);
     }
@@ -62,6 +66,10 @@ export default class DefaultEnvironment extends BaseEnvironment {
     async teardown() {
         await this.stopServer();
         await super.teardown();
+
+        Object.entries(this.processHandlers).forEach(([event, handler]) => {
+            process.off(event, handler);
+        });
     }
 
     async stopServer() {
