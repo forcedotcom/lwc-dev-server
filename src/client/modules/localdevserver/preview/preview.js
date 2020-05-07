@@ -80,8 +80,9 @@ export default class Preview extends LightningElement {
         const module = await import(specifier);
         if (!module.default) {
             // This means there were some compilation errors
-            let err = new Error();
-            err.message = 'Custom unexpected error';
+            let err = new Error(
+                `There were errors while compiling component ${specifier}`
+            );
             err.specifier = specifier;
             throw err;
         }
