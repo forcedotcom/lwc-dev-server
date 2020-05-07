@@ -1,13 +1,17 @@
 import { LightningElement, register } from 'lwc';
 import { registerWireService } from 'wire-service';
 import { createRouter } from 'webruntime_navigation/navigation';
-import { routes } from 'localdevserver/routerLib';
 import * as aura from 'webruntime/aura';
 import auraStorage from 'webruntime/auraStorage';
-import * as auraInstrumentation from 'webruntime/auraInstrumentation';
 import * as logger from 'webruntime/logger';
+import * as auraInstrumentation from 'webruntime/auraInstrumentation';
+import * as lightningConfigProvider from 'localdevserver/lightningConfigProvider';
+import { routes } from 'localdevserver/routerLib';
+import configProviderService from 'lightning/configProvider';
 
 registerWireService(register);
+
+configProviderService(lightningConfigProvider);
 
 createRouter({ routes })
     .addErrorNavigate(e => {
