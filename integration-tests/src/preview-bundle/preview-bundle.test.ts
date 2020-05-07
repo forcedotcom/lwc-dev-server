@@ -1,7 +1,7 @@
 import PreviewPage from '../pageObjects/PreviewPage';
 
 describe('previewing an LWC bundle', () => {
-    it.skip('renders expected content', async () => {
+    it('renders expected content', async () => {
         const page = new PreviewPage('test', 'testComponent');
         await page.open();
 
@@ -12,10 +12,7 @@ describe('previewing an LWC bundle', () => {
         expect(text).toBe('Hello, World!');
     });
 
-    /**
-     * Skipping cause of the window reference, might need dom in the lib library for tsconfig.json
-     */
-    it.skip('renders expected component style', async () => {
+    it('renders expected component style', async () => {
         const page = new PreviewPage('test', 'testComponent');
         await page.open();
 

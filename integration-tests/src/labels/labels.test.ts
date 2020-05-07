@@ -3,7 +3,7 @@ import PreviewTestComponentPage from '../pageObjects/PreviewTestComponentPage';
 /**
  * This is skipped since we don't support namespaces right yet.
  */
-describe.skip('Labels', () => {
+describe('Labels', () => {
     it('displays the known label', async () => {
         await PreviewTestComponentPage.open();
         const labelEl = await PreviewTestComponentPage.testComponent.then(el =>
@@ -19,6 +19,6 @@ describe.skip('Labels', () => {
             el.shadow$('.label-unknown')
         );
         const text = await labelEl.getText();
-        expect(text).toBe('{unknown label: c.labelUnknown}');
+        expect(text).toBe('[c.labelUnknown]');
     });
 });

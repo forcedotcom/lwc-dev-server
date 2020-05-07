@@ -108,6 +108,13 @@ export default class LocalDevServer {
             ]);
         }
 
+        // We don't officially support non-SFDX projects, but this continues to
+        // let them work via localdevserver.config.json. We should standardize
+        // how modules are resolved-- https://salesforce.quip.com/i1b0AQqkJ46F
+        if (!this.project.isSfdx) {
+            config.addModules([this.project.modulesSourceDirectory]);
+        }
+
         const services: ServiceDefinitionCtor[] = [
             // @ts-ignore
             ComponentServiceWithExclusions,

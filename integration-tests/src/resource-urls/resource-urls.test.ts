@@ -4,7 +4,7 @@
 
 import PreviewPage from '../pageObjects/PreviewPage';
 
-describe.skip('Static Resources', () => {
+describe('Static Resources', () => {
     it('Test Images', async () => {
         // static resources page from lwc-recipes
         let page = new PreviewPage('c', 'miscStaticResource');

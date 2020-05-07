@@ -24,50 +24,59 @@ export default class ComponentIndex {
 
     public getModules(): PackageComponent[] {
         let modulesSourceDirectory = this.project.modulesSourceDirectory;
+        const moduleDirectories: string[] = [];
         if (this.project.isSfdx) {
-            modulesSourceDirectory = path.join(
-                modulesSourceDirectory,
-                'main/default/lwc'
+            moduleDirectories.push(
+                path.join(
+                    this.project.modulesSourceDirectory,
+                    'main/default/lwc'
+                )
+            );
+        } else {
+            moduleDirectories.push(
+                ...this.findSubdirectories(this.project.modulesSourceDirectory)
             );
         }
-        return this.findModulesIn(modulesSourceDirectory);
+        return this.findModulesIn(moduleDirectories);
     }
 
     /**
      * @return list of .js modules inside namespaceRoot folder
      */
-    private findModulesIn(namespaceRoot: string): PackageComponent[] {
+    private findModulesIn(namespaceRoots: string[]): PackageComponent[] {
         const files: PackageComponent[] = [];
-        const subdirs = this.findSubdirectories(namespaceRoot);
-        for (const subdir of subdirs) {
-            const basename = path.basename(subdir);
-            const modulePath = path.join(subdir, basename + '.js');
-            if (
-                fs.pathExistsSync(modulePath) &&
-                this.isJSComponent(modulePath) &&
-                this.isUIComponent(modulePath)
-            ) {
-                const name = basename;
-                let namespace = path.basename(path.dirname(subdir));
-                if (this.project.isSfdx) {
-                    namespace = this.project.configuration.namespace;
+        namespaceRoots.forEach(namespaceRoot => {
+            const subdirs = this.findSubdirectories(namespaceRoot);
+            for (const subdir of subdirs) {
+                const basename = path.basename(subdir);
+                const modulePath = path.join(subdir, basename + '.js');
+                if (
+                    fs.pathExistsSync(modulePath) &&
+                    this.isJSComponent(modulePath) &&
+                    this.isUIComponent(modulePath)
+                ) {
+                    const name = basename;
+                    let namespace = path.basename(path.dirname(subdir));
+                    if (this.project.isSfdx) {
+                        namespace = this.project.configuration.namespace;
+                    }
+
+                    const jsName = `${namespace}/${name}`;
+                    const decamelizedName = decamelize(name, '-');
+                    const htmlName = `${namespace}-${decamelizedName}`;
+                    const url = `/preview/${namespace}/${name}`;
+
+                    files.push({
+                        jsName,
+                        htmlName,
+                        namespace,
+                        name,
+                        url,
+                        path: path.normalize(modulePath)
+                    });
                 }
-
-                const jsName = `${namespace}/${name}`;
-                const decamelizedName = decamelize(name, '-');
-                const htmlName = `${namespace}-${decamelizedName}`;
-                const url = `/preview/${namespace}/${name}`;
-
-                files.push({
-                    jsName,
-                    htmlName,
-                    namespace,
-                    name,
-                    url,
-                    path: path.normalize(modulePath)
-                });
             }
-        }
+        });
         return files;
     }
 
