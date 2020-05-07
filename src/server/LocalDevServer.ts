@@ -89,25 +89,6 @@ export default class LocalDevServer {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`
         ]);
 
-        if (this.vendorVersion === '224') {
-            // The 220-224 versions of LDS make use of aggregate-ui which does
-            // not work outside of core. We add this to override the version LDS
-            // back to the 218 version.
-
-            // In 224 LDS there's a flag we can use to disable use of
-            // aggregate-ui, then we can remove this override: W-7069525.
-
-            // In 226 LDS the use of aggregate-ui is supposed to be removed, so
-            // if all orgs are on 226 before W-7069525 is completed then this
-            // can be removed and the story nevered.
-
-            // LDS is the only thing in this 218 package so adding this at the
-            // end should only override LDS, not any other packages.
-            config.addModules([
-                `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg`
-            ]);
-        }
-
         // We don't officially support non-SFDX projects, but this continues to
         // let them work via localdevserver.config.json. We should standardize
         // how modules are resolved-- https://salesforce.quip.com/i1b0AQqkJ46F
