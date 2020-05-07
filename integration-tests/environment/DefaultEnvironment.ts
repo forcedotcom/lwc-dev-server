@@ -49,16 +49,25 @@ export default class DefaultEnvironment extends BaseEnvironment {
 
         this.server = new LocalDevServer(project);
         await this.server.start();
+
         this.global.serverPort = this.server.serverPort;
+
+        // jest does not call teardown on interruption
+        process.on('SIGINT', async () => this.stopServer());
+        process.on('SIGTERM', async () => this.stopServer());
 
         debug(`started server on port ${this.global.serverPort}`);
     }
 
     async teardown() {
+        await this.stopServer();
+        await super.teardown();
+    }
+
+    async stopServer() {
         if (this.server) {
             await this.server.shutdown();
             debug('stopped server');
         }
-        await super.teardown();
     }
 }

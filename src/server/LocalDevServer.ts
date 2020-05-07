@@ -145,11 +145,6 @@ export default class LocalDevServer {
         await this.server.shutdown();
     }
 
-    private async exitHandler() {
-        await this.shutdown();
-        process.exit();
-    }
-
     /**
      * Starts the server. If the server successfully started and contains
      * an address, print the server up message.
@@ -172,10 +167,6 @@ export default class LocalDevServer {
             console.error(`Server start up failed.`);
             throw e;
         }
-
-        // graceful shutdown
-        process.on('SIGINT', async () => this.exitHandler());
-        process.on('SIGTERM', async () => this.exitHandler());
     }
 
     private copyStaticAssets() {
