@@ -179,6 +179,16 @@ export default class Start extends SfdxCommand {
 
         await server.start();
 
+        // graceful shutdown
+        const exitHandler = async () => {
+            this.ux.log('\nStopping local development server');
+            await server.shutdown();
+            process.exit();
+        };
+
+        process.on('SIGINT', exitHandler);
+        process.on('SIGTERM', exitHandler);
+
         return retValue;
     }
 

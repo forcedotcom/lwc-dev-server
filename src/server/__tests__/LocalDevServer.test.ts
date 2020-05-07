@@ -27,6 +27,10 @@ describe('LocalDevServer', () => {
     let consoleLogMock: any;
     let consoleErrorMock: any;
     let fileUtilsCopyMock: any;
+    let addMiddlewareMock: any;
+    let addModulesMock: any;
+    let addRoutesMock: any;
+    let addServicesMock: any;
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -40,6 +44,11 @@ describe('LocalDevServer', () => {
             }
         });
 
+        addMiddlewareMock = jest.fn();
+        addModulesMock = jest.fn();
+        addRoutesMock = jest.fn();
+        addServicesMock = jest.fn();
+
         // @ts-ignore
         WebruntimeConfig.mockImplementation(() => {
             return {
@@ -47,10 +56,10 @@ describe('LocalDevServer', () => {
                 server: {
                     resourceRoot: '/webruntime'
                 },
-                addMiddleware: jest.fn(),
-                addModules: jest.fn(),
-                addRoutes: jest.fn(),
-                addServices: jest.fn()
+                addMiddleware: addMiddlewareMock,
+                addModules: addModulesMock,
+                addRoutes: addRoutesMock,
+                addServices: addServicesMock
             };
         });
         project = new Project('/Users/arya/dev/myproject');
@@ -105,7 +114,7 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
 
         // @ts-ignore
-        expect(server.config.addMiddleware).toHaveBeenCalledTimes(1);
+        expect(addMiddlewareMock).toHaveBeenCalledTimes(1);
     });
 
     it('should add routes to the config', () => {
@@ -166,11 +175,9 @@ describe('LocalDevServer', () => {
     it('should add modules with the correct vendor version to the config', () => {
         const server = new LocalDevServer(project);
 
-        // @ts-ignore
-        expect(server.config.addModules).toHaveBeenCalledTimes(1);
+        expect(addModulesMock).toHaveBeenCalledTimes(2);
 
-        // @ts-ignore
-        const modules = server.config.addModules.mock.calls[0][0];
+        const modules = addModulesMock.mock.calls[0][0];
 
         expect(modules).toEqual([
             '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg',
@@ -183,10 +190,10 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         project.isSfdx = true;
 
-        const server = new LocalDevServer(project);
+        new LocalDevServer(project);
 
         // @ts-ignore
-        expect(server.config.addServices).toHaveBeenCalledTimes(1);
+        expect(addServicesMock).toHaveBeenCalledTimes(1);
     });
 
     it('should not add custom component service for sfdx projects', () => {
@@ -196,9 +203,22 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
 
         // @ts-ignore
-        expect(server.config.addServices.mock.calls[0][0]).not.toContain(
+        expect(addServicesMock.mock.calls[0][0]).not.toContain(
             getCustomComponentService('', '')
         );
+    });
+
+    it('should add the modulesSourceDirectory for non-sfdx modules', () => {
+        // @ts-ignore
+        project.isSfdx = false;
+
+        new LocalDevServer(project);
+
+        expect(addModulesMock).toHaveBeenCalledTimes(2);
+
+        const modules = addModulesMock.mock.calls[1][0];
+
+        expect(modules).toEqual([project.modulesSourceDirectory]);
     });
 
     it('copies app static assets to the server assets directory', async () => {
@@ -224,32 +244,6 @@ describe('LocalDevServer', () => {
             copiedFromPath,
             copiedToPath
         );
-    });
-
-    it('should handle graceful shutdown (SIGTERM)', async () => {
-        const server = new LocalDevServer(project);
-        const mockShutdown = jest.spyOn(server, 'shutdown');
-        const mockExit = jest.spyOn(process, 'exit');
-        // @ts-ignore
-        mockExit.mockImplementation(() => {});
-
-        await server.start();
-        process.emit('SIGTERM', 'SIGTERM');
-
-        expect(mockShutdown).toHaveBeenCalledTimes(1);
-    });
-
-    it('should handle graceful shutdown (SIGINT)', async () => {
-        const server = new LocalDevServer(project);
-        const mockShutdown = jest.spyOn(server, 'shutdown');
-        const mockExit = jest.spyOn(process, 'exit');
-        // @ts-ignore
-        mockExit.mockImplementation(() => {});
-
-        await server.start();
-        process.emit('SIGINT', 'SIGINT');
-
-        expect(mockShutdown).toHaveBeenCalledTimes(1);
     });
 
     it('throws an error if copying static assets fails', async () => {

@@ -193,6 +193,14 @@ export default class Project {
         if (packageDirectories.length > 0) {
             if (!this.configuration.modulesSourceDirectory) {
                 // The sfdx-project.json specifies where the modules are located.
+
+                // WARNING: this is not the correct modules source dir (which
+                // would be for example `force-app/main/default`) but a dir
+                // several levels above (e.g., `force-app`).
+                // This is because LWR doesn't allow more than one directory
+                // to watch for changes, but we need to watch the entire
+                // force-app dir for changes to other files such as static
+                // resources. Once LWR fixes this then this should be changed.
                 this.configuration.modulesSourceDirectory =
                     packageDirectories[0];
             }

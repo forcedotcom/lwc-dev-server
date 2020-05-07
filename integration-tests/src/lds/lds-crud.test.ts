@@ -8,7 +8,7 @@ import debug from 'debug';
 
 const log = debug('localdevserver:test');
 
-describe.skip('Lightning data service CRUD proxies to the org', () => {
+describe('Lightning data service CRUD proxies to the org', () => {
     it('Create, Read, Edit, Delete an Account object via LDS', async () => {
         await CRUDPage.open();
 

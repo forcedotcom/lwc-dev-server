@@ -89,6 +89,12 @@ export default class LocalDevServer {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`
         ]);
 
+        // We don't officially support non-SFDX projects, but this continues to
+        // let them work via localdevserver.config.json.
+        if (!this.project.isSfdx) {
+            config.addModules([this.project.modulesSourceDirectory]);
+        }
+
         const services: ServiceDefinitionCtor[] = [
             // @ts-ignore
             ComponentServiceWithExclusions,
@@ -119,11 +125,6 @@ export default class LocalDevServer {
         await this.server.shutdown();
     }
 
-    private async exitHandler() {
-        await this.shutdown();
-        process.exit();
-    }
-
     /**
      * Starts the server. If the server successfully started and contains
      * an address, print the server up message.
@@ -146,10 +147,6 @@ export default class LocalDevServer {
             console.error(`Server start up failed.`);
             throw e;
         }
-
-        // graceful shutdown
-        process.on('SIGINT', async () => this.exitHandler());
-        process.on('SIGTERM', async () => this.exitHandler());
     }
 
     private copyStaticAssets() {

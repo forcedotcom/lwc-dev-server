@@ -905,123 +905,123 @@ describe('apexMiddleware', () => {
         expect(next).not.toBeCalled();
     });
 });
-// describe('apexResourceLoader', () => {
-//     beforeEach(() => {
-//         jest.clearAllMocks();
-//         jest.resetModules();
-//     });
+describe('apexResourceLoader', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        jest.resetModules();
+    });
 
-//     it('loads requests for inline.js', async () => {
-//         const request = getRequest();
-//         request.get.mockImplementation(() => {
-//             return Promise.resolve('value');
-//         });
+    it('loads requests for inline.js', async () => {
+        const request = getRequest();
+        request.get.mockImplementation(() => {
+            return Promise.resolve('value');
+        });
 
-//         const loader = new ApexResourceLoader(
-//             request,
-//             'https://na132.salesforce.com'
-//         );
-//         const response = await loader.fetch('/inline.js', {});
+        const loader = new ApexResourceLoader(
+            request,
+            'https://na132.salesforce.com'
+        );
+        const response = await loader.fetch('/inline.js', {});
 
-//         expect(request.get).toBeCalledWith({
-//             url: '/inline.js'
-//         });
-//         // @ts-ignore
-//         expect(response.toString()).toBe('value');
-//     });
+        expect(request.get).toBeCalledWith({
+            url: '/inline.js'
+        });
+        // @ts-ignore
+        expect(response.toString()).toBe('value');
+    });
 
-//     it('loads requests for inline.js url with query string and extra paths', async () => {
-//         const request = getRequest();
-//         request.get.mockImplementation(() => {
-//             return Promise.resolve('value');
-//         });
+    it('loads requests for inline.js url with query string and extra paths', async () => {
+        const request = getRequest();
+        request.get.mockImplementation(() => {
+            return Promise.resolve('value');
+        });
 
-//         const loader = new ApexResourceLoader(
-//             request,
-//             'https://na132.salesforce.com'
-//         );
-//         const url =
-//             '/l/%7B%22mode%22%3A%22PROD%22%2C%22app%22%3A%22one%3Aone%22%2C%22fwuid%22%3A%22SMRgtHXIUVBtPJBYLBvdxw%22%2C%22loaded%22%3A%7B%22APPLICATION%40markup%3A%2F%2Fone%3Aone%22%3A%224LN5cnym63OOBP3Bk7ufaQ%22%7D%2C%22mlr%22%3A1%2C%22pathPrefix%22%3A%22%22%2C%22dns%22%3A%22c%22%2C%22ls%22%3A1%2C%22ct%22%3A1%7D/inline.js?jwt=abcdefgiOiJIUzI1NiIsinR5cCI6IkpXVCJ9..eKKHtlCa5k-ffFBJkUABypc8WZPl1Vet-KBVlIRrvTc';
-//         const response = await loader.fetch(url, {});
+        const loader = new ApexResourceLoader(
+            request,
+            'https://na132.salesforce.com'
+        );
+        const url =
+            '/l/%7B%22mode%22%3A%22PROD%22%2C%22app%22%3A%22one%3Aone%22%2C%22fwuid%22%3A%22SMRgtHXIUVBtPJBYLBvdxw%22%2C%22loaded%22%3A%7B%22APPLICATION%40markup%3A%2F%2Fone%3Aone%22%3A%224LN5cnym63OOBP3Bk7ufaQ%22%7D%2C%22mlr%22%3A1%2C%22pathPrefix%22%3A%22%22%2C%22dns%22%3A%22c%22%2C%22ls%22%3A1%2C%22ct%22%3A1%7D/inline.js?jwt=abcdefgiOiJIUzI1NiIsinR5cCI6IkpXVCJ9..eKKHtlCa5k-ffFBJkUABypc8WZPl1Vet-KBVlIRrvTc';
+        const response = await loader.fetch(url, {});
 
-//         expect(request.get).toBeCalledWith({
-//             url
-//         });
-//         // @ts-ignore
-//         expect(response.toString()).toBe('value');
-//     });
+        expect(request.get).toBeCalledWith({
+            url
+        });
+        // @ts-ignore
+        expect(response.toString()).toBe('value');
+    });
 
-//     it('loads requests for inline.js when absolute', async () => {
-//         const request = getRequest();
-//         request.get.mockImplementation(() => {
-//             return Promise.resolve('value');
-//         });
+    it('loads requests for inline.js when absolute', async () => {
+        const request = getRequest();
+        request.get.mockImplementation(() => {
+            return Promise.resolve('value');
+        });
 
-//         const origin = 'https://na132.salesforce.com';
-//         const loader = new ApexResourceLoader(request, origin);
-//         const url =
-//             '/l/%7B%22mode%22%3A%22PROD%22%2C%22app%22%3A%22one%3Aone%22%2C%22fwuid%22%3A%22SMRgtHXIUVBtPJBYLBvdxw%22%2C%22loaded%22%3A%7B%22APPLICATION%40markup%3A%2F%2Fone%3Aone%22%3A%224LN5cnym63OOBP3Bk7ufaQ%22%7D%2C%22mlr%22%3A1%2C%22pathPrefix%22%3A%22%22%2C%22dns%22%3A%22c%22%2C%22ls%22%3A1%2C%22ct%22%3A1%7D/inline.js?jwt=abcdefgiOiJIUzI1NiIsinR5cCI6IkpXVCJ9..eKKHtlCa5k-ffFBJkUABypc8WZPl1Vet-KBVlIRrvTc';
-//         const response = await loader.fetch(origin + url, {});
+        const origin = 'https://na132.salesforce.com';
+        const loader = new ApexResourceLoader(request, origin);
+        const url =
+            '/l/%7B%22mode%22%3A%22PROD%22%2C%22app%22%3A%22one%3Aone%22%2C%22fwuid%22%3A%22SMRgtHXIUVBtPJBYLBvdxw%22%2C%22loaded%22%3A%7B%22APPLICATION%40markup%3A%2F%2Fone%3Aone%22%3A%224LN5cnym63OOBP3Bk7ufaQ%22%7D%2C%22mlr%22%3A1%2C%22pathPrefix%22%3A%22%22%2C%22dns%22%3A%22c%22%2C%22ls%22%3A1%2C%22ct%22%3A1%7D/inline.js?jwt=abcdefgiOiJIUzI1NiIsinR5cCI6IkpXVCJ9..eKKHtlCa5k-ffFBJkUABypc8WZPl1Vet-KBVlIRrvTc';
+        const response = await loader.fetch(origin + url, {});
 
-//         expect(request.get).toBeCalledWith({
-//             url
-//         });
-//         // @ts-ignore
-//         expect(response.toString()).toBe('value');
-//     });
+        expect(request.get).toBeCalledWith({
+            url
+        });
+        // @ts-ignore
+        expect(response.toString()).toBe('value');
+    });
 
-//     it('does not call get on the request if the url does not match the expected origin', async () => {
-//         const request = getRequest();
-//         request.get.mockImplementation(() => {
-//             return Promise.resolve('');
-//         });
+    it('does not call get on the request if the url does not match the expected origin', async () => {
+        const request = getRequest();
+        request.get.mockImplementation(() => {
+            return Promise.resolve('');
+        });
 
-//         const loader = new ApexResourceLoader(
-//             request,
-//             'https://na132.salesforce.com'
-//         );
-//         const response = await loader.fetch(
-//             'https://321.salesforce.com/inline.js',
-//             {}
-//         );
+        const loader = new ApexResourceLoader(
+            request,
+            'https://na132.salesforce.com'
+        );
+        const response = await loader.fetch(
+            'https://321.salesforce.com/inline.js',
+            {}
+        );
 
-//         expect(request.get).not.toBeCalled();
-//         expect(response).toBeNull();
-//     });
+        expect(request.get).not.toBeCalled();
+        expect(response).toBeNull();
+    });
 
-//     it('does not call get on the request for non inline.js urls', async () => {
-//         const request = getRequest();
-//         request.get.mockImplementation(() => {
-//             return Promise.resolve('value');
-//         });
+    it('does not call get on the request for non inline.js urls', async () => {
+        const request = getRequest();
+        request.get.mockImplementation(() => {
+            return Promise.resolve('value');
+        });
 
-//         const loader = new ApexResourceLoader(
-//             request,
-//             'https://na132.salesforce.com'
-//         );
-//         const response = await loader.fetch('/app.css', {});
+        const loader = new ApexResourceLoader(
+            request,
+            'https://na132.salesforce.com'
+        );
+        const response = await loader.fetch('/app.css', {});
 
-//         expect(request.get).not.toBeCalled();
-//         expect(response).toBeNull();
-//     });
+        expect(request.get).not.toBeCalled();
+        expect(response).toBeNull();
+    });
 
-//     it('returns null on errors', async () => {
-//         const request = getRequest();
-//         request.get.mockImplementation(() => {
-//             return Promise.reject(new Error('test error'));
-//         });
+    it('returns null on errors', async () => {
+        const request = getRequest();
+        request.get.mockImplementation(() => {
+            return Promise.reject(new Error('test error'));
+        });
 
-//         const loader = new ApexResourceLoader(
-//             request,
-//             'https://na132.salesforce.com'
-//         );
+        const loader = new ApexResourceLoader(
+            request,
+            'https://na132.salesforce.com'
+        );
 
-//         expect(loader.fetch('/inline.js', {})).rejects.toEqual(
-//             new Error('test error')
-//         );
+        expect(loader.fetch('/inline.js', {})).rejects.toEqual(
+            new Error('test error')
+        );
 
-//         expect(request.get).toBeCalledWith({
-//             url: '/inline.js'
-//         });
-//     });
-// });
+        expect(request.get).toBeCalledWith({
+            url: '/inline.js'
+        });
+    });
+});
