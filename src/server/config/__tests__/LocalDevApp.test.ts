@@ -109,7 +109,7 @@ describe('LocalDevApp.ts', () => {
         it('replaces {versionKey} in experimental_content', () => {
             const packageJsonPath = path.join(
                 __dirname,
-                '../../../package.json'
+                '../../../../package.json'
             );
 
             mockFs({

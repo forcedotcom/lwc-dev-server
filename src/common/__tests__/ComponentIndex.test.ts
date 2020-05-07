@@ -16,23 +16,25 @@ describe('ComponentIndex getModules()', () => {
             'my-project': {
                 'package.json': '{}',
                 'localdevserver.config.json': JSON.stringify({
-                    modulesSourceDirectory: 'src/namespace'
+                    modulesSourceDirectory: 'src/modules'
                 }),
                 src: {
-                    namespace: {
-                        module: {
-                            'module.html': '',
-                            'module.js':
-                                'export default class Module extends LightningElement {}'
-                        },
-                        module2: {
-                            'module2.html': '',
-                            'module2.js':
-                                'export default class Module extends NavigationMixin(LightningElement) {}'
-                        },
-                        module3: {
-                            'module3.html': '',
-                            'module3 .js': ''
+                    modules: {
+                        namespace: {
+                            module: {
+                                'module.html': '',
+                                'module.js':
+                                    'export default class Module extends LightningElement {}'
+                            },
+                            module2: {
+                                'module2.html': '',
+                                'module2.js':
+                                    'export default class Module extends NavigationMixin(LightningElement) {}'
+                            },
+                            module3: {
+                                'module3.html': '',
+                                'module3 .js': ''
+                            }
                         }
                     }
                 }
@@ -47,7 +49,7 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module',
                 url: '/preview/namespace/module',
                 path: path.normalize(
-                    'my-project/src/namespace/module/module.js'
+                    'my-project/src/modules/namespace/module/module.js'
                 )
             },
             {
@@ -57,7 +59,7 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module2',
                 url: '/preview/namespace/module2',
                 path: path.normalize(
-                    'my-project/src/namespace/module2/module2.js'
+                    'my-project/src/modules/namespace/module2/module2.js'
                 )
             }
         ];

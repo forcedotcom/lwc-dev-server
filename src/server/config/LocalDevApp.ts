@@ -1,7 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import debugLogger from 'debug';
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
 import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
+
+const debug = debugLogger('localdevserver');
 
 export class LocalDevPage extends WebruntimePage {
     get experimental_content() {
@@ -105,7 +108,7 @@ export class LocalDevPage extends WebruntimePage {
      */
     getVersionKey(buildDir: string): string {
         // use the version from package.json
-        const packageJsonPath = path.join(__dirname, '../../package.json');
+        const packageJsonPath = path.join(__dirname, '../../../package.json');
         try {
             const packageJson = JSON.parse(
                 fs.readFileSync(packageJsonPath, 'utf8')
@@ -113,7 +116,11 @@ export class LocalDevPage extends WebruntimePage {
             if (packageJson.version) {
                 return packageJson.version;
             }
-        } catch (e) {}
+        } catch (e) {
+            debug(
+                `warning: unable to determine versionKey from package.json ${e}`
+            );
+        }
 
         // fallback to the latest project version hash
         return getLatestVersion(buildDir);

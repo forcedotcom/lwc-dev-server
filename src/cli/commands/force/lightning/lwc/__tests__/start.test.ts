@@ -21,6 +21,8 @@ describe('start', () => {
     let consoleErrorMock: any;
 
     beforeEach(() => {
+        jest.resetAllMocks();
+
         start = new Start([], new Config.Config(<Config.Options>{}));
         setupConfigAggregator();
         const hubOrg = {
@@ -482,6 +484,79 @@ Starting LWC Local Development.
             await start.run();
 
             expect(log.mock.calls[1][0]).toEqual(expected);
+        });
+
+        describe('graceful termination', () => {
+            let mockExit: jest.SpyInstance;
+
+            beforeEach(() => {
+                mockExit = jest
+                    .spyOn(process, 'exit')
+                    // @ts-ignore
+                    .mockImplementation(() => {});
+            });
+
+            afterEach(() => {
+                mockExit.mockRestore();
+            });
+
+            test('should handle graceful shutdown (SIGTERM)', async () => {
+                setupFlags();
+                setupOrg();
+                Object.defineProperty(start, 'ux', {
+                    get: () => {
+                        return {
+                            log: jest.fn(),
+                            error: jest.fn()
+                        };
+                    },
+                    configurable: true,
+                    enumerable: true
+                });
+
+                const serverStart = jest.fn();
+                const serverShutdown = jest.fn();
+                (LocalDevServer as jest.Mock).mockImplementation(() => {
+                    return {
+                        start: serverStart,
+                        shutdown: serverShutdown
+                    };
+                });
+
+                await start.run();
+                process.emit('SIGTERM', 'SIGTERM');
+
+                expect(serverShutdown).toHaveBeenCalledTimes(1);
+            });
+
+            test('should handle graceful shutdown (SIGINT)', async () => {
+                setupFlags();
+                setupOrg();
+                Object.defineProperty(start, 'ux', {
+                    get: () => {
+                        return {
+                            log: jest.fn(),
+                            error: jest.fn()
+                        };
+                    },
+                    configurable: true,
+                    enumerable: true
+                });
+
+                const serverStart = jest.fn();
+                const serverShutdown = jest.fn();
+                (LocalDevServer as jest.Mock).mockImplementation(() => {
+                    return {
+                        start: serverStart,
+                        shutdown: serverShutdown
+                    };
+                });
+
+                await start.run();
+                process.emit('SIGINT', 'SIGINT');
+
+                expect(serverShutdown).toHaveBeenCalledTimes(1);
+            });
         });
     });
 });
