@@ -75,7 +75,11 @@ export default class WebruntimeConfig implements Config {
             ResourceUrlService
         ];
 
-        this.bundle = ['@webruntime/app', 'webruntime_navigation/*'];
+        this.bundle = [
+            '@webruntime/app',
+            'webruntime_navigation/*',
+            'lightning/configProvider'
+        ];
 
         this.preloadModules = [];
 

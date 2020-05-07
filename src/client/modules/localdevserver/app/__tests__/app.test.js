@@ -5,6 +5,14 @@ jest.mock('webruntime/aura', () => ({}), { virtual: true });
 jest.mock('webruntime/auraStorage', () => ({}), { virtual: true });
 jest.mock('webruntime/auraInstrumentation', () => ({}), { virtual: true });
 jest.mock('webruntime/logger', () => ({}), { virtual: true });
+jest.mock(
+    'lightning/configProvider',
+    () => ({
+        __esModule: true,
+        default: jest.fn()
+    }),
+    { virtual: true }
+);
 
 function createComponentUnderTest(props) {
     const el = createElement('localdevserver-app', {
