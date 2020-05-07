@@ -4,7 +4,7 @@ import { createRouter } from 'webruntime_navigation/navigation';
 import { routes } from 'localdevserver/routerLib';
 import * as aura from 'webruntime/aura';
 import auraStorage from 'webruntime/auraStorage';
-import * as auraInstrumentation from 'webruntime/auraInstrumentation';
+import * as auraInstrumentation from 'localdevserver/instrumentation';
 import * as logger from 'webruntime/logger';
 
 registerWireService(register);
