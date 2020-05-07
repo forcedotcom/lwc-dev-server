@@ -154,6 +154,9 @@ describe('start', () => {
             let result: JsonMap = (await start.run()) as JsonMap;
             if (result) {
                 expect(result['endpoint']).toEqual('http://test.instance.url');
+                expect(result['endpointHeaders']).toEqual([
+                    'Authorization: Bearer testingAccessToken'
+                ]);
                 expect(result['orgId']).toEqual('testingOrgIDX');
                 expect(result['api_version']).toEqual('99.0');
                 expect(result['port']).toEqual(3333);
@@ -191,48 +194,6 @@ describe('start', () => {
             }
         });
 
-        // test('onProxyReq will add Authorization header', async () => {
-        //     setupAllDev();
-
-        //     let header = '';
-        //     let request: { setHeader: Function } = {
-        //         setHeader: function(name: string, value: string) {
-        //             header = `${name}: ${value}`;
-        //         }
-        //     };
-
-        //     let result = await start.run();
-        //     Project.prototype.configuration.onProxyReq(request, null, null);
-
-        //     expect(header).toBe('Authorization: Bearer testingAccessToken');
-        // });
-
-        // test('uses port from flags', async () => {
-        //     setupUX();
-        //     setupOrg();
-        //     setupProject();
-
-        //     Object.defineProperty(start, 'flags', {
-        //         get: () => {
-        //             return { port: '5151' };
-        //         }
-        //     });
-
-        //     let configuredPort = null;
-        //     // @ts-ignore
-        //     LocalDevServer.mockImplementation(() => {
-        //         return {
-        //             start: (project: Project) => {
-        //                 configuredPort = project.configuration.port;
-        //             }
-        //         };
-        //     });
-
-        //     await start.run();
-
-        //     expect(configuredPort).toBe(5151);
-        // });
-
         test('outputs legal message', async () => {
             setupAllDev();
             const log = jest.fn();
@@ -257,50 +218,52 @@ describe('start', () => {
             expect(log.mock.calls[0][0]).toEqual(expected);
         });
 
-        // test('uses port from flags', async () => {
-        //     setupUX();
-        //     setupOrg();
-        //     setupProject();
+        test('uses port from flags', async () => {
+            setupUX();
+            setupOrg();
+            setupProject();
 
-        //     Object.defineProperty(start, 'flags', {
-        //         get: () => {
-        //             return { port: '5151' };
-        //         }
-        //     });
+            Object.defineProperty(start, 'flags', {
+                get: () => {
+                    return { port: '5151' };
+                }
+            });
 
-        //     let configuredPort = null;
-        //     // @ts-ignore
-        //     LocalDevServer.mockImplementation(() => {
-        //         return {
-        //             start: (project: Project) => {
-        //                 configuredPort = project.configuration.port;
-        //             }
-        //         };
-        //     });
+            let configuredPort = null;
+            // @ts-ignore
+            LocalDevServer.mockImplementation((project: Project) => {
+                configuredPort = project.configuration.port;
+                return {
+                    start: jest.fn()
+                };
+            });
 
-        //     await start.run();
+            await start.run();
 
-        //     expect(configuredPort).toBe(5151);
-        // });
+            expect(configuredPort).toBe(5151);
+        });
 
-        // test('passes devhub user to LocalDevServer', async () => {
-        //     setupAllDev();
+        // TODO: the dev hub user was passed for telemetry purposes.
+        // figure out the right approach, if there's another anonymous
+        // id we can reuse.
+        test.skip('passes devhub user to LocalDevServer', async () => {
+            setupAllDev();
 
-        //     let actual;
-        //     // @ts-ignore
-        //     LocalDevServer.mockImplementation(devhubUser => {
-        //         actual = devhubUser;
-        //         return {
-        //             start: () => {}
-        //         };
-        //     });
-        //     // @ts-ignore
-        //     start.hubOrg.getUsername.mockReturnValue('admin@devhub.org');
+            let actual;
+            // @ts-ignore
+            LocalDevServer.mockImplementation(devhubUser => {
+                actual = devhubUser;
+                return {
+                    start: () => {}
+                };
+            });
+            // @ts-ignore
+            start.hubOrg.getUsername.mockReturnValue('admin@devhub.org');
 
-        //     await start.run();
+            await start.run();
 
-        //     expect(actual).toBe('admin@devhub.org');
-        // });
+            expect(actual).toBe('admin@devhub.org');
+        });
     });
 
     describe('reportStatus()', () => {
