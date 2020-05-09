@@ -12,6 +12,7 @@ import {
     ImportMapObject
 } from '@webruntime/api';
 import { CompilerDiagnostic } from '@lwc/errors';
+import stripAnsi from 'strip-ansi';
 const SFDX_LWC_DIRECTORY = 'lwc';
 
 const debug = debugLogger('localdevserver:customcomponents');
@@ -106,10 +107,14 @@ export function getCustomComponentService(
         private formatDiagnostics(diagnostics: CompilerDiagnostic[]) {
             let resultJSON = { errors: [] };
             diagnostics.forEach(diagnostic => {
-                const msgTitle = diagnostic.message.split('\n')[0];
-                const msgBody = diagnostic.message
-                    .replace(msgTitle, '')
-                    .replace(/\u001b\[.*?m/g, '');
+                let msgTitle = diagnostic.message.split('\n')[0];
+                const msgBody = stripAnsi(
+                    diagnostic.message.replace(msgTitle, '')
+                );
+                if (diagnostic.filename) {
+                    msgTitle = msgTitle.replace(`${diagnostic.filename}:`, '');
+                }
+
                 const err = {
                     filename: diagnostic.filename,
                     location: diagnostic.location,

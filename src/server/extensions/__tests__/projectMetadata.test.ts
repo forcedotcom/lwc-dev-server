@@ -47,7 +47,7 @@ describe('projectMetadata', () => {
             expect(route).toEqual(`/localdev/${nonce}/localdev.js`);
         });
 
-        it('should add the /localdev/{{sessionNonce}}/show route', async () => {
+        it('should add the /localdev/{{sessionNonce}}errorDetails route', async () => {
             const extension = projectMetadata(nonce, project);
 
             extension.extendApp({ app, options });
@@ -55,7 +55,7 @@ describe('projectMetadata', () => {
             // @ts-ignore
             const route = app.get.mock.calls[1][0];
 
-            expect(route).toEqual(`/localdev/${nonce}/show`);
+            expect(route).toEqual(`/localdev/${nonce}/errorDetails`);
         });
     });
 });

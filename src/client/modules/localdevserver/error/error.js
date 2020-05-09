@@ -54,43 +54,6 @@ export default class Error extends LightningElement {
                     this.errorMessage = err.message;
                     this.code = err.code;
                 });
-        } else if (this.error && this.error.filename) {
-            if (this.error.location) {
-                this.errorLocation = `${this.error.filename}:${this.error.location.line}:${this.error.location.column}`;
-                this.errorLine = this.error.location.line;
-            } else {
-                this.errorLocation = `${this.error.filename}`;
-                this.errorLine = null;
-            }
-            this.errorMessage = this.processMessage(this.error.message);
-            fetch(`/localdev/${getNonce()}/show?file=${this._error.filename}`, {
-                credentials: 'same-origin'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return;
-                    }
-                    return response.text();
-                })
-                .then(text => {
-                    if (text) {
-                        // source code can be thousands of lines. Just show context
-                        // around where the error occured. 5 lines before, and 5 lines after.
-                        if (this.errorLine) {
-                            let lines = text.split('\n');
-                            const start = Math.max(1, this.errorLine - 5);
-                            const end = Math.min(
-                                this.errorLine + 5,
-                                lines.length
-                            );
-                            lines = lines.slice(start, end);
-                            this.lineOffset = start + 1;
-                            this.code = lines.join('\n');
-                        } else {
-                            this.code = text;
-                        }
-                    }
-                });
         } else {
             this.errorMessage = this.error.message;
             this.errorLine = 0;
@@ -99,14 +62,6 @@ export default class Error extends LightningElement {
     }
     get error() {
         return this._error;
-    }
-    processMessage(message) {
-        let msg = message.split('\n')[0];
-        if (msg.indexOf(this.error.filename >= 0)) {
-            msg = msg.replace(this.error.filename + ':', '');
-            msg = msg.replace(this.error.filename, '');
-        }
-        return msg;
     }
 
     handleClose() {
