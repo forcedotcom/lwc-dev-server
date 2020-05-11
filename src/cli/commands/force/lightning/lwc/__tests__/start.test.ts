@@ -1,4 +1,4 @@
-import Start from '../start';
+import Start, { errorCodes } from '../start';
 import * as Config from '@oclif/config';
 import { JsonMap } from '@salesforce/ts-types';
 import LocalDevServer from '../../../../../../server/LocalDevServer';
@@ -329,6 +329,33 @@ Starting LWC Local Development.
             expect(log.mock.calls[0][0]).toEqual(expected);
         });
 
+        test('authenticating to inactive scratch org reports should return exit code EPERM', async () => {
+            setupFlags();
+            const org = setupOrg();
+            const log = jest.fn();
+            const error = jest.fn();
+            Object.defineProperty(start, 'ux', {
+                get: () => {
+                    return {
+                        log,
+                        error
+                    };
+                },
+                configurable: true,
+                enumerable: true
+            });
+            const mockError = new Error('expected');
+            org.refreshAuth.mockImplementation(() => {
+                throw mockError;
+            });
+            org.getUsername.mockReturnValue('user@test.org');
+
+            expect.assertions(1);
+            await expect(start.run()).rejects.toMatchObject({
+                exitCode: errorCodes.EPERM
+            });
+        });
+
         test('authenticating to inactive scratch org reports scratch org is inactive', async () => {
             setupFlags();
             const org = setupOrg();
@@ -345,7 +372,7 @@ Starting LWC Local Development.
                 enumerable: true
             });
             org.refreshAuth.mockImplementation(() => {
-                throw 'expected';
+                throw new Error('expected');
             });
             org.getUsername.mockReturnValue('user@test.org');
 
@@ -358,9 +385,11 @@ Starting LWC Local Development.
     Api Version: ${colors.green('99.0')}\
 `;
 
-            await start.run();
-
-            expect(log.mock.calls[1][0]).toEqual(expected);
+            try {
+                await start.run();
+            } catch (err) {}
+            expect(error).toBeCalledTimes(1);
+            expect(error).toHaveBeenCalledWith(expected);
         });
 
         test('on org refresh, unhandledRejections for StatusCodeErrors are suppressed', async () => {
@@ -382,7 +411,6 @@ Starting LWC Local Development.
                 const err = new Error('foo');
                 err.name = 'StatusCodeError';
                 process.emit('unhandledRejection', err, Promise.reject(err));
-                throw err;
             });
 
             await start.run();
@@ -408,7 +436,6 @@ Starting LWC Local Development.
             org.refreshAuth.mockImplementation(async () => {
                 const err = new Error('test error');
                 process.emit('unhandledRejection', err, Promise.reject(err));
-                throw err;
             });
 
             await start.run();
