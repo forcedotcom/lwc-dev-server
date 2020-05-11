@@ -364,7 +364,7 @@ Starting LWC Local Development.
             expect(log.mock.calls[0][0]).toEqual(expected);
         });
 
-        test('authenticating to inactive scratch org reports should return exit code EHOSTDOWN', async () => {
+        test('authenticating to inactive scratch org reports should return exit code EPERM', async () => {
             setupFlags();
             const org = setupOrg();
             const log = jest.fn();
@@ -387,7 +387,7 @@ Starting LWC Local Development.
 
             expect.assertions(1);
             await expect(start.run()).rejects.toMatchObject({
-                exitCode: errorCodes.EHOSTDOWN
+                exitCode: errorCodes.EPERM
             });
         });
 
@@ -422,8 +422,9 @@ Starting LWC Local Development.
 
             try {
                 await start.run();
-            } catch (error) {}
-            expect(log.mock.calls[1][0]).toEqual(expected);
+            } catch (err) {}
+            expect(error).toBeCalledTimes(1);
+            expect(error).toHaveBeenCalledWith(expected);
         });
 
         test('on org refresh, unhandledRejections for StatusCodeErrors are suppressed', async () => {

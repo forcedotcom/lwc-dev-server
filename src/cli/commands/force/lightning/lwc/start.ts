@@ -16,9 +16,13 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('@salesforce/lwc-dev-server', 'start');
 
-// Error codes
+/**
+ * Error codes for start command.
+ * Process exits with error codes specified here if an error happens.
+ * salesforcedx-vscode uses this as well as the stderr output to determine a user friendly message / action.
+ */
 export const errorCodes = {
-    EHOSTDOWN: 112
+    EPERM: 1
 };
 
 export default class Start extends SfdxCommand {
@@ -131,7 +135,7 @@ export default class Start extends SfdxCommand {
             });
             await this.org.refreshAuth();
         } catch (err) {
-            this.reportStatus(
+            this.reportError(
                 colors.green(devhubalias),
                 colors.red(
                     `${orgusername} - ${messages.getMessage(
@@ -140,7 +144,7 @@ export default class Start extends SfdxCommand {
                 ),
                 colors.green(api_version)
             );
-            err.exitCode = errorCodes.EHOSTDOWN;
+            err.exitCode = errorCodes.EPERM;
             throw err;
         }
 
@@ -188,24 +192,40 @@ export default class Start extends SfdxCommand {
         return retValue;
     }
 
-    private reportStatus(
+    private getStatusMessage(
         devHubOrg: string,
         scratchOrg: string,
         apiVersion?: string
     ) {
         if (apiVersion) {
-            this.ux.log(`\
+            return `\
 Starting LWC Local Development.
     Dev Hub Org: ${devHubOrg}
     Scratch Org: ${scratchOrg}
     Api Version: ${apiVersion}\
-`);
+`;
         } else {
-            this.ux.log(`\
+            return `\
 Starting LWC Local Development.
     Dev Hub Org: ${devHubOrg}
     Scratch Org: ${scratchOrg}\
-`);
+`;
         }
+    }
+
+    private reportStatus(
+        devHubOrg: string,
+        scratchOrg: string,
+        apiVersion?: string
+    ) {
+        this.ux.log(this.getStatusMessage(devHubOrg, scratchOrg, apiVersion));
+    }
+
+    private reportError(
+        devHubOrg: string,
+        scratchOrg: string,
+        apiVersion?: string
+    ) {
+        this.ux.error(this.getStatusMessage(devHubOrg, scratchOrg, apiVersion));
     }
 }
