@@ -1,8 +1,11 @@
+import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
+import { performance } from 'perf_hooks';
 import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
+import LocalDevTelemetryReporter from '../instrumentation/LocalDevTelemetryReporter';
 import {
     sessionNonce,
     apexMiddleware,
@@ -29,12 +32,34 @@ export default class LocalDevServer {
     private liveReload?: any;
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
+    /**
+     * A unique ID that maps to the user that is operating local development.
+     * It has no information you can map back to the actual user,
+     */
+    private readonly anonymousUserId: string;
 
-    constructor(project: Project, connection?: Connection) {
+    /**
+     * Initializes properties for the LocalDevServer
+     *
+     * @param project project object
+     * @param connection JSForce connection for the org
+     * @param devhubUser By providing a devhubUser we can provide instrumentation for a unique user. Otherwise they all get bucketed into one user.
+     */
+    constructor(
+        project: Project,
+        connection?: Connection,
+        devhubUser: string = ''
+    ) {
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
         this.vendorVersion = project.configuration.core_version;
+        this.anonymousUserId = devhubUser
+            ? crypto
+                  .createHash('md5')
+                  .update(devhubUser)
+                  .digest('hex')
+            : '';
 
         const supportedCoreVersions = this.getSupportedCoreVersions();
         if (
@@ -130,10 +155,28 @@ export default class LocalDevServer {
      * an address, print the server up message.
      */
     async start() {
+        const startTime = performance.now();
+        // Reporter for instrumentation
+        const reporter = await LocalDevTelemetryReporter.getInstance(
+            this.anonymousUserId,
+            this.sessionNonce
+        );
         try {
             await this.server.initialize();
             this.copyStaticAssets();
-            await this.server.start();
+            await this.server.start(() => {
+                const runtimeDuration = performance.now() - startTime;
+                // After the application has ended.
+                // Report how long the server was opened.
+                reporter.trackApplicationEnd(runtimeDuration);
+            });
+
+            const startDuration = performance.now() - startTime;
+            reporter.trackApplicationStart(
+                startDuration,
+                false,
+                this.vendorVersion || '0'
+            );
 
             let port = `${this.serverPort}`;
             if (port && port !== 'undefined') {
@@ -144,6 +187,7 @@ export default class LocalDevServer {
                 console.error(`Server start up failed.`);
             }
         } catch (e) {
+            reporter.trackApplicationStartException(e);
             console.error(`Server start up failed.`);
             throw e;
         }

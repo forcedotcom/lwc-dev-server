@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import path from 'path';
 import mockFs from 'mock-fs';
 import { Server, Container } from '@webruntime/server';
@@ -5,6 +6,7 @@ import LocalDevServer from '../LocalDevServer';
 import Project from '../../common/Project';
 import WebruntimeConfig from '../config/WebruntimeConfig';
 import * as fileUtils from '../../common/fileUtils';
+import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import { ComponentServiceWithExclusions } from '../services/ComponentServiceWithExclusions';
 import { getCustomComponentService } from '../services/CustomComponentService';
 import { getLabelService } from '../services/LabelsService';
@@ -34,6 +36,7 @@ describe('LocalDevServer', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetModules();
 
         mockFs({
             'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
@@ -422,6 +425,128 @@ describe('LocalDevServer', () => {
             await server.shutdown();
 
             expect(mockClose).toBeCalledTimes(1);
+        });
+    });
+
+    describe('telemetry', () => {
+        const MockReporter = {
+            trackApplicationStart: jest.fn(),
+            trackApplicationEnd: jest.fn(),
+            trackApplicationStartException: jest.fn()
+        };
+
+        beforeEach(() => {
+            jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+                // @ts-ignore
+                .mockImplementation(async () => MockReporter);
+        });
+
+        afterEach(() => {
+            // @ts-ignore
+            LocalDevTelemetryReporter.getInstance.mockClear();
+        });
+
+        it('reports on application start', async () => {
+            const reporter = await LocalDevTelemetryReporter.getInstance(
+                'userid',
+                'sessionid'
+            );
+            jest.spyOn(reporter, 'trackApplicationStart');
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+            await server.start();
+
+            expect(reporter.trackApplicationStart).toBeCalledWith(
+                expect.any(Number),
+                expect.any(Boolean),
+                expect.any(String)
+            );
+        });
+
+        it('reports on application end', async () => {
+            const reporter = await LocalDevTelemetryReporter.getInstance(
+                'userid',
+                'sessionid'
+            );
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+            await server.start();
+
+            // @ts-ignore
+            const onClose = (server.server.start as any).mock.calls[0][0];
+            onClose();
+
+            expect(reporter.trackApplicationEnd).toBeCalledWith(
+                expect.any(Number)
+            );
+        });
+
+        it('reports when exception is thrown durning application start', async () => {
+            const reporter = await LocalDevTelemetryReporter.getInstance(
+                'userid',
+                'sessionid'
+            );
+            // Throw an exception during LocalDevServer start
+            reporter.trackApplicationStart = jest
+                .fn()
+                .mockImplementationOnce(() => {
+                    throw new Error('expected error');
+                });
+
+            // Will throw an exception
+            try {
+                const connection: Connection = mock(Connection);
+                const server = new LocalDevServer(project, connection);
+                await server.start();
+            } catch (e) {}
+
+            expect(reporter.trackApplicationStartException).toBeCalledWith(
+                expect.any(Error)
+            );
+        });
+
+        it('passes encoded devhubuser to instrumentation as userid', async () => {
+            // @ts-ignore
+            const hash: crypto.Hash = {
+                update: (data: string) => {
+                    return hash;
+                },
+                // @ts-ignore
+                digest: function() {
+                    return 'anonymousUserId';
+                }
+            };
+            jest.spyOn(crypto, 'createHash').mockImplementationOnce(() => {
+                return hash;
+            });
+
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(
+                project,
+                connection,
+                'devhubuser@salesforce.com'
+            );
+
+            await server.start();
+            expect(
+                // @ts-ignore
+                LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
+            ).toBe('anonymousUserId');
+        });
+
+        it('serializes devhubuser', async () => {
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(
+                project,
+                connection,
+                'devhubuser@salesforce.com'
+            );
+            await server.start();
+
+            expect(
+                // @ts-ignore
+                LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
+            ).not.toBe('devhubuser@salesforce.com');
         });
     });
 });
