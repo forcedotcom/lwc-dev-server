@@ -19,20 +19,18 @@ import { mock } from 'ts-mockito';
 
 const mockServerConstructor = jest.fn();
 jest.mock('@webruntime/server', () => {
-    class MockServer extends EventEmitter {
-        constructor(...args: any) {
-            super(...args);
-            mockServerConstructor(...args);
-        }
-        initialize() {}
-        start() {}
-        shutdown() {
-            this.emit('shutdown');
-        }
-    }
-    MockServer.constructor = jest.fn();
     return {
-        Server: MockServer,
+        Server: class MockServer extends EventEmitter {
+            constructor(...args: any) {
+                super(...args);
+                mockServerConstructor(...args);
+            }
+            initialize() {}
+            start() {}
+            shutdown() {
+                this.emit('shutdown');
+            }
+        },
         Container: jest.fn()
     };
 });
@@ -52,6 +50,11 @@ describe('LocalDevServer', () => {
     let addModulesMock: any;
     let addRoutesMock: any;
     let addServicesMock: any;
+    const MockReporter = {
+        trackApplicationStart: jest.fn(),
+        trackApplicationEnd: jest.fn(),
+        trackApplicationStartException: jest.fn()
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -90,6 +93,9 @@ describe('LocalDevServer', () => {
         fileUtilsCopyMock = jest
             .spyOn(fileUtils, 'copyFiles')
             .mockImplementation();
+        jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+            // @ts-ignore
+            .mockImplementation(async () => MockReporter);
     });
 
     afterEach(() => {
@@ -97,6 +103,8 @@ describe('LocalDevServer', () => {
         consoleLogMock.mockRestore();
         consoleErrorMock.mockRestore();
         fileUtilsCopyMock.mockRestore();
+        // @ts-ignore
+        LocalDevTelemetryReporter.getInstance.mockClear();
     });
 
     it('should create a webruntime server', () => {
@@ -449,23 +457,6 @@ describe('LocalDevServer', () => {
     });
 
     describe('telemetry', () => {
-        const MockReporter = {
-            trackApplicationStart: jest.fn(),
-            trackApplicationEnd: jest.fn(),
-            trackApplicationStartException: jest.fn()
-        };
-
-        beforeEach(() => {
-            jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
-                // @ts-ignore
-                .mockImplementation(async () => MockReporter);
-        });
-
-        afterEach(() => {
-            // @ts-ignore
-            LocalDevTelemetryReporter.getInstance.mockClear();
-        });
-
         it('reports on application start', async () => {
             const reporter = await LocalDevTelemetryReporter.getInstance(
                 'userid',
