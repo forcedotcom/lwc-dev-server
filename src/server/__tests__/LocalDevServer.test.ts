@@ -534,6 +534,22 @@ describe('LocalDevServer', () => {
             ).toBe('anonymousUserId');
         });
 
+        it('passes nonce to instrumentation as sessionid', async () => {
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(
+                project,
+                connection,
+                'devhubuser@salesforce.com'
+            );
+            // @ts-ignore
+            server.sessionNonce = 'nonce';
+            await server.start();
+            expect(
+                // @ts-ignore
+                LocalDevTelemetryReporter.getInstance.mock.calls[0][1]
+            ).toBe('nonce');
+        });
+
         it('serializes devhubuser', async () => {
             const connection: Connection = mock(Connection);
             const server = new LocalDevServer(
