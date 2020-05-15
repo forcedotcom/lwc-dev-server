@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { EventEmitter } from 'events';
 import path from 'path';
 import mockFs from 'mock-fs';
 import { Server, Container } from '@webruntime/server';
@@ -16,7 +17,25 @@ import { apiMiddleware } from '../extensions/apiMiddleware';
 import { Connection } from '@salesforce/core';
 import { mock } from 'ts-mockito';
 
-jest.mock('@webruntime/server');
+const mockServerConstructor = jest.fn();
+jest.mock('@webruntime/server', () => {
+    class MockServer extends EventEmitter {
+        constructor(...args: any) {
+            super(...args);
+            mockServerConstructor(...args);
+        }
+        initialize() {}
+        start() {}
+        shutdown() {
+            this.emit('shutdown');
+        }
+    }
+    MockServer.constructor = jest.fn();
+    return {
+        Server: MockServer,
+        Container: jest.fn()
+    };
+});
 jest.mock('../config/WebruntimeConfig');
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -83,11 +102,12 @@ describe('LocalDevServer', () => {
     it('should create a webruntime server', () => {
         new LocalDevServer(project);
 
-        expect(Server).toHaveBeenCalledTimes(1);
-
-        // @ts-ignore
-        const args = Server.mock.calls[0][0];
-        expect(args).toHaveProperty('config');
+        expect(mockServerConstructor).toHaveBeenCalledTimes(1);
+        expect(mockServerConstructor).toHaveBeenCalledWith(
+            expect.objectContaining({
+                config: expect.any(Object)
+            })
+        );
     });
 
     it('should create a session nonce', () => {
@@ -470,11 +490,9 @@ describe('LocalDevServer', () => {
             );
             const connection: Connection = mock(Connection);
             const server = new LocalDevServer(project, connection);
-            await server.start();
 
-            // @ts-ignore
-            const onClose = (server.server.start as any).mock.calls[0][0];
-            onClose();
+            await server.start();
+            await server.shutdown();
 
             expect(reporter.trackApplicationEnd).toBeCalledWith(
                 expect.any(Number)
