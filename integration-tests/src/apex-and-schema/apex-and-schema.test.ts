@@ -16,7 +16,7 @@ beforeAll(async () => {
 });
 
 describe('apex', () => {
-    it('can wire data to a property', async () => {
+    xit('can wire data to a property', async () => {
         const page = new ApexPage('c', 'wireToProp');
         await page.open();
 
@@ -28,7 +28,7 @@ describe('apex', () => {
         expect(contactNames).toHaveLength(10);
     });
 
-    it('can wire data to a function with params', async () => {
+    xit('can wire data to a function with params', async () => {
         const page = new ApexPage('c', 'wireToFunctionWithParams');
         await page.open();
 
@@ -51,7 +51,7 @@ describe('apex', () => {
         expect(contactName).toBe('Rose Gonzalez');
     });
 
-    it('can be called imperatively', async () => {
+    xit('can be called imperatively', async () => {
         const page = new ApexPage('c', 'apexImperative');
         await page.open();
 
@@ -66,7 +66,7 @@ describe('apex', () => {
         expect(contactNames).toHaveLength(10);
     });
 
-    it('wired data can be used with imported schema fields', async () => {
+    xit('wired data can be used with imported schema fields', async () => {
         const page = new ApexPage('c', 'apexSchema');
         await page.open();
 
