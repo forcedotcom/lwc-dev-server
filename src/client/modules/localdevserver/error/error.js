@@ -49,8 +49,10 @@ export default class Error extends LightningElement {
                 })
                 .then(data => {
                     const err = data.errors[0];
-                    this.errorLine = err.location.line;
-                    this.errorLocation = `${err.filename}:${err.location.line}:${err.location.column}`;
+                    const locLine = err.location ? err.location.line : '0';
+                    const locColumn = err.location ? err.location.column : '0';
+                    this.errorLine = locLine;
+                    this.errorLocation = `${err.filename}:${locLine}:${locColumn}`;
                     this.errorMessage = err.message;
                     this.code = err.code;
                 });
