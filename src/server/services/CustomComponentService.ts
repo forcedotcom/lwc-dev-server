@@ -69,13 +69,28 @@ export function getCustomComponentService(
             });
 
             if (diagnostics && diagnostics.length > 0) {
-                return {
-                    type: RequestOutputTypes.JSON,
-                    resource: { json: this.formatDiagnostics(diagnostics) },
-                    specifier,
-                    diagnostics,
-                    success
-                };
+                let partialCompileError = false;
+                // Components that require multiple dependencies are compiled
+                // multiple times in order to address all the dependencies.
+                // When an internal dependency is missing it will return a diagnostics
+                // with code 1002, we need to let does be taken care of by the compiler
+                // and not immediately surface them to the user
+                for (let i = 0; i < diagnostics.length; i++) {
+                    if (diagnostics[i].code === 1002) {
+                        partialCompileError = true;
+                        break;
+                    }
+                }
+
+                if (!partialCompileError) {
+                    return {
+                        type: RequestOutputTypes.JSON,
+                        resource: { json: this.formatDiagnostics(diagnostics) },
+                        specifier,
+                        diagnostics,
+                        success
+                    };
+                }
             }
 
             return {
