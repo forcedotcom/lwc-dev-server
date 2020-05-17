@@ -23,7 +23,7 @@ describe('LocalDevServerConfiguration', () => {
         );
 
         // @ts-ignore
-        expect(console.error.mock.calls[0][0]).toBe(
+        expect(console.error.mock.calls[0][0]).toEqual(
             'Loading file config.json failed with error: Error: EBADF: bad file descriptor, read'
         );
     });

@@ -5,10 +5,7 @@ exports[`localdevserver-code-highlighter renders - code, no line info 1`] = `
   #shadow-root(open)
     <div>
       <pre
-        class="line-numbers language-javascript"
-        data-line="undefined"
-        data-start="1"
-        style="counter-reset: linenumber 0;"
+        class=" language-javascript"
       >
         <code
           class=" language-javascript"
@@ -367,55 +364,7 @@ exports[`localdevserver-code-highlighter renders - code, no line info 1`] = `
           >
             }
           </span>
-          <span
-            aria-hidden="true"
-            class="line-numbers-rows"
-            localdevserver-codehighlighter_codehighlighter=""
-          >
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-          </span>
         </code>
-        <div
-          aria-hidden="true"
-          class="line-highlight"
-          data-range="undefined"
-          localdevserver-codehighlighter_codehighlighter=""
-        />
       </pre>
     </div>
 </localdevserver-code-highlighter>
@@ -426,10 +375,7 @@ exports[`localdevserver-code-highlighter renders - code, with line info 1`] = `
   #shadow-root(open)
     <div>
       <pre
-        class="line-numbers  language-javascript"
-        data-line="undefined"
-        data-start="3"
-        style="counter-reset: linenumber 2;"
+        class="  language-javascript"
       >
         <code
           class="  language-javascript"
@@ -788,55 +734,7 @@ exports[`localdevserver-code-highlighter renders - code, with line info 1`] = `
           >
             }
           </span>
-          <span
-            aria-hidden="true"
-            class="line-numbers-rows"
-            localdevserver-codehighlighter_codehighlighter=""
-          >
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-            <span
-              localdevserver-codehighlighter_codehighlighter=""
-            />
-          </span>
         </code>
-        <div
-          aria-hidden="true"
-          class="line-highlight"
-          data-range="undefined"
-          localdevserver-codehighlighter_codehighlighter=""
-        />
       </pre>
     </div>
 </localdevserver-code-highlighter>

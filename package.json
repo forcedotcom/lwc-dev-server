@@ -141,6 +141,7 @@
         "reload": "^3.0.4",
         "request-promise-native": "^1.0.8",
         "shelljs": "^0.8.3",
+        "strip-ansi": "^6.0.0",
         "uuidv4": "5.0.0"
     },
     "resolutions": {

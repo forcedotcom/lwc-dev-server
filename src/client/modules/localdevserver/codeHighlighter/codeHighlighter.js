@@ -30,9 +30,6 @@ export default class CodeHighlighter extends LightningElement {
                 div.removeChild(div.lastChild);
             }
             const pre = document.createElement('pre');
-            pre.setAttribute('class', 'line-numbers');
-            pre.setAttribute('data-line', this.line);
-            pre.setAttribute('data-start', this.lineOffset);
             const codeEL = document.createElement('code');
             pre.appendChild(codeEL);
             codeEL.setAttribute('class', 'language-javascript');

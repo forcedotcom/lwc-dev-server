@@ -11,7 +11,8 @@ import {
     RequestService,
     ImportMapObject
 } from '@webruntime/api';
-
+import { CompilerDiagnostic } from '@lwc/errors';
+import stripAnsi from 'strip-ansi';
 const SFDX_LWC_DIRECTORY = 'lwc';
 
 const debug = debugLogger('localdevserver:customcomponents');
@@ -61,11 +62,36 @@ export function getCustomComponentService(
 
             compilerConfig.baseDir = modulesDirectory;
 
-            const { result, metadata, success, diagnostics } = await compile({
+            let { result, metadata, success, diagnostics } = await compile({
                 ...compilerConfig,
                 namespace: SFDX_LWC_DIRECTORY,
                 name
             });
+
+            if (diagnostics && diagnostics.length > 0) {
+                let partialCompileError = false;
+                // Components that require multiple dependencies are compiled
+                // multiple times in order to address all the dependencies.
+                // When an internal dependency is missing it will return a diagnostics
+                // with code 1002, we need to let does be taken care of by the compiler
+                // and not immediately surface them to the user
+                for (let i = 0; i < diagnostics.length; i++) {
+                    if (diagnostics[i].code === 1002) {
+                        partialCompileError = true;
+                        break;
+                    }
+                }
+
+                if (!partialCompileError) {
+                    return {
+                        type: RequestOutputTypes.JSON,
+                        resource: { json: this.formatDiagnostics(diagnostics) },
+                        specifier,
+                        diagnostics,
+                        success
+                    };
+                }
+            }
 
             return {
                 type: RequestOutputTypes.COMPONENT,
@@ -89,6 +115,31 @@ export function getCustomComponentService(
                 return null;
             }
             return split[1];
+        }
+
+        // Clean up Diagnostics since they are provided in a format suitable for the command line
+        // but not for being displayed by the app's error component
+        private formatDiagnostics(diagnostics: CompilerDiagnostic[]) {
+            let resultJSON = { errors: [] };
+            diagnostics.forEach(diagnostic => {
+                let msgTitle = diagnostic.message.split('\n')[0];
+                const msgBody = stripAnsi(
+                    diagnostic.message.replace(msgTitle, '')
+                );
+                if (diagnostic.filename) {
+                    msgTitle = msgTitle.replace(`${diagnostic.filename}:`, '');
+                }
+
+                const err = {
+                    filename: diagnostic.filename,
+                    location: diagnostic.location,
+                    code: msgBody,
+                    message: msgTitle
+                };
+                // @ts-ignore
+                resultJSON.errors.push(err);
+            });
+            return resultJSON;
         }
     };
 }
