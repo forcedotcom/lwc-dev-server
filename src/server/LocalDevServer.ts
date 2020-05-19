@@ -165,16 +165,14 @@ export default class LocalDevServer {
             await this.server.initialize();
             this.copyStaticAssets();
             this.server.on('shutdown', () => {
-                const runtimeDuration = performance.now() - startTime;
                 // After the application has ended.
                 // Report how long the server was opened.
-                reporter.trackApplicationEnd(runtimeDuration);
+                reporter.trackApplicationEnd(startTime);
             });
             await this.server.start();
 
-            const startDuration = performance.now() - startTime;
             reporter.trackApplicationStart(
-                startDuration,
+                startTime,
                 false,
                 this.vendorVersion || '0'
             );
