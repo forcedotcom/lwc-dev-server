@@ -1,8 +1,6 @@
-import crypto from 'crypto';
 import { EventEmitter } from 'events';
 import path from 'path';
 import mockFs from 'mock-fs';
-import { Server, Container } from '@webruntime/server';
 import LocalDevServer from '../LocalDevServer';
 import Project from '../../common/Project';
 import WebruntimeConfig from '../config/WebruntimeConfig';
@@ -459,7 +457,6 @@ describe('LocalDevServer', () => {
     describe('telemetry', () => {
         it('reports on application start', async () => {
             const reporter = await LocalDevTelemetryReporter.getInstance(
-                'userid',
                 'sessionid'
             );
             jest.spyOn(reporter, 'trackApplicationStart');
@@ -476,7 +473,6 @@ describe('LocalDevServer', () => {
 
         it('reports on application end', async () => {
             const reporter = await LocalDevTelemetryReporter.getInstance(
-                'userid',
                 'sessionid'
             );
             const connection: Connection = mock(Connection);
@@ -492,7 +488,6 @@ describe('LocalDevServer', () => {
 
         it('reports when exception is thrown durning application start', async () => {
             const reporter = await LocalDevTelemetryReporter.getInstance(
-                'userid',
                 'sessionid'
             );
             // Throw an exception during LocalDevServer start
@@ -514,64 +509,16 @@ describe('LocalDevServer', () => {
             );
         });
 
-        it('passes encoded devhubuser to instrumentation as userid', async () => {
-            // @ts-ignore
-            const hash: crypto.Hash = {
-                update: (data: string) => {
-                    return hash;
-                },
-                // @ts-ignore
-                digest: function() {
-                    return 'anonymousUserId';
-                }
-            };
-            jest.spyOn(crypto, 'createHash').mockImplementationOnce(() => {
-                return hash;
-            });
-
-            const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(
-                project,
-                connection,
-                'devhubuser@salesforce.com'
-            );
-
-            await server.start();
-            expect(
-                // @ts-ignore
-                LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
-            ).toBe('anonymousUserId');
-        });
-
         it('passes nonce to instrumentation as sessionid', async () => {
             const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(
-                project,
-                connection,
-                'devhubuser@salesforce.com'
-            );
+            const server = new LocalDevServer(project, connection);
             // @ts-ignore
             server.sessionNonce = 'nonce';
             await server.start();
             expect(
                 // @ts-ignore
-                LocalDevTelemetryReporter.getInstance.mock.calls[0][1]
-            ).toBe('nonce');
-        });
-
-        it('serializes devhubuser', async () => {
-            const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(
-                project,
-                connection,
-                'devhubuser@salesforce.com'
-            );
-            await server.start();
-
-            expect(
-                // @ts-ignore
                 LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
-            ).not.toBe('devhubuser@salesforce.com');
+            ).toBe('nonce');
         });
     });
 });

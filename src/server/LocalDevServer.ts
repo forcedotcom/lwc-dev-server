@@ -32,34 +32,18 @@ export default class LocalDevServer {
     private liveReload?: any;
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
-    /**
-     * A unique ID that maps to the user that is operating local development.
-     * It has no information you can map back to the actual user,
-     */
-    private readonly anonymousUserId: string;
 
     /**
      * Initializes properties for the LocalDevServer
      *
      * @param project project object
      * @param connection JSForce connection for the org
-     * @param devhubUser By providing a devhubUser we can provide instrumentation for a unique user. Otherwise they all get bucketed into one user.
      */
-    constructor(
-        project: Project,
-        connection?: Connection,
-        devhubUser: string = ''
-    ) {
+    constructor(project: Project, connection?: Connection) {
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
         this.vendorVersion = project.configuration.core_version;
-        this.anonymousUserId = devhubUser
-            ? crypto
-                  .createHash('md5')
-                  .update(devhubUser)
-                  .digest('hex')
-            : '';
 
         const supportedCoreVersions = this.getSupportedCoreVersions();
         if (
@@ -158,7 +142,6 @@ export default class LocalDevServer {
         const startTime = performance.now();
         // Reporter for instrumentation
         const reporter = await LocalDevTelemetryReporter.getInstance(
-            this.anonymousUserId,
             this.sessionNonce
         );
         try {

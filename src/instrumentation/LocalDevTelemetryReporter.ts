@@ -1,4 +1,5 @@
 import LocalDevTelemetryOptions from './LocalDevTelemetryOptions';
+import { getMachineId } from './machineId';
 import { TelemetryReporter } from '@salesforce/telemetry/lib/telemetryReporter';
 import { performance } from 'perf_hooks';
 
@@ -84,7 +85,8 @@ export default class LocalDevTelemetryReporter {
         });
     }
 
-    public static async getInstance(userId: string, sessionId: string) {
+    public static async getInstance(sessionId: string) {
+        const userId = getMachineId();
         const reporter = await TelemetryReporter.create(
             new LocalDevTelemetryOptions(userId, sessionId)
         );

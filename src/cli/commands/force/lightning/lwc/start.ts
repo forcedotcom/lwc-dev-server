@@ -185,7 +185,7 @@ export default class Start extends SfdxCommand {
         );
 
         // Start local dev server
-        const server = new LocalDevServer(project, conn, devhubusername);
+        const server = new LocalDevServer(project, conn);
 
         await server.start();
 

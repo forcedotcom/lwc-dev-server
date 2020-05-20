@@ -1,4 +1,5 @@
 import LocalDevTelemetryReporter from '../LocalDevTelemetryReporter';
+import * as machineId from '../machineId';
 import { TelemetryReporter } from '@salesforce/telemetry/lib/telemetryReporter';
 import { performance } from 'perf_hooks';
 
@@ -150,8 +151,10 @@ describe('LocalDevTelemetryReporter', () => {
 
     test('getInstance() passes userId to TelemetryReporter', async () => {
         TelemetryReporter.create = jest.fn();
+        jest.spyOn(machineId, 'getMachineId').mockImplementationOnce(() => {
+            return 'userId';
+        });
         const localDevReporter = LocalDevTelemetryReporter.getInstance(
-            'userId',
             'sessionId'
         );
         // @ts-ignore
@@ -163,7 +166,6 @@ describe('LocalDevTelemetryReporter', () => {
     test('getInstance() passes sessionId to TelemetryReporter', async () => {
         TelemetryReporter.create = jest.fn();
         const localDevReporter = LocalDevTelemetryReporter.getInstance(
-            'userid',
             'sessionId'
         );
         // @ts-ignore

@@ -242,28 +242,6 @@ describe('start', () => {
 
             expect(configuredPort).toBe(5151);
         });
-
-        // TODO: the dev hub user was passed for telemetry purposes.
-        // figure out the right approach, if there's another anonymous
-        // id we can reuse.
-        test.skip('passes devhub user to LocalDevServer', async () => {
-            setupAllDev();
-
-            let actual;
-            // @ts-ignore
-            LocalDevServer.mockImplementation(devhubUser => {
-                actual = devhubUser;
-                return {
-                    start: () => {}
-                };
-            });
-            // @ts-ignore
-            start.hubOrg.getUsername.mockReturnValue('admin@devhub.org');
-
-            await start.run();
-
-            expect(actual).toBe('admin@devhub.org');
-        });
     });
 
     describe('reportStatus()', () => {
