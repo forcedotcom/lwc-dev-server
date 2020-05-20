@@ -1,7 +1,7 @@
 public with sharing class ApexTestContactController {
     @AuraEnabled(cacheable=true)
     public static List<Contact> getContactList() {
-        return [SELECT Id, Name, Title, Phone, Email FROM Contact LIMIT 10];
+        return [SELECT Id, Name, Title, Phone, Email FROM Contact WITH SECURITY_ENFORCED LIMIT 10];
     }
 
     @AuraEnabled(cacheable=true)

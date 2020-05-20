@@ -32,42 +32,29 @@ export default class Error extends LightningElement {
     @api
     set error(newError) {
         this._error = newError;
-        if (this.error && this.error.filename) {
-            if (this.error.location) {
-                this.errorLocation = `${this.error.filename}:${this.error.location.line}:${this.error.location.column}`;
-                this.errorLine = this.error.location.line;
-            } else {
-                this.errorLocation = `${this.error.filename}`;
-                this.errorLine = null;
-            }
-            this.errorMessage = this.processMessage(this.error.message);
-            fetch(`/localdev/${getNonce()}/show?file=${this._error.filename}`, {
-                credentials: 'same-origin'
-            })
+        if (this.error && this.error.specifier) {
+            fetch(
+                `/localdev/${getNonce()}/errorDetails?specifier=${
+                    this._error.specifier
+                }`,
+                {
+                    credentials: 'same-origin'
+                }
+            )
                 .then(response => {
                     if (!response.ok) {
                         return;
                     }
-                    return response.text();
+                    return response.json();
                 })
-                .then(text => {
-                    if (text) {
-                        // source code can be thousands of lines. Just show context
-                        // around where the error occured. 5 lines before, and 5 lines after.
-                        if (this.errorLine) {
-                            let lines = text.split('\n');
-                            const start = Math.max(1, this.errorLine - 5);
-                            const end = Math.min(
-                                this.errorLine + 5,
-                                lines.length
-                            );
-                            lines = lines.slice(start, end);
-                            this.lineOffset = start + 1;
-                            this.code = lines.join('\n');
-                        } else {
-                            this.code = text;
-                        }
-                    }
+                .then(data => {
+                    const err = data.errors[0];
+                    const locLine = err.location ? err.location.line : '0';
+                    const locColumn = err.location ? err.location.column : '0';
+                    this.errorLine = locLine;
+                    this.errorLocation = `${err.filename}:${locLine}:${locColumn}`;
+                    this.errorMessage = err.message;
+                    this.code = err.code;
                 });
         } else {
             this.errorMessage = this.error.message;
@@ -77,14 +64,6 @@ export default class Error extends LightningElement {
     }
     get error() {
         return this._error;
-    }
-    processMessage(message) {
-        let msg = message.split('\n')[0];
-        if (msg.indexOf(this.error.filename >= 0)) {
-            msg = msg.replace(this.error.filename + ':', '');
-            msg = msg.replace(this.error.filename, '');
-        }
-        return msg;
     }
 
     handleClose() {

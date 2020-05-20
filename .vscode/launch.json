@@ -25,6 +25,7 @@
             "request": "launch",
             "name": "Jest: Current File (unit test)",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            "env": { "HEADLESS": "false", "DEBUG": "true" },
             "args": [
                 "${fileBasenameNoExtension}",
                 "--config",

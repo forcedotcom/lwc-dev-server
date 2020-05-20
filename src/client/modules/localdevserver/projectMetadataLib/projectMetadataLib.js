@@ -2,7 +2,9 @@
  * Gets the session nonce for the page.
  */
 export function getNonce() {
-    const meta = document.head.querySelector('meta[name=nonce][content]');
+    const meta = document.head.querySelector(
+        'meta[name=sessionNonce][content]'
+    );
 
     return meta ? meta.content : '';
 }

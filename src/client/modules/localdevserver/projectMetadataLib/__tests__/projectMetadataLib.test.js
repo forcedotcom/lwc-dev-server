@@ -28,7 +28,8 @@ describe('localdevserver-project-metadata-lib', () => {
         });
 
         it('should return the nonce from the meta tag', () => {
-            document.head.innerHTML = '<meta name="nonce" content="secret">';
+            document.head.innerHTML =
+                '<meta name="sessionNonce" content="secret">';
 
             expect(lib.getNonce()).toEqual('secret');
         });
