@@ -22,7 +22,7 @@ Otherwise you will need to run `yarn build` after making any changes.
 
 - [CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server)
 
-## Running Talon from Source
+## Running Lightning Web Runtime from Source
 
 From the same directory where you cloned this project, clone the webruntime repo:
 
@@ -63,6 +63,12 @@ $ find node_modules -type l | grep -v .bin
 node_modules/@webruntime/framework
 node_modules/@webruntime/common
 node_modules/@webruntime/compiler
+```
+
+You can unlink webruntime:
+```console
+yarn unlink-webruntime
+yarn install && yarn build
 ```
 
 ## Publishing
