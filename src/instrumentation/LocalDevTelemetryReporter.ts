@@ -1,5 +1,7 @@
 import LocalDevTelemetryOptions from './LocalDevTelemetryOptions';
+import { getMachineId } from './machineId';
 import { TelemetryReporter } from '@salesforce/telemetry/lib/telemetryReporter';
+import { performance } from 'perf_hooks';
 
 export default class LocalDevTelemetryReporter {
     private static _instance: LocalDevTelemetryReporter | null = null;
@@ -9,18 +11,28 @@ export default class LocalDevTelemetryReporter {
         this.reporter = reporter;
     }
 
+    /**
+     * Send telemetry of server start up duration
+     * @param startTime High resolution millisecond timestamp of server start time
+     * @param fromVSCode whether server is running from VS Code
+     * @param apiVersion API Version
+     */
     public trackApplicationStart(
-        duration: number,
+        startTime: number,
         fromVSCode: boolean,
         apiVersion: string
     ) {
         this.reporter.sendTelemetryEvent('application_start', {
-            duration,
+            duration: performance.now() - startTime,
             fromVSCode: fromVSCode.toString(),
             apiVersion
         });
     }
 
+    /**
+     * Send telemetry when there's an exception during server start
+     * @param exception exception
+     */
     public trackApplicationStartException(exception: Error) {
         this.reporter.sendTelemetryEvent('application_start_exception', {
             exception: exception.toString()
@@ -31,9 +43,13 @@ export default class LocalDevTelemetryReporter {
         this.reporter.sendTelemetryEvent('application_start_noauth');
     }
 
-    public trackApplicationEnd(runtimeDuration: number) {
+    /**
+     * Send telemetry of server run time duration
+     * @param startTime High resolution millisecond timestamp of server start time
+     */
+    public trackApplicationEnd(startTime: number) {
         this.reporter.sendTelemetryEvent('application_end', {
-            runtimeDuration
+            runtimeDuration: performance.now() - startTime
         });
     }
 
@@ -69,7 +85,8 @@ export default class LocalDevTelemetryReporter {
         });
     }
 
-    public static async getInstance(userId: string, sessionId: string) {
+    public static async getInstance(sessionId: string) {
+        const userId = getMachineId();
         const reporter = await TelemetryReporter.create(
             new LocalDevTelemetryOptions(userId, sessionId)
         );

@@ -6,7 +6,7 @@ declare global {
     namespace NodeJS {
         interface Global {
             seleniumProcess: ChildProcess;
-            _SFDX_DISABLE_INSIGHTS: string | undefined;
+            _SFDX_DISABLE_TELEMETRY: string | undefined;
         }
     }
 }
@@ -42,6 +42,6 @@ module.exports = async () => {
     );
 
     // Disable Instrumentation sending actual log lines during test runs
-    global._SFDX_DISABLE_INSIGHTS = process.env.SFDX_DISABLE_INSIGHTS;
-    process.env.SFDX_DISABLE_INSIGHTS = 'true';
+    global._SFDX_DISABLE_TELEMETRY = process.env.SFDX_DISABLE_TELEMETRY;
+    process.env.SFDX_DISABLE_TELEMETRY = 'true';
 };

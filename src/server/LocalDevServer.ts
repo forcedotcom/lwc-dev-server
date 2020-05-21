@@ -1,8 +1,11 @@
+import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
+import { performance } from 'perf_hooks';
 import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
+import LocalDevTelemetryReporter from '../instrumentation/LocalDevTelemetryReporter';
 import {
     sessionNonce,
     apexMiddleware,
@@ -30,6 +33,12 @@ export default class LocalDevServer {
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
 
+    /**
+     * Initializes properties for the LocalDevServer
+     *
+     * @param project project object
+     * @param connection JSForce connection for the org
+     */
     constructor(project: Project, connection?: Connection) {
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
@@ -130,10 +139,26 @@ export default class LocalDevServer {
      * an address, print the server up message.
      */
     async start() {
+        const startTime = performance.now();
+        // Reporter for instrumentation
+        const reporter = await LocalDevTelemetryReporter.getInstance(
+            this.sessionNonce
+        );
         try {
             await this.server.initialize();
             this.copyStaticAssets();
+            this.server.on('shutdown', () => {
+                // After the application has ended.
+                // Report how long the server was opened.
+                reporter.trackApplicationEnd(startTime);
+            });
             await this.server.start();
+
+            reporter.trackApplicationStart(
+                startTime,
+                false,
+                this.vendorVersion || '0'
+            );
 
             let port = `${this.serverPort}`;
             if (port && port !== 'undefined') {
@@ -144,6 +169,7 @@ export default class LocalDevServer {
                 console.error(`Server start up failed.`);
             }
         } catch (e) {
+            reporter.trackApplicationStartException(e);
             console.error(`Server start up failed.`);
             throw e;
         }

@@ -1,7 +1,19 @@
 import LocalDevTelemetryReporter from '../LocalDevTelemetryReporter';
+import * as machineId from '../machineId';
 import { TelemetryReporter } from '@salesforce/telemetry/lib/telemetryReporter';
+import { performance } from 'perf_hooks';
 
 jest.mock('@salesforce/telemetry/lib/telemetryReporter');
+
+/**
+ * Mock performance.now call once.
+ * @param mockTimeNow Mocked time
+ */
+function mockNowOnce(mockTimeNow: number) {
+    jest.spyOn(performance, 'now').mockImplementationOnce(() => {
+        return mockTimeNow;
+    });
+}
 
 describe('LocalDevTelemetryReporter', () => {
     const MockedReporter = <jest.Mock<TelemetryReporter>>(
@@ -18,14 +30,16 @@ describe('LocalDevTelemetryReporter', () => {
     test('trackApplicationStart() sends telemetry event', () => {
         const reporter = new MockedReporter();
         const localDevReporter = new LocalDevTelemetryReporter(reporter);
+        const startTime = 10000;
 
-        localDevReporter.trackApplicationStart(12345, true, '23.0');
+        mockNowOnce(12345);
+        localDevReporter.trackApplicationStart(startTime, true, '23.0');
 
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(
             'application_start',
             {
-                duration: 12345,
+                duration: 2345,
                 fromVSCode: 'true',
                 apiVersion: '23.0'
             }
@@ -63,14 +77,16 @@ describe('LocalDevTelemetryReporter', () => {
     test('trackApplicationEnd() sends telemetry event', () => {
         const reporter = new MockedReporter();
         const localDevReporter = new LocalDevTelemetryReporter(reporter);
+        const startTime = 10000;
 
-        localDevReporter.trackApplicationEnd(5555);
+        mockNowOnce(55555);
+        localDevReporter.trackApplicationEnd(startTime);
 
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(
             'application_end',
             {
-                runtimeDuration: 5555
+                runtimeDuration: 45555
             }
         );
     });
@@ -135,8 +151,10 @@ describe('LocalDevTelemetryReporter', () => {
 
     test('getInstance() passes userId to TelemetryReporter', async () => {
         TelemetryReporter.create = jest.fn();
+        jest.spyOn(machineId, 'getMachineId').mockImplementationOnce(() => {
+            return 'userId';
+        });
         const localDevReporter = LocalDevTelemetryReporter.getInstance(
-            'userId',
             'sessionId'
         );
         // @ts-ignore
@@ -148,7 +166,6 @@ describe('LocalDevTelemetryReporter', () => {
     test('getInstance() passes sessionId to TelemetryReporter', async () => {
         TelemetryReporter.create = jest.fn();
         const localDevReporter = LocalDevTelemetryReporter.getInstance(
-            'userid',
             'sessionId'
         );
         // @ts-ignore

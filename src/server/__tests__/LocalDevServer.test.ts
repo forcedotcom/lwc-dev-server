@@ -1,10 +1,11 @@
+import { EventEmitter } from 'events';
 import path from 'path';
 import mockFs from 'mock-fs';
-import { Server, Container } from '@webruntime/server';
 import LocalDevServer from '../LocalDevServer';
 import Project from '../../common/Project';
 import WebruntimeConfig from '../config/WebruntimeConfig';
 import * as fileUtils from '../../common/fileUtils';
+import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import { ComponentServiceWithExclusions } from '../services/ComponentServiceWithExclusions';
 import { getCustomComponentService } from '../services/CustomComponentService';
 import { getLabelService } from '../services/LabelsService';
@@ -14,7 +15,23 @@ import { apiMiddleware } from '../extensions/apiMiddleware';
 import { Connection } from '@salesforce/core';
 import { mock } from 'ts-mockito';
 
-jest.mock('@webruntime/server');
+const mockServerConstructor = jest.fn();
+jest.mock('@webruntime/server', () => {
+    return {
+        Server: class MockServer extends EventEmitter {
+            constructor(...args: any) {
+                super(...args);
+                mockServerConstructor(...args);
+            }
+            initialize() {}
+            start() {}
+            shutdown() {
+                this.emit('shutdown');
+            }
+        },
+        Container: jest.fn()
+    };
+});
 jest.mock('../config/WebruntimeConfig');
 jest.mock('../../common/Project');
 jest.mock('../../common/fileUtils');
@@ -31,9 +48,15 @@ describe('LocalDevServer', () => {
     let addModulesMock: any;
     let addRoutesMock: any;
     let addServicesMock: any;
+    const MockReporter = {
+        trackApplicationStart: jest.fn(),
+        trackApplicationEnd: jest.fn(),
+        trackApplicationStartException: jest.fn()
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetModules();
 
         mockFs({
             'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
@@ -68,6 +91,9 @@ describe('LocalDevServer', () => {
         fileUtilsCopyMock = jest
             .spyOn(fileUtils, 'copyFiles')
             .mockImplementation();
+        jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+            // @ts-ignore
+            .mockImplementation(async () => MockReporter);
     });
 
     afterEach(() => {
@@ -75,16 +101,19 @@ describe('LocalDevServer', () => {
         consoleLogMock.mockRestore();
         consoleErrorMock.mockRestore();
         fileUtilsCopyMock.mockRestore();
+        // @ts-ignore
+        LocalDevTelemetryReporter.getInstance.mockClear();
     });
 
     it('should create a webruntime server', () => {
         new LocalDevServer(project);
 
-        expect(Server).toHaveBeenCalledTimes(1);
-
-        // @ts-ignore
-        const args = Server.mock.calls[0][0];
-        expect(args).toHaveProperty('config');
+        expect(mockServerConstructor).toHaveBeenCalledTimes(1);
+        expect(mockServerConstructor).toHaveBeenCalledWith(
+            expect.objectContaining({
+                config: expect.any(Object)
+            })
+        );
     });
 
     it('should create a session nonce', () => {
@@ -422,6 +451,74 @@ describe('LocalDevServer', () => {
             await server.shutdown();
 
             expect(mockClose).toBeCalledTimes(1);
+        });
+    });
+
+    describe('telemetry', () => {
+        it('reports on application start', async () => {
+            const reporter = await LocalDevTelemetryReporter.getInstance(
+                'sessionid'
+            );
+            jest.spyOn(reporter, 'trackApplicationStart');
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+            await server.start();
+
+            expect(reporter.trackApplicationStart).toBeCalledWith(
+                expect.any(Number),
+                expect.any(Boolean),
+                expect.any(String)
+            );
+        });
+
+        it('reports on application end', async () => {
+            const reporter = await LocalDevTelemetryReporter.getInstance(
+                'sessionid'
+            );
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+
+            await server.start();
+            await server.shutdown();
+
+            expect(reporter.trackApplicationEnd).toBeCalledWith(
+                expect.any(Number)
+            );
+        });
+
+        it('reports when exception is thrown durning application start', async () => {
+            const reporter = await LocalDevTelemetryReporter.getInstance(
+                'sessionid'
+            );
+            // Throw an exception during LocalDevServer start
+            reporter.trackApplicationStart = jest
+                .fn()
+                .mockImplementationOnce(() => {
+                    throw new Error('expected error');
+                });
+
+            // Will throw an exception
+            try {
+                const connection: Connection = mock(Connection);
+                const server = new LocalDevServer(project, connection);
+                await server.start();
+            } catch (e) {}
+
+            expect(reporter.trackApplicationStartException).toBeCalledWith(
+                expect.any(Error)
+            );
+        });
+
+        it('passes nonce to instrumentation as sessionid', async () => {
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+            // @ts-ignore
+            server.sessionNonce = 'nonce';
+            await server.start();
+            expect(
+                // @ts-ignore
+                LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
+            ).toBe('nonce');
         });
     });
 });
