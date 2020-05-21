@@ -65,7 +65,7 @@ node_modules/@webruntime/common
 node_modules/@webruntime/compiler
 ```
 
-You can unlink webruntime:
+To unlink webruntime:
 ```console
 yarn unlink-webruntime
 yarn install && yarn build
