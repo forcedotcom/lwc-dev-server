@@ -156,7 +156,7 @@ export default class LocalDevServer {
 
             reporter.trackApplicationStart(
                 startTime,
-                false,
+                process.env.SFDX_TOOL,
                 this.vendorVersion || '0'
             );
 

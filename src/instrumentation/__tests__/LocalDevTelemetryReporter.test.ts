@@ -33,14 +33,18 @@ describe('LocalDevTelemetryReporter', () => {
         const startTime = 10000;
 
         mockNowOnce(12345);
-        localDevReporter.trackApplicationStart(startTime, true, '23.0');
+        localDevReporter.trackApplicationStart(
+            startTime,
+            'salesforce-vscode-extensions',
+            '23.0'
+        );
 
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(
             'application_start',
             {
                 duration: 2345,
-                fromVSCode: 'true',
+                tool: 'salesforce-vscode-extensions',
                 apiVersion: '23.0'
             }
         );

@@ -14,17 +14,18 @@ export default class LocalDevTelemetryReporter {
     /**
      * Send telemetry of server start up duration
      * @param startTime High resolution millisecond timestamp of server start time
-     * @param fromVSCode whether server is running from VS Code
+     * @param tool Tool that starts the dev server
      * @param apiVersion API Version
      */
     public trackApplicationStart(
         startTime: number,
-        fromVSCode: boolean,
+        tool: string | undefined,
         apiVersion: string
     ) {
+        console.log(process.env.SFDX_TOOL);
         this.reporter.sendTelemetryEvent('application_start', {
             duration: performance.now() - startTime,
-            fromVSCode: fromVSCode.toString(),
+            tool,
             apiVersion
         });
     }
