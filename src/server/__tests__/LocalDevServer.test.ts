@@ -455,35 +455,7 @@ describe('LocalDevServer', () => {
     });
 
     describe('telemetry', () => {
-        it('reports on application start when running from VS Code', async () => {
-            const reporter = await LocalDevTelemetryReporter.getInstance(
-                'sessionid'
-            );
-            jest.spyOn(reporter, 'trackApplicationStart');
-            const connection: Connection = mock(Connection);
-
-            // mock SFDX_TOOL env variable
-            const originalEnvSfdxTool = process.env.SFDX_TOOL;
-            process.env.SFDX_TOOL = 'salesforce-vscode-extensions';
-
-            const server = new LocalDevServer(project, connection);
-            await server.start();
-
-            expect(reporter.trackApplicationStart).toBeCalledWith(
-                expect.any(Number),
-                'salesforce-vscode-extensions',
-                expect.any(String)
-            );
-
-            // unmock SFDX_TOOL env variable
-            if (typeof originalEnvSfdxTool !== 'undefined') {
-                process.env.SFDX_TOOL = originalEnvSfdxTool;
-            } else {
-                delete process.env.SFDX_TOOL;
-            }
-        });
-
-        it('reports on application start when running from terminal', async () => {
+        it('reports on application start', async () => {
             const reporter = await LocalDevTelemetryReporter.getInstance(
                 'sessionid'
             );
@@ -494,7 +466,6 @@ describe('LocalDevServer', () => {
 
             expect(reporter.trackApplicationStart).toBeCalledWith(
                 expect.any(Number),
-                undefined,
                 expect.any(String)
             );
         });

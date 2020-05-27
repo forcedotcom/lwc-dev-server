@@ -14,18 +14,12 @@ export default class LocalDevTelemetryReporter {
     /**
      * Send telemetry of server start up duration
      * @param startTime High resolution millisecond timestamp of server start time
-     * @param tool Tool that starts the dev server
      * @param apiVersion API Version
      */
-    public trackApplicationStart(
-        startTime: number,
-        tool: string | undefined,
-        apiVersion: string
-    ) {
-        console.log(process.env.SFDX_TOOL);
+    public trackApplicationStart(startTime: number, apiVersion: string) {
         this.reporter.sendTelemetryEvent('application_start', {
             duration: performance.now() - startTime,
-            tool,
+            tool: process.env.SFDX_TOOL,
             apiVersion
         });
     }
