@@ -156,7 +156,6 @@ export default class LocalDevServer {
 
             reporter.trackApplicationStart(
                 startTime,
-                false,
                 this.vendorVersion || '0'
             );
 

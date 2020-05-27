@@ -27,22 +27,67 @@ describe('LocalDevTelemetryReporter', () => {
         };
     });
 
-    test('trackApplicationStart() sends telemetry event', () => {
+    test('trackApplicationStart() sends telemetry event with duration and api version', () => {
         const reporter = new MockedReporter();
         const localDevReporter = new LocalDevTelemetryReporter(reporter);
         const startTime = 10000;
+        const apiVersion = '23.0';
 
         mockNowOnce(12345);
-        localDevReporter.trackApplicationStart(startTime, true, '23.0');
+        localDevReporter.trackApplicationStart(startTime, apiVersion);
 
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
         expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(
             'application_start',
             {
                 duration: 2345,
-                fromVSCode: 'true',
                 apiVersion: '23.0'
             }
+        );
+    });
+
+    test('trackApplicationStart() sends telemetry event and event has correct tool field if SFDX_TOOL env variable is set', () => {
+        const reporter = new MockedReporter();
+        const localDevReporter = new LocalDevTelemetryReporter(reporter);
+        const startTime = 10000;
+        const apiVersion = '23.0';
+
+        mockNowOnce(12345);
+        // mock SFDX_TOOL env variable
+        const originalEnvSfdxTool = process.env.SFDX_TOOL;
+        process.env.SFDX_TOOL = 'salesforce-vscode-extensions';
+        localDevReporter.trackApplicationStart(startTime, apiVersion);
+
+        expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
+        expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(
+            'application_start',
+            {
+                duration: 2345,
+                tool: 'salesforce-vscode-extensions',
+                apiVersion: '23.0'
+            }
+        );
+
+        // unmock SFDX_TOOL env variable
+        if (typeof originalEnvSfdxTool !== 'undefined') {
+            process.env.SFDX_TOOL = originalEnvSfdxTool;
+        } else {
+            delete process.env.SFDX_TOOL;
+        }
+    });
+
+    test('trackApplicationStart() sends telemetry event and event does not have tool field if SFDX_TOOL env variable is not set', () => {
+        const reporter = new MockedReporter();
+        const localDevReporter = new LocalDevTelemetryReporter(reporter);
+        const startTime = 10000;
+        const apiVersion = '23.0';
+
+        localDevReporter.trackApplicationStart(startTime, apiVersion);
+
+        expect(reporter.sendTelemetryEvent).toHaveBeenCalledTimes(1);
+        expect(reporter.sendTelemetryEvent).toHaveBeenCalledWith(
+            'application_start',
+            expect.not.objectContaining({ tool: expect.anything() })
         );
     });
 

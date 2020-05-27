@@ -466,7 +466,6 @@ describe('LocalDevServer', () => {
 
             expect(reporter.trackApplicationStart).toBeCalledWith(
                 expect.any(Number),
-                expect.any(Boolean),
                 expect.any(String)
             );
         });
