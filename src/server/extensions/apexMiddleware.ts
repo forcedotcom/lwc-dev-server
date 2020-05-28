@@ -7,7 +7,7 @@ import parse from 'co-body';
 import { URL } from 'url';
 import { AppExtensionConfig } from '@webruntime/api';
 
-const log = debug('localdevserver*');
+const log = debug('localdevserver');
 const ONE_APP_URL = '/one/one.app';
 const DEFAULT_TIMEOUT = 20000;
 
@@ -143,7 +143,10 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
                             }
                         } catch (e) {
                             log(`invalid apex response: ${response}`);
-                            return sendError(res, response);
+                            return sendError(
+                                res,
+                                `error parsing apex response: ${response}`
+                            );
                         }
                         return;
                     }

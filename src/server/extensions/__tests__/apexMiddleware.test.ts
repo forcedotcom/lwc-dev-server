@@ -524,9 +524,6 @@ describe('apexMiddleware', () => {
                 }
             ]
         });
-        // expect(res.send).toHaveBeenLastCalledWith({
-        //     error: [{ message: 'expected' }]
-        // });
         expect(next).not.toBeCalled();
     });
 
