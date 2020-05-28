@@ -178,9 +178,11 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenLastCalledWith(
-            'error retrieving aura config: unauthenticated'
-        );
+        expect(res.send).toHaveBeenLastCalledWith({
+            error: [
+                { message: 'error retrieving aura config: unauthenticated' }
+            ]
+        });
         expect(next).not.toBeCalled();
     });
 
@@ -445,9 +447,9 @@ describe('apexMiddleware', () => {
         };
         expect(request.post).toHaveBeenCalledWith(expectedArgument);
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenLastCalledWith(
-            'error parsing apex response: Unexpected token * in JSON at position 0'
-        );
+        expect(res.send).toHaveBeenLastCalledWith({
+            error: [{ message: '*/ error' }]
+        });
         expect(next).not.toBeCalled();
     });
 
@@ -496,7 +498,7 @@ describe('apexMiddleware', () => {
         //@ts-ignore
         request.post.mockImplementationOnce(() =>
             JSON.stringify({
-                actions: [{ state: 'ERROR', error: [{ message: 'expected' }] }]
+                actions: [{ state: 'ERROR', error: 'expected' }]
             })
         );
 
@@ -515,9 +517,16 @@ describe('apexMiddleware', () => {
             }
         };
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenLastCalledWith(
-            JSON.parse('{"error":[{"message":"expected"}]}')
-        );
+        expect(res.send).toHaveBeenLastCalledWith({
+            error: [
+                {
+                    message: 'expected'
+                }
+            ]
+        });
+        // expect(res.send).toHaveBeenLastCalledWith({
+        //     error: [{ message: 'expected' }]
+        // });
         expect(next).not.toBeCalled();
     });
 
@@ -558,9 +567,14 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenLastCalledWith(
-            'error parsing or finding aura config: window.Aura not found'
-        );
+        expect(res.send).toHaveBeenLastCalledWith({
+            error: [
+                {
+                    message:
+                        'error parsing or finding aura config: window.Aura not found'
+                }
+            ]
+        });
         expect(next).not.toBeCalled();
     });
 
@@ -612,9 +626,14 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenLastCalledWith(
-            'error parsing or finding aura config: window.Aura not found'
-        );
+        expect(res.send).toHaveBeenLastCalledWith({
+            error: [
+                {
+                    message:
+                        'error parsing or finding aura config: window.Aura not found'
+                }
+            ]
+        });
         expect(next).not.toBeCalled();
     });
 
@@ -829,7 +848,9 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenCalledWith('classname must be specified');
+        expect(res.send).toHaveBeenCalledWith({
+            error: [{ message: 'classname must be specified' }]
+        });
         expect(next).not.toBeCalled();
     });
 
@@ -853,7 +874,9 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenCalledWith('method must be specified');
+        expect(res.send).toHaveBeenCalledWith({
+            error: [{ message: 'method must be specified' }]
+        });
         expect(next).not.toBeCalled();
     });
 
@@ -877,7 +900,9 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenCalledWith('namespace must be specified');
+        expect(res.send).toHaveBeenCalledWith({
+            error: [{ message: 'namespace must be specified' }]
+        });
         expect(next).not.toBeCalled();
     });
 
@@ -901,7 +926,9 @@ describe('apexMiddleware', () => {
         await middleware(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenCalledWith('cacheable must be specified');
+        expect(res.send).toHaveBeenCalledWith({
+            error: [{ message: 'cacheable must be specified' }]
+        });
         expect(next).not.toBeCalled();
     });
 });

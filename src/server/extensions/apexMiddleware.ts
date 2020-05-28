@@ -106,14 +106,15 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
                                     connectionParams
                                 );
                                 if (cachedConfig == null) {
-                                    res.status(500).send(
+                                    sendError(
+                                        res,
                                         'error parsing or finding aura config: window.Aura not found'
                                     );
                                     return;
                                 }
                             } catch (e) {
                                 console.error(e);
-                                res.status(500).send(e.message);
+                                sendError(res, e.message);
                                 return;
                             }
                         }
@@ -136,9 +137,7 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
                             const parsed = JSON.parse(response);
                             const actionResult = parsed.actions[0];
                             if (actionResult.state === 'ERROR') {
-                                res.status(500)
-                                    .type('json')
-                                    .send({ error: actionResult.error });
+                                sendError(res, actionResult.error);
                             } else {
                                 res.type('json').send(actionResult.returnValue);
                             }
@@ -158,7 +157,7 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
 function sendError(res: Response, message: string) {
     res.status(500)
         .type('json')
-        .send({ error: [message] });
+        .send({ error: [{ message: message }] });
 }
 
 async function callAuraApexRequest(
