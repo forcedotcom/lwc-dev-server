@@ -7,7 +7,7 @@ import parse from 'co-body';
 import { URL } from 'url';
 import { AppExtensionConfig } from '@webruntime/api';
 
-const log = debug('localdevserver');
+const log = debug('localdevserver*');
 const ONE_APP_URL = '/one/one.app';
 const DEFAULT_TIMEOUT = 20000;
 
@@ -144,9 +144,7 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
                             }
                         } catch (e) {
                             log(`invalid apex response: ${response}`);
-                            res.status(500).send(
-                                `error parsing apex response: ${e.message}`
-                            );
+                            return sendError(res, response);
                         }
                         return;
                     }
@@ -158,7 +156,9 @@ export function apexMiddleware(connectionParams: ConnectionParams) {
 }
 
 function sendError(res: Response, message: string) {
-    res.status(500).send(message);
+    res.status(500)
+        .type('json')
+        .send({ error: [message] });
 }
 
 async function callAuraApexRequest(
