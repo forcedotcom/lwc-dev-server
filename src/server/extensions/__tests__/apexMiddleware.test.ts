@@ -448,7 +448,7 @@ describe('apexMiddleware', () => {
         expect(request.post).toHaveBeenCalledWith(expectedArgument);
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.send).toHaveBeenLastCalledWith({
-            error: [{ message: '*/ error' }]
+            error: [{ message: 'error parsing apex response: */ error' }]
         });
         expect(next).not.toBeCalled();
     });
