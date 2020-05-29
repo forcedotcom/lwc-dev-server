@@ -57,13 +57,6 @@ export default class Start extends SfdxCommand {
             'defaultdevhubusername'
         ) as string;
 
-        let port: number;
-        if (this.flags.port !== undefined && this.flags.port !== null) {
-            port = this.flags.port;
-        } else {
-            port = 3333;
-        }
-
         if (!this.org) {
             // This you DO need.
             // We require this right now for proxying and api version.
@@ -163,7 +156,10 @@ export default class Start extends SfdxCommand {
         project.configuration.endpointHeaders = [
             `Authorization: Bearer ${accessToken}`
         ];
-        project.configuration.port = port;
+        project.configuration.port =
+            this.flags.port !== undefined && this.flags.port !== null
+                ? this.flags.port
+                : project.port;
         project.configuration.namespace = <string>(
             (await this.project.resolveProjectConfig()).namespace
         );
@@ -173,7 +169,7 @@ export default class Start extends SfdxCommand {
             api_version: project.configuration.api_version,
             endpoint: project.configuration.endpoint,
             endpointHeaders: project.configuration.endpointHeaders,
-            port,
+            port: project.configuration.port,
             token: accessToken
         };
         debug(
