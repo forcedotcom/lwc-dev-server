@@ -182,7 +182,7 @@ describe('LocalDevServer', () => {
             jest.restoreAllMocks();
         });
 
-        it('configures the modulePaths with the matching virtual modules directory', async () => {
+        it('configures the modulePaths with the matching virtual modules directory for 224', async () => {
             const projectPath = '/Users/arya/dev/myproject';
             const project = mockProject({ projectPath, version: '48.0' });
             const mockConn: any = {};
@@ -200,6 +200,37 @@ describe('LocalDevServer', () => {
             const expected = path.resolve(
                 __dirname,
                 '../../../virtual-modules/224'
+            );
+
+            expect(talonServer.createServer).toBeCalledWith(
+                expect.objectContaining({
+                    modulePaths: expect.arrayContaining([expected])
+                }),
+                expect.anything(),
+                mockConn
+            );
+
+            jest.restoreAllMocks();
+        });
+
+        it('configures the modulePaths with the matching virtual modules directory for 226', async () => {
+            const projectPath = '/Users/arya/dev/myproject';
+            const project = mockProject({ projectPath, version: '49.0' });
+            const mockConn: any = {};
+
+            jest.spyOn(require, 'resolve').mockImplementation(
+                () =>
+                    'node_modules/@salesforce/lwc-dev-server-dependencies/index.js'
+            );
+
+            jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+            const server = new LocalDevServer();
+            await server.start(project, mockConn);
+
+            const expected = path.resolve(
+                __dirname,
+                '../../../virtual-modules/226'
             );
 
             expect(talonServer.createServer).toBeCalledWith(
