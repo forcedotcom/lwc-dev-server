@@ -113,7 +113,7 @@ export default class LocalDevServer {
             ...nodePaths
         ];
 
-        if (version === 222 || version === 224) {
+        if (version === 222 || version === 224 || version === 226) {
             // Use 218 version of LDS temporarily
             // Its the only thing in this 218 directory, so the rest will come from 220 dependencies
             modulePaths.unshift(
