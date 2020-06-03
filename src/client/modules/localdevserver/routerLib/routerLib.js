@@ -30,3 +30,14 @@ export async function getPreviewUrl(navContext, namespace, name) {
     };
     return await generateUrl(navContext, route);
 }
+
+export async function getOldPreviewUrl(navContext, namespace, name) {
+    const route = {
+        id: 'old-preview',
+        attributes: {
+            namespace,
+            name
+        }
+    };
+    return await generateUrl(navContext, route);
+}
