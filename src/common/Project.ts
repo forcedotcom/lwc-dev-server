@@ -110,6 +110,14 @@ export default class Project {
         return this.rootDirectory;
     }
 
+    /**
+     * Returns the port set in localdevserver.config.json file.
+     * If no value set, returns the default port (3333).
+     */
+    public get port(): number {
+        return this.configuration.port;
+    }
+
     // Look for package.json or go up directories until found
     private resolveProjectDirectory(
         directory: string,

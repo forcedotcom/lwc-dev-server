@@ -105,6 +105,36 @@ describe('project', () => {
             expect(project.modulesSourceDirectory).toBe(expected);
         });
 
+        test('handles port specified in the json config', () => {
+            const port = 12345;
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        port
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+
+            expect(project.port).toBe(port);
+        });
+
+        test('uses a fallback when port is not specified in the json config', () => {
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': '{}'
+                }
+            });
+
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'src');
+
+            expect(project.port).toBe(3333);
+        });
+
         test('throws an exception when referencing a project without package.json or sfdx-project.json', () => {
             mock({
                 'invalid-project': {
