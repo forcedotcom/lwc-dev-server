@@ -36,4 +36,21 @@ describe('routerLib.js', () => {
             );
         });
     });
+
+    describe('getOldPreviewUrl', () => {
+        it('calls generateUrl with the namespace and name attributes', () => {
+            const fakeContext = {};
+            lib.getOldPreviewUrl(fakeContext, 'c', 'foo');
+
+            expect(generateUrl).toBeCalledWith(
+                fakeContext,
+                expect.objectContaining({
+                    attributes: {
+                        namespace: 'c',
+                        name: 'foo'
+                    }
+                })
+            );
+        });
+    });
 });
