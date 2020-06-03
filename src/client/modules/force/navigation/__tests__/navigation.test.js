@@ -1,3 +1,6 @@
+/**
+ * Modified from webruntime_navigation/lightningNavigation tests
+ */
 import { api, createElement, LightningElement } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from '../navigation';
 
