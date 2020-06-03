@@ -117,7 +117,7 @@
         "@rollup/plugin-alias": "^3.0.1",
         "@salesforce/command": "^2.0.0",
         "@salesforce/core": "^2.0.1",
-        "@salesforce/lwc-dev-server-dependencies": "1.0.64",
+        "@salesforce/lwc-dev-server-dependencies": "1.0.69",
         "@salesforce/telemetry": "^2.0.2",
         "@salesforce/ts-types": "^1.1.4",
         "@wdio/sync": "^6.0.15",
