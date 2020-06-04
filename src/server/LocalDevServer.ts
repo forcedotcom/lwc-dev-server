@@ -223,10 +223,8 @@ export default class LocalDevServer {
      */
     private getSupportedCoreVersions() {
         const vendoredModulesPath = path.join(
-            this.rootDir,
-            'node_modules',
-            '@salesforce',
-            'lwc-dev-server-dependencies',
+            require.resolve('@salesforce/lwc-dev-server-dependencies'),
+            '..',
             'vendors'
         );
 
