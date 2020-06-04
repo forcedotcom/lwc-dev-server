@@ -30,6 +30,7 @@ export default class LocalDevServerApp extends LightningElement {
             // switch to off-core LDS.
             aura,
             logger,
+            'aura-instrumentation': auraInstrumentation,
             'aura-storage': auraStorage,
             'instrumentation/service': auraInstrumentation,
 
