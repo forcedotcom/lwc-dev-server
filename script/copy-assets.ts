@@ -11,6 +11,8 @@ mkdir('-p', assets);
 cp('-R', `${src}/assets`, dist);
 // cp('-R', `${src}/html`, dist);
 
+cp('-R', `${src}/client`, dist);
+
 // copy SLDS assets
 const sldsPath = path.join(
     __dirname,
