@@ -60,10 +60,7 @@ export default class WebruntimeConfig implements Config {
 
         this.app = {
             defaultComponent: 'localdevserver/app',
-            defaultTemplate: path.join(
-                this.projectDir,
-                'src/client/index.html'
-            ),
+            defaultTemplate: path.join(this.projectDir, 'client', 'index.html'),
             definition: LocalDevApp
         };
 

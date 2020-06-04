@@ -30,3 +30,6 @@ autoreloadtestingcopy
 # oclif
 tmp/
 oclif.manifest.json
+
+# client
+client/

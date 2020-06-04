@@ -20,9 +20,10 @@
     "files": [
         "/bin",
         "/dist",
-        "/modules",
+        "/client",
         "/script",
         "/messages",
+        "/lwc.config.json",
         "/oclif.manifest.json",
         "!**/__tests__/",
         "!**/__mocks__/",
