@@ -20,9 +20,9 @@
     "files": [
         "/bin",
         "/dist",
-        "/modules",
         "/script",
         "/messages",
+        "/lwc.config.json",
         "/oclif.manifest.json",
         "!**/__tests__/",
         "!**/__mocks__/",
@@ -44,7 +44,6 @@
         "format": "prettier --write \"src/**/*.ts\"",
         "link-webruntime": "yarn link @webruntime/common @webruntime/framework @webruntime/compiler",
         "unlink-webruntime": "yarn unlink @webruntime/common @webruntime/framework @webruntime/compiler",
-        "postinstall": "node script/postinstall-build.js",
         "prepack": "oclif-dev manifest",
         "postpack": "rm -f oclif.manifest.json",
         "prepublishOnly": "yarn build",

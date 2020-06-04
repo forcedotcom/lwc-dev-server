@@ -101,6 +101,16 @@ module.exports = function(modulePath, options) {
         return require.resolve('@lwc/engine');
     }
 
+    if (modulePath === '@salesforce/lwc-dev-server-dependencies') {
+        return path.join(
+            PROJECT_ROOT,
+            'node_modules',
+            '@salesforce',
+            'lwc-dev-server-dependencies',
+            'vendors'
+        );
+    }
+
     /**
      * NOTE: lwc-dev-tools changes
      */
