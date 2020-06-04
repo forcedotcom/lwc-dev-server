@@ -107,11 +107,14 @@ export function getLabelService(
 
         private loadCustomLabels(labelsPath: string | undefined): LabelValues {
             if (!labelsPath) {
-                debug('custom labels file not specified or does not exist');
+                debug('custom labels file not specified');
                 return {};
             }
             if (!fs.existsSync(labelsPath)) {
-                throw new Error(`Labels file '${labelsPath}' does not exist`);
+                console.warn(
+                    `Warning: Labels file '${labelsPath}' does not exist`
+                );
+                return {};
             }
 
             const xmlContent = fs.readFileSync(labelsPath, 'utf8');
