@@ -1,0 +1,176 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - '@webruntime/compiler > eslint > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > babel-eslint > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > eslint > inquirer > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > eslint > table > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > eslint > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > @babel/core > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > babel-eslint > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > babel-eslint > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > eslint > inquirer > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > eslint > table > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > eslint > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > babel-eslint > @babel/traverse > @babel/generator > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > @babel/core > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-block-scoping > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > babel-eslint > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > babel-eslint > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > eslint > inquirer > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > eslint > table > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > babel-eslint > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > babel-eslint > @babel/traverse > @babel/generator > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-unicode-regex > @babel/helper-regex > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-block-scoping > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-block-scoping > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > babel-plugin-transform-proxy-compat > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-plugin-transform-proxy-compat > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > babel-eslint > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > babel-eslint > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > babel-eslint > @babel/traverse > @babel/generator > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-unicode-regex > @babel/helper-regex > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-unicode-regex > @babel/helper-regex > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-block-scoping > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > babel-plugin-transform-proxy-compat > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > babel-plugin-transform-proxy-compat > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-plugin-transform-proxy-compat > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > babel-eslint > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-unicode-regex > @babel/helper-regex > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > babel-plugin-transform-proxy-compat > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > @lwc/compiler > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-compat > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
+    - '@webruntime/services > @webruntime/api > @webruntime/compiler > rollup-plugin-compat > es5-proxy-compat > babel-preset-compat > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-06-04T21:22:16.386Z'
