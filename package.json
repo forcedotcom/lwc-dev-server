@@ -20,7 +20,6 @@
     "files": [
         "/bin",
         "/dist",
-        "/client",
         "/script",
         "/messages",
         "/lwc.config.json",
@@ -30,7 +29,7 @@
         "!**/.DS_Store"
     ],
     "scripts": {
-        "clean": "yarn rimraf client dist reports coverage errorShots oclif.manifest.json",
+        "clean": "yarn rimraf dist reports coverage errorShots oclif.manifest.json",
         "build": "yarn clean && tsc && ts-node script/copy-assets",
         "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
         "lint": "yarn eslint src --ext js,ts",

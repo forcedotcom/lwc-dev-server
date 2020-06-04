@@ -4,6 +4,6 @@
         "@lwc/wire-service",
         "@webruntime/navigation",
         "@communities-webruntime/client",
-        "client/modules"
+        "dist/client/modules"
     ]
 }
