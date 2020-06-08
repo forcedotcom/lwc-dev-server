@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`navigation CurrentPageReference should throw error on imperative usage 1`] = `"(0 , _navigation.CurrentPageReference) is not a function"`;
-
-exports[`navigation NavigationMixin should throw error if not lightning element 1`] = `"function Date() { [native code] } must be an Element type"`;

@@ -120,7 +120,7 @@ export default class WebruntimeConfig implements Config {
             inlineConfig: [
                 {
                     descriptor: '*/*',
-                    exclude: ['lwc', 'wire-service']
+                    exclude: ['lwc', 'wire-service', 'lightning/navigation']
                 }
             ]
         };
