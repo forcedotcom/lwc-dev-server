@@ -88,10 +88,12 @@ export default class WebruntimeConfig implements Config {
         // these modules are provided by the Webruntime App(defined above) or other external sources.
         // webruntime compiler should not attempt to resolve these against a service.
         // '@app' modules are defined in the LocalDevApp experimental scripts
+        // 'lightning/navigation' module is defined in localdevserver/app
         this.externals = [
             'webruntime_loader/loader',
             '@app/basePath',
-            '@app/csrfToken'
+            '@app/csrfToken',
+            'lightning/navigation'
         ];
 
         this.compilerConfig = {
@@ -120,7 +122,7 @@ export default class WebruntimeConfig implements Config {
             inlineConfig: [
                 {
                     descriptor: '*/*',
-                    exclude: ['lwc', 'wire-service', 'lightning/navigation']
+                    exclude: ['lwc', 'wire-service']
                 }
             ]
         };
