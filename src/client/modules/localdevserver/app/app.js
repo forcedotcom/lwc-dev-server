@@ -1,6 +1,7 @@
 import { LightningElement, register } from 'lwc';
 import { registerWireService } from 'wire-service';
 import { createRouter } from 'webruntime_navigation/navigation';
+import lightningNavigation from 'webruntime_navigation/lightningNavigation';
 import * as aura from 'webruntime/aura';
 import auraStorage from 'webruntime/auraStorage';
 import * as logger from 'webruntime/logger';
@@ -33,6 +34,7 @@ export default class LocalDevServerApp extends LightningElement {
             'aura-instrumentation': auraInstrumentation,
             'aura-storage': auraStorage,
             'instrumentation/service': auraInstrumentation,
+            'lightning/navigation': lightningNavigation,
 
             // Hardcoded values for salesforce-scoped imports. As these modules
             // become officially supported they can be removed from here. We
