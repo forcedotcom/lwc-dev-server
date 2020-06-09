@@ -112,7 +112,7 @@ export function getLabelService(
             }
             if (!fs.existsSync(labelsPath)) {
                 console.warn(
-                    `Warning: Labels file '${labelsPath}' does not exist`
+                    `Warning: Labels file '${labelsPath}' does not exist.`
                 );
                 return {};
             }

@@ -67,7 +67,10 @@ describe('project', () => {
                     'package.json': '{}',
                     'localdevserver.config.json':
                         '{"modulesSourceDirectory": "modulesSrc"}'
-                }
+                },
+                'my-project/modulesSrc': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -83,7 +86,10 @@ describe('project', () => {
                     'localdevserver.config.json': JSON.stringify({
                         modulesSourceDirectory
                     })
-                }
+                },
+                '/foo/modulesSrc': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -96,13 +102,36 @@ describe('project', () => {
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json': '{}'
-                }
+                },
+                'my-project/src': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
             const expected = path.join('my-project', 'src');
 
             expect(project.modulesSourceDirectory).toBe(expected);
+        });
+
+        test('errors when the modules source directory does not exist', () => {
+            const modulesSourceDirectory = path.normalize('invalidDir');
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+
+            expect(() => {
+                project.modulesSourceDirectory;
+            }).toThrow(
+                "modules source directory 'my-project/invalidDir' does not exist, exiting"
+            );
         });
 
         test('handles port specified in the json config', () => {
@@ -262,7 +291,10 @@ describe('project', () => {
                     }),
                     'localdevserver.config.json': '{}',
                     'package.json': '{}'
-                }
+                },
+                'my-project/force-app': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -419,7 +451,10 @@ describe('project', () => {
                             }
                         ]
                     })
-                }
+                },
+                'my-project/force-app': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -446,7 +481,10 @@ describe('project', () => {
                             'specified/directory/'
                         )
                     })
-                }
+                },
+                'my-project/specified/directory': mock.directory({
+                    items: {}
+                })
             });
 
             jest.spyOn(fileUtils, 'findFolders').mockReturnValue([]);

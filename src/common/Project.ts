@@ -64,13 +64,18 @@ export default class Project {
     }
 
     public get modulesSourceDirectory(): string {
-        if (path.isAbsolute(this.configuration.modulesSourceDirectory)) {
-            return this.configuration.modulesSourceDirectory;
+        var srcDir = path.isAbsolute(this.configuration.modulesSourceDirectory)
+            ? this.configuration.modulesSourceDirectory
+            : path.join(
+                  this.rootDirectory,
+                  this.configuration.modulesSourceDirectory || 'src'
+              );
+        if (!fs.existsSync(srcDir) || !fs.lstatSync(srcDir).isDirectory()) {
+            throw new Error(
+                `modules source directory '${srcDir}' does not exist, exiting`
+            );
         }
-        return path.join(
-            this.rootDirectory,
-            this.configuration.modulesSourceDirectory || 'src'
-        );
+        return srcDir;
     }
 
     public get staticResourcesDirectories(): string[] {
