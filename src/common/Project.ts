@@ -80,6 +80,12 @@ export default class Project {
 
     public get staticResourcesDirectories(): string[] {
         const staticResourceDirectoriesResults: string[] = [];
+        if (!Array.isArray(this.configuration.staticResourcesDirectories)) {
+            console.warn(
+                'staticResourcesDirectories must be provided in a list format'
+            );
+            return staticResourceDirectoriesResults;
+        }
         this.configuration.staticResourcesDirectories.forEach(
             staticResourceDirectory => {
                 if (path.isAbsolute(staticResourceDirectory)) {

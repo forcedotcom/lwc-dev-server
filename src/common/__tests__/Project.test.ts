@@ -557,5 +557,27 @@ describe('project', () => {
                 '/tmp/absolute/path'
             ]);
         });
+
+        test('when staticResourcesDirectories is not specified as a list, log a warning and return an empty list', () => {
+            jest.spyOn(console, 'warn').mockImplementation();
+
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        staticResourcesDirectories: '/tmp/absolute/path'
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+
+            expect(project.staticResourcesDirectories).toStrictEqual([]);
+            expect(console.warn).toBeCalledWith(
+                expect.stringContaining(
+                    'staticResourcesDirectories must be provided in a list format'
+                )
+            );
+        });
     });
 });
