@@ -126,11 +126,12 @@ describe('project', () => {
             });
 
             const project = new Project('my-project');
+            const expected = path.join('my-project', 'invalidDir');
 
             expect(() => {
                 project.modulesSourceDirectory;
             }).toThrow(
-                "modules source directory 'my-project/invalidDir' does not exist, exiting"
+                `modules source directory '${expected}' does not exist, exiting`
             );
         });
 
