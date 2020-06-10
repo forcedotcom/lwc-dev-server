@@ -61,46 +61,6 @@ jobs:
                       - dist
                       - modules
                       - lib
-    #   "pack and publish":
-    #     docker:
-    #       - image: circleci/node:10.15.3
-    #     steps:
-    #       - attach_workspace:
-    #           at: .
-    #       - restore_cache: *restore_cache
-    #       - run: sudo apt-get update && sudo apt-get install -y p7zip-full
-    #       - run: yarn oclif-dev pack
-    #       # - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
-    #       - run: yarn oclif-dev publish
-    #   "pack deb and publish":
-    #     docker:
-    #       - image: circleci/node:10.15.3
-    #     steps:
-    #       - attach_workspace:
-    #           at: .
-    #       - restore_cache: *restore_cache
-    #       - run: sudo apt-get update && sudo apt-get install -y apt-utils
-    #       - run: sudo -E /bin/bash -c "cp -R /home/circleci/.cache /usr/local/share && yarn oclif-dev pack:deb"
-    #       - run: yarn oclif-dev publish:deb
-    #   "pack macos and publish":
-    #     macos:
-    #       xcode: "10.0.0"
-    #     steps:
-    #       - attach_workspace:
-    #           at: .
-    #       - restore_cache: *restore_cache
-    #       - run: yarn oclif-dev pack:macos
-    #       - run: yarn oclif-dev publish:macos
-    #   "pack win and publish":
-    #     docker:
-    #       - image: circleci/node:10.15.3
-    #     steps:
-    #       - attach_workspace:
-    #           at: .
-    #       - restore_cache: *restore_cache
-    #       - run: sudo apt-get update && sudo apt-get install -y nsis p7zip-full
-    #       - run: yarn oclif-dev pack:win
-    #       - run: yarn oclif-dev publish:win
 
     build-and-test-win:
         executor: win/default
@@ -155,7 +115,7 @@ jobs:
             - restore_cache: *restore_cache
             - run: *install
             - run: yarn build
-            - run: yarn pack
+            - run: npm pack # using npm vs yarn since yarn does not support npmignore mixed with package.json config
             - run:
                   name: Staging artifact
                   command: |
@@ -166,25 +126,10 @@ jobs:
 
 workflows:
     version: 2.1
-    main:
+    'lwc-dev-server':
         jobs:
             - build
             - build-artifact
-        #   - "pack and publish":
-        #       requires:
-        #         - build
-        #   - "pack:deb and publish":
-        #       requires:
-        #         - build
-        # - "pack:macos and publish":
-        #     requires:
-        #       - build
-        #   - "pack:win and publish":
-        #       requires:
-        #         - build
-
-    build_win:
-        jobs:
             - build-and-test-win:
                   context: local-dev-gs0
             - build-and-test-win:
