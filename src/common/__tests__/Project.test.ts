@@ -114,7 +114,8 @@ describe('project', () => {
             expect(project.modulesSourceDirectory).toBe(expected);
         });
 
-        test('errors when the modules source directory does not exist', () => {
+        test('logs warning when the modules source directory does not exist', () => {
+            jest.spyOn(console, 'warn').mockImplementation();
             const modulesSourceDirectory = path.normalize('invalidDir');
             mock({
                 'my-project': {
@@ -128,10 +129,9 @@ describe('project', () => {
             const project = new Project('my-project');
             const expected = path.join('my-project', 'invalidDir');
 
-            expect(() => {
-                project.modulesSourceDirectory;
-            }).toThrow(
-                `modules source directory '${expected}' does not exist, exiting`
+            project.modulesSourceDirectory;
+            expect(console.warn).toBeCalledWith(
+                `modules source directory '${expected}' does not exist`
             );
         });
 

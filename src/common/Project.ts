@@ -71,9 +71,7 @@ export default class Project {
                   this.configuration.modulesSourceDirectory || 'src'
               );
         if (!fs.existsSync(srcDir) || !fs.lstatSync(srcDir).isDirectory()) {
-            throw new Error(
-                `modules source directory '${srcDir}' does not exist, exiting`
-            );
+            console.warn(`modules source directory '${srcDir}' does not exist`);
         }
         return srcDir;
     }
