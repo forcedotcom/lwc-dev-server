@@ -6,14 +6,28 @@ orbs:
     browser-tools: circleci/browser-tools@0.1.3
     win: circleci/windows@2.4.0
 
+_refs:
+    defaults: &defaults
+        working_directory: ~/cli
+        docker:
+            - image: node:12
+    restore_cache: &restore_cache
+        keys:
+						key: dependency-cache-3-{{ checksum "yarn.lock" }}
+		install: &install
+				name: Install dependencies
+				command: |
+					yarn --version
+					node --version
+					yarn
+
 jobs:
     build:
         docker:
             - image: circleci/node:10.15.3-browsers
         steps:
             - checkout
-            - restore_cache:
-                  key: dependency-cache-3-{{ checksum "yarn.lock" }}
+            - restore_cache: *restore_cache
             - browser-tools/install-chrome:
                   replace-existing: true
             - run: yarn install --frozen-lockfile
@@ -47,50 +61,46 @@ jobs:
                       - dist
                       - modules
                       - lib
-#   "pack and publish":
-#     docker:
-#       - image: circleci/node:10.15.3
-#     steps:
-#       - attach_workspace:
-#           at: .
-#       - restore_cache:
-#           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-#       - run: sudo apt-get update && sudo apt-get install -y p7zip-full
-#       - run: yarn oclif-dev pack
-#       # - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
-#       - run: yarn oclif-dev publish
-#   "pack deb and publish":
-#     docker:
-#       - image: circleci/node:10.15.3
-#     steps:
-#       - attach_workspace:
-#           at: .
-#       - restore_cache:
-#           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-#       - run: sudo apt-get update && sudo apt-get install -y apt-utils
-#       - run: sudo -E /bin/bash -c "cp -R /home/circleci/.cache /usr/local/share && yarn oclif-dev pack:deb"
-#       - run: yarn oclif-dev publish:deb
-#   "pack macos and publish":
-#     macos:
-#       xcode: "10.0.0"
-#     steps:
-#       - attach_workspace:
-#           at: .
-#       - restore_cache:
-#           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-#       - run: yarn oclif-dev pack:macos
-#       - run: yarn oclif-dev publish:macos
-#   "pack win and publish":
-#     docker:
-#       - image: circleci/node:10.15.3
-#     steps:
-#       - attach_workspace:
-#           at: .
-#       - restore_cache:
-#           key: dependency-cache-3-{{ checksum "yarn.lock" }}
-#       - run: sudo apt-get update && sudo apt-get install -y nsis p7zip-full
-#       - run: yarn oclif-dev pack:win
-#       - run: yarn oclif-dev publish:win
+    #   "pack and publish":
+    #     docker:
+    #       - image: circleci/node:10.15.3
+    #     steps:
+    #       - attach_workspace:
+    #           at: .
+    #       - restore_cache: *restore_cache
+    #       - run: sudo apt-get update && sudo apt-get install -y p7zip-full
+    #       - run: yarn oclif-dev pack
+    #       # - run: yarn oclif-dev pack -t linux-x64,win32-x64,darwin-x64
+    #       - run: yarn oclif-dev publish
+    #   "pack deb and publish":
+    #     docker:
+    #       - image: circleci/node:10.15.3
+    #     steps:
+    #       - attach_workspace:
+    #           at: .
+    #       - restore_cache: *restore_cache
+    #       - run: sudo apt-get update && sudo apt-get install -y apt-utils
+    #       - run: sudo -E /bin/bash -c "cp -R /home/circleci/.cache /usr/local/share && yarn oclif-dev pack:deb"
+    #       - run: yarn oclif-dev publish:deb
+    #   "pack macos and publish":
+    #     macos:
+    #       xcode: "10.0.0"
+    #     steps:
+    #       - attach_workspace:
+    #           at: .
+    #       - restore_cache: *restore_cache
+    #       - run: yarn oclif-dev pack:macos
+    #       - run: yarn oclif-dev publish:macos
+    #   "pack win and publish":
+    #     docker:
+    #       - image: circleci/node:10.15.3
+    #     steps:
+    #       - attach_workspace:
+    #           at: .
+    #       - restore_cache: *restore_cache
+    #       - run: sudo apt-get update && sudo apt-get install -y nsis p7zip-full
+    #       - run: yarn oclif-dev pack:win
+    #       - run: yarn oclif-dev publish:win
 
     build-and-test-win:
         executor: win/default
@@ -137,11 +147,30 @@ jobs:
                       - node_modules
                       - ~/.cache/yarn
 
+  	build-artifact:
+        <<: *defaults
+				description: 'Building and archiving tarball'
+        steps:
+          - checkout
+					- restore_cache: *restore_cache
+					- run: *install
+					- run: yarn build
+					- run: yarn pack
+					- run:
+							name: Staging artifact
+							command: |
+								mkdir artifact
+								find . -name "*.tgz" -type f -exec cp {} ./artifact \;
+					- store_artifacts:
+							path: ./artifact
+
+
 workflows:
     version: 2.1
-    master:
+    main:
         jobs:
-            - 'build'
+						- build
+						- build-artifact
         #   - "pack and publish":
         #       requires:
         #         - build
