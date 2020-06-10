@@ -46,9 +46,7 @@
         "unlink-webruntime": "yarn unlink @webruntime/common @webruntime/framework @webruntime/compiler",
         "prepack": "oclif-dev manifest",
         "postpack": "rm -f oclif.manifest.json",
-        "prepublishOnly": "yarn build",
-        "preversion": "yarn test",
-        "postversion": "git push --no-verify && git push --tags --no-verify"
+        "prepublishOnly": "yarn build"
     },
     "devDependencies": {
         "@lwc/jest-preset": "^4.5.0",
