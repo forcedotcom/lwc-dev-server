@@ -17,7 +17,8 @@ describe('ResourceUrlService', () => {
                 basePath: '',
                 resourceRoot: '/webruntime'
             },
-            compilerConfig: {}
+            compilerConfig: {},
+            additionalProperties: {}
         };
     });
 

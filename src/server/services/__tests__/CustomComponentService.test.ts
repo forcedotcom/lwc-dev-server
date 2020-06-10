@@ -35,7 +35,8 @@ describe('CustomComponentService', () => {
                     amd: { define: 'Webruntime.define' }
                 },
                 inlineConfig: []
-            }
+            },
+            additionalProperties: {}
         };
 
         customComponentService = new CustomComponentService(config);

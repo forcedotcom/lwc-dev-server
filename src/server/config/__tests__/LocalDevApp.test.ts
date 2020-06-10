@@ -31,7 +31,13 @@ describe('LocalDevApp.ts', () => {
 
         locals = { sessionNonce: 'fakeSessionNonce' };
 
-        publicConfig = Object.assign({}, DEFAULT_CONFIG);
+        publicConfig = {
+            projectDir: DEFAULT_CONFIG.projectDir,
+            buildDir: DEFAULT_CONFIG.buildDir,
+            compilerConfig: DEFAULT_CONFIG.compilerConfig,
+            server: DEFAULT_CONFIG.server,
+            additionalProperties: {}
+        };
     });
 
     afterEach(() => {
