@@ -95,7 +95,9 @@ Here's an example that shows the available configuration parameters.
     "modulesSourceDirectory": "src/", 
 
     // Where are your static assets.
-    "staticResourcesDirectory": "staticresources/",
+    "staticResourcesDirectories": [
+        "staticresources/"
+    ],
 
     // The address port for your local server. Defaults to 3333
     "port": 3333,
