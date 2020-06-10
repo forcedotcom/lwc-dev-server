@@ -13,13 +13,13 @@ _refs:
             - image: node:12
     restore_cache: &restore_cache
         keys:
-						key: dependency-cache-3-{{ checksum "yarn.lock" }}
-		install: &install
-				name: Install dependencies
-				command: |
-					yarn --version
-					node --version
-					yarn
+            key: dependency-cache-3-{{ checksum "yarn.lock" }}
+    install: &install
+        name: Install dependencies
+        command: |
+            yarn --version
+            node --version
+            yarn
 
 jobs:
     build:
@@ -147,30 +147,29 @@ jobs:
                       - node_modules
                       - ~/.cache/yarn
 
-  	build-artifact:
+    build-artifact:
         <<: *defaults
-				description: 'Building and archiving tarball'
+        description: 'Building and archiving tarball'
         steps:
-          - checkout
-					- restore_cache: *restore_cache
-					- run: *install
-					- run: yarn build
-					- run: yarn pack
-					- run:
-							name: Staging artifact
-							command: |
-								mkdir artifact
-								find . -name "*.tgz" -type f -exec cp {} ./artifact \;
-					- store_artifacts:
-							path: ./artifact
-
+            - checkout
+            - restore_cache: *restore_cache
+            - run: *install
+            - run: yarn build
+            - run: yarn pack
+            - run:
+                  name: Staging artifact
+                  command: |
+                      mkdir artifact
+                      find . -name "*.tgz" -type f -exec cp {} ./artifact \;
+            - store_artifacts:
+                  path: ./artifact
 
 workflows:
     version: 2.1
     main:
         jobs:
-						- build
-						- build-artifact
+            - build
+            - build-artifact
         #   - "pack and publish":
         #       requires:
         #         - build
