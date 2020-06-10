@@ -14,6 +14,8 @@ _refs:
     restore_cache: &restore_cache
         keys:
             - dependency-cache-3-{{ checksum "yarn.lock" }}
+              # if cache for exact version of 'package.json' is not present, then load the most recent cache
+            - dependency-cache-3-
     install: &install
         name: Install dependencies
         command: |
