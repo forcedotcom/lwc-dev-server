@@ -63,6 +63,7 @@ describe('getLabelService', () => {
             [CUSTOM_LABELS_PATH]: SAMPLE_CUSTOM_LABELS
         });
         jest.clearAllMocks();
+        jest.spyOn(console, 'warn').mockImplementation();
     });
 
     afterEach(() => {
@@ -71,20 +72,17 @@ describe('getLabelService', () => {
     });
 
     describe('customLabelsFile', () => {
-        it('throws error when a custom labels file is specified but doesnt exist', async () => {
-            try {
-                const Service = getLabelService('src/does-not-exist.xml');
-                const labelsService = new Service();
-                await labelsService.initialize();
+        it('prints warning when a custom labels file is specified but doesnt exist', async () => {
+            const Service = getLabelService('src/does-not-exist.xml');
+            const labelsService = new Service();
+            await labelsService.initialize();
 
-                fail(
-                    'Should have thrown an exception on trying to load a file that does not exist'
-                );
-            } catch (e) {
-                expect(e.message).toBe(
-                    "Labels file 'src/does-not-exist.xml' does not exist"
-                );
-            }
+            expect(console.warn).toBeCalledWith(
+                expect.stringContaining(
+                    "Warning: Labels file 'src/does-not-exist.xml' does not exist"
+                )
+            );
+            // no error
         });
 
         it('doesnt throw an error if a custom label file is undefined', async () => {

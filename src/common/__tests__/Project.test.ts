@@ -67,7 +67,10 @@ describe('project', () => {
                     'package.json': '{}',
                     'localdevserver.config.json':
                         '{"modulesSourceDirectory": "modulesSrc"}'
-                }
+                },
+                'my-project/modulesSrc': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -83,7 +86,10 @@ describe('project', () => {
                     'localdevserver.config.json': JSON.stringify({
                         modulesSourceDirectory
                     })
-                }
+                },
+                '/foo/modulesSrc': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -96,13 +102,37 @@ describe('project', () => {
                 'my-project': {
                     'package.json': '{}',
                     'localdevserver.config.json': '{}'
-                }
+                },
+                'my-project/src': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
             const expected = path.join('my-project', 'src');
 
             expect(project.modulesSourceDirectory).toBe(expected);
+        });
+
+        test('logs warning when the modules source directory does not exist', () => {
+            jest.spyOn(console, 'warn').mockImplementation();
+            const modulesSourceDirectory = path.normalize('invalidDir');
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'invalidDir');
+
+            project.modulesSourceDirectory;
+            expect(console.warn).toBeCalledWith(
+                `modules source directory '${expected}' does not exist`
+            );
         });
 
         test('handles port specified in the json config', () => {
@@ -262,7 +292,10 @@ describe('project', () => {
                     }),
                     'localdevserver.config.json': '{}',
                     'package.json': '{}'
-                }
+                },
+                'my-project/force-app': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -419,7 +452,10 @@ describe('project', () => {
                             }
                         ]
                     })
-                }
+                },
+                'my-project/force-app': mock.directory({
+                    items: {}
+                })
             });
 
             const project = new Project('my-project');
@@ -446,7 +482,10 @@ describe('project', () => {
                             'specified/directory/'
                         )
                     })
-                }
+                },
+                'my-project/specified/directory': mock.directory({
+                    items: {}
+                })
             });
 
             jest.spyOn(fileUtils, 'findFolders').mockReturnValue([]);
@@ -518,6 +557,28 @@ describe('project', () => {
             expect(project.staticResourcesDirectories).toStrictEqual([
                 '/tmp/absolute/path'
             ]);
+        });
+
+        test('when staticResourcesDirectories is not specified as a list, log a warning and return an empty list', () => {
+            jest.spyOn(console, 'warn').mockImplementation();
+
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        staticResourcesDirectories: '/tmp/absolute/path'
+                    })
+                }
+            });
+
+            const project = new Project('my-project');
+
+            expect(project.staticResourcesDirectories).toStrictEqual([]);
+            expect(console.warn).toBeCalledWith(
+                expect.stringContaining(
+                    'staticResourcesDirectories must be provided in a list format'
+                )
+            );
         });
     });
 });
