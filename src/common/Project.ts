@@ -64,17 +64,26 @@ export default class Project {
     }
 
     public get modulesSourceDirectory(): string {
-        if (path.isAbsolute(this.configuration.modulesSourceDirectory)) {
-            return this.configuration.modulesSourceDirectory;
+        var srcDir = path.isAbsolute(this.configuration.modulesSourceDirectory)
+            ? this.configuration.modulesSourceDirectory
+            : path.join(
+                  this.rootDirectory,
+                  this.configuration.modulesSourceDirectory || 'src'
+              );
+        if (!fs.existsSync(srcDir) || !fs.lstatSync(srcDir).isDirectory()) {
+            console.warn(`modules source directory '${srcDir}' does not exist`);
         }
-        return path.join(
-            this.rootDirectory,
-            this.configuration.modulesSourceDirectory || 'src'
-        );
+        return srcDir;
     }
 
     public get staticResourcesDirectories(): string[] {
         const staticResourceDirectoriesResults: string[] = [];
+        if (!Array.isArray(this.configuration.staticResourcesDirectories)) {
+            console.warn(
+                'staticResourcesDirectories must be provided in a list format'
+            );
+            return staticResourceDirectoriesResults;
+        }
         this.configuration.staticResourcesDirectories.forEach(
             staticResourceDirectory => {
                 if (path.isAbsolute(staticResourceDirectory)) {
