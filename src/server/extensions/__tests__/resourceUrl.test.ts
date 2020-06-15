@@ -33,7 +33,8 @@ describe('resourceUrl', () => {
                     resourceRoot: '/webruntime',
                     basePath: '/basePath'
                 },
-                compilerConfig: {}
+                compilerConfig: {},
+                additionalProperties: {}
             };
 
             jest.spyOn(console, 'log').mockImplementation();

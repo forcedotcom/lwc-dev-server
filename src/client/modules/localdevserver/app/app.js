@@ -27,7 +27,7 @@ export default class LocalDevServerApp extends LightningElement {
         super();
 
         this.defineModules({
-            // Modules referenced by LDS from core. Some of these may removable once we
+            // Modules referenced by LDS from core. Some of these may be removable once we
             // switch to off-core LDS.
             aura,
             logger,
@@ -40,6 +40,7 @@ export default class LocalDevServerApp extends LightningElement {
             // become officially supported they can be removed from here. We
             // could also do this through stub implementations too.
             '@salesforce/user/isGuest': true,
+            '@salesforce/user/Id': '',
             '@salesforce/client/formFactor': 'Large'
         });
     }
