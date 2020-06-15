@@ -31,7 +31,10 @@ describe('LocalDevApp.ts', () => {
 
         locals = { sessionNonce: 'fakeSessionNonce' };
 
-        publicConfig = Object.assign({}, DEFAULT_CONFIG);
+        publicConfig = {
+            ...DEFAULT_CONFIG,
+            ...{ additionalProperties: {} }
+        };
     });
 
     afterEach(() => {
