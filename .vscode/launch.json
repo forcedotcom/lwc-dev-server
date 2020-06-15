@@ -11,6 +11,20 @@
             "processId": "${command:PickProcess}"
         },
         {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Attach by Chrome Extension",
+            "url": "http://localhost:3333/",
+            "webRoot": "${workspaceFolder}/src",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "/./*": "${webRoot}/*",
+                "/src/*": "${webRoot}/*",
+                "/*": "*",
+                "/./~/*": "${webRoot}/../node_modules/*"
+            }
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Jest: All Unit Tests",
