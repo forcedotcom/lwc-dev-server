@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { findFolders } from './fileUtils';
+import { SfdxProjectJson } from '@salesforce/core';
 
 /**
  * The project object describes two things.
@@ -177,115 +178,142 @@ export default class Project {
     }
 
     private initWithSfdxConfiguration() {
-        const _path = this.directory;
-        let jsonFileContents = null;
-        const sfdxProjectPath = path.join(_path, 'sfdx-project.json');
-        const packageDirectories: string[] = [];
-
-        if (fs.existsSync(sfdxProjectPath)) {
-            try {
-                jsonFileContents = fs.readFileSync(sfdxProjectPath, 'utf-8');
-            } catch (e) {
-                console.error(
-                    `Loading ${sfdxProjectPath} failed JSON parsing with error ${e.message}`
-                );
-            }
-
-            try {
-                if (
-                    jsonFileContents !== null &&
-                    jsonFileContents.trim() !== ''
-                ) {
-                    const configMap: any = JSON.parse(jsonFileContents);
-
-                    if (configMap.packageDirectories instanceof Array) {
-                        let defaultPackage: string = '';
-                        configMap.packageDirectories.forEach(
-                            (element: { default: boolean; path: string }) => {
-                                if (element.default) {
-                                    defaultPackage = element.path;
-                                } else {
-                                    packageDirectories.push(element.path);
-                                }
-                            }
-                        );
-                        if (defaultPackage) {
-                            packageDirectories.unshift(defaultPackage);
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error(
-                    `Loading configuration from ${sfdxProjectPath} failed with the error ${e.message}`
-                );
-            }
-        }
+        const packageDirectories: string[] = this.getPackageDirectories();
 
         if (packageDirectories.length > 0) {
-            if (!this.configuration.modulesSourceDirectory) {
-                // The sfdx-project.json specifies where the modules are located.
+            const defaultPackageDirectory = packageDirectories[0];
+            this.setModulesSourceDirectory(defaultPackageDirectory);
+            this.setStaticResourcesDirectories(packageDirectories);
+            this.setCustomLabelsFile(defaultPackageDirectory);
+            this.setContentAssetsPath(defaultPackageDirectory);
+        }
+    }
 
-                // WARNING: this is not the correct modules source dir (which
-                // would be for example `force-app/main/default`) but a dir
-                // several levels above (e.g., `force-app`).
-                // This is because LWR doesn't allow more than one directory
-                // to watch for changes, but we need to watch the entire
-                // force-app dir for changes to other files such as static
-                // resources. Once LWR fixes this then this should be changed.
-                this.configuration.modulesSourceDirectory =
-                    packageDirectories[0];
-            }
+    private getPackageDirectories(): string[] {
+        const packageDirectories: string[] = [];
+        const sfdxProjectPath = path.join(this.directory, 'sfdx-project.json');
 
-            if (
-                this.configuration.staticResourcesDirectories &&
-                this.configuration.staticResourcesDirectories.length === 0
-            ) {
-                // Figure out where the static resources are located
-                let resourcePaths: string[] = [];
-                packageDirectories.forEach(item => {
-                    const staticResourceFolders = findFolders(
-                        path.join(_path, item),
-                        'staticresources',
-                        [],
-                        new Set([
-                            'aura',
-                            'lwc',
-                            'classes',
-                            'triggers',
-                            'layouts',
-                            'objects'
-                        ])
+        if (fs.existsSync(sfdxProjectPath)) {
+            const jsonFileContents = this.getJsonFileContents(sfdxProjectPath);
+            if (jsonFileContents && !!jsonFileContents.trim()) {
+                try {
+                    this.getPackagesFromMap(
+                        JSON.parse(jsonFileContents),
+                        packageDirectories
                     );
-                    const resourcePathIndex =
-                        resourcePaths.length > 0 ? resourcePaths.length - 1 : 0;
-                    resourcePaths.splice(
-                        resourcePathIndex,
-                        0,
-                        ...staticResourceFolders
+                } catch (e) {
+                    console.error(
+                        `Loading configuration from ${sfdxProjectPath} failed with the error ${e.message}`
                     );
-                });
-                this.configuration.staticResourcesDirectories = resourcePaths;
-            }
-
-            if (!this.configuration.customLabelsFile) {
-                const labelsPath = path.join(
-                    packageDirectories[0],
-                    'main/default/labels/CustomLabels.labels-meta.xml'
-                );
-                if (fs.existsSync(path.join(this.rootDirectory, labelsPath))) {
-                    this.configuration.customLabelsFile = labelsPath;
                 }
             }
+        }
+        return packageDirectories;
+    }
 
-            if (!this.configuration.contentAssetsPath) {
-                const contentAssetUrlPath = path.join(
-                    packageDirectories[0],
-                    'main',
-                    'default',
-                    'contentassets'
-                );
-                this.configuration.contentAssetsPath = contentAssetUrlPath;
+    private getJsonFileContents(jsonPath: string): string | null {
+        let jsonFileContents = null;
+        try {
+            jsonFileContents = fs.readFileSync(jsonPath, 'utf-8');
+        } catch (e) {
+            console.error(
+                `Loading ${jsonPath} failed JSON parsing with error ${e.message}`
+            );
+        }
+        return jsonFileContents;
+    }
+
+    private getPackagesFromMap(configMap: any, packageDirectories: string[]) {
+        if (configMap.packageDirectories instanceof Array) {
+            let defaultPackage: string = '';
+            configMap.packageDirectories.forEach(
+                (element: { default: boolean; path: string }) => {
+                    if (element.default) {
+                        defaultPackage = element.path;
+                    } else {
+                        packageDirectories.push(element.path);
+                    }
+                }
+            );
+            if (defaultPackage) {
+                packageDirectories.unshift(defaultPackage);
             }
+        }
+    }
+
+    private setModulesSourceDirectory(defaultPackageDirectory: string) {
+        if (!this.configuration.modulesSourceDirectory) {
+            // The sfdx-project.json specifies where the modules are located.
+
+            // WARNING: this is not the correct modules source dir (which
+            // would be for example `force-app/main/default`) but a dir
+            // several levels above (e.g., `force-app`).
+            // This is because LWR doesn't allow more than one directory
+            // to watch for changes, but we need to watch the entire
+            // force-app dir for changes to other files such as static
+            // resources. Once LWR fixes this then this should be changed.
+            this.configuration.modulesSourceDirectory = defaultPackageDirectory;
+        }
+    }
+
+    private setStaticResourcesDirectories(packageDirectories: string[]) {
+        const foldersToIgnore = new Set([
+            'aura',
+            'lwc',
+            'classes',
+            'triggers',
+            'layouts',
+            'objects'
+        ]);
+        if (
+            this.configuration.staticResourcesDirectories &&
+            this.configuration.staticResourcesDirectories.length === 0
+        ) {
+            // Figure out where the static resources are located
+            let resourcePaths: string[] = [];
+            packageDirectories.forEach(item => {
+                const staticResourceFolders = findFolders(
+                    path.join(this.directory, item),
+                    'staticresources',
+                    [],
+                    foldersToIgnore
+                );
+                const resourcePathIndex =
+                    resourcePaths.length > 0 ? resourcePaths.length - 1 : 0;
+                resourcePaths.splice(
+                    resourcePathIndex,
+                    0,
+                    ...staticResourceFolders
+                );
+            });
+            this.configuration.staticResourcesDirectories = resourcePaths;
+        }
+    }
+
+    private setCustomLabelsFile(defaultPackageDirectory: string) {
+        if (!this.configuration.customLabelsFile) {
+            const labelsPath = path.join(
+                defaultPackageDirectory,
+                'main',
+                'default',
+                'labels',
+                'CustomLabels.labels-meta.xml'
+            );
+            if (fs.existsSync(path.join(this.rootDirectory, labelsPath))) {
+                this.configuration.customLabelsFile = labelsPath;
+            }
+        }
+    }
+
+    private setContentAssetsPath(defaultPackageDirectory: string) {
+        if (!this.configuration.contentAssetsPath) {
+            const contentAssetUrlPath = path.join(
+                defaultPackageDirectory,
+                'main',
+                'default',
+                'contentassets'
+            );
+            this.configuration.contentAssetsPath = contentAssetUrlPath;
         }
     }
 }
