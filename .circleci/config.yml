@@ -180,5 +180,3 @@ workflows:
                   requires:
                       - build
                       - build-artifact
-                      - build-and-test-win
-                            context: local-dev-gs0
