@@ -134,6 +134,14 @@ export default class LocalDevServerConfiguration {
         this.configFromJson.customLabelsFile = file;
     }
 
+    public get contentAssetsPath(): string {
+        return this.configFromJson.contentAssetUrlPath || '';
+    }
+
+    public set contentAssetsPath(path: string) {
+        this.configFromJson.contentAssetUrlPath = path;
+    }
+
     /**
      * The address port for your local server. Defaults to 3333
      * To specify in json file, use

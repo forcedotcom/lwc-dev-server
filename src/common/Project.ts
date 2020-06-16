@@ -111,6 +111,20 @@ export default class Project {
             );
         }
     }
+
+    public get contentAssetsPath(): string {
+        if (path.isAbsolute(this.configuration.contentAssetsPath)) {
+            return this.configuration.contentAssetsPath;
+        }
+        if (this.configuration.contentAssetsPath !== '') {
+            return path.join(
+                this.rootDirectory,
+                this.configuration.contentAssetsPath
+            );
+        }
+        return '';
+    }
+
     /**
      * The Root directory of the Project.
      * Where the package.json or the root sfdx-project.json file is located.
@@ -261,6 +275,16 @@ export default class Project {
                 if (fs.existsSync(path.join(this.rootDirectory, labelsPath))) {
                     this.configuration.customLabelsFile = labelsPath;
                 }
+            }
+
+            if (!this.configuration.contentAssetsPath) {
+                const contentAssetUrlPath = path.join(
+                    packageDirectories[0],
+                    'main',
+                    'default',
+                    'contentassets'
+                );
+                this.configuration.contentAssetsPath = contentAssetUrlPath;
             }
         }
     }
