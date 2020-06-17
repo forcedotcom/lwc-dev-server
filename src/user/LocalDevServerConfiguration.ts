@@ -134,12 +134,12 @@ export default class LocalDevServerConfiguration {
         this.configFromJson.customLabelsFile = file;
     }
 
-    public get contentAssetsPath(): string {
-        return this.configFromJson.contentAssetUrlPath || '';
+    public get contentAssetsDirectory(): string {
+        return this.configFromJson.contentAssetsDirectory || '';
     }
 
-    public set contentAssetsPath(path: string) {
-        this.configFromJson.contentAssetUrlPath = path;
+    public set contentAssetsDirectory(path: string) {
+        this.configFromJson.contentAssetsDirectory = path;
     }
 
     /**

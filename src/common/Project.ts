@@ -2,7 +2,6 @@ import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import { findFolders } from './fileUtils';
-import { SfdxProjectJson } from '@salesforce/core';
 
 /**
  * The project object describes two things.
@@ -113,14 +112,14 @@ export default class Project {
         }
     }
 
-    public get contentAssetsPath(): string {
-        if (path.isAbsolute(this.configuration.contentAssetsPath)) {
-            return this.configuration.contentAssetsPath;
+    public get contentAssetsDirectory(): string {
+        if (path.isAbsolute(this.configuration.contentAssetsDirectory)) {
+            return this.configuration.contentAssetsDirectory;
         }
-        if (this.configuration.contentAssetsPath !== '') {
+        if (this.configuration.contentAssetsDirectory !== '') {
             return path.join(
                 this.rootDirectory,
-                this.configuration.contentAssetsPath
+                this.configuration.contentAssetsDirectory
             );
         }
         return '';
@@ -306,14 +305,18 @@ export default class Project {
     }
 
     private setContentAssetsPath(defaultPackageDirectory: string) {
-        if (!this.configuration.contentAssetsPath) {
-            const contentAssetUrlPath = path.join(
+        if (!this.configuration.contentAssetsDirectory) {
+            const contentAssetsPath = path.join(
                 defaultPackageDirectory,
                 'main',
                 'default',
                 'contentassets'
             );
-            this.configuration.contentAssetsPath = contentAssetUrlPath;
+            if (
+                fs.existsSync(path.join(this.rootDirectory, contentAssetsPath))
+            ) {
+                this.configuration.contentAssetsDirectory = contentAssetsPath;
+            }
         }
     }
 }

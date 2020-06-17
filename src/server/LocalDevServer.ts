@@ -191,9 +191,9 @@ export default class LocalDevServer {
         }
 
         try {
-            if (this.project.contentAssetsPath) {
+            if (this.project.contentAssetsDirectory) {
                 copyFiles(
-                    path.join(this.project.contentAssetsPath, '*'),
+                    path.join(this.project.contentAssetsDirectory, '*'),
                     path.join(staticAssetsPath, CONTENT_ASSETS)
                 );
             }
