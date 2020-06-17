@@ -141,6 +141,73 @@ describe('ComponentIndex getModules()', () => {
         expect(componentIndex.getModules()).toEqual(expected);
     });
 
+    test('when using sfdx, returns modules in custom lwc directory', () => {
+        mock({
+            'my-project': {
+                'package.json': JSON.stringify({
+                    name: 'test-project'
+                }),
+                'sfdx-project.json': JSON.stringify({
+                    packageDirectories: [
+                        {
+                            path: 'custom-source-dir',
+                            default: true,
+                            package: 'Test Package Name',
+                            versionName: "Spring '19",
+                            versionNumber: '1.0.0.NEXT'
+                        }
+                    ]
+                }),
+                'custom-source-dir': {
+                    lwc: {
+                        module: {
+                            'module.html': '',
+                            'module.js':
+                                'export default class Module extends LightningElement {}'
+                        },
+                        module2: {
+                            'module2.html': '',
+                            'module2.js':
+                                'export default class Module extends NavigationMixin(LightningElement) {}'
+                        },
+                        module3: {
+                            'module3.html': '',
+                            'module3 .js': ''
+                        }
+                    }
+                }
+            }
+        });
+
+        const expected: object[] = [
+            {
+                htmlName: 'c-module',
+                jsName: 'c/module',
+                namespace: 'c',
+                name: 'module',
+                url: '/preview/c/module',
+                path: path.normalize(
+                    'my-project/custom-source-dir/lwc/module/module.js'
+                )
+            },
+            {
+                htmlName: 'c-module2',
+                jsName: 'c/module2',
+                namespace: 'c',
+                name: 'module2',
+                url: '/preview/c/module2',
+                path: path.normalize(
+                    'my-project/custom-source-dir/lwc/module2/module2.js'
+                )
+            }
+        ];
+
+        const project = new Project('my-project');
+        const componentIndex = new ComponentIndex(project);
+
+        expect(componentIndex.getModules()).toEqual(expected);
+    });
+
     test('when using sfdx, handle project without lwc', () => {
         mock({
             'my-project': {

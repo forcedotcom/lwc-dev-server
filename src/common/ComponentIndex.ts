@@ -27,10 +27,14 @@ export default class ComponentIndex {
         const moduleDirectories: string[] = [];
         if (this.project.isSfdx) {
             moduleDirectories.push(
-                path.join(
-                    this.project.modulesSourceDirectory,
-                    'main/default/lwc'
-                )
+                this.project.modulesSourceDirectory.endsWith('force-app')
+                    ? path.join(
+                          this.project.modulesSourceDirectory,
+                          'main',
+                          'default',
+                          'lwc'
+                      )
+                    : path.join(this.project.modulesSourceDirectory, 'lwc')
             );
         } else {
             moduleDirectories.push(
