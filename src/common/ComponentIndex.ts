@@ -25,17 +25,12 @@ export default class ComponentIndex {
     public getModules(): PackageComponent[] {
         let modulesSourceDirectory = this.project.modulesSourceDirectory;
         const moduleDirectories: string[] = [];
+
         if (this.project.isSfdx) {
-            moduleDirectories.push(
-                this.project.modulesSourceDirectory.endsWith('force-app')
-                    ? path.join(
-                          this.project.modulesSourceDirectory,
-                          'main',
-                          'default',
-                          'lwc'
-                      )
-                    : path.join(this.project.modulesSourceDirectory, 'lwc')
+            const lwcPath = this.getComponentDirectoryPath(
+                this.project.modulesSourceDirectory
             );
+            moduleDirectories.push(lwcPath);
         } else {
             moduleDirectories.push(
                 ...this.findSubdirectories(this.project.modulesSourceDirectory)
@@ -44,6 +39,27 @@ export default class ComponentIndex {
         return this.findModulesIn(moduleDirectories);
     }
 
+    private getComponentDirectoryPath(currentPath: string): string {
+        var results: string[] = [];
+        this.searchForComponentDirectory(currentPath, results);
+        return results[0];
+    }
+
+    private searchForComponentDirectory(
+        currentPath: string,
+        results: string[]
+    ) {
+        fs.readdirSync(currentPath).forEach(dir => {
+            const dirFullPath = path.join(currentPath, dir);
+            const stat = fs.statSync(dirFullPath);
+            if (stat.isDirectory() && dir === 'lwc') {
+                results.push(dirFullPath);
+                return;
+            } else if (stat.isDirectory()) {
+                this.searchForComponentDirectory(dirFullPath, results);
+            }
+        });
+    }
     /**
      * @return list of .js modules inside namespaceRoot folder
      */
