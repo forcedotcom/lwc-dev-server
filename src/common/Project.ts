@@ -101,28 +101,18 @@ export default class Project {
     }
 
     public get customLabelsPath(): string | undefined {
-        if (path.isAbsolute(this.configuration.customLabelsFile)) {
-            return this.configuration.customLabelsFile;
-        }
-        if (this.configuration.customLabelsFile !== '') {
-            return path.join(
-                this.rootDirectory,
-                this.configuration.customLabelsFile
-            );
-        }
+        return this.getConfigurationPath(this.configuration.customLabelsFile);
     }
 
-    public get contentAssetsDirectory(): string {
-        if (path.isAbsolute(this.configuration.contentAssetsDirectory)) {
-            return this.configuration.contentAssetsDirectory;
+    public get contentAssetsDirectory(): string | undefined {
+        var dir = this.getConfigurationPath(
+            this.configuration.contentAssetsDirectory
+        );
+        if (dir && (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory())) {
+            console.warn(`content assets directory '${dir}' does not exist`);
+            return undefined;
         }
-        if (this.configuration.contentAssetsDirectory !== '') {
-            return path.join(
-                this.rootDirectory,
-                this.configuration.contentAssetsDirectory
-            );
-        }
-        return '';
+        return dir;
     }
 
     /**
@@ -315,8 +305,19 @@ export default class Project {
             if (
                 fs.existsSync(path.join(this.rootDirectory, contentAssetsPath))
             ) {
+                // Only set the config if present. This prevents warning the user
+                // of a configuration that they likely don't need or care about.
                 this.configuration.contentAssetsDirectory = contentAssetsPath;
             }
+        }
+    }
+
+    private getConfigurationPath(config: string): string | undefined {
+        if (path.isAbsolute(config)) {
+            return config;
+        }
+        if (config !== '') {
+            return path.join(this.rootDirectory, config);
         }
     }
 }

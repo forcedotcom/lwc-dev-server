@@ -471,7 +471,7 @@ describe('project', () => {
             });
 
             const project = new Project('my-project');
-            expect(project.customLabelsPath).toBeUndefined();
+            expect(project.contentAssetsDirectory).toBeUndefined();
         });
 
         test('then configure the port from the configuration', () => {
