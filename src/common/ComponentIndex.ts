@@ -42,10 +42,7 @@ export default class ComponentIndex {
 
     private getComponentDirectoryPath(currentPath: string): string {
         const results: string[] = [];
-        const defaultPath: string = path.join(
-            currentPath,
-            'force-app/main/default/lwc'
-        );
+        const defaultPath: string = path.join(currentPath, 'main/default/lwc');
         if (fs.pathExistsSync(defaultPath)) {
             return defaultPath;
         }

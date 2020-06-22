@@ -70,7 +70,7 @@ describe('ComponentIndex getModules()', () => {
         expect(componentIndex.getModules()).toEqual(expected);
     });
 
-    test('when using sfdx, returns modules in lwc directory', () => {
+    test('when using sfdx, returns modules in default lwc directory', () => {
         mock({
             'my-project': {
                 'package.json': JSON.stringify({
