@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import Project from './Project';
 import decamelize from 'decamelize';
+import { findFolders } from './fileUtils';
 
 // TODO clean this up
 export default class ComponentIndex {
@@ -40,26 +41,18 @@ export default class ComponentIndex {
     }
 
     private getComponentDirectoryPath(currentPath: string): string {
-        var results: string[] = [];
-        this.searchForComponentDirectory(currentPath, results);
+        const results: string[] = [];
+        const defaultPath: string = path.join(
+            currentPath,
+            'force-app/main/default/lwc'
+        );
+        if (fs.pathExistsSync(defaultPath)) {
+            return defaultPath;
+        }
+        findFolders(currentPath, 'lwc', results);
         return results[0];
     }
 
-    private searchForComponentDirectory(
-        currentPath: string,
-        results: string[]
-    ) {
-        fs.readdirSync(currentPath).forEach(dir => {
-            const dirFullPath = path.join(currentPath, dir);
-            const stat = fs.statSync(dirFullPath);
-            if (stat.isDirectory() && dir === 'lwc') {
-                results.push(dirFullPath);
-                return;
-            } else if (stat.isDirectory()) {
-                this.searchForComponentDirectory(dirFullPath, results);
-            }
-        });
-    }
     /**
      * @return list of .js modules inside namespaceRoot folder
      */
