@@ -31,7 +31,13 @@ export default class ComponentIndex {
             const lwcPath = this.getComponentDirectoryPath(
                 this.project.modulesSourceDirectory
             );
-            moduleDirectories.push(lwcPath);
+            if (lwcPath) {
+                moduleDirectories.push(lwcPath);
+            } else {
+                console.warn(
+                    `no \'lwc\' directory found in path ${this.project.modulesSourceDirectory}`
+                );
+            }
         } else {
             moduleDirectories.push(
                 ...this.findSubdirectories(this.project.modulesSourceDirectory)
@@ -47,10 +53,6 @@ export default class ComponentIndex {
             return defaultPath;
         }
         findFolders(currentPath, 'lwc', results);
-        if (results.length === 0) {
-            console.warn(`no \'lwc\' directory found in path ${currentPath}`);
-            return '';
-        }
         return results[0];
     }
 
