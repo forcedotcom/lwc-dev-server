@@ -47,6 +47,10 @@ export default class ComponentIndex {
             return defaultPath;
         }
         findFolders(currentPath, 'lwc', results);
+        if (results.length === 0) {
+            console.warn(`no \'lwc\' directory found in path ${currentPath}`);
+            return '';
+        }
         return results[0];
     }
 
