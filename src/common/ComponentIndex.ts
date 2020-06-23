@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import Project from './Project';
 import decamelize from 'decamelize';
+import { findFolders } from './fileUtils';
 
 // TODO clean this up
 export default class ComponentIndex {
@@ -25,19 +26,34 @@ export default class ComponentIndex {
     public getModules(): PackageComponent[] {
         let modulesSourceDirectory = this.project.modulesSourceDirectory;
         const moduleDirectories: string[] = [];
+
         if (this.project.isSfdx) {
-            moduleDirectories.push(
-                path.join(
-                    this.project.modulesSourceDirectory,
-                    'main/default/lwc'
-                )
+            const lwcPath = this.getComponentDirectoryPath(
+                this.project.modulesSourceDirectory
             );
+            if (lwcPath) {
+                moduleDirectories.push(lwcPath);
+            } else {
+                console.warn(
+                    `no 'lwc' directory found in path ${this.project.modulesSourceDirectory}`
+                );
+            }
         } else {
             moduleDirectories.push(
                 ...this.findSubdirectories(this.project.modulesSourceDirectory)
             );
         }
         return this.findModulesIn(moduleDirectories);
+    }
+
+    private getComponentDirectoryPath(currentPath: string): string {
+        const results: string[] = [];
+        const defaultPath: string = path.join(currentPath, 'main/default/lwc');
+        if (fs.pathExistsSync(defaultPath)) {
+            return defaultPath;
+        }
+        findFolders(currentPath, 'lwc', results);
+        return results[0];
     }
 
     /**
