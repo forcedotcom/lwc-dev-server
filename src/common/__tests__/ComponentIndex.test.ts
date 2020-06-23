@@ -70,7 +70,7 @@ describe('ComponentIndex getModules()', () => {
         expect(componentIndex.getModules()).toEqual(expected);
     });
 
-    test('when using sfdx, returns modules in lwc directory', () => {
+    test('when using sfdx, returns modules in default lwc directory', () => {
         mock({
             'my-project': {
                 'package.json': JSON.stringify({
@@ -80,6 +80,147 @@ describe('ComponentIndex getModules()', () => {
                     packageDirectories: [
                         {
                             path: 'force-app',
+                            default: true,
+                            package: 'Test Package Name',
+                            versionName: "Spring '19",
+                            versionNumber: '1.0.0.NEXT'
+                        }
+                    ]
+                }),
+                'force-app': {
+                    main: {
+                        default: {
+                            lwc: {
+                                module: {
+                                    'module.html': '',
+                                    'module.js':
+                                        'export default class Module extends LightningElement {}'
+                                },
+                                module2: {
+                                    'module2.html': '',
+                                    'module2.js':
+                                        'export default class Module extends NavigationMixin(LightningElement) {}'
+                                },
+                                module3: {
+                                    'module3.html': '',
+                                    'module3 .js': ''
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const expected: object[] = [
+            {
+                htmlName: 'c-module',
+                jsName: 'c/module',
+                namespace: 'c',
+                name: 'module',
+                url: '/preview/c/module',
+                path: path.normalize(
+                    'my-project/force-app/main/default/lwc/module/module.js'
+                )
+            },
+            {
+                htmlName: 'c-module2',
+                jsName: 'c/module2',
+                namespace: 'c',
+                name: 'module2',
+                url: '/preview/c/module2',
+                path: path.normalize(
+                    'my-project/force-app/main/default/lwc/module2/module2.js'
+                )
+            }
+        ];
+
+        const project = new Project('my-project');
+        const componentIndex = new ComponentIndex(project);
+
+        expect(componentIndex.getModules()).toEqual(expected);
+    });
+
+    test('when using sfdx, returns modules in custom lwc directory', () => {
+        mock({
+            'my-project': {
+                'package.json': JSON.stringify({
+                    name: 'test-project'
+                }),
+                'sfdx-project.json': JSON.stringify({
+                    packageDirectories: [
+                        {
+                            path: 'custom-source-dir',
+                            default: true,
+                            package: 'Test Package Name',
+                            versionName: "Spring '19",
+                            versionNumber: '1.0.0.NEXT'
+                        }
+                    ]
+                }),
+                'custom-source-dir': {
+                    dummy_directory1: {},
+                    dummy_directory2: {},
+                    lwc: {
+                        module: {
+                            'module.html': '',
+                            'module.js':
+                                'export default class Module extends LightningElement {}'
+                        },
+                        module2: {
+                            'module2.html': '',
+                            'module2.js':
+                                'export default class Module extends NavigationMixin(LightningElement) {}'
+                        },
+                        module3: {
+                            'module3.html': '',
+                            'module3 .js': ''
+                        }
+                    },
+                    dummy_directory3: {}
+                }
+            }
+        });
+
+        const expected: object[] = [
+            {
+                htmlName: 'c-module',
+                jsName: 'c/module',
+                namespace: 'c',
+                name: 'module',
+                url: '/preview/c/module',
+                path: path.normalize(
+                    'my-project/custom-source-dir/lwc/module/module.js'
+                )
+            },
+            {
+                htmlName: 'c-module2',
+                jsName: 'c/module2',
+                namespace: 'c',
+                name: 'module2',
+                url: '/preview/c/module2',
+                path: path.normalize(
+                    'my-project/custom-source-dir/lwc/module2/module2.js'
+                )
+            }
+        ];
+
+        const project = new Project('my-project');
+        const componentIndex = new ComponentIndex(project);
+
+        expect(componentIndex.getModules()).toEqual(expected);
+    });
+
+    test('when using sfdx, returns modules in custom lwc directory nested inside force-app', () => {
+        mock({
+            'my-project': {
+                'package.json': JSON.stringify({
+                    name: 'test-project'
+                }),
+                'sfdx-project.json': JSON.stringify({
+                    packageDirectories: [
+                        {
+                            path: 'force-app/main/default',
                             default: true,
                             package: 'Test Package Name',
                             versionName: "Spring '19",
