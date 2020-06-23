@@ -35,7 +35,7 @@ export default class ComponentIndex {
                 moduleDirectories.push(lwcPath);
             } else {
                 console.warn(
-                    `no \'lwc\' directory found in path ${this.project.modulesSourceDirectory}`
+                    `no 'lwc' directory found in path ${this.project.modulesSourceDirectory}`
                 );
             }
         } else {
