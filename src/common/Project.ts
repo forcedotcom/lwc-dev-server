@@ -104,6 +104,11 @@ export default class Project {
         return this.getConfigurationPath(this.configuration.customLabelsFile);
     }
 
+    /**
+     * Sets the content assets path in the configuration if 1) explicitly set
+     * in the configuration or 2) exists in an SFDX project. We will only warn
+     * the user of the missing directory if they have set the configuration.
+     */
     public get contentAssetsDirectory(): string | undefined {
         var dir = this.getConfigurationPath(
             this.configuration.contentAssetsDirectory
@@ -305,9 +310,14 @@ export default class Project {
             if (
                 fs.existsSync(path.join(this.rootDirectory, contentAssetsPath))
             ) {
-                // Only set the config if present. This prevents warning the user
-                // of a configuration that they likely don't need or care about.
                 this.configuration.contentAssetsDirectory = contentAssetsPath;
+            } else {
+                const results = findFolders(
+                    this.rootDirectory,
+                    'contentassets',
+                    []
+                );
+                this.configuration.contentAssetsDirectory = results[0];
             }
         }
     }

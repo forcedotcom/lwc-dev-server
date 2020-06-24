@@ -454,6 +454,32 @@ describe('project', () => {
             expect(project.contentAssetsDirectory).toStrictEqual(expected);
         });
 
+        test('configure content assets if the directory exists outside of force-app/main/default', () => {
+            mockFindFolders = jest
+                .spyOn(fileUtils, 'findFolders')
+                .mockReturnValue([path.join('foo', 'contentassets')]);
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
+                },
+                'my-project/foo/contentassets': mock.directory({
+                    items: {}
+                })
+            });
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'foo', 'contentassets');
+            expect(project.contentAssetsDirectory).toStrictEqual(expected);
+        });
+
         test('does not configure content assets if the directory is not present', () => {
             mock({
                 'my-project': {
