@@ -1,7 +1,6 @@
 import Project from '../Project';
 import mock from 'mock-fs';
 import path from 'path';
-import fs from 'fs';
 import * as fileUtils from '../fileUtils';
 
 describe('project', () => {
@@ -339,7 +338,7 @@ describe('project', () => {
                     items: {}
                 })
             });
-
+            // my-project/force-app/main/default/contentassets
             const project = new Project('my-project');
             const expected = path.join('my-project', 'force-app');
             expect(project.modulesSourceDirectory).toBe(expected);
@@ -375,7 +374,7 @@ describe('project', () => {
 
         test('configures the custom labels file if it exists', () => {
             mock({
-                'my-project': {
+                '/my-project': {
                     'sfdx-project.json': JSON.stringify({
                         packageDirectories: [
                             {
@@ -387,12 +386,13 @@ describe('project', () => {
                     'localdevserver.config.json': '{}',
                     'package.json': '{}'
                 },
-                'my-project/force-app/main/default/labels/CustomLabels.labels-meta.xml': `<?xml version="1.0" encoding="UTF-8"?>
+                '/my-project/force-app/main/default/labels/CustomLabels.labels-meta.xml': `<?xml version="1.0" encoding="UTF-8"?>
                     <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata"></CustomLabels>`
             });
 
-            const project = new Project('my-project');
+            const project = new Project(path.join(path.sep, 'my-project'));
             const expected = path.join(
+                path.sep,
                 'my-project',
                 'force-app',
                 'main',
@@ -425,7 +425,7 @@ describe('project', () => {
 
         test('configure content assets if the directory exists', () => {
             mock({
-                'my-project': {
+                '/my-project': {
                     'sfdx-project.json': JSON.stringify({
                         packageDirectories: [
                             {
@@ -437,21 +437,22 @@ describe('project', () => {
                     'localdevserver.config.json': '{}',
                     'package.json': '{}'
                 },
-                'my-project/force-app/main/default/contentassets': mock.directory(
+                '/my-project/force-app/main/default/contentassets': mock.directory(
                     {
                         items: {}
                     }
                 )
             });
-            const project = new Project('my-project');
+            const project = new Project(path.join(path.sep, 'my-project'));
             const expected = path.join(
+                path.sep,
                 'my-project',
                 'force-app',
                 'main',
                 'default',
                 'contentassets'
             );
-            expect(project.contentAssetsDirectory).toStrictEqual(expected);
+            expect(project.contentAssetsDirectory).toContain(expected);
         });
 
         test('configure content assets if the directory exists outside of force-app/main/default', () => {
@@ -459,7 +460,7 @@ describe('project', () => {
                 .spyOn(fileUtils, 'findFolders')
                 .mockReturnValue([path.join('foo', 'contentassets')]);
             mock({
-                'my-project': {
+                '/my-project': {
                     'sfdx-project.json': JSON.stringify({
                         packageDirectories: [
                             {
@@ -471,18 +472,24 @@ describe('project', () => {
                     'localdevserver.config.json': '{}',
                     'package.json': '{}'
                 },
-                'my-project/foo/contentassets': mock.directory({
+                '/my-project/force-app/foo/contentassets': mock.directory({
                     items: {}
                 })
             });
-            const project = new Project('my-project');
-            const expected = path.join('my-project', 'foo', 'contentassets');
+            const project = new Project(path.join(path.sep, 'my-project'));
+            const expected = path.join(
+                path.sep,
+                'my-project',
+                'force-app',
+                'foo',
+                'contentassets'
+            );
             expect(project.contentAssetsDirectory).toStrictEqual(expected);
         });
 
         test('does not configure content assets if the directory is not present', () => {
             mock({
-                'my-project': {
+                '/my-project': {
                     'sfdx-project.json': JSON.stringify({
                         packageDirectories: [
                             {
@@ -496,7 +503,7 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project');
+            const project = new Project(path.join(path.sep, 'my-project'));
             expect(project.contentAssetsDirectory).toBeUndefined();
         });
 
@@ -608,12 +615,12 @@ describe('project', () => {
             });
 
             jest.spyOn(fileUtils, 'findFolders').mockReturnValue([]);
-            const project = new Project('my-project/');
+            const project = new Project(path.join('my-project', path.sep));
             const expected = path.join(
                 'my-project',
                 'specified',
                 'directory',
-                '/'
+                path.sep
             );
 
             expect(project.modulesSourceDirectory).toBe(expected);

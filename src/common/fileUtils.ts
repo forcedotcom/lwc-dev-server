@@ -29,6 +29,54 @@ export function removeFile(file: string) {
 }
 
 /**
+ * Determines the path to a file with given parent folder. First attempts
+ * to find the file in the default location. If the file is not found,
+ * searches through the folders at the given base path until it finds the
+ * parent folder. We will return the path if the file is present in the folder.
+ * @param rootPath Parent path where to start looking for a folder
+ * @param defaultPath Default path for this file
+ * @param folderName Name of the folder we're looking for
+ * @param fileName Name of the file we're looking for
+ */
+export function findFileWithDefaultPath(
+    rootPath: string,
+    defaultPath: string,
+    parentDir: string,
+    fileName: string
+): string {
+    var filePath = '';
+    var defaultPath = path.join(rootPath, defaultPath, parentDir, fileName);
+    if (fs.existsSync(defaultPath)) {
+        filePath = defaultPath;
+    } else {
+        var parentDirPath = findFolders(rootPath, parentDir, [])[0];
+        if (
+            parentDirPath &&
+            fs.existsSync(path.join(parentDirPath, fileName))
+        ) {
+            filePath = path.join(parentDirPath, fileName);
+        }
+    }
+    return filePath;
+}
+
+export function findFolderWithDefaultPath(
+    rootPath: string,
+    defaultPath: string,
+    folderName: string,
+    foldersToIgnore: Set<string> = new Set([])
+) {
+    var folderPath = '';
+    var defaultPath = path.join(rootPath, defaultPath, folderName);
+    if (fs.existsSync(defaultPath) && fs.statSync(defaultPath).isDirectory()) {
+        folderPath = defaultPath;
+    } else {
+        folderPath = findFolders(rootPath, folderName, [], foldersToIgnore)[0];
+    }
+    return folderPath;
+}
+
+/**
  * Find specific folder by iterate over rootPath's children
  *
  * @param rootPath Parent path where to start looking for a folder
@@ -42,7 +90,7 @@ export function findFolders(
     folderArray: string[] = [],
     foldersToIgnore: Set<string> = new Set([])
 ) {
-    if (!fs.statSync(rootPath).isDirectory()) {
+    if (!fs.existsSync(rootPath) || !fs.statSync(rootPath).isDirectory()) {
         return folderArray;
     }
 
@@ -69,4 +117,16 @@ export function findFolders(
         }
     }
     return folderArray;
+}
+
+export function getFileContents(filePath: string): string | null {
+    let contents = null;
+    try {
+        contents = fs.readFileSync(filePath, 'utf-8');
+    } catch (e) {
+        console.error(
+            `Loading ${filePath} failed parsing with error ${e.message}`
+        );
+    }
+    return contents;
 }
