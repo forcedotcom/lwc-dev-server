@@ -1,16 +1,32 @@
 import { CompileService, PublicConfig } from '@webruntime/api';
 import debugLogger from 'debug';
 import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
+import { CONTENT_ASSETS, STATIC_RESOURCES } from '../Constants';
 
 const RESOURCE_URL_PREFIX = '@salesforce/resourceUrl/';
+const CONTENT_ASSET_URL_PREFIX = '@salesforce/contentAssetUrl/';
 const debug = debugLogger('localdevserver:resource');
 
 function isResourceUrlScopedModule(id: string) {
     return id && id.startsWith(RESOURCE_URL_PREFIX);
 }
 
+function isContentAssetUrlScopedModule(id: string) {
+    return id && id.startsWith(CONTENT_ASSET_URL_PREFIX);
+}
+
+function getExportUrl(id: string, buildDir: string, subDir: string) {
+    const versionKey = getLatestVersion(buildDir);
+    const [resourceName] = id.split('/')[2].split('.');
+    const replacement = `/assets/project/${versionKey}/${subDir}/${resourceName}`;
+
+    debug(`resolving ${id} as ${replacement}`);
+    return `export default '${replacement}';`;
+}
+
 /**
- * Rollup plugin to resolve @salesforce/resourceUrl imports.
+ * Rollup plugin to resolve @salesforce/resourceUrl and
+ * @salesforce/contentAssetUrl imports.
  *
  * @param buildDir Absolute path to the webruntime output directory.
  */
@@ -20,19 +36,19 @@ function plugin(buildDir: string) {
 
         load(id: string) {
             if (isResourceUrlScopedModule(id)) {
-                const versionKey = getLatestVersion(buildDir);
-                const resourceName = id.substring(RESOURCE_URL_PREFIX.length);
-                const replacement = `/assets/project/${versionKey}/${resourceName}`;
-
-                debug(`resolving ${id} as ${replacement}`);
-                return `export default '${replacement}';`;
+                return getExportUrl(id, buildDir, STATIC_RESOURCES);
             }
-
+            if (isContentAssetUrlScopedModule(id)) {
+                return getExportUrl(id, buildDir, CONTENT_ASSETS);
+            }
             return null;
         },
 
         resolveId(id: string) {
-            return isResourceUrlScopedModule(id) ? id : null;
+            return isResourceUrlScopedModule(id) ||
+                isContentAssetUrlScopedModule(id)
+                ? id
+                : null;
         }
     };
 }

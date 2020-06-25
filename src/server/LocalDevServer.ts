@@ -23,6 +23,7 @@ import { ComponentServiceWithExclusions } from './services/ComponentServiceWithE
 import colors from 'colors';
 import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
+import { CONTENT_ASSETS, STATIC_RESOURCES } from './Constants';
 
 export default class LocalDevServer {
     private server: Server;
@@ -174,35 +175,57 @@ export default class LocalDevServer {
         }
     }
 
+    /**
+     * Copy app static resources.
+     */
     private copyStaticAssets() {
-        // copy app static resources
-        const distAssetsPath = path.join(this.rootDir, 'dist', 'assets');
         const serverAssetsPath = path.join(this.config.buildDir, 'assets');
+        const staticAssetsPath = path.join(serverAssetsPath, 'project');
 
+        this.copyDistAssets(serverAssetsPath);
+        this.copyStaticResources(staticAssetsPath);
+        this.copyContentAssets(staticAssetsPath);
+    }
+
+    private copyDistAssets(serverAssetsPath: string) {
+        const distAssetsPath = path.join(this.rootDir, 'dist', 'assets');
         try {
             const localDevAssetsPath = path.join(serverAssetsPath, 'localdev');
             copyFiles(path.join(distAssetsPath, '*'), localDevAssetsPath);
         } catch (e) {
-            throw new Error(`Unable to copy assets: ${e.message || e}`);
+            throw new Error(`Unable to copy dist assets: ${e.message || e}`);
         }
+    }
 
+    private copyStaticResources(staticAssetsPath: string) {
+        const staticResources = this.project.staticResourcesDirectories;
         try {
-            if (
-                this.project.staticResourcesDirectories &&
-                this.project.staticResourcesDirectories.length > 0
-            ) {
-                const staticResourcesAssetsPath = path.join(
-                    serverAssetsPath,
-                    'project'
-                );
-                this.project.staticResourcesDirectories.forEach(item => {
-                    copyFiles(path.join(item, '*'), staticResourcesAssetsPath);
+            if (staticResources && staticResources.length > 0) {
+                staticResources.forEach(item => {
+                    copyFiles(
+                        path.join(item, '*'),
+                        path.join(staticAssetsPath, STATIC_RESOURCES)
+                    );
                 });
             }
         } catch (e) {
             throw new Error(
                 `Unable to copy static resources: ${e.message || e}`
             );
+        }
+    }
+
+    private copyContentAssets(staticAssetsPath: string) {
+        const contentAssetsDir = this.project.contentAssetsDirectory;
+        try {
+            if (contentAssetsDir && contentAssetsDir !== '') {
+                copyFiles(
+                    path.join(contentAssetsDir, '*'),
+                    path.join(staticAssetsPath, CONTENT_ASSETS)
+                );
+            }
+        } catch (e) {
+            console.warn(`Unable to copy contentAssets: ${e.getMessage || e}`);
         }
     }
 

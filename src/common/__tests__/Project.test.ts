@@ -249,6 +249,48 @@ describe('project', () => {
         });
     });
 
+    describe('when retrieving the content assets directory', () => {
+        test('handles a relative contentAssetsDirectory specified in the json config', () => {
+            const contentAssetsDir = 'contentassets';
+
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory: 'modulesSrc',
+                        contentAssetsDirectory: contentAssetsDir
+                    })
+                },
+                'my-project/contentassets': mock.directory({
+                    items: {}
+                })
+            });
+
+            const project = new Project('my-project');
+            const expected = path.join('my-project', contentAssetsDir);
+            expect(project.contentAssetsDirectory).toBe(expected);
+        });
+
+        test('handles an absolute contentAssetsDirectory specified in the json config', () => {
+            const contentAssetsDirectory = path.normalize('/foo/contentassets');
+            mock({
+                'my-project': {
+                    'package.json': '{}',
+                    'localdevserver.config.json': JSON.stringify({
+                        modulesSourceDirectory: 'modulesSrc',
+                        contentAssetsDirectory: contentAssetsDirectory
+                    })
+                },
+                '/foo/contentassets': mock.directory({
+                    items: {}
+                })
+            });
+
+            const project = new Project('my-project');
+            expect(project.contentAssetsDirectory).toBe(contentAssetsDirectory);
+        });
+    });
+
     describe('when creating with sfdx-project.json', () => {
         // @ts-ignore
         let mockFindFolders;
@@ -379,6 +421,83 @@ describe('project', () => {
 
             const project = new Project('my-project');
             expect(project.customLabelsPath).toBeUndefined();
+        });
+
+        test('configure content assets if the directory exists', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
+                },
+                'my-project/force-app/main/default/contentassets': mock.directory(
+                    {
+                        items: {}
+                    }
+                )
+            });
+            const project = new Project('my-project');
+            const expected = path.join(
+                'my-project',
+                'force-app',
+                'main',
+                'default',
+                'contentassets'
+            );
+            expect(project.contentAssetsDirectory).toStrictEqual(expected);
+        });
+
+        test('configure content assets if the directory exists outside of force-app/main/default', () => {
+            mockFindFolders = jest
+                .spyOn(fileUtils, 'findFolders')
+                .mockReturnValue([path.join('foo', 'contentassets')]);
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
+                },
+                'my-project/foo/contentassets': mock.directory({
+                    items: {}
+                })
+            });
+            const project = new Project('my-project');
+            const expected = path.join('my-project', 'foo', 'contentassets');
+            expect(project.contentAssetsDirectory).toStrictEqual(expected);
+        });
+
+        test('does not configure content assets if the directory is not present', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify({
+                        packageDirectories: [
+                            {
+                                path: 'force-app',
+                                default: true
+                            }
+                        ]
+                    }),
+                    'localdevserver.config.json': '{}',
+                    'package.json': '{}'
+                }
+            });
+
+            const project = new Project('my-project');
+            expect(project.contentAssetsDirectory).toBeUndefined();
         });
 
         test('then configure the port from the configuration', () => {
