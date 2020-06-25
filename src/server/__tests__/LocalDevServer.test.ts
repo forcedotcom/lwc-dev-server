@@ -288,7 +288,7 @@ describe('LocalDevServer', () => {
         );
 
         await expect(server.start()).rejects.toThrow(
-            'Unable to copy assets: test error'
+            'Unable to copy dist assets: test error'
         );
     });
 

@@ -9,8 +9,9 @@ import { AppExtensionConfig } from '@webruntime/api';
 const debug = debugLogger('localdevserver:resource');
 
 /**
- * Determines the file extension for the given static asset, based on the
- * resource-meta.xml file at the same location.
+ * Determines the file extension for the given static asset. For resourceUrls
+ * this is based on the resource-meta.xml file at the same location. For
+ * contentAssetUrls this will always be 'asset'.
  *
  * @param baseFilePath Absolute path to the static asset, without an extension.
  *
@@ -33,6 +34,11 @@ function getStaticResourceFileExt(baseFilePath: string) {
             console.warn(
                 `Unable to determine the static resource file type from ${resourceMetaPath}: ${e.message}`
             );
+        }
+    } else {
+        const contentAssetMetaPath = `${baseFilePath}.asset`;
+        if (fs.existsSync(contentAssetMetaPath)) {
+            return 'asset';
         }
     }
 
