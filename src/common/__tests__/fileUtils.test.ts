@@ -4,6 +4,11 @@ import { ls } from 'shelljs';
 import * as fileUtils from '../fileUtils';
 
 describe('fileUtils', () => {
+    const rootPath = '/Users/mikasa/dev/myproject';
+    const defaultPath = 'default/path';
+    const parentDir = 'parent';
+    const fileName = 'file.txt';
+
     afterEach(mockFs.restore);
 
     describe('copyFiles()', () => {
@@ -165,6 +170,210 @@ describe('fileUtils', () => {
                     '/Users/mikasa/dev/myproject/.localdevserver'
                 );
             }).not.toThrow();
+        });
+    });
+
+    describe('findFileWithDefaultPath()', () => {
+        it('returns the default file path if present', () => {
+            const filePath = `${rootPath}/${defaultPath}/${parentDir}/${fileName}`;
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${filePath}`]: ''
+            });
+
+            expect(fs.existsSync(filePath)).toBeTruthy();
+            const result = fileUtils.findFileWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir,
+                fileName
+            );
+            expect(result).toBe(filePath);
+        });
+
+        it('returns a non-default file path if present', () => {
+            const nonDefault = 'other/path';
+            const nonDefaultFilePath = `${rootPath}/${nonDefault}/${parentDir}/${fileName}`;
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${nonDefaultFilePath}`]: ''
+            });
+
+            expect(fs.existsSync(nonDefaultFilePath)).toBeTruthy();
+            const result = fileUtils.findFileWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir,
+                fileName
+            );
+            expect(result).toBe(nonDefaultFilePath);
+        });
+
+        it('returns blank if root is not found', () => {
+            const result = fileUtils.findFileWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir,
+                fileName
+            );
+            expect(result).toBe('');
+        });
+
+        it('returns blank if file is not found', () => {
+            mockFs({
+                [`${rootPath}`]: {}
+            });
+
+            const result = fileUtils.findFileWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir,
+                fileName
+            );
+            expect(result).toBe('');
+        });
+    });
+
+    describe('findFolderWithDefaultPath()', () => {
+        it('returns the default folder path if present', () => {
+            const folderPath = `${rootPath}/${defaultPath}/${parentDir}`;
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${folderPath}`]: {}
+            });
+
+            expect(fs.existsSync(folderPath)).toBeTruthy();
+            const result = fileUtils.findFolderWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir
+            );
+            expect(result).toBe(folderPath);
+        });
+
+        it('returns a non-default folder path if present', () => {
+            const nonDefault = 'other/path';
+            const nonDefaultFilePath = `${rootPath}/${nonDefault}/${parentDir}`;
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${nonDefaultFilePath}`]: {}
+            });
+
+            expect(fs.existsSync(nonDefaultFilePath)).toBeTruthy();
+            const result = fileUtils.findFolderWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir
+            );
+            expect(result).toBe(nonDefaultFilePath);
+        });
+
+        it('returns blank if root is not found', () => {
+            const result = fileUtils.findFolderWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir
+            );
+            expect(result).toBeUndefined();
+        });
+
+        it('returns blank if folder is not found', () => {
+            mockFs({
+                [`${rootPath}`]: {}
+            });
+
+            const result = fileUtils.findFolderWithDefaultPath(
+                rootPath,
+                defaultPath,
+                parentDir
+            );
+            expect(result).toBeUndefined();
+        });
+    });
+
+    describe('findFolders()', () => {
+        const childFolder = `${rootPath}/some/directory/assets`;
+        const childFolder2 = `${rootPath}/some/other/assets`;
+        const childFolder3 = `${rootPath}/some/more/assets`;
+
+        it('returns child folder', () => {
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${childFolder}`]: {}
+            });
+
+            const result = fileUtils.findFolders(rootPath, 'assets', []);
+            expect(result).toStrictEqual([childFolder]);
+        });
+
+        it('returns multiple child folders', () => {
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${childFolder}`]: {},
+                [`${childFolder2}`]: {},
+                [`${childFolder3}`]: {}
+            });
+
+            const result = fileUtils.findFolders(rootPath, 'assets', []);
+            expect(result.length).toEqual(3);
+            expect(result).toContain(childFolder);
+            expect(result).toContain(childFolder2);
+            expect(result).toContain(childFolder3);
+        });
+
+        it('returns child folder while ignoring other folders', () => {
+            const childFolder = `${rootPath}/some/directory/assets`;
+            const childFolder2 = `${rootPath}/some/other/assets`;
+            const childFolder3 = `${rootPath}/some/more/assets`;
+            const folders_to_ignore = new Set(['other', 'more']);
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${childFolder}`]: {},
+                [`${childFolder2}`]: {},
+                [`${childFolder3}`]: {}
+            });
+
+            const result = fileUtils.findFolders(
+                rootPath,
+                'assets',
+                [],
+                folders_to_ignore
+            );
+            expect(result).toStrictEqual([childFolder]);
+        });
+
+        it('returns empty array when child folder is not found', () => {
+            mockFs({
+                [`${rootPath}`]: {}
+            });
+
+            const result = fileUtils.findFolders(rootPath, parentDir, []);
+            expect(result).toStrictEqual([]);
+        });
+
+        it('returns empty array when root is not found', () => {
+            const result = fileUtils.findFolders(rootPath, parentDir, []);
+            expect(result).toStrictEqual([]);
+        });
+    });
+
+    describe('getFileContents()', () => {
+        const exampleFile = '/Users/mikasa/dev/exampleFile.txt';
+
+        it('returns file contents if file is present', () => {
+            mockFs({
+                [`${exampleFile}`]: 'sampleContent'
+            });
+
+            expect(fs.existsSync(exampleFile)).toBeTruthy();
+            const result = fileUtils.getFileContents(exampleFile);
+            expect(result).toBe('sampleContent');
+        });
+
+        it('returns null if file is not present', () => {
+            expect(fs.existsSync(exampleFile)).toBeFalsy();
+            const result = fileUtils.getFileContents(exampleFile);
+            expect(result).toBeNull();
         });
     });
 });

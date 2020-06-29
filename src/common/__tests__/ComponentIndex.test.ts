@@ -72,7 +72,7 @@ describe('ComponentIndex getModules()', () => {
 
     test('when using sfdx, returns modules in default lwc directory', () => {
         mock({
-            'my-project': {
+            '/my-project': {
                 'package.json': JSON.stringify({
                     name: 'test-project'
                 }),
@@ -120,7 +120,7 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module',
                 url: '/preview/c/module',
                 path: path.normalize(
-                    'my-project/force-app/main/default/lwc/module/module.js'
+                    '/my-project/force-app/main/default/lwc/module/module.js'
                 )
             },
             {
@@ -130,12 +130,12 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module2',
                 url: '/preview/c/module2',
                 path: path.normalize(
-                    'my-project/force-app/main/default/lwc/module2/module2.js'
+                    '/my-project/force-app/main/default/lwc/module2/module2.js'
                 )
             }
         ];
 
-        const project = new Project('my-project');
+        const project = new Project(path.normalize('/my-project'));
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getModules()).toEqual(expected);
@@ -143,7 +143,7 @@ describe('ComponentIndex getModules()', () => {
 
     test('when using sfdx, returns modules in custom lwc directory', () => {
         mock({
-            'my-project': {
+            '/my-project': {
                 'package.json': JSON.stringify({
                     name: 'test-project'
                 }),
@@ -190,7 +190,7 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module',
                 url: '/preview/c/module',
                 path: path.normalize(
-                    'my-project/custom-source-dir/lwc/module/module.js'
+                    '/my-project/custom-source-dir/lwc/module/module.js'
                 )
             },
             {
@@ -200,12 +200,12 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module2',
                 url: '/preview/c/module2',
                 path: path.normalize(
-                    'my-project/custom-source-dir/lwc/module2/module2.js'
+                    '/my-project/custom-source-dir/lwc/module2/module2.js'
                 )
             }
         ];
 
-        const project = new Project('my-project');
+        const project = new Project(path.normalize('/my-project'));
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getModules()).toEqual(expected);
@@ -213,7 +213,7 @@ describe('ComponentIndex getModules()', () => {
 
     test('when using sfdx, returns modules in custom lwc directory nested inside force-app', () => {
         mock({
-            'my-project': {
+            '/my-project': {
                 'package.json': JSON.stringify({
                     name: 'test-project'
                 }),
@@ -261,7 +261,7 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module',
                 url: '/preview/c/module',
                 path: path.normalize(
-                    'my-project/force-app/main/default/lwc/module/module.js'
+                    '/my-project/force-app/main/default/lwc/module/module.js'
                 )
             },
             {
@@ -271,12 +271,12 @@ describe('ComponentIndex getModules()', () => {
                 name: 'module2',
                 url: '/preview/c/module2',
                 path: path.normalize(
-                    'my-project/force-app/main/default/lwc/module2/module2.js'
+                    '/my-project/force-app/main/default/lwc/module2/module2.js'
                 )
             }
         ];
 
-        const project = new Project('my-project');
+        const project = new Project(path.normalize('/my-project'));
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getModules()).toEqual(expected);
@@ -324,7 +324,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
 
     test('when using sfdx, returns project metadata', () => {
         mock({
-            'my-project': {
+            '/my-project': {
                 'package.json': JSON.stringify({
                     name: 'test-project'
                 }),
@@ -375,7 +375,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             name: 'module',
                             url: '/preview/c/module',
                             path: path.normalize(
-                                'my-project/force-app/main/default/lwc/module/module.js'
+                                '/my-project/force-app/main/default/lwc/module/module.js'
                             )
                         },
                         {
@@ -385,7 +385,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             name: 'module2',
                             url: '/preview/c/module2',
                             path: path.normalize(
-                                'my-project/force-app/main/default/lwc/module2/module2.js'
+                                '/my-project/force-app/main/default/lwc/module2/module2.js'
                             )
                         }
                     ]
@@ -393,7 +393,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
             ]
         };
 
-        const project = new Project('my-project');
+        const project = new Project(path.join(path.sep, 'my-project'));
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getProjectMetadata()).toEqual(expected);
@@ -401,7 +401,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
 
     test('when using sfdx, returns project metadata for default only', () => {
         mock({
-            'my-project': {
+            '/my-project': {
                 'package.json': JSON.stringify({
                     name: 'test-project'
                 }),
@@ -476,7 +476,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             name: 'module',
                             url: '/preview/c/module',
                             path: path.normalize(
-                                'my-project/force-app/main/default/lwc/module/module.js'
+                                '/my-project/force-app/main/default/lwc/module/module.js'
                             )
                         },
                         {
@@ -486,7 +486,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
                             name: 'module2',
                             url: '/preview/c/module2',
                             path: path.normalize(
-                                'my-project/force-app/main/default/lwc/module2/module2.js'
+                                '/my-project/force-app/main/default/lwc/module2/module2.js'
                             )
                         }
                     ]
@@ -494,7 +494,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
             ]
         };
 
-        const project = new Project('my-project');
+        const project = new Project(path.join(path.sep, 'my-project'));
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getProjectMetadata()).toEqual(expected);

@@ -77,7 +77,7 @@ export function findFolderWithDefaultPath(
 }
 
 /**
- * Find specific folder by iterate over rootPath's children
+ * Find specific folder by iterating over the rootPath's children
  *
  * @param rootPath Parent path where to start looking for a folder
  * @param folderName Name of the folder we're looking for
@@ -111,7 +111,8 @@ export function findFolders(
                 folderArray = findFolders(
                     path.join(rootPath, file),
                     folderName,
-                    folderArray
+                    folderArray,
+                    foldersToIgnore
                 );
             }
         }
@@ -121,12 +122,14 @@ export function findFolders(
 
 export function getFileContents(filePath: string): string | null {
     let contents = null;
-    try {
-        contents = fs.readFileSync(filePath, 'utf-8');
-    } catch (e) {
-        console.error(
-            `Loading ${filePath} failed parsing with error ${e.message}`
-        );
+    if (fs.existsSync(filePath)) {
+        try {
+            contents = fs.readFileSync(filePath, 'utf-8');
+        } catch (e) {
+            console.error(
+                `Loading ${filePath} failed parsing with error ${e.message}`
+            );
+        }
     }
     return contents;
 }

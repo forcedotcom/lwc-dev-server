@@ -15,8 +15,8 @@ import {
 } from '../server/Constants';
 
 export default class SfdxProject {
-    private configuration: LocalDevServerConfiguration;
-    private projectDir: string;
+    private _configuration: LocalDevServerConfiguration;
+    private rootDirectory: string;
     private sfdxProjectPath: string;
     private _isSfdxProject: boolean;
 
@@ -31,15 +31,19 @@ export default class SfdxProject {
     private static readonly CUSTOM_LABELS_FOLDER = 'labels';
     private static readonly CUSTOM_LABELS_FILE = 'CustomLabels.labels-meta.xml';
 
-    constructor(config: LocalDevServerConfiguration, projectDir: string) {
-        this.configuration = config;
-        this.projectDir = projectDir;
-        this.sfdxProjectPath = path.join(projectDir, SFDX_PROJECT_JSON);
+    constructor(config: LocalDevServerConfiguration, rootDir: string) {
+        this._configuration = config;
+        this.rootDirectory = rootDir;
+        this.sfdxProjectPath = path.join(rootDir, SFDX_PROJECT_JSON);
         this._isSfdxProject = fs.existsSync(this.sfdxProjectPath);
     }
 
     public get isSfdxProject() {
         return this._isSfdxProject;
+    }
+
+    public get configuration(): LocalDevServerConfiguration {
+        return this._configuration;
     }
 
     public initWithSfdxConfiguration() {
@@ -55,7 +59,7 @@ export default class SfdxProject {
         }
     }
 
-    private getPackageDirectories(): string[] {
+    public getPackageDirectories(): string[] {
         const packageDirectories: string[] = [];
         const jsonContents = getFileContents(this.sfdxProjectPath);
         if (jsonContents && !!jsonContents.trim()) {
@@ -102,7 +106,10 @@ export default class SfdxProject {
             // to watch for changes, but we need to watch the entire
             // force-app dir for changes to other files such as static
             // resources. Once LWR fixes this then this should be changed.
-            this.configuration.modulesSourceDirectory = defaultPackageDirectory;
+            this.configuration.modulesSourceDirectory = path.join(
+                this.rootDirectory,
+                defaultPackageDirectory
+            );
         }
     }
 
@@ -115,7 +122,7 @@ export default class SfdxProject {
             let resourcePaths: string[] = [];
             packageDirectories.forEach(item => {
                 const staticResourceFolders = findFolders(
-                    path.join(this.projectDir, item),
+                    path.join(this.rootDirectory, item),
                     STATIC_RESOURCES,
                     [],
                     SfdxProject.FOLDERS_TO_IGNORE
@@ -135,7 +142,7 @@ export default class SfdxProject {
     private setCustomLabelsFile(defaultPackageDirectory: string) {
         if (!this.configuration.customLabelsFile) {
             this.configuration.customLabelsFile = findFileWithDefaultPath(
-                path.join(this.projectDir, defaultPackageDirectory),
+                path.join(this.rootDirectory, defaultPackageDirectory),
                 DEFAULT_SFDX_PATH,
                 SfdxProject.CUSTOM_LABELS_FOLDER,
                 SfdxProject.CUSTOM_LABELS_FILE
@@ -146,7 +153,7 @@ export default class SfdxProject {
     private setContentAssetsPath(defaultPackageDirectory: string) {
         if (!this.configuration.contentAssetsDirectory) {
             this.configuration.contentAssetsDirectory = findFolderWithDefaultPath(
-                path.join(this.projectDir, defaultPackageDirectory),
+                path.join(this.rootDirectory, defaultPackageDirectory),
                 DEFAULT_SFDX_PATH,
                 CONTENT_ASSETS,
                 SfdxProject.FOLDERS_TO_IGNORE
