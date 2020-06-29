@@ -29,27 +29,33 @@ export function removeFile(file: string) {
 }
 
 /**
- * Determines the path to a file with given parent folder. First attempts
- * to find the file in the default location. If the file is not found,
- * searches through the folders at the given base path until it finds the
- * parent folder. We will return the path if the file is present in the folder.
+ * Find specific file by iterating over the rootPath's children.
+ * Checks the default path provided first.
+ *
  * @param rootPath Parent path where to start looking for a folder
- * @param defaultPath Default path for this file
- * @param folderName Name of the folder we're looking for
+ * @param defaultPath First path to check for the file
+ * @param parentDir Name of the folder containing the file
  * @param fileName Name of the file we're looking for
+ * @param foldersToIgnore Set of folders to ignore while scanning
  */
 export function findFileWithDefaultPath(
     rootPath: string,
     defaultPath: string,
     parentDir: string,
-    fileName: string
+    fileName: string,
+    foldersToIgnore: Set<string> = new Set([])
 ): string {
     var filePath = '';
     var defaultPath = path.join(rootPath, defaultPath, parentDir, fileName);
     if (fs.existsSync(defaultPath)) {
         filePath = defaultPath;
     } else {
-        var parentDirPath = findFolders(rootPath, parentDir, [])[0];
+        var parentDirPath = findFolders(
+            rootPath,
+            parentDir,
+            [],
+            foldersToIgnore
+        )[0];
         if (
             parentDirPath &&
             fs.existsSync(path.join(parentDirPath, fileName))
@@ -60,6 +66,15 @@ export function findFileWithDefaultPath(
     return filePath;
 }
 
+/**
+ * Find specific folder by iterating over the rootPath's children.
+ * Checks the default path provided first.
+ *
+ * @param rootPath Parent path where to start looking for a folder
+ * @param defaultPath First path to check for the folder
+ * @param folderName Name of the folder we're looking for
+ * @param foldersToIgnore Set of folders to ignore while scanning
+ */
 export function findFolderWithDefaultPath(
     rootPath: string,
     defaultPath: string,
@@ -77,12 +92,47 @@ export function findFolderWithDefaultPath(
 }
 
 /**
- * Find specific folder by iterating over the rootPath's children
+ * Find all paths to target folder name given root path and directories
+ * to iterate.
+ *
+ * @param rootPath Parent path where to start looking for a folder
+ * @param directoriesToCheck List of directories to check for target folder
+ * @param targetFolder Name of the folder we're looking for
+ * @param foldersToIgnore Set of folders to ignore while scanning
+ */
+export function findAllFolderPaths(
+    rootPath: string,
+    directoriesToCheck: string[],
+    targetFolder: string,
+    foldersToIgnore: Set<string> = new Set([])
+): string[] {
+    let targetFolderPaths: string[] = [];
+    if (directoriesToCheck && directoriesToCheck.length > 0) {
+        directoriesToCheck.forEach(directory => {
+            const folderPaths = findFolders(
+                path.join(rootPath, directory),
+                targetFolder,
+                [],
+                foldersToIgnore
+            );
+            // Determines where to insert the new item
+            const pathIndex =
+                targetFolderPaths.length > 0 ? targetFolderPaths.length - 1 : 0;
+            // Adds the path to the current list of items
+            targetFolderPaths.splice(pathIndex, 0, ...folderPaths);
+        });
+    }
+    return targetFolderPaths;
+}
+
+/**
+ * Find specific folder by iterating over the rootPath's children.
+ * Returns all matches.
  *
  * @param rootPath Parent path where to start looking for a folder
  * @param folderName Name of the folder we're looking for
  * @param folderArray Paths where we've found the folderName
- * @param foldersToIgnore Set of folders to ignore scanning
+ * @param foldersToIgnore Set of folders to ignore while scanning
  */
 export function findFolders(
     rootPath: string,
@@ -120,6 +170,11 @@ export function findFolders(
     return folderArray;
 }
 
+/**
+ * Get the contents of the specified file.
+ *
+ * @param filePath path to file
+ */
 export function getFileContents(filePath: string): string | null {
     let contents = null;
     if (fs.existsSync(filePath)) {

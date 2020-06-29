@@ -1,5 +1,6 @@
 import fs from 'fs';
 import mockFs from 'mock-fs';
+import path from 'path';
 import { ls } from 'shelljs';
 import * as fileUtils from '../fileUtils';
 
@@ -8,6 +9,10 @@ describe('fileUtils', () => {
     const defaultPath = 'default/path';
     const parentDir = 'parent';
     const fileName = 'file.txt';
+
+    const childFolder = `${rootPath}/some/directory/assets`;
+    const childFolder2 = `${rootPath}/some/other/assets`;
+    const childFolder3 = `${rootPath}/some/more/assets`;
 
     afterEach(mockFs.restore);
 
@@ -175,7 +180,9 @@ describe('fileUtils', () => {
 
     describe('findFileWithDefaultPath()', () => {
         it('returns the default file path if present', () => {
-            const filePath = `${rootPath}/${defaultPath}/${parentDir}/${fileName}`;
+            const filePath = path.normalize(
+                `${rootPath}/${defaultPath}/${parentDir}/${fileName}`
+            );
             mockFs({
                 [`${rootPath}`]: {},
                 [`${filePath}`]: ''
@@ -193,7 +200,9 @@ describe('fileUtils', () => {
 
         it('returns a non-default file path if present', () => {
             const nonDefault = 'other/path';
-            const nonDefaultFilePath = `${rootPath}/${nonDefault}/${parentDir}/${fileName}`;
+            const nonDefaultFilePath = path.normalize(
+                `${rootPath}/${nonDefault}/${parentDir}/${fileName}`
+            );
             mockFs({
                 [`${rootPath}`]: {},
                 [`${nonDefaultFilePath}`]: ''
@@ -236,7 +245,9 @@ describe('fileUtils', () => {
 
     describe('findFolderWithDefaultPath()', () => {
         it('returns the default folder path if present', () => {
-            const folderPath = `${rootPath}/${defaultPath}/${parentDir}`;
+            const folderPath = path.normalize(
+                `${rootPath}/${defaultPath}/${parentDir}`
+            );
             mockFs({
                 [`${rootPath}`]: {},
                 [`${folderPath}`]: {}
@@ -253,7 +264,9 @@ describe('fileUtils', () => {
 
         it('returns a non-default folder path if present', () => {
             const nonDefault = 'other/path';
-            const nonDefaultFilePath = `${rootPath}/${nonDefault}/${parentDir}`;
+            const nonDefaultFilePath = path.normalize(
+                `${rootPath}/${nonDefault}/${parentDir}`
+            );
             mockFs({
                 [`${rootPath}`]: {},
                 [`${nonDefaultFilePath}`]: {}
@@ -291,11 +304,75 @@ describe('fileUtils', () => {
         });
     });
 
-    describe('findFolders()', () => {
-        const childFolder = `${rootPath}/some/directory/assets`;
-        const childFolder2 = `${rootPath}/some/other/assets`;
-        const childFolder3 = `${rootPath}/some/more/assets`;
+    describe('findAllFolderPaths()', () => {
+        const targetFolder = 'target';
+        const packagesToCheck = ['force-app', 'force-app-2'];
 
+        it('returns all instances of target folder', () => {
+            const path1 = `${rootPath}/force-app/sample/${targetFolder}`;
+            const path2 = `${rootPath}/force-app-2/other/${targetFolder}`;
+            mockFs({
+                [`${path1}`]: {},
+                [`${path2}`]: {}
+            });
+
+            const result = fileUtils.findAllFolderPaths(
+                rootPath,
+                packagesToCheck,
+                targetFolder
+            );
+            expect(result.length).toEqual(2);
+            expect(result).toContain(path.normalize(path1));
+            expect(result).toContain(path.normalize(path2));
+        });
+
+        it('returns all instances of target folder while ignoring other folders', () => {
+            const path1 = `${rootPath}/force-app/sample/${targetFolder}`;
+            const path2 = `${rootPath}/force-app-2/other/${targetFolder}`;
+            const path3 = `${rootPath}/force-app/ignore1/${targetFolder}`;
+            const path4 = `${rootPath}/force-app-2/ignore2/${targetFolder}`;
+            mockFs({
+                [`${path1}`]: {},
+                [`${path2}`]: {},
+                [`${path3}`]: {},
+                [`${path4}`]: {}
+            });
+
+            const result = fileUtils.findAllFolderPaths(
+                rootPath,
+                packagesToCheck,
+                targetFolder,
+                new Set(['ignore1', 'ignore2'])
+            );
+            expect(result.length).toEqual(2);
+            expect(result).toContain(path.normalize(path1));
+            expect(result).toContain(path.normalize(path2));
+        });
+
+        it('returns empty array when child folder is not found', () => {
+            mockFs({
+                [`${rootPath}`]: {}
+            });
+
+            const result = fileUtils.findAllFolderPaths(
+                rootPath,
+                packagesToCheck,
+                targetFolder
+            );
+            expect(result).toStrictEqual([]);
+        });
+
+        it('returns empty array when root is not found', () => {
+            const result = fileUtils.findAllFolderPaths(
+                rootPath,
+                packagesToCheck,
+                parentDir
+            );
+            expect(result).toStrictEqual([]);
+        });
+    });
+
+    describe('findFolders()', () => {
         it('returns child folder', () => {
             mockFs({
                 [`${rootPath}`]: {},
@@ -303,7 +380,7 @@ describe('fileUtils', () => {
             });
 
             const result = fileUtils.findFolders(rootPath, 'assets', []);
-            expect(result).toStrictEqual([childFolder]);
+            expect(result).toStrictEqual([path.normalize(childFolder)]);
         });
 
         it('returns multiple child folders', () => {
@@ -316,9 +393,9 @@ describe('fileUtils', () => {
 
             const result = fileUtils.findFolders(rootPath, 'assets', []);
             expect(result.length).toEqual(3);
-            expect(result).toContain(childFolder);
-            expect(result).toContain(childFolder2);
-            expect(result).toContain(childFolder3);
+            expect(result).toContain(path.normalize(childFolder));
+            expect(result).toContain(path.normalize(childFolder2));
+            expect(result).toContain(path.normalize(childFolder3));
         });
 
         it('returns child folder while ignoring other folders', () => {
@@ -339,7 +416,7 @@ describe('fileUtils', () => {
                 [],
                 folders_to_ignore
             );
-            expect(result).toStrictEqual([childFolder]);
+            expect(result).toStrictEqual([path.normalize(childFolder)]);
         });
 
         it('returns empty array when child folder is not found', () => {

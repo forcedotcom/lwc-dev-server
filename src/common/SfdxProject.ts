@@ -2,22 +2,23 @@ import LocalDevServerConfiguration from 'user/LocalDevServerConfiguration';
 import fs from 'fs-extra';
 import path from 'path';
 import {
-    findFolders,
-    getFileContents,
     findFileWithDefaultPath,
-    findFolderWithDefaultPath
+    findFolders,
+    findFolderWithDefaultPath,
+    getFileContents,
+    findAllFolderPaths
 } from './fileUtils';
 import {
-    SFDX_PROJECT_JSON,
     CONTENT_ASSETS,
-    STATIC_RESOURCES,
-    DEFAULT_SFDX_PATH
+    DEFAULT_SFDX_PATH,
+    SFDX_PROJECT_JSON,
+    STATIC_RESOURCES
 } from '../server/Constants';
 
 export default class SfdxProject {
     private _configuration: LocalDevServerConfiguration;
-    private rootDirectory: string;
-    private sfdxProjectPath: string;
+    private _rootDirectory: string;
+    private _sfdxProjectPath: string;
     private _isSfdxProject: boolean;
 
     private static readonly FOLDERS_TO_IGNORE = new Set([
@@ -33,9 +34,9 @@ export default class SfdxProject {
 
     constructor(config: LocalDevServerConfiguration, rootDir: string) {
         this._configuration = config;
-        this.rootDirectory = rootDir;
-        this.sfdxProjectPath = path.join(rootDir, SFDX_PROJECT_JSON);
-        this._isSfdxProject = fs.existsSync(this.sfdxProjectPath);
+        this._rootDirectory = rootDir;
+        this._sfdxProjectPath = path.join(rootDir, SFDX_PROJECT_JSON);
+        this._isSfdxProject = fs.existsSync(this._sfdxProjectPath);
     }
 
     public get isSfdxProject() {
@@ -61,7 +62,7 @@ export default class SfdxProject {
 
     public getPackageDirectories(): string[] {
         const packageDirectories: string[] = [];
-        const jsonContents = getFileContents(this.sfdxProjectPath);
+        const jsonContents = getFileContents(this._sfdxProjectPath);
         if (jsonContents && !!jsonContents.trim()) {
             try {
                 this.getPackagesFromMap(
@@ -70,7 +71,7 @@ export default class SfdxProject {
                 );
             } catch (e) {
                 console.error(
-                    `Loading configuration from ${this.sfdxProjectPath} failed with the error ${e.message}`
+                    `Loading configuration from ${this._sfdxProjectPath} failed with the error ${e.message}`
                 );
             }
         }
@@ -107,7 +108,7 @@ export default class SfdxProject {
             // force-app dir for changes to other files such as static
             // resources. Once LWR fixes this then this should be changed.
             this.configuration.modulesSourceDirectory = path.join(
-                this.rootDirectory,
+                this._rootDirectory,
                 defaultPackageDirectory
             );
         }
@@ -118,34 +119,23 @@ export default class SfdxProject {
             this.configuration.staticResourcesDirectories &&
             this.configuration.staticResourcesDirectories.length === 0
         ) {
-            // Figure out where the static resources are located
-            let resourcePaths: string[] = [];
-            packageDirectories.forEach(item => {
-                const staticResourceFolders = findFolders(
-                    path.join(this.rootDirectory, item),
-                    STATIC_RESOURCES,
-                    [],
-                    SfdxProject.FOLDERS_TO_IGNORE
-                );
-                const resourcePathIndex =
-                    resourcePaths.length > 0 ? resourcePaths.length - 1 : 0;
-                resourcePaths.splice(
-                    resourcePathIndex,
-                    0,
-                    ...staticResourceFolders
-                );
-            });
-            this.configuration.staticResourcesDirectories = resourcePaths;
+            this.configuration.staticResourcesDirectories = findAllFolderPaths(
+                this._rootDirectory,
+                packageDirectories,
+                STATIC_RESOURCES,
+                SfdxProject.FOLDERS_TO_IGNORE
+            );
         }
     }
 
     private setCustomLabelsFile(defaultPackageDirectory: string) {
         if (!this.configuration.customLabelsFile) {
             this.configuration.customLabelsFile = findFileWithDefaultPath(
-                path.join(this.rootDirectory, defaultPackageDirectory),
+                path.join(this._rootDirectory, defaultPackageDirectory),
                 DEFAULT_SFDX_PATH,
                 SfdxProject.CUSTOM_LABELS_FOLDER,
-                SfdxProject.CUSTOM_LABELS_FILE
+                SfdxProject.CUSTOM_LABELS_FILE,
+                SfdxProject.FOLDERS_TO_IGNORE
             );
         }
     }
@@ -153,7 +143,7 @@ export default class SfdxProject {
     private setContentAssetsPath(defaultPackageDirectory: string) {
         if (!this.configuration.contentAssetsDirectory) {
             this.configuration.contentAssetsDirectory = findFolderWithDefaultPath(
-                path.join(this.rootDirectory, defaultPackageDirectory),
+                path.join(this._rootDirectory, defaultPackageDirectory),
                 DEFAULT_SFDX_PATH,
                 CONTENT_ASSETS,
                 SfdxProject.FOLDERS_TO_IGNORE

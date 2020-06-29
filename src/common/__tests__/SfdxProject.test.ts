@@ -163,7 +163,7 @@ describe('sfdxProject', () => {
         });
 
         test('use the packageDirectories to resolve the static resources directory', () => {
-            jest.spyOn(fileUtils, 'findFolders').mockReturnValue([
+            jest.spyOn(fileUtils, 'findAllFolderPaths').mockReturnValue([
                 path.join('force-app', 'main', 'default', 'staticresources')
             ]);
             const sfdxProject = new SfdxProject(configuration, 'my-project');
