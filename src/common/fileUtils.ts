@@ -45,12 +45,17 @@ export function findFileWithDefaultPath(
     fileName: string,
     foldersToIgnore: Set<string> = new Set([])
 ): string {
-    var filePath = '';
-    var defaultPath = path.join(rootPath, defaultPath, parentDir, fileName);
-    if (fs.existsSync(defaultPath)) {
-        filePath = defaultPath;
+    let filePath = '';
+    const fullDefaultPath = path.join(
+        rootPath,
+        defaultPath,
+        parentDir,
+        fileName
+    );
+    if (fs.existsSync(fullDefaultPath)) {
+        filePath = fullDefaultPath;
     } else {
-        var parentDirPath = findFolders(
+        const parentDirPath = findFolders(
             rootPath,
             parentDir,
             [],
@@ -81,10 +86,13 @@ export function findFolderWithDefaultPath(
     folderName: string,
     foldersToIgnore: Set<string> = new Set([])
 ) {
-    var folderPath = '';
-    var defaultPath = path.join(rootPath, defaultPath, folderName);
-    if (fs.existsSync(defaultPath) && fs.statSync(defaultPath).isDirectory()) {
-        folderPath = defaultPath;
+    let folderPath = '';
+    const fullDefaultPath = path.join(rootPath, defaultPath, folderName);
+    if (
+        fs.existsSync(fullDefaultPath) &&
+        fs.statSync(fullDefaultPath).isDirectory()
+    ) {
+        folderPath = fullDefaultPath;
     } else {
         folderPath = findFolders(rootPath, folderName, [], foldersToIgnore)[0];
     }

@@ -35,11 +35,11 @@ export default class SfdxProject {
         this._configuration = config;
         this._rootDirectory = rootDir;
         this._sfdxProjectPath = path.join(rootDir, SFDX_PROJECT_JSON);
-        this._isSfdxProject = fs.existsSync(this._sfdxProjectPath);
+        this._isSfdxProject = SfdxProject.isSfdxProjectJsonPresent(rootDir);
     }
 
-    public get isSfdxProject() {
-        return this._isSfdxProject;
+    public static isSfdxProjectJsonPresent(rootDirectory: string): boolean {
+        return fs.existsSync(path.join(rootDirectory, SFDX_PROJECT_JSON));
     }
 
     public get configuration(): LocalDevServerConfiguration {
@@ -50,7 +50,10 @@ export default class SfdxProject {
         if (this._isSfdxProject) {
             const packageDirectories: string[] = this.getPackageDirectories();
             if (packageDirectories.length > 0) {
-                const defaultPackageDirectory = packageDirectories[0];
+                const defaultPackageDirectory = path.join(
+                    this._rootDirectory,
+                    packageDirectories[0]
+                );
                 this.setModulesSourceDirectory(defaultPackageDirectory);
                 this.setStaticResourcesDirectories(packageDirectories);
                 this.setCustomLabelsFile(defaultPackageDirectory);
@@ -106,10 +109,7 @@ export default class SfdxProject {
             // to watch for changes, but we need to watch the entire
             // force-app dir for changes to other files such as static
             // resources. Once LWR fixes this then this should be changed.
-            this.configuration.modulesSourceDirectory = path.join(
-                this._rootDirectory,
-                defaultPackageDirectory
-            );
+            this.configuration.modulesSourceDirectory = defaultPackageDirectory;
         }
     }
 
@@ -130,7 +130,7 @@ export default class SfdxProject {
     private setCustomLabelsFile(defaultPackageDirectory: string) {
         if (!this.configuration.customLabelsFile) {
             this.configuration.customLabelsFile = findFileWithDefaultPath(
-                path.join(this._rootDirectory, defaultPackageDirectory),
+                defaultPackageDirectory,
                 DEFAULT_SFDX_PATH,
                 SfdxProject.CUSTOM_LABELS_FOLDER,
                 SfdxProject.CUSTOM_LABELS_FILE,
@@ -142,7 +142,7 @@ export default class SfdxProject {
     private setContentAssetsPath(defaultPackageDirectory: string) {
         if (!this.configuration.contentAssetsDirectory) {
             this.configuration.contentAssetsDirectory = findFolderWithDefaultPath(
-                path.join(this._rootDirectory, defaultPackageDirectory),
+                defaultPackageDirectory,
                 DEFAULT_SFDX_PATH,
                 CONTENT_ASSETS,
                 SfdxProject.FOLDERS_TO_IGNORE

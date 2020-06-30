@@ -35,16 +35,18 @@ describe('sfdxProject', () => {
 
     describe('when retrieving isSfdx', () => {
         test('isSfdx is true when sfdx-project.json is present', () => {
-            const sfdxProject = new SfdxProject(configuration, 'my-project');
-            expect(sfdxProject.isSfdxProject).toBe(true);
+            expect(SfdxProject.isSfdxProjectJsonPresent('my-project')).toBe(
+                true
+            );
         });
 
         test('isSfdx is false when sfdx-project.json is not present', () => {
             mock({
                 'my-project': {}
             });
-            const sfdxProject = new SfdxProject(configuration, 'my-project');
-            expect(sfdxProject.isSfdxProject).toBe(false);
+            expect(SfdxProject.isSfdxProjectJsonPresent('my-project')).toBe(
+                false
+            );
         });
     });
 

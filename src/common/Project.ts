@@ -47,13 +47,12 @@ export default class Project {
 
         // Use detection of the sfdx-project configuration to detect if this is an Sfdx Project and we should
         // treat it as such.
-        const sfdxProject = new SfdxProject(
-            this._configuration,
-            this.rootDirectory
-        );
-        if (sfdxProject.isSfdxProject) {
-            this._isSFDX = true;
-            sfdxProject.initWithSfdxConfiguration();
+        this._isSFDX = SfdxProject.isSfdxProjectJsonPresent(this.rootDirectory);
+        if (this._isSFDX) {
+            new SfdxProject(
+                this._configuration,
+                this.rootDirectory
+            ).initWithSfdxConfiguration();
         }
     }
 
