@@ -168,7 +168,6 @@ export default class WebruntimeConfig implements Config {
      * @param plugins - An array of rollup plugins
      */
     addPlugins(plugins: Plugin[]) {
-        console.log('**** In addPlugins');
         if (!this.compilerConfig.plugins) {
             this.compilerConfig.plugins = [];
         }
@@ -177,10 +176,6 @@ export default class WebruntimeConfig implements Config {
             ...this.compilerConfig.plugins,
             ...plugins
         ];
-
-        for (const plugin of this.compilerConfig.plugins) {
-            console.log('***** plugin - ', plugin);
-        }
     }
 
     /**
@@ -189,8 +184,5 @@ export default class WebruntimeConfig implements Config {
      */
     addServices(services: ServiceDefinitionCtor[]) {
         this.services = [...this.services, ...services];
-        for (const service of services) {
-            console.log('***** service:', service);
-        }
     }
 }

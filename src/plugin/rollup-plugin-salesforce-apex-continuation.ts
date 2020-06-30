@@ -15,11 +15,12 @@ export default function plugin() {
     return {
         name: 'rollup-plugin-apex-continuation',
         resolvedId(id: string) {
-            console.log('***** In apex-continuation resolve plugin');
             return matchesApexScopedModule(id) ? id : null;
         },
         loadId(id: string) {
-            throw 'Not supported';
+            if (matchesApexScopedModule(id)) {
+                throw 'Not supported';
+            }
         }
     };
 }

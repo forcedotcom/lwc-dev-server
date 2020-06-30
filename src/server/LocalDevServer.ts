@@ -23,8 +23,8 @@ import { ComponentServiceWithExclusions } from './services/ComponentServiceWithE
 import colors from 'colors';
 import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
-import plugin from '../common/rollup-plugin-salesforce-apex-continuation';
-import { ApexContinuationService } from '../common/salesforce-apex-continuation-service';
+import plugin from '../plugin/rollup-plugin-salesforce-apex-continuation';
+import { ApexContinuationService } from '../plugin/salesforce-apex-continuation-service';
 
 export default class LocalDevServer {
     private server: Server;
