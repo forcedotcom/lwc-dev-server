@@ -2,11 +2,10 @@ import LocalDevServerConfiguration from 'user/LocalDevServerConfiguration';
 import fs from 'fs-extra';
 import path from 'path';
 import {
+    findAllFolderPaths,
     findFileWithDefaultPath,
-    findFolders,
     findFolderWithDefaultPath,
-    getFileContents,
-    findAllFolderPaths
+    getFileContents
 } from './fileUtils';
 import {
     CONTENT_ASSETS,

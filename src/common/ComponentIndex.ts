@@ -3,7 +3,7 @@ import path from 'path';
 import Project from './Project';
 import decamelize from 'decamelize';
 import { findFolderWithDefaultPath } from './fileUtils';
-import { DEFAULT_SFDX_PATH } from '../server/Constants';
+import { DEFAULT_SFDX_PATH, SFDX_PROJECT_JSON } from '../server/Constants';
 
 // TODO clean this up
 export default class ComponentIndex {
@@ -177,7 +177,7 @@ export default class ComponentIndex {
         let defaultPackageName = 'Default';
 
         if (this.project.isSfdx) {
-            const sfdxProjectPath = path.join(root, 'sfdx-project.json');
+            const sfdxProjectPath = path.join(root, SFDX_PROJECT_JSON);
             if (fs.existsSync(sfdxProjectPath)) {
                 try {
                     const sfdxJson = JSON.parse(

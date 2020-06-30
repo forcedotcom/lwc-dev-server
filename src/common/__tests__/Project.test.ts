@@ -7,7 +7,7 @@ describe('project', () => {
     // Stop mocking 'fs' after each test
     afterEach(mock.restore);
 
-    describe('when retrieving the project directory', () => {
+    describe('getDirectory()', () => {
         test('project is resolved to the relative current directory ".", so return the current directory', () => {
             const project = new Project('.');
             expect(project.directory).toEqual(process.cwd());

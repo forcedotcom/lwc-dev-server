@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import SfdxProject from './SfdxProject';
+import { SFDX_PROJECT_JSON } from '../server/Constants';
 
 /**
  * The project object describes two things.
@@ -161,7 +162,7 @@ export default class Project {
         // What if we find nothing?
         if (
             !fs.existsSync(path.join(currentDirectory, 'package.json')) &&
-            !fs.existsSync(path.join(currentDirectory, 'sfdx-project.json'))
+            !fs.existsSync(path.join(currentDirectory, SFDX_PROJECT_JSON))
         ) {
             return this.resolveProjectDirectory(
                 path.join(currentDirectory, '..'),

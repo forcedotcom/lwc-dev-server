@@ -93,7 +93,7 @@ export function findFolderWithDefaultPath(
 
 /**
  * Find all paths to target folder name given root path and directories
- * to iterate.
+ * to search.
  *
  * @param rootPath Parent path where to start looking for a folder
  * @param directoriesToCheck List of directories to check for target folder
@@ -175,8 +175,8 @@ export function findFolders(
  *
  * @param filePath path to file
  */
-export function getFileContents(filePath: string): string | null {
-    let contents = null;
+export function getFileContents(filePath: string): string | undefined {
+    let contents = undefined;
     if (fs.existsSync(filePath)) {
         try {
             contents = fs.readFileSync(filePath, 'utf-8');

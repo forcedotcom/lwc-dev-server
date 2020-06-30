@@ -399,9 +399,6 @@ describe('fileUtils', () => {
         });
 
         it('returns child folder while ignoring other folders', () => {
-            const childFolder = `${rootPath}/some/directory/assets`;
-            const childFolder2 = `${rootPath}/some/other/assets`;
-            const childFolder3 = `${rootPath}/some/more/assets`;
             const folders_to_ignore = new Set(['other', 'more']);
             mockFs({
                 [`${rootPath}`]: {},
@@ -447,10 +444,10 @@ describe('fileUtils', () => {
             expect(result).toBe('sampleContent');
         });
 
-        it('returns null if file is not present', () => {
+        it('returns undefined if file is not present', () => {
             expect(fs.existsSync(exampleFile)).toBeFalsy();
             const result = fileUtils.getFileContents(exampleFile);
-            expect(result).toBeNull();
+            expect(result).toBeUndefined();
         });
     });
 });
