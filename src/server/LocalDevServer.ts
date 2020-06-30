@@ -23,6 +23,8 @@ import { ComponentServiceWithExclusions } from './services/ComponentServiceWithE
 import colors from 'colors';
 import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
+import plugin from '../common/rollup-plugin-salesforce-apex-continuation';
+import { ApexContinuationService } from '../common/salesforce-apex-continuation-service';
 
 export default class LocalDevServer {
     private server: Server;
@@ -79,6 +81,8 @@ export default class LocalDevServer {
 
         config.addMiddleware(middleware);
 
+        config.addPlugins([plugin]);
+
         const routes: ContainerAppExtension[] = [
             projectMetadata(this.sessionNonce, this.project)
         ];
@@ -115,7 +119,8 @@ export default class LocalDevServer {
                 getCustomComponentService(
                     project.configuration.namespace,
                     path.join(project.modulesSourceDirectory, 'main', 'default')
-                )
+                ),
+                ApexContinuationService
             );
         }
 
