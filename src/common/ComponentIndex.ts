@@ -30,7 +30,7 @@ export default class ComponentIndex {
 
         if (this.project.isSfdx) {
             const lwcPath = findFolderWithDefaultPath(
-                this.project.directory,
+                this.project.modulesSourceDirectory,
                 DEFAULT_SFDX_PATH,
                 'lwc'
             );
@@ -38,12 +38,12 @@ export default class ComponentIndex {
                 moduleDirectories.push(lwcPath);
             } else {
                 console.warn(
-                    `no 'lwc' directory found in path ${this.project.modulesSourceDirectory}`
+                    `no 'lwc' directory found in path ${modulesSourceDirectory}`
                 );
             }
         } else {
             moduleDirectories.push(
-                ...this.findSubdirectories(this.project.modulesSourceDirectory)
+                ...this.findSubdirectories(modulesSourceDirectory)
             );
         }
         return this.findModulesIn(moduleDirectories);
