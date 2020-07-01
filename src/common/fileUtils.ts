@@ -28,6 +28,24 @@ export function removeFile(file: string) {
     }
 }
 
+export function findLWCFolderPath(rootPath: string) {
+    return findFolderWithDefaultPath(
+        rootPath,
+        path.join('main', 'default'),
+        'lwc',
+        new Set([
+            'aura',
+            'classes',
+            'contentassets',
+            'triggers',
+            'labels',
+            'layouts',
+            'objects',
+            'staticresources'
+        ])
+    );
+}
+
 /**
  * Find specific file by iterating over the rootPath's children.
  * Checks the default path provided first.
