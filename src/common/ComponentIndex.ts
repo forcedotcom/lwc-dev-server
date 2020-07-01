@@ -2,7 +2,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import Project from './Project';
 import decamelize from 'decamelize';
-import { findFolders } from './fileUtils';
+import { findFolderWithDefaultPath } from './fileUtils';
+import { DEFAULT_SFDX_PATH, SFDX_PROJECT_JSON } from '../server/Constants';
 
 // TODO clean this up
 export default class ComponentIndex {
@@ -28,32 +29,24 @@ export default class ComponentIndex {
         const moduleDirectories: string[] = [];
 
         if (this.project.isSfdx) {
-            const lwcPath = this.getComponentDirectoryPath(
-                this.project.modulesSourceDirectory
+            const lwcPath = findFolderWithDefaultPath(
+                this.project.modulesSourceDirectory,
+                DEFAULT_SFDX_PATH,
+                'lwc'
             );
             if (lwcPath) {
                 moduleDirectories.push(lwcPath);
             } else {
                 console.warn(
-                    `no 'lwc' directory found in path ${this.project.modulesSourceDirectory}`
+                    `no 'lwc' directory found in path ${modulesSourceDirectory}`
                 );
             }
         } else {
             moduleDirectories.push(
-                ...this.findSubdirectories(this.project.modulesSourceDirectory)
+                ...this.findSubdirectories(modulesSourceDirectory)
             );
         }
         return this.findModulesIn(moduleDirectories);
-    }
-
-    private getComponentDirectoryPath(currentPath: string): string {
-        const results: string[] = [];
-        const defaultPath: string = path.join(currentPath, 'main/default/lwc');
-        if (fs.pathExistsSync(defaultPath)) {
-            return defaultPath;
-        }
-        findFolders(currentPath, 'lwc', results);
-        return results[0];
     }
 
     /**
@@ -184,7 +177,7 @@ export default class ComponentIndex {
         let defaultPackageName = 'Default';
 
         if (this.project.isSfdx) {
-            const sfdxProjectPath = path.join(root, 'sfdx-project.json');
+            const sfdxProjectPath = path.join(root, SFDX_PROJECT_JSON);
             if (fs.existsSync(sfdxProjectPath)) {
                 try {
                     const sfdxJson = JSON.parse(
