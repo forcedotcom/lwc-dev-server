@@ -71,12 +71,12 @@ export default class WebruntimeConfig implements Config {
         };
 
         this.services = [
-            ImportMapService,
-            AppBootstrapService,
+            ApexContinuationService,
             ApexService,
-            SchemaService,
+            AppBootstrapService,
+            ImportMapService,
             ResourceUrlService,
-            ApexContinuationService
+            SchemaService
         ];
 
         this.bundle = [

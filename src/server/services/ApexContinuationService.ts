@@ -1,10 +1,6 @@
-import { CompileService, PublicConfig } from '@webruntime/api';
-import debugLogger from 'debug';
-import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
-import { CONTENT_ASSETS, STATIC_RESOURCES } from '../Constants';
+import { CompileService } from '@webruntime/api';
 
 const APEX_CONTINUATION_REGEX = /^(@salesforce\/apexContinuation)(?:\/([\w-]+\.[\w-]+(?:\.[\w-]+)?))?$/;
-const debug = debugLogger('localdevserver:resource');
 
 function matchesApexContinuationScopedModule(id: string) {
     return id && id.match(APEX_CONTINUATION_REGEX);
