@@ -41,10 +41,6 @@ export default class ComponentIndex {
                     `no 'lwc' directory found in path ${modulesSourceDirectory}`
                 );
             }
-        } else {
-            moduleDirectories.push(
-                ...this.findSubdirectories(modulesSourceDirectory)
-            );
         }
         return this.findModulesIn(moduleDirectories);
     }
