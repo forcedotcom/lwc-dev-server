@@ -1,3 +1,9 @@
+# 2.3.0 - July 2, 2020
+
+## Added
+
+-   Added support for Salesforce scoped import contentAssetUrl ([PR #222](https://github.com/forcedotcom/lwc-dev-server/pull/222))
+
 # 2.2.0 - June 18, 2020
 
 ## Fixed
