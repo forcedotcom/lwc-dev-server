@@ -44,18 +44,10 @@ describe('LocalDevServerConfiguration', () => {
         );
     });
 
-    test('loading of namespace from config json', () => {
-        mock({
-            'config.json': JSON.stringify({
-                namespace: 'data-ns'
-            })
-        });
+    test('For SFDX projects, namespace should be c', () => {
+        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
 
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.namespace).toBe('data-ns');
+        expect(configuration.namespace).toBe('c');
     });
 
     test('loading of containerType from config json', () => {
@@ -208,20 +200,6 @@ describe('LocalDevServerConfiguration', () => {
         );
 
         expect(configuration.port).toBe(0);
-    });
-
-    test('loading of namespace from config json', () => {
-        mock({
-            'config.json': JSON.stringify({
-                namespace: 'data-ns'
-            })
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.namespace).toBe('data-ns');
     });
 
     test('loading of api version from config json', () => {
