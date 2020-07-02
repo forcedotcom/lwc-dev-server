@@ -11,7 +11,10 @@ describe('ComponentIndex getModules()', () => {
     console.warn = jest.fn();
     console.error = jest.fn();
 
-    test('when not sfdx, returns modules modulesSourceDirectory', () => {
+    /**
+     * We do not support non-sfdx projects now.
+     */
+    test.skip('when not sfdx, returns modules modulesSourceDirectory', () => {
         mock({
             'my-project': {
                 'package.json': '{}',
