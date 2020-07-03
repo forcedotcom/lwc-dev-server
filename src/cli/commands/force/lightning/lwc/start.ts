@@ -160,9 +160,6 @@ export default class Start extends SfdxCommand {
             this.flags.port !== undefined && this.flags.port !== null
                 ? this.flags.port
                 : project.port;
-        project.configuration.namespace = <string>(
-            (await this.project.resolveProjectConfig()).namespace
-        );
 
         const retValue = {
             orgId: this.org.getOrgId(),
