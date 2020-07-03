@@ -11,65 +11,6 @@ describe('ComponentIndex getModules()', () => {
     console.warn = jest.fn();
     console.error = jest.fn();
 
-    test('when not sfdx, returns modules modulesSourceDirectory', () => {
-        mock({
-            'my-project': {
-                'package.json': '{}',
-                'localdevserver.config.json': JSON.stringify({
-                    modulesSourceDirectory: 'src/modules'
-                }),
-                src: {
-                    modules: {
-                        namespace: {
-                            module: {
-                                'module.html': '',
-                                'module.js':
-                                    'export default class Module extends LightningElement {}'
-                            },
-                            module2: {
-                                'module2.html': '',
-                                'module2.js':
-                                    'export default class Module extends NavigationMixin(LightningElement) {}'
-                            },
-                            module3: {
-                                'module3.html': '',
-                                'module3 .js': ''
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        const expected: object[] = [
-            {
-                htmlName: 'namespace-module',
-                jsName: 'namespace/module',
-                namespace: 'namespace',
-                name: 'module',
-                url: '/preview/namespace/module',
-                path: path.normalize(
-                    'my-project/src/modules/namespace/module/module.js'
-                )
-            },
-            {
-                htmlName: 'namespace-module2',
-                jsName: 'namespace/module2',
-                namespace: 'namespace',
-                name: 'module2',
-                url: '/preview/namespace/module2',
-                path: path.normalize(
-                    'my-project/src/modules/namespace/module2/module2.js'
-                )
-            }
-        ];
-
-        const project = new Project('my-project');
-        const componentIndex = new ComponentIndex(project);
-
-        expect(componentIndex.getModules()).toEqual(expected);
-    });
-
     test('when using sfdx, returns modules in default lwc directory', () => {
         mock({
             '/my-project': {
