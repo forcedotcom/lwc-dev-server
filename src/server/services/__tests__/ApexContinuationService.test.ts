@@ -51,15 +51,12 @@ describe('ApexContinuationService', () => {
 
                 const service = new ApexContinuationService();
                 const plugin = service.getPlugin();
-                try {
+                function loadApexContinuation() {
                     plugin.load(
                         '@salesforce/apexContinuation/SampleContinuationClass.startRequest'
                     );
-                } catch (e) {
-                    expect(e.message).toBe(
-                        'Preview of component using Apex Continuation is not supported'
-                    );
                 }
+                expect(loadApexContinuation).toThrowErrorMatchingSnapshot();
             });
 
             it('should return null instead of throwing error for other than @salesforce/apexContinuation imports', () => {
