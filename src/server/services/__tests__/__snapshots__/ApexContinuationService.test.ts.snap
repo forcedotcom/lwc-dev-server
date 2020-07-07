@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ApexContinuationService rollup plugin load should throw error for @salesforce/apexContinuation imports 1`] = `"Preview of component using Apex Continuation is not supported"`;
+exports[`ApexContinuationService rollup plugin load should throw error for @salesforce/apexContinuation imports 1`] = `"You can't preview a component using Apex Continuation. Test the component directly in the org"`;

@@ -21,7 +21,7 @@ function plugin() {
             const idParts = matchesApexContinuationScopedModule(id);
             if (idParts) {
                 throw new Error(
-                    'Preview of component using Apex Continuation is not supported'
+                    "You can't preview a component using Apex Continuation. Test the component directly in the org"
                 );
             }
             return null;
