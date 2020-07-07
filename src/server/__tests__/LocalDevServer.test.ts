@@ -44,6 +44,7 @@ describe('LocalDevServer', () => {
     let consoleLogMock: any;
     let consoleErrorMock: any;
     let fileUtilsCopyMock: any;
+    let findLWCFolderPathMock: any;
     let addMiddlewareMock: any;
     let addModulesMock: any;
     let addRoutesMock: any;
@@ -94,6 +95,9 @@ describe('LocalDevServer', () => {
         jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
             // @ts-ignore
             .mockImplementation(async () => MockReporter);
+        findLWCFolderPathMock = jest
+            .spyOn(fileUtils, 'findLWCFolderPath')
+            .mockImplementation();
     });
 
     afterEach(() => {
@@ -101,6 +105,7 @@ describe('LocalDevServer', () => {
         consoleLogMock.mockRestore();
         consoleErrorMock.mockRestore();
         fileUtilsCopyMock.mockRestore();
+        findLWCFolderPathMock.mockRestore();
         // @ts-ignore
         LocalDevTelemetryReporter.getInstance.mockClear();
     });
@@ -218,6 +223,9 @@ describe('LocalDevServer', () => {
     it('should add custom component service for sfdx projects', () => {
         // @ts-ignore
         project.isSfdx = true;
+        findLWCFolderPathMock.mockImplementation(() => {
+            return path.join(project.modulesSourceDirectory, 'lwc');
+        });
 
         new LocalDevServer(project);
 
@@ -339,7 +347,9 @@ describe('LocalDevServer', () => {
         it('should add the ComponentServiceWithExclusions when project isSFDX', async () => {
             // @ts-ignore
             project.isSfdx = true;
-
+            findLWCFolderPathMock.mockImplementation(() => {
+                return path.join(project.modulesSourceDirectory, 'lwc');
+            });
             const server = new LocalDevServer(project);
 
             expect(
@@ -351,7 +361,9 @@ describe('LocalDevServer', () => {
         it('should add the CustomComponentService when project isSFDX', async () => {
             // @ts-ignore
             project.isSfdx = true;
-
+            findLWCFolderPathMock.mockImplementation(() => {
+                return path.join(project.modulesSourceDirectory, 'lwc');
+            });
             const componentService = getCustomComponentService('', '');
             const server = new LocalDevServer(project);
             // @ts-ignore
@@ -379,6 +391,9 @@ describe('LocalDevServer', () => {
         it('should add the LabelService when a customLabelsPath is specified', async () => {
             // @ts-ignore
             project.isSfdx = true;
+            findLWCFolderPathMock.mockImplementation(() => {
+                return path.join(project.modulesSourceDirectory, 'lwc');
+            });
             // @ts-ignore
             project.customLabelsPath = 'my/labelsFile.xml';
 
