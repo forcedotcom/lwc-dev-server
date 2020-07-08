@@ -43,6 +43,7 @@ describe('LocalDevServer', () => {
     let project: Project;
     let consoleLogMock: any;
     let consoleErrorMock: any;
+    let consoleWarnMock: any;
     let fileUtilsCopyMock: any;
     let findLWCFolderPathMock: any;
     let addMiddlewareMock: any;
@@ -89,6 +90,7 @@ describe('LocalDevServer', () => {
         project = new Project('/Users/arya/dev/myproject');
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+        consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
         fileUtilsCopyMock = jest
             .spyOn(fileUtils, 'copyFiles')
             .mockImplementation();
@@ -104,6 +106,7 @@ describe('LocalDevServer', () => {
         mockFs.restore();
         consoleLogMock.mockRestore();
         consoleErrorMock.mockRestore();
+        consoleWarnMock.mockRestore();
         fileUtilsCopyMock.mockRestore();
         findLWCFolderPathMock.mockRestore();
         // @ts-ignore
@@ -218,6 +221,22 @@ describe('LocalDevServer', () => {
             '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg',
             '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/connect-gen-pkg'
         ]);
+    });
+
+    it('should show a warning when lwc folder is not present for sfdx projects', () => {
+        // @ts-ignore
+        project.isSfdx = true;
+        findLWCFolderPathMock.mockImplementation(() => {
+            return undefined;
+        });
+
+        new LocalDevServer(project);
+
+        // @ts-ignore
+        expect(addServicesMock).toHaveBeenCalledTimes(1);
+        expect(consoleWarnMock.mock.calls[0][0]).toEqual(
+            `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+        );
     });
 
     it('should add custom component service for sfdx projects', () => {

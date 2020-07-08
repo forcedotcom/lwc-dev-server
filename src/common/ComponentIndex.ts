@@ -5,7 +5,6 @@ import decamelize from 'decamelize';
 import { findLWCFolderPath } from './fileUtils';
 import { SFDX_PROJECT_JSON } from '../server/Constants';
 
-// TODO clean this up
 export default class ComponentIndex {
     private project: Project;
 
