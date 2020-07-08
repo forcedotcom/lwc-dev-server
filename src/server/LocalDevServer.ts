@@ -125,7 +125,7 @@ export default class LocalDevServer {
                 );
             } else {
                 console.warn(
-                    `no 'lwc' directory found in path ${project.modulesSourceDirectory}`
+                    `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
                 );
             }
         }
