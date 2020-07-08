@@ -43,7 +43,9 @@ describe('LocalDevServer', () => {
     let project: Project;
     let consoleLogMock: any;
     let consoleErrorMock: any;
+    let consoleWarnMock: any;
     let fileUtilsCopyMock: any;
+    let findLWCFolderPathMock: any;
     let addMiddlewareMock: any;
     let addModulesMock: any;
     let addRoutesMock: any;
@@ -88,19 +90,25 @@ describe('LocalDevServer', () => {
         project = new Project('/Users/arya/dev/myproject');
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+        consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
         fileUtilsCopyMock = jest
             .spyOn(fileUtils, 'copyFiles')
             .mockImplementation();
         jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
             // @ts-ignore
             .mockImplementation(async () => MockReporter);
+        findLWCFolderPathMock = jest
+            .spyOn(fileUtils, 'findLWCFolderPath')
+            .mockImplementation();
     });
 
     afterEach(() => {
         mockFs.restore();
         consoleLogMock.mockRestore();
         consoleErrorMock.mockRestore();
+        consoleWarnMock.mockRestore();
         fileUtilsCopyMock.mockRestore();
+        findLWCFolderPathMock.mockRestore();
         // @ts-ignore
         LocalDevTelemetryReporter.getInstance.mockClear();
     });
@@ -215,9 +223,28 @@ describe('LocalDevServer', () => {
         ]);
     });
 
+    it('should show a warning when lwc folder is not present for sfdx projects', () => {
+        // @ts-ignore
+        project.isSfdx = true;
+        findLWCFolderPathMock.mockImplementation(() => {
+            return undefined;
+        });
+
+        new LocalDevServer(project);
+
+        // @ts-ignore
+        expect(addServicesMock).toHaveBeenCalledTimes(1);
+        expect(consoleWarnMock.mock.calls[0][0]).toEqual(
+            `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+        );
+    });
+
     it('should add custom component service for sfdx projects', () => {
         // @ts-ignore
         project.isSfdx = true;
+        findLWCFolderPathMock.mockImplementation(() => {
+            return path.join(project.modulesSourceDirectory, 'lwc');
+        });
 
         new LocalDevServer(project);
 
@@ -339,7 +366,9 @@ describe('LocalDevServer', () => {
         it('should add the ComponentServiceWithExclusions when project isSFDX', async () => {
             // @ts-ignore
             project.isSfdx = true;
-
+            findLWCFolderPathMock.mockImplementation(() => {
+                return path.join(project.modulesSourceDirectory, 'lwc');
+            });
             const server = new LocalDevServer(project);
 
             expect(
@@ -351,7 +380,9 @@ describe('LocalDevServer', () => {
         it('should add the CustomComponentService when project isSFDX', async () => {
             // @ts-ignore
             project.isSfdx = true;
-
+            findLWCFolderPathMock.mockImplementation(() => {
+                return path.join(project.modulesSourceDirectory, 'lwc');
+            });
             const componentService = getCustomComponentService('', '');
             const server = new LocalDevServer(project);
             // @ts-ignore
@@ -379,6 +410,9 @@ describe('LocalDevServer', () => {
         it('should add the LabelService when a customLabelsPath is specified', async () => {
             // @ts-ignore
             project.isSfdx = true;
+            findLWCFolderPathMock.mockImplementation(() => {
+                return path.join(project.modulesSourceDirectory, 'lwc');
+            });
             // @ts-ignore
             project.customLabelsPath = 'my/labelsFile.xml';
 
