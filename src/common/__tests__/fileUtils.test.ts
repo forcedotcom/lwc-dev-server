@@ -7,6 +7,7 @@ import * as fileUtils from '../fileUtils';
 describe('fileUtils', () => {
     const rootPath = '/Users/mikasa/dev/myproject';
     const defaultPath = 'default/path';
+    const lwcDir = 'lwc';
     const parentDir = 'parent';
     const fileName = 'file.txt';
 
@@ -240,6 +241,52 @@ describe('fileUtils', () => {
                 fileName
             );
             expect(result).toBe('');
+        });
+    });
+
+    describe('findLWCFolderPath()', () => {
+        it('returns the default folder path if present', () => {
+            const projectDefault = path.join('main', 'default');
+            const folderPath = path.normalize(
+                `${rootPath}/${projectDefault}/${lwcDir}`
+            );
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${folderPath}`]: {}
+            });
+
+            expect(fs.existsSync(folderPath)).toBeTruthy();
+            const result = fileUtils.findLWCFolderPath(rootPath);
+            expect(result).toBe(folderPath);
+        });
+
+        it('returns a non-default folder path if present', () => {
+            const projectDefault = 'src';
+            const nonDefaultFilePath = path.normalize(
+                `${rootPath}/${projectDefault}/${lwcDir}`
+            );
+            mockFs({
+                [`${rootPath}`]: {},
+                [`${nonDefaultFilePath}`]: {}
+            });
+
+            expect(fs.existsSync(nonDefaultFilePath)).toBeTruthy();
+            const result = fileUtils.findLWCFolderPath(rootPath);
+            expect(result).toBe(nonDefaultFilePath);
+        });
+
+        it('returns blank if root is not found', () => {
+            const result = fileUtils.findLWCFolderPath(rootPath);
+            expect(result).toBeUndefined();
+        });
+
+        it('returns blank if folder is not found', () => {
+            mockFs({
+                [`${rootPath}`]: {}
+            });
+
+            const result = fileUtils.findLWCFolderPath(rootPath);
+            expect(result).toBeUndefined();
         });
     });
 
