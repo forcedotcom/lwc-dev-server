@@ -5,6 +5,8 @@ import { PublicConfig } from '@webruntime/api';
 import { Plugin } from 'rollup';
 import { ImportMapService, AppBootstrapService } from '@webruntime/services';
 import { ApexService, SchemaService } from '@communities-webruntime/services';
+import { ResourceUrlService } from '../../services/ResourceUrlService';
+import { ApexContinuationService } from '../../services/ApexContinuationService';
 
 jest.mock('../../../common/Project');
 
@@ -57,6 +59,16 @@ describe('WebruntimeConfig', () => {
         it('should include SchemaService', () => {
             const config = new WebruntimeConfig(project);
             expect(config.services).toContain(SchemaService);
+        });
+
+        it('should include ApexContinuationService', () => {
+            const config = new WebruntimeConfig(project);
+            expect(config.services).toContain(ApexContinuationService);
+        });
+
+        it('should include ResourceUrlService', () => {
+            const config = new WebruntimeConfig(project);
+            expect(config.services).toContain(ResourceUrlService);
         });
     });
 
