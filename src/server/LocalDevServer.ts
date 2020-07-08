@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
@@ -17,7 +16,7 @@ import {
 import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
-import { copyFiles } from '../common/fileUtils';
+import { copyFiles, findLWCFolderPath } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 import colors from 'colors';
@@ -112,12 +111,22 @@ export default class LocalDevServer {
         ];
 
         if (this.project.isSfdx) {
-            services.push(
-                getCustomComponentService(
-                    project.configuration.namespace,
-                    path.join(project.modulesSourceDirectory, 'main', 'default')
-                )
+            const lwcPath = findLWCFolderPath(
+                this.project.modulesSourceDirectory
             );
+
+            if (lwcPath) {
+                services.push(
+                    getCustomComponentService(
+                        project.configuration.namespace,
+                        path.dirname(lwcPath)
+                    )
+                );
+            } else {
+                console.warn(
+                    `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+                );
+            }
         }
 
         config.addServices(services);
