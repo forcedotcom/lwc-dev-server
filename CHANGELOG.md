@@ -1,3 +1,11 @@
+# 2.4.0 - July 9, 2020
+
+## Fixed
+
+-   Support projects using namespace configuration ([PR #228](https://github.com/forcedotcom/lwc-dev-server/pull/228))
+-   Show unsupported error message when a component uses `@salesforce/apexContinuation` ([PR #227](https://github.com/forcedotcom/lwc-dev-server/pull/227))
+-   Support projects with customized folder structures ([PR #231](https://github.com/forcedotcom/lwc-dev-server/pull/231))
+
 # 2.3.0 - July 2, 2020
 
 ## Added
