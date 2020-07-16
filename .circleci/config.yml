@@ -21,9 +21,6 @@ parameters:
     node-image-version:
         type: string
         default: 'node:12'
-    yarn-version:
-        type: string
-        default: 'latest'
     node-build-image-version:
         type: string
         default: '10.15.3'
@@ -59,7 +56,6 @@ commands:
             - checkout
             - node/install:
                   install-yarn: true
-                  yarn-version: << pipeline.parameters.yarn-version >>
                   node-version: '12.18.2'
             - run: yarn build
 
