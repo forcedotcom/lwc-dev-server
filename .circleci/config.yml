@@ -130,9 +130,9 @@ executors:
 
 jobs:
     build:
-        docker:
-            - image: circleci/node:<< pipeline.parameters.node-build-image-version >>-browsers
-        working_directory: ~/cli
+        executor:
+            name: default-executor
+            image: circleci/node:<< pipeline.parameters.node-build-image-version >>-browsers
         steps:
             - init-setup
             - browser-tools/install-chrome:
@@ -209,33 +209,28 @@ jobs:
         executor: default-executor
         steps:
             - slack/notify:
-                  channel: 'shelbys-test-channel'
+                  channel: 'pdt_releases'
                   color: '#FFDEAD'
-                  message: 'TESTING - Starting publish for Local Dev Server'
+                  message: 'Starting publish for Local Dev Server'
             - ssh-config
             - init-setup
             - gh-config
-            #- pre-publish
-            #- run: npm publish # using npm vs yarn since yarn does not support npmignore mixed with package.json config
-            #- run: git push origin main
-            #- post-publish
-            - run:
-                  # TODO - remove
-                  command: |
-                      export RELEASE_TAG="$(node -pe "require('./package.json').version")"
-                      echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
+            - pre-publish
+            - run: npm publish # using npm vs yarn since yarn does not support npmignore mixed with package.json config
+            - post-publish
             - slack/notify:
-                  channel: 'shelbys-test-channel'
+                  channel: 'pdt_releases'
                   color: '#9bcd9b'
-                  message: 'TESTING - Local Dev Server v${RELEASE_VERSION} has been published to npm'
+                  message: 'Local Dev Server v${RELEASE_VERSION} has been published to npm'
             - slack/status:
-                  channel: 'shelbys-test-channel'
+                  channel: 'pdt_releases'
                   fail_only: true
 
 workflows:
     version: 2.1
 
     commit-workflow:
+        unless: << pipeline.parameters.publish >>
         jobs:
             - build
             - build-artifact
@@ -251,7 +246,7 @@ workflows:
         jobs:
             - slack/approval-notification:
                   message: Pending Approval for Publish of Local Dev Server
-                  channel: 'shelbys-test-channel'
+                  channel: 'pdt_releases'
                   color: '#0E1111'
             - build
             - build-artifact
@@ -267,7 +262,7 @@ workflows:
                   filters:
                       branches:
                           only:
-                              - sh/configImprovements
+                              - main
                   requires:
                       - build
                       - build-artifact

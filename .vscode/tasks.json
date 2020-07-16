@@ -13,7 +13,7 @@
         },
         {
             "label": "Publish Local Dev Server",
-            "command": "./scripts/publish-workflow.sh",
+            "command": "./script/publish-workflow.sh",
             "type": "shell",
             "args": ["${input:circleCiId}"]
         }
