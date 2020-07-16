@@ -60,6 +60,7 @@ commands:
             - node/install:
                   install-yarn: true
                   yarn-version: << pipeline.parameters.yarn-version >>
+                  node-version: '12.18.2'
             - run: yarn build
 
     ssh-config:
