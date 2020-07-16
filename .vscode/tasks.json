@@ -10,6 +10,19 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Publish Local Dev Server",
+            "command": "./scripts/publish-workflow.sh",
+            "type": "shell",
+            "args": ["${input:circleCiId}"]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "circleCiId",
+            "type": "promptString",
+            "description": "CircleCi Token"
         }
     ]
 }
