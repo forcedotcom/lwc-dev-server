@@ -54,9 +54,10 @@ commands:
     init-setup:
         steps:
             - checkout
-            - node/install:
-                  install-yarn: true
-                  node-version: '12.18.2'
+            - run: yarn --version
+            - run: node --version
+            - node/install-packages:
+                  pkg-manager: yarn
             - run: yarn build
 
     ssh-config:
