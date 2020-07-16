@@ -107,6 +107,7 @@ jobs:
     build:
         docker:
             - image: circleci/node:<< pipeline.parameters.node-build-image-version >>-browsers
+        working_directory: ~/cli
         steps:
             - init-setup
             - browser-tools/install-chrome:
