@@ -61,6 +61,21 @@ commands:
                   app-dir: ~/cli
             - run: yarn build
 
+    pre-publish:
+        steps:
+            - run:
+                  name: Bump package version
+                  command: |
+                      yarn version --minor --no-git-tag-version
+                      git add package.json
+                      export RELEASE_TAG="$(node -pe "require('./package.json').version")"
+                      echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
+                      source $BASH_ENV
+                      git commit -m "[skip ci] Updated version $RELEASE_TAG"
+            - run:
+                  name: Set .npmrc
+                  command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+
     ssh-config:
         steps:
             - add_ssh_keys:
@@ -190,18 +205,7 @@ jobs:
             - ssh-config
             - init-setup
             - gh-config
-            - run:
-                  name: Bump package version
-                  command: |
-                      yarn version --minor --no-git-tag-version
-                      git add package.json
-                      export RELEASE_TAG="$(node -pe "require('./package.json').version")"
-                      echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
-                      source $BASH_ENV
-                      git commit -m "[skip ci] Updated version $RELEASE_TAG"
-            - run:
-                  name: Set .npmrc
-                  command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+            - pre-publish
             - run: npm publish # using npm vs yarn since yarn does not support npmignore mixed with package.json config
             - run: git push origin main
             - run:
