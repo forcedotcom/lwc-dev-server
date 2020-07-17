@@ -211,17 +211,17 @@ jobs:
             - slack/notify:
                   channel: 'pdt_releases'
                   color: '#FFDEAD'
-                  message: 'Starting publish for Local Dev Server'
+                  message: 'TESTING - Starting publish for Local Dev Server'
             - ssh-config
             - init-setup
             - gh-config
-            - pre-publish
-            - run: npm publish # using npm vs yarn since yarn does not support npmignore mixed with package.json config
-            - post-publish
+            #- pre-publish
+            #- run: npm publish # using npm vs yarn since yarn does not support npmignore mixed with package.json config
+            #- post-publish
             - slack/notify:
                   channel: 'pdt_releases'
                   color: '#9bcd9b'
-                  message: 'Local Dev Server v${RELEASE_VERSION} has been published to npm'
+                  message: 'TESTING - Local Dev Server v${RELEASE_VERSION} has been published to npm'
             - slack/status:
                   channel: 'pdt_releases'
                   fail_only: true
@@ -245,7 +245,7 @@ workflows:
         when: << pipeline.parameters.publish >>
         jobs:
             - slack/approval-notification:
-                  message: Pending Approval for Publish of Local Dev Server
+                  message: TESTING - Pending Approval for Publish of Local Dev Server
                   channel: 'pdt_releases'
                   color: '#0E1111'
             - build
@@ -262,7 +262,7 @@ workflows:
                   filters:
                       branches:
                           only:
-                              - main
+                              - sh/demo
                   requires:
                       - build
                       - build-artifact
