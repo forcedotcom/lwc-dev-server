@@ -14,10 +14,10 @@ parameters:
         default: 'c7:78:f5:7c:26:35:0a:57:9a:cb:23:f8:92:4b:40:b7'
     cache-version:
         type: string
-        default: 'v2'
+        default: 'v3'
     with-cache:
         type: boolean
-        default: false
+        default: true
     sfdx-cli-version:
         type: string
         default: 'latest'
