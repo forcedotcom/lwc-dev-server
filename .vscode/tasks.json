@@ -16,6 +16,12 @@
             "command": "./script/publish-workflow.sh",
             "type": "shell",
             "args": ["${input:circleCiId}"]
+        },
+        {
+            "label": "Clear Cache and call commit workflow",
+            "command": "./script/clear-cache.sh",
+            "type": "shell",
+            "args": ["${input:circleCiId}"]
         }
     ],
     "inputs": [

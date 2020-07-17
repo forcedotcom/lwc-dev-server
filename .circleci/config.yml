@@ -14,16 +14,13 @@ parameters:
         default: 'c7:78:f5:7c:26:35:0a:57:9a:cb:23:f8:92:4b:40:b7'
     cache-version:
         type: string
-        default: 'v1'
+        default: 'v2'
     sfdx-cli-version:
         type: string
         default: 'latest'
     node-image-version:
         type: string
         default: 'node:12'
-    node-build-image-version:
-        type: string
-        default: '10.15.3'
     publish:
         type: boolean
         default: false
@@ -59,6 +56,7 @@ commands:
             - node/install-packages:
                   pkg-manager: yarn
                   app-dir: ~/cli
+                  cache-version: << pipeline.parameters.cache-version >>
             - run: yarn build
 
     pre-publish:
@@ -132,7 +130,7 @@ jobs:
     build:
         executor:
             name: default-executor
-            image: circleci/node:<< pipeline.parameters.node-build-image-version >>-browsers
+            image: << pipeline.parameters.node-image-version >>-browsers
         steps:
             - init-setup
             - browser-tools/install-chrome:
