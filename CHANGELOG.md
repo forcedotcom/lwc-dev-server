@@ -1,3 +1,9 @@
+# 2.5.0 - July 17, 2020
+
+## Fixed
+
+-   Default to use Api version 49.0 ([PR #236](https://github.com/forcedotcom/lwc-dev-server/pull/236))
+
 # 2.4.0 - July 9, 2020
 
 ## Fixed
