@@ -21,6 +21,9 @@ parameters:
     node-image-version:
         type: string
         default: 'node:12'
+    node-build-image-version:
+        type: string
+        default: '10.15.3'
     publish:
         type: boolean
         default: false
@@ -130,7 +133,7 @@ jobs:
     build:
         executor:
             name: default-executor
-            image: << pipeline.parameters.node-image-version >>-browsers
+            image: circleci/node:<< pipeline.parameters.node-build-image-version >>-browsers
         steps:
             - init-setup
             - browser-tools/install-chrome:
