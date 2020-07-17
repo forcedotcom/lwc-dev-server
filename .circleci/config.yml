@@ -209,7 +209,7 @@ jobs:
         executor: default-executor
         steps:
             - slack/notify:
-                  channel: 'pdt_releases'
+                  channel: 'shelbys-test-channel'
                   color: '#FFDEAD'
                   message: 'TESTING - Starting publish for Local Dev Server'
             - ssh-config
@@ -219,11 +219,11 @@ jobs:
             #- run: npm publish # using npm vs yarn since yarn does not support npmignore mixed with package.json config
             #- post-publish
             - slack/notify:
-                  channel: 'pdt_releases'
+                  channel: 'shelbys-test-channel'
                   color: '#9bcd9b'
                   message: 'TESTING - Local Dev Server v${RELEASE_VERSION} has been published to npm'
             - slack/status:
-                  channel: 'pdt_releases'
+                  channel: 'shelbys-test-channel'
                   fail_only: true
 
 workflows:
@@ -246,7 +246,7 @@ workflows:
         jobs:
             - slack/approval-notification:
                   message: TESTING - Pending Approval for Publish of Local Dev Server
-                  channel: 'pdt_releases'
+                  channel: 'shelbys-test-channel'
                   color: '#0E1111'
             - build
             - build-artifact
