@@ -15,6 +15,9 @@ parameters:
     cache-version:
         type: string
         default: 'v2'
+    with-cache:
+        type: boolean
+        default: false
     sfdx-cli-version:
         type: string
         default: 'latest'
@@ -60,6 +63,7 @@ commands:
                   pkg-manager: yarn
                   app-dir: ~/cli
                   cache-version: << pipeline.parameters.cache-version >>
+                  with-cache: << pipeline.parameters.with-cache >>
             - run: yarn build
 
     pre-publish:
