@@ -14,7 +14,7 @@ parameters:
         default: 'c7:78:f5:7c:26:35:0a:57:9a:cb:23:f8:92:4b:40:b7'
     cache-version:
         type: string
-        default: 'v3'
+        default: 'v2'
     with-cache:
         type: boolean
         default: true
