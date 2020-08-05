@@ -15,7 +15,7 @@
             "label": "Publish Local Dev Server",
             "command": "./script/publish-workflow.sh",
             "type": "shell",
-            "args": ["${input:circleCiId}"]
+            "args": ["${input:circleCiId}", "${input:publishType}"]
         }
     ],
     "inputs": [
@@ -23,6 +23,13 @@
             "id": "circleCiId",
             "type": "promptString",
             "description": "CircleCi Token"
+        },
+        {
+            "id": "publishType",
+            "type": "pickString",
+            "description": "Type of version to publish",
+            "options": ["minor", "patch", "major"],
+            "default": "minor"
         }
     ]
 }
