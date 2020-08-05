@@ -27,6 +27,12 @@ parameters:
     publish:
         type: boolean
         default: false
+    publish-type:
+        type: string
+        default: minor
+    with-cache:
+        type: boolean
+        default: false
 
 commands:
     gh-config:
@@ -59,6 +65,7 @@ commands:
             - node/install-packages:
                   pkg-manager: yarn
                   app-dir: ~/cli
+                  with-cache: << pipeline.parameters.with-cache >>
             - run: yarn build
 
     pre-publish:
@@ -66,7 +73,7 @@ commands:
             - run:
                   name: Bump package version
                   command: |
-                      yarn version --minor --no-git-tag-version
+                      yarn version --<< pipeline.parameters.publish-type >> --no-git-tag-version
                       git add package.json
                       export RELEASE_TAG="$(node -pe "require('./package.json').version")"
                       echo "export RELEASE_VERSION=$RELEASE_TAG" >> $BASH_ENV
