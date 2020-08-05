@@ -1,3 +1,9 @@
+# 2.5.1 - August 5, 2020
+
+## Added
+
+-   Added signing for plugin ([#240](https://github.com/forcedotcom/lwc-dev-server/pull/240))
+
 # 2.5.0 - July 17, 2020
 
 ## Fixed
