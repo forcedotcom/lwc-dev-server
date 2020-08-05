@@ -80,8 +80,20 @@ commands:
                       source $BASH_ENV
                       git commit -m "Updated version $RELEASE_TAG"
             - run:
+                  name: Install awscli
+                  command: |
+                      apt-get update
+                      apt-get install -y awscli
+                      echo ${SALESFORCE_KEY} | base64 --decode > ~/salesforce-cli.key
+            - run:
                   name: Set .npmrc
                   command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+
+    publish:
+        steps:
+            - run:
+                  name: Sign plugin and publish to NPM
+                  command: ./script/sign-and-npm-publish.js
 
     post-publish:
         steps:
@@ -223,7 +235,7 @@ jobs:
             - init-setup
             - gh-config
             - pre-publish
-            - run: npm publish # using npm vs yarn since yarn does not support npmignore mixed with package.json config
+            - publish
             - post-publish
             - slack/notify:
                   channel: 'pdt_releases'
