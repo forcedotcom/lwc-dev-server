@@ -12,3 +12,6 @@ curl -v -u ${CircleCIToken}: -X POST --header "Content-Type: application/json" -
     "publish-type": "'"${PublishType}"'"
   }
 }' https://circleci.com/api/v2/project/gh/forcedotcom/lwc-dev-server/pipeline
+
+# open the release pipe line url
+open "https://app.circleci.com/pipelines/github/forcedotcom/lwc-dev-server"
