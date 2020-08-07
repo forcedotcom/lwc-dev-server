@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lwc-dev-server",
-    "version": "2.4.0",
+    "version": "2.5.1",
     "defaultApiVersion": "49.0",
     "description": "Salesforce CLI plugin for Local Development (Beta)",
     "license": "MIT",
