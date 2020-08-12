@@ -274,3 +274,4 @@ workflows:
                       - build-artifact
                       - WinTestsGS0
                       - WinTestsR2
+                      - hold
