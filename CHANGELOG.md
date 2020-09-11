@@ -1,3 +1,9 @@
+# 2.5.2 - September 11, 2020
+
+## Added
+
+-   Added support for 228 dependencies ([#255](https://github.com/forcedotcom/lwc-dev-server/pull/255/files))
+
 # 2.5.1 - August 5, 2020
 
 ## Added
