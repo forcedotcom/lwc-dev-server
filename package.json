@@ -30,6 +30,8 @@
     ],
     "scripts": {
         "clean": "yarn rimraf dist reports coverage errorShots oclif.manifest.json",
+        "commit-init": "commitizen init cz-conventional-changelog --save-dev --save-exact --force",
+        "commit": "git-cz",
         "build": "yarn clean && tsc && ts-node script/copy-assets",
         "watch": "tsc -w | awk '{gsub(/\\033c/,\"\") system(\"\")}1'",
         "lint": "yarn eslint src --ext js,ts",
@@ -49,6 +51,10 @@
         "prepublishOnly": "yarn build"
     },
     "devDependencies": {
+        "@commitlint/cli": "^7",
+        "@commitlint/config-conventional": "^7",
+        "commitizen": "^3.0.5",
+        "cz-conventional-changelog": "^2.1.0",
         "@lwc/jest-preset": "^4.5.0",
         "@lwc/jest-resolver": "^4.5.0",
         "@lwc/synthetic-shadow": "1.2.2",
@@ -169,10 +175,21 @@
     "husky": {
         "hooks": {
             "pre-commit": "yarn lint-staged",
-            "pre-push": "yarn lint"
+            "pre-push": "yarn lint",
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
         }
+    },
+    "lint-staged": {
+        "./{src,test}/**/*.{ts,js}": [
+            "eslint -c .eslintrc.json --fix"
+        ]
     },
     "publishConfig": {
         "access": "public"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
     }
 }
