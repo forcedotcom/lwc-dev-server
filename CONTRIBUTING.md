@@ -1,6 +1,7 @@
 # Contributing
 
 Clone the repo and build:
+
 ```sh
 git clone git@github.com:forcedotcom/lwc-dev-server.git
 cd lwc-dev-server
@@ -16,11 +17,12 @@ yarn watch
 # Watch for changes to files and run tests
 yarn test:watch
 ```
+
 Otherwise you will need to run `yarn build` after making any changes.
 
 ## Links
 
-- [CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server)
+-   [CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server)
 
 ## Running Lightning Web Runtime from Source
 
@@ -66,10 +68,17 @@ node_modules/@webruntime/compiler
 ```
 
 To unlink webruntime:
+
 ```console
 yarn unlink-webruntime
 yarn install && yarn build
 ```
+
+## Committing
+
+1. We enforce commit message format. We recommend using [commitizen](https://github.com/commitizen/cz-cli) by installing it with `npm install -g commitizen` and running `npm run commit-init`. When you commit, we recommend that you use `npm run commit`, which prompts you with a series of questions to format the commit message. Or you can use our VS Code Task `Commit`.
+1. The commit message format that we expect is: `type: commit message`. Valid types are: feat, fix, improvement, docs, style, refactor, perf, test, build, ci, chore and revert.
+1. Before commit and push, Husky runs several hooks to ensure the commit message is in the correct format and that everything lints and compiles properly.
 
 ## Publishing
 
@@ -78,6 +87,7 @@ We use the `npm version` command to update the package.json version based on [se
 ### Publishing Publicly
 
 #### 1) Update the Version
+
 For backwards-compatible bug fixes:
 
 ```sh
@@ -113,6 +123,7 @@ npm version prerelease --preid=beta
 ```
 
 Then publish it:
+
 ```sh
 npm publish --registry http://platform-cli-registry.eng.sfdc.net:4880
 ```
@@ -137,7 +148,7 @@ SFDX_S3_HOST='http://10.252.156.165:9000/sfdx/media/salesforce-cli' SFDX_NPM_REG
 You can pass in a pattern or a test filename after `yarn test` to run just a specific test, for example:
 
 ```sh
-yarn test dev.test.ts # will only run tests in this file    
+yarn test dev.test.ts # will only run tests in this file
 ```
 
 For integration tests use `test:e2e`:
@@ -168,21 +179,24 @@ Specify the project folder (defaults to `./project`):
  */
 ```
 
-See the [specific environment typescript files](/integration-tests/environment ) for more documentation on available parameters for tests using that environment.
+See the [specific environment typescript files](/integration-tests/environment) for more documentation on available parameters for tests using that environment.
 
 ### Debugging
 
 We recommend using the Visual Studio Code (VS Code) IDE for your plugin development. Included in the `.vscode` directory of this plugin is a `launch.json` config file, which allows you to attach a debugger to the node process when running your commands.
 
 To debug the `force:lightning:lwc:start` command:
+
 1. Start the inspector
-  
-If you linked your plugin to the sfdx cli, call your command with the `dev-suspend` switch: 
+
+If you linked your plugin to the sfdx cli, call your command with the `dev-suspend` switch:
+
 ```sh-session
 $ sfdx force:lightning:lwc:start --dev-suspend
 ```
-  
+
 Alternatively, to call your command using the `bin/run` script, set the `NODE_OPTIONS` environment variable to `--inspect-brk` when starting the debugger:
+
 ```sh-session
 $ NODE_OPTIONS=--inspect-brk bin/run force:lightning:lwc:start
 ```
@@ -190,7 +204,7 @@ $ NODE_OPTIONS=--inspect-brk bin/run force:lightning:lwc:start
 2. Set some breakpoints in your command code
 3. Click on the Debug icon in the Activity Bar on the side of VS Code to open up the Debug view.
 4. In the upper left hand corner of VS Code, verify that the "Attach to Remote" launch configuration has been chosen.
-5. Hit the green play button to the left of the "Attach to Remote" launch configuration window. The debugger should now be suspended on the first line of the program. 
+5. Hit the green play button to the left of the "Attach to Remote" launch configuration window. The debugger should now be suspended on the first line of the program.
 6. Hit the green play button at the top middle of VS Code (this play button will be to the right of the play button that you clicked in step #5).
 
 Congrats, you are debugging!
