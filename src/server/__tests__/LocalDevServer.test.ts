@@ -23,8 +23,8 @@ jest.mock('@webruntime/server', () => {
                 super(...args);
                 mockServerConstructor(...args);
             }
-            initialize() { }
-            start() { }
+            initialize() {}
+            start() {}
             shutdown() {
                 this.emit('shutdown');
             }
@@ -536,7 +536,7 @@ describe('LocalDevServer', () => {
                 const connection: Connection = mock(Connection);
                 const server = new LocalDevServer(project, connection);
                 await server.start();
-            } catch (e) { }
+            } catch (e) {}
 
             expect(reporter.trackApplicationStartException).toBeCalledWith(
                 expect.any(Error)
