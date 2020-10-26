@@ -23,8 +23,8 @@ jest.mock('@webruntime/server', () => {
                 super(...args);
                 mockServerConstructor(...args);
             }
-            initialize() {}
-            start() {}
+            initialize() { }
+            start() { }
             shutdown() {
                 this.emit('shutdown');
             }
@@ -218,6 +218,7 @@ describe('LocalDevServer', () => {
 
         expect(modules).toEqual([
             '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-stub-pkg',
             '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg',
             '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/connect-gen-pkg'
         ]);
@@ -535,7 +536,7 @@ describe('LocalDevServer', () => {
                 const connection: Connection = mock(Connection);
                 const server = new LocalDevServer(project, connection);
                 await server.start();
-            } catch (e) {}
+            } catch (e) { }
 
             expect(reporter.trackApplicationStartException).toBeCalledWith(
                 expect.any(Error)
