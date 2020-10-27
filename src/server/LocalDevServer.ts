@@ -92,10 +92,13 @@ export default class LocalDevServer {
 
         config.addRoutes(routes);
 
+        // We have a separate work item to make local dev server work with the 228 LDS changes.
+        // Until then we are forcing local dev server to dependen on 226 force-pkg that has the 226 LDS implementaion.
         config.addModules([
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-pkg`,
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-stub-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`,
+            //  `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`,
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/force-pkg`,
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`
         ]);
 
