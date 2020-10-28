@@ -17,7 +17,7 @@ exports[`localdevserver-header renders 1`] = `
           width="142"
         />
         <h1>
-          Welcome to the Local Development Server
+          Welcome to the LWC Code Preview
         </h1>
         <span
           class="slds-badge slds-theme_warning slds-m-left_small"
