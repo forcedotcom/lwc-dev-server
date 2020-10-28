@@ -92,10 +92,16 @@ export default class LocalDevServer {
 
         config.addRoutes(routes);
 
+        // We have a separate work item to make local dev server work with the 228 LDS changes, where LDS is refactored into separate modules.
+        // Until then, we are adding 226 modules as well for components using LDS to work.
         config.addModules([
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-pkg`,
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-stub-pkg`,
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`,
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/lightning-pkg`,
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/force-pkg`,
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/connect-gen-pkg`
         ]);
 
         // We don't officially support non-SFDX projects, but this continues to
