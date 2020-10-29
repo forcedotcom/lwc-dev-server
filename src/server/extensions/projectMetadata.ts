@@ -48,7 +48,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     // NOTE: Some of the info used below is set on WebRuntimeConfig.ts
                     // but not available here, might want to move some of it to Project.ts config
                     const normalizedFile = path.join(
-                        project.directory,
+                        project.projectDirectory,
                         '.localdevserver',
                         'webruntime',
                         'custom-component',

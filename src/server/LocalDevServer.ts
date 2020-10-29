@@ -22,7 +22,7 @@ import { ComponentServiceWithExclusions } from './services/ComponentServiceWithE
 import colors from 'colors';
 import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
-import { CONTENT_ASSETS, STATIC_RESOURCES } from './Constants';
+import { CONTENT_ASSETS, STATIC_RESOURCES } from '../common/Constants';
 
 export default class LocalDevServer {
     private server: Server;
