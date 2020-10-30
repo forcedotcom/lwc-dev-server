@@ -109,7 +109,7 @@ export default class Start extends SfdxCommand {
         const conn = this.org.getConnection();
 
         // Highest level API is always last
-        const api_version = '49.0'; // await conn.retrieveMaxApiVersion();
+        const api_version = await conn.retrieveMaxApiVersion();
 
         const orgusername = this.org.getUsername() || '';
         try {
