@@ -84,6 +84,7 @@ export default class LocalDevServerConfiguration {
      * https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.create_components_namespace
      */
     public get namespace(): string {
+        // TODO Fix me to support namespaces properly
         return 'one';
     }
 

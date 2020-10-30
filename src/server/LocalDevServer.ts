@@ -146,11 +146,11 @@ export default class LocalDevServer {
                 );
             }
         } else {
-            console.warn(`Not an sfdx project`);
+            console.log(`Not an sfdx project`);
             const lwcPath = findLWCFolderPathCore(
                 this.project.modulesSourceDirectory
             );
-            console.warn(`${lwcPath}`);
+            console.log(`${lwcPath}`);
             if (lwcPath) {
                 services.push(
                     getCustomComponentService(
