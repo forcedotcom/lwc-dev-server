@@ -46,11 +46,14 @@ export function findLWCFolderPath(rootPath: string) {
     );
 }
 
+// temporary
 export function findLWCFolderPathCore(rootPath: string) {
     return findFolderWithDefaultPath(
         rootPath,
-        path.join('core', 'ui-global-components'),
-        'modules',
+        '',
+        // path.join('core', 'ui-global-components'),
+        //'modules',
+        '',
         new Set([
             'aura',
             'classes',
