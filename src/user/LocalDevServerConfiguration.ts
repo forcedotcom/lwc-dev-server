@@ -84,7 +84,7 @@ export default class LocalDevServerConfiguration {
      * https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.create_components_namespace
      */
     public get namespace(): string {
-        return 'laf';
+        return 'one';
     }
 
     /**

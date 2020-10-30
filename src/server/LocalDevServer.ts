@@ -17,7 +17,11 @@ import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
 import { getCoreComponentService } from './services/CoreComponentService';
-import { copyFiles, findLWCFolderPath } from '../common/fileUtils';
+import {
+    copyFiles,
+    findLWCFolderPath,
+    findLWCFolderPathCore
+} from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 import colors from 'colors';
@@ -129,6 +133,24 @@ export default class LocalDevServer {
                 this.project.modulesSourceDirectory
             );
 
+            if (lwcPath) {
+                services.push(
+                    getCustomComponentService(
+                        project.configuration.namespace,
+                        path.dirname(lwcPath)
+                    )
+                );
+            } else {
+                console.warn(
+                    `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+                );
+            }
+        } else {
+            console.warn(`Not an sfdx project`);
+            const lwcPath = findLWCFolderPathCore(
+                this.project.modulesSourceDirectory
+            );
+            console.warn(`${lwcPath}`);
             if (lwcPath) {
                 services.push(
                     getCustomComponentService(

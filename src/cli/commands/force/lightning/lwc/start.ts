@@ -53,7 +53,7 @@ export default class Start extends SfdxCommand {
     protected static supportsDevhubUsername = true;
 
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-    protected static requiresProject = true;
+    protected static requiresProject = false;
 
     public async run(): Promise<AnyJson> {
         const devhubusername = this.hubOrg ? this.hubOrg.getUsername() : '';
@@ -98,10 +98,10 @@ export default class Start extends SfdxCommand {
 
         // Sfdx validates this before we have a chance to, this appears to be
         // a "just in case" condition so reporting the same error they do.
-        if (!this.project) {
-            this.ux.error(messages.getMessage('error:noproject'));
-            return { project: typeof this.project };
-        }
+        // if (!this.project) {
+        // this.ux.error(messages.getMessage('error:noproject'));
+        // return { project: typeof this.project };
+        // }
 
         this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));
 
@@ -109,7 +109,7 @@ export default class Start extends SfdxCommand {
         const conn = this.org.getConnection();
 
         // Highest level API is always last
-        const api_version = await conn.retrieveMaxApiVersion();
+        const api_version = '49.0'; //await conn.retrieveMaxApiVersion();
 
         const orgusername = this.org.getUsername() || '';
         try {
@@ -153,7 +153,7 @@ export default class Start extends SfdxCommand {
 
         const accessToken = conn.accessToken;
 
-        const project = new Project(this.project.getPath());
+        const project = new Project('/Users/nkruk/blt/app/main');
 
         project.configuration.api_version = api_version;
         project.configuration.endpoint = conn.instanceUrl;

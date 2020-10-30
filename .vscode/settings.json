@@ -18,10 +18,22 @@
     ],
     "salesforcedx-vscode-lightning.activationMode": "always",
     "workbench.colorCustomizations": {
-        "activityBar.background": "#0C3600",
-        "titleBar.activeBackground": "#114B00",
-        "titleBar.activeForeground": "#EDFFE8"
+        "activityBar.background": "#123600",
+        "titleBar.activeBackground": "#010300",
+        "titleBar.activeForeground": "#e7e7e7",
+        "activityBar.activeBackground": "#123600",
+        "activityBar.activeBorder": "#0055ff",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#0055ff",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "statusBar.background": "#010300",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#123600",
+        "titleBar.inactiveBackground": "#01030099",
+        "titleBar.inactiveForeground": "#e7e7e799"
     },
     "editor.tabSize": 2,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "peacock.color": "#010300"
 }

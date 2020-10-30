@@ -46,6 +46,24 @@ export function findLWCFolderPath(rootPath: string) {
     );
 }
 
+export function findLWCFolderPathCore(rootPath: string) {
+    return findFolderWithDefaultPath(
+        rootPath,
+        path.join('core', 'ui-global-components'),
+        'modules',
+        new Set([
+            'aura',
+            'classes',
+            'contentassets',
+            'triggers',
+            'labels',
+            'layouts',
+            'objects',
+            'staticresources'
+        ])
+    );
+}
+
 /**
  * Find specific file by iterating over the rootPath's children.
  * Checks the default path provided first.
