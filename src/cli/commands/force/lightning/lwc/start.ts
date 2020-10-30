@@ -39,6 +39,10 @@ export default class Start extends SfdxCommand {
         port: flags.integer({
             char: 'p',
             description: messages.getMessage('portFlagDescription')
+        }),
+        core: flags.string({
+            char: 'c',
+            description: 'Core directory to serve modules out of'
         })
     };
 
@@ -52,6 +56,7 @@ export default class Start extends SfdxCommand {
     protected static requiresProject = true;
 
     public async run(): Promise<AnyJson> {
+        console.log("Running matt's start.ts");
         const devhubusername = this.hubOrg ? this.hubOrg.getUsername() : '';
         const devhubalias = this.configAggregator.getPropertyValue(
             'defaultdevhubusername'
@@ -105,7 +110,7 @@ export default class Start extends SfdxCommand {
         const conn = this.org.getConnection();
 
         // Highest level API is always last
-        const api_version = await conn.retrieveMaxApiVersion();
+        const api_version = '49.0'; // await conn.retrieveMaxApiVersion();
 
         const orgusername = this.org.getUsername() || '';
         try {
@@ -178,7 +183,7 @@ export default class Start extends SfdxCommand {
         );
 
         // Start local dev server
-        const server = new LocalDevServer(project, conn);
+        const server = new LocalDevServer(project, conn, this.flags.core);
 
         await server.start();
 

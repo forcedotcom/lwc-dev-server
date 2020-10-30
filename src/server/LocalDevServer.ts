@@ -16,6 +16,7 @@ import {
 import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
+import { getCoreComponentService } from './services/CoreComponentService';
 import { copyFiles, findLWCFolderPath } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
@@ -39,7 +40,11 @@ export default class LocalDevServer {
      * @param project project object
      * @param connection JSForce connection for the org
      */
-    constructor(project: Project, connection?: Connection) {
+    constructor(
+        project: Project,
+        connection?: Connection,
+        coreDirectory?: string
+    ) {
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
@@ -116,7 +121,10 @@ export default class LocalDevServer {
             getLabelService(project.customLabelsPath)
         ];
 
-        if (this.project.isSfdx) {
+        if (coreDirectory) {
+            config.addModules([coreDirectory]);
+            services.push(getCoreComponentService(path.dirname(coreDirectory)));
+        } else if (this.project.isSfdx) {
             const lwcPath = findLWCFolderPath(
                 this.project.modulesSourceDirectory
             );
