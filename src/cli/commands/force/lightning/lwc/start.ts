@@ -56,7 +56,6 @@ export default class Start extends SfdxCommand {
     protected static requiresProject = true;
 
     public async run(): Promise<AnyJson> {
-        console.log("Running matt's start.ts");
         const devhubusername = this.hubOrg ? this.hubOrg.getUsername() : '';
         const devhubalias = this.configAggregator.getPropertyValue(
             'defaultdevhubusername'
