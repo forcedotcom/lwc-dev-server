@@ -181,7 +181,7 @@
     },
     "lint-staged": {
         "./{src,test}/**/*.{ts,js}": [
-            "eslint -c .eslintrc.json --fix"
+            "eslint -c .eslintrc.js --fix"
         ]
     },
     "publishConfig": {

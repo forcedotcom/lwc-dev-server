@@ -39,6 +39,10 @@ export default class Start extends SfdxCommand {
         port: flags.integer({
             char: 'p',
             description: messages.getMessage('portFlagDescription')
+        }),
+        core: flags.string({
+            char: 'c',
+            description: 'Core directory to serve modules out of'
         })
     };
 
@@ -178,7 +182,7 @@ export default class Start extends SfdxCommand {
         );
 
         // Start local dev server
-        const server = new LocalDevServer(project, conn);
+        const server = new LocalDevServer(project, conn, this.flags.core);
 
         await server.start();
 

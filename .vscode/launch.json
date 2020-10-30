@@ -29,7 +29,11 @@
             "request": "launch",
             "name": "Jest: All Unit Tests",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest",
-            "args": ["--runInBand", "--coverage", "false"],
+            "args": [
+                "--runInBand",
+                "--coverage",
+                "false"
+            ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
             "disableOptimisticBPs": true
@@ -39,7 +43,10 @@
             "request": "launch",
             "name": "Jest: Current File (unit test)",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest",
-            "env": { "HEADLESS": "false", "DEBUG": "true" },
+            "env": {
+                "HEADLESS": "false",
+                "DEBUG": "true"
+            },
             "args": [
                 "${fileBasenameNoExtension}",
                 "--config",
@@ -72,7 +79,10 @@
             "request": "launch",
             "name": "Jest: Current File (integration test) with Debugging",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest",
-            "env": { "HEADLESS": "false", "DEBUG": "true" },
+            "env": {
+                "HEADLESS": "false",
+                "DEBUG": "true"
+            },
             "args": [
                 "${fileBasenameNoExtension}",
                 "--config",
@@ -83,6 +93,12 @@
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
             "disableOptimisticBPs": true
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Remote Attach",
+            "port": 9229
         }
     ]
 }
