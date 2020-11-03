@@ -23,8 +23,8 @@ jest.mock('@webruntime/server', () => {
                 super(...args);
                 mockServerConstructor(...args);
             }
-            initialize() {}
-            start() {}
+            initialize() { }
+            start() { }
             shutdown() {
                 this.emit('shutdown');
             }
@@ -62,10 +62,10 @@ describe('LocalDevServer', () => {
 
         mockFs({
             'node_modules/@salesforce/lwc-dev-server-dependencies/vendors': {
-                'dependencies-218': {},
-                'dependencies-220': {},
-                'dependencies-222': {},
-                'dependencies-224': {}
+                'dependencies-228': {},
+                'dependencies-226': {},
+                'dependencies-224': {},
+                'dependencies-222': {}
             }
         });
 
@@ -135,16 +135,16 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
 
         // @ts-ignore
-        expect(server.vendorVersion).toEqual('218');
+        expect(server.vendorVersion).toEqual('228');
     });
 
     it('should fallback to latest available vendor version', () => {
-        project.configuration.api_version = '52.0';
+        project.configuration.api_version = '54.0';
 
         const server = new LocalDevServer(project);
 
         // @ts-ignore
-        expect(server.vendorVersion).toEqual('224');
+        expect(server.vendorVersion).toEqual('228');
     });
 
     it('should add middleware to the config', () => {
@@ -217,9 +217,13 @@ describe('LocalDevServer', () => {
         const modules = addModulesMock.mock.calls[0][0];
 
         expect(modules).toEqual([
-            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/lightning-pkg',
-            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/force-pkg',
-            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-218/connect-gen-pkg'
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-228/lightning-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-228/lightning-stub-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-228/force-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-228/connect-gen-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/lightning-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/force-pkg',
+            '@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/connect-gen-pkg'
         ]);
     });
 
