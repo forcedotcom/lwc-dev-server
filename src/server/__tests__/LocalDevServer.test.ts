@@ -23,8 +23,8 @@ jest.mock('@webruntime/server', () => {
                 super(...args);
                 mockServerConstructor(...args);
             }
-            initialize() { }
-            start() { }
+            initialize() {}
+            start() {}
             shutdown() {
                 this.emit('shutdown');
             }
