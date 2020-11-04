@@ -1,13 +1,7 @@
 import { LightningElement } from 'lwc';
-import {
-    subscribe,
-    unsubscribe,
-    onError,
-    setDebugFlag,
-    isEmpEnabled
-} from 'lightning/empApi';
+import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 
-export default class EmpApi extends LightningElement {
+export default class EmpApiLWC extends LightningElement {
     channelName = '/event/Test__e';
     isSubscribeDisabled = false;
     isUnsubscribeDisabled = !this.isSubscribeDisabled;
