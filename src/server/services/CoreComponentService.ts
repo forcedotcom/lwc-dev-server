@@ -1,4 +1,5 @@
 import path from 'path';
+import fg from 'fast-glob';
 import debugLogger from 'debug';
 import { compile } from '@webruntime/compiler';
 import {
@@ -28,9 +29,41 @@ const debug = debugLogger('localdevserver:customcomponents');
  * @param modulesDirectory Absolute path to the parent of the 'lwc' directory.
  */
 export function getCoreComponentService(
-    modulesDirectory: string
+    moduleDirectories: string[]
 ): new (config: PublicConfig) => AddressableService & RequestService {
-    const uri = `/core-component/:uid/:mode/:locale/laf/:name`;
+    // namespace -> /modules/ directory
+    const namespaceDirectories = new Map();
+    // scan directories for namespaces
+    moduleDirectories.forEach(moduleDir => {
+        if (!moduleDir.endsWith('/')) {
+            moduleDir += '/';
+        }
+        const inspectDir = moduleDir + '*';
+        const namespaceDirs = fg.sync(inspectDir.split(','), {
+            onlyDirectories: true
+        });
+        namespaceDirs.forEach(namespaceDir => {
+            // The directory's basename is the name of the namespace
+            const namespace = path.basename(namespaceDir);
+            if (namespaceDirectories.has(namespace)) {
+                console.log(
+                    'Ignoring duplicate directory for namespace: ' +
+                        namespace +
+                        ' -> [' +
+                        namespaceDirectories.get(namespace) +
+                        ', ' +
+                        moduleDir +
+                        ']'
+                );
+            } else {
+                namespaceDirectories.set(namespace, moduleDir);
+            }
+        });
+    });
+
+    console.log('Namespace Directory Map:', namespaceDirectories);
+
+    const uri = `/core-component/:uid/:mode/:locale/:namespace/:name`;
 
     return class CustomComponentService extends AddressableService
         implements RequestService {
@@ -39,9 +72,14 @@ export function getCoreComponentService(
         constructor(config: PublicConfig) {
             super(uri);
 
-            this.mappings = {
-                [`laf/`]: '/core-component/:uid/:mode/:locale/laf/'
-            };
+            this.mappings = {};
+
+            for (const namespace of namespaceDirectories.keys()) {
+                Object.assign(this.mappings, {
+                    [namespace + '/']:
+                        '/core-component/:uid/:mode/:locale/' + namespace + '/'
+                });
+            }
         }
 
         async initialize() {}
@@ -54,17 +92,18 @@ export function getCoreComponentService(
             console.log('MATT: Requesting a core component!');
             debugger;
             const name = this.extractNameFromSpecifier(specifier);
-            if (!name) {
+            const namespace = this.extractNamespaceFromSpecifier(specifier);
+            if (!name || !namespace) {
                 throw new Error(
                     `Invalid specifier for custom component: ${specifier}`
                 );
             }
 
-            compilerConfig.baseDir = modulesDirectory;
+            compilerConfig.baseDir = namespaceDirectories.get(namespace);
 
             let { result, metadata, success, diagnostics } = await compile({
                 ...compilerConfig,
-                namespace: 'laf',
+                namespace,
                 name
             });
 
@@ -115,6 +154,14 @@ export function getCoreComponentService(
                 return null;
             }
             return split[1];
+        }
+
+        private extractNamespaceFromSpecifier(specifier: string) {
+            const split = specifier.split('/');
+            if (!split || split.length !== 2) {
+                return null;
+            }
+            return split[0];
         }
 
         // Clean up Diagnostics since they are provided in a format suitable for the command line

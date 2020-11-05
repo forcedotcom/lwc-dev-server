@@ -42,7 +42,11 @@ export default class Start extends SfdxCommand {
         }),
         core: flags.string({
             char: 'c',
-            description: 'Core directory to serve modules out of'
+            description: 'core project directory, e.g. ~/blt/app/main'
+        }),
+        modules: flags.string({
+            char: 'm',
+            description: 'Glob to directories of namespaced modules to serve'
         })
     };
 
@@ -153,7 +157,7 @@ export default class Start extends SfdxCommand {
 
         const accessToken = conn.accessToken;
 
-        const project = new Project('/Users/nkruk/blt/app/main');
+        const project = new Project(this.flags.core);
 
         project.configuration.api_version = api_version;
         project.configuration.endpoint = conn.instanceUrl;
@@ -182,7 +186,7 @@ export default class Start extends SfdxCommand {
         );
 
         // Start local dev server
-        const server = new LocalDevServer(project, conn, this.flags.core);
+        const server = new LocalDevServer(project, conn, this.flags.modules);
 
         await server.start();
 
