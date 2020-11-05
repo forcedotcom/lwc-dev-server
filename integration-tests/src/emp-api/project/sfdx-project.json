@@ -4,11 +4,11 @@
             "path": "force-app",
             "default": true,
             "package": "EmpApiTest",
-            "versionName": "Spring '19",
+            "versionName": "Winter '20",
             "versionNumber": "1.0.0.NEXT"
         }
     ],
     "namespace": "",
-    "sourceApiVersion": "46.0",
+    "sourceApiVersion": "50.0",
     "sfdcLoginUrl": "https://login.salesforce.com"
 }
