@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import fg from 'fast-glob';
 import { performance } from 'perf_hooks';
 import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
@@ -47,7 +48,7 @@ export default class LocalDevServer {
     constructor(
         project: Project,
         connection?: Connection,
-        coreDirectory?: string
+        modulesGlob?: string
     ) {
         this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
@@ -125,9 +126,13 @@ export default class LocalDevServer {
             getLabelService(project.customLabelsPath)
         ];
 
-        if (coreDirectory) {
-            config.addModules([coreDirectory]);
-            services.push(getCoreComponentService(path.dirname(coreDirectory)));
+        if (modulesGlob) {
+            const moduleDirs = fg.sync(modulesGlob.split(','), {
+                onlyDirectories: true
+            });
+            console.log('Module Dirs: ', moduleDirs);
+            config.addModules(moduleDirs);
+            services.push(getCoreComponentService(moduleDirs));
         } else if (this.project.isSfdx) {
             const lwcPath = findLWCFolderPath(
                 this.project.modulesSourceDirectory
