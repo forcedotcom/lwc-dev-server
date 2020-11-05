@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import path from 'path';
 import PreviewPage from '../pageObjects/PreviewPage';
 
 describe('lightning:formatted-address Component', () => {
