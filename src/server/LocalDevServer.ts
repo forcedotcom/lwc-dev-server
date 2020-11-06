@@ -78,7 +78,6 @@ export default class LocalDevServer {
         }
 
         config.addMiddleware(middleware);
-
         const routes: ContainerAppExtension[] = [
             projectMetadata(this.sessionNonce, this.project)
         ];

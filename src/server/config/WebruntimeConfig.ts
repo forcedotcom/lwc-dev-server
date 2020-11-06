@@ -15,6 +15,8 @@ import { Plugin } from 'rollup';
 import { ApexService, SchemaService } from '@communities-webruntime/services';
 import { ResourceUrlService } from '../services/ResourceUrlService';
 import { ApexContinuationService } from '../services/ApexContinuationService';
+import { LWCMessageService } from '../services/LWCMessageService';
+
 import alias from '@rollup/plugin-alias';
 
 export default class WebruntimeConfig implements Config {
@@ -76,7 +78,8 @@ export default class WebruntimeConfig implements Config {
             AppBootstrapService,
             ImportMapService,
             ResourceUrlService,
-            SchemaService
+            SchemaService,
+            LWCMessageService
         ];
 
         this.bundle = [
