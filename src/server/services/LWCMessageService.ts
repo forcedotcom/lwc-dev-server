@@ -4,7 +4,7 @@ import path from 'path';
 const APEX_LWC_MESSAGE_SERVICE_REGEX = /^(@salesforce\/messageChannel\/.*)/;
 
 function matchesLWCMessageServiceScopedModule(id: string) {
-    return id && id.match(/gvasdhjgavsdjhgavsjhdgavsd/);
+    return id && id.match(APEX_LWC_MESSAGE_SERVICE_REGEX);
 }
 
 /**
