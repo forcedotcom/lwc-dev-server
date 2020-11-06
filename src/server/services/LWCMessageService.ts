@@ -8,7 +8,7 @@ function matchesLWCMessageServiceScopedModule(id: string) {
 }
 
 /**
- * Rollup plugin to resolve @salesforce/apexContinuation
+ * Rollup plugin to resolve @salesforce/messageChannel
  *
  */
 function plugin() {
@@ -22,7 +22,7 @@ function plugin() {
             const idParts = matchesLWCMessageServiceScopedModule(id);
             if (idParts) {
                 throw new Error(
-                    "You can't preview a component using Lightning Messages Service. Test the component directly in the org"
+                    "You can't preview a component using Lightning Message Service. Test the component directly in the org"
                 );
             }
             return null;
