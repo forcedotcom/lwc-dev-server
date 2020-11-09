@@ -36,14 +36,14 @@ export function copyStaticResources(
     config: WebruntimeConfig
 ) {
     const staticResources = project.staticResourcesDirectories;
-    const assetsPath = path.join(
-        config.buildDir,
-        'assets',
-        'project',
-        STATIC_RESOURCES
-    );
     try {
         if (staticResources && staticResources.length > 0) {
+            const assetsPath = path.join(
+                config.buildDir,
+                'assets',
+                'project',
+                STATIC_RESOURCES
+            );
             staticResources.forEach((item: string) => {
                 copyFiles(path.join(item, '*'), assetsPath);
             });
@@ -55,14 +55,14 @@ export function copyStaticResources(
 
 export function copyContentAssets(project: Project, config: WebruntimeConfig) {
     const contentAssetsDir = project.contentAssetsDirectory;
-    const assetsPath = path.join(
-        config.buildDir,
-        'assets',
-        'project',
-        CONTENT_ASSETS
-    );
     try {
         if (contentAssetsDir && contentAssetsDir !== '') {
+            const assetsPath = path.join(
+                config.buildDir,
+                'assets',
+                'project',
+                CONTENT_ASSETS
+            );
             copyFiles(path.join(contentAssetsDir, '*'), assetsPath);
         }
     } catch (e) {

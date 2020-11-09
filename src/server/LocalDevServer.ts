@@ -23,6 +23,7 @@ import colors from 'colors';
 import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
 import { CONTENT_ASSETS, STATIC_RESOURCES } from '../common/Constants';
+import { copyStaticAssets } from '../common/StaticResourcesUtils';
 
 export default class LocalDevServer {
     private server: Server;
@@ -161,7 +162,7 @@ export default class LocalDevServer {
         );
         try {
             await this.server.initialize();
-            this.copyStaticAssets();
+            copyStaticAssets(this.project, this.config);
             this.server.on('shutdown', () => {
                 // After the application has ended.
                 // Report how long the server was opened.
@@ -186,60 +187,6 @@ export default class LocalDevServer {
             reporter.trackApplicationStartException(e);
             console.error(`Server start up failed.`);
             throw e;
-        }
-    }
-
-    /**
-     * Copy app static resources.
-     */
-    private copyStaticAssets() {
-        const serverAssetsPath = path.join(this.config.buildDir, 'assets');
-        const staticAssetsPath = path.join(serverAssetsPath, 'project');
-
-        this.copyDistAssets(serverAssetsPath);
-        this.copyStaticResources(staticAssetsPath);
-        this.copyContentAssets(staticAssetsPath);
-    }
-
-    private copyDistAssets(serverAssetsPath: string) {
-        const distAssetsPath = path.join(this.rootDir, 'dist', 'assets');
-        try {
-            const localDevAssetsPath = path.join(serverAssetsPath, 'localdev');
-            copyFiles(path.join(distAssetsPath, '*'), localDevAssetsPath);
-        } catch (e) {
-            throw new Error(`Unable to copy dist assets: ${e.message || e}`);
-        }
-    }
-
-    private copyStaticResources(staticAssetsPath: string) {
-        const staticResources = this.project.staticResourcesDirectories;
-        try {
-            if (staticResources && staticResources.length > 0) {
-                staticResources.forEach(item => {
-                    copyFiles(
-                        path.join(item, '*'),
-                        path.join(staticAssetsPath, STATIC_RESOURCES)
-                    );
-                });
-            }
-        } catch (e) {
-            throw new Error(
-                `Unable to copy static resources: ${e.message || e}`
-            );
-        }
-    }
-
-    private copyContentAssets(staticAssetsPath: string) {
-        const contentAssetsDir = this.project.contentAssetsDirectory;
-        try {
-            if (contentAssetsDir && contentAssetsDir !== '') {
-                copyFiles(
-                    path.join(contentAssetsDir, '*'),
-                    path.join(staticAssetsPath, CONTENT_ASSETS)
-                );
-            }
-        } catch (e) {
-            console.warn(`Unable to copy contentAssets: ${e.getMessage || e}`);
         }
     }
 
