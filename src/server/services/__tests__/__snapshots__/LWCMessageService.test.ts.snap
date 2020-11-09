@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LWCMessageService rollup plugin load should throw error for @salesforce/messageChannel imports 1`] = `"You can't preview a component using Lightning Message Service. Test the component directly in the org"`;
