@@ -78,6 +78,7 @@ describe('LocalDevServer', () => {
         WebruntimeConfig.mockImplementation(() => {
             return {
                 buildDir: 'Users/arya/dev/myproject/.localdevserver',
+                serverDir: path.join(__dirname, '..', '..', '..'),
                 server: {
                     resourceRoot: '/webruntime'
                 },
@@ -324,6 +325,8 @@ describe('LocalDevServer', () => {
         );
     });
 
+    // TODO - can't figure out why project.modulesSourceDirectory and project.directory
+    // are present, but project.projectDirectory is undefined.
     it('throws an error if copying static assets fails', async () => {
         fileUtilsCopyMock.mockImplementation(() => {
             throw new Error('test error');

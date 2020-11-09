@@ -27,7 +27,6 @@ import { copyStaticAssets } from '../common/StaticResourcesUtils';
 export default class LocalDevServer {
     private server: Server;
     private config: WebruntimeConfig;
-    private rootDir: string;
     private project: Project;
     private liveReload?: any;
     private readonly sessionNonce: string;
@@ -40,7 +39,6 @@ export default class LocalDevServer {
      * @param connection JSForce connection for the org
      */
     constructor(project: Project, connection?: Connection) {
-        this.rootDir = path.join(__dirname, '..', '..');
         this.project = project;
         this.sessionNonce = uuidv4();
         this.vendorVersion = project.configuration.core_version;
