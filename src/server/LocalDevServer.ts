@@ -16,7 +16,7 @@ import {
 import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
-import { copyFiles, findLWCFolderPath } from '../common/fileUtils';
+import { copyFiles, findLWCFolderPath, removeFile } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 import colors from 'colors';
@@ -162,6 +162,7 @@ export default class LocalDevServer {
         );
         try {
             await this.server.initialize();
+            removeFile(this.config.buildDir);
             this.copyStaticAssets();
             this.server.on('shutdown', () => {
                 // After the application has ended.
@@ -169,7 +170,6 @@ export default class LocalDevServer {
                 reporter.trackApplicationEnd(startTime);
             });
             await this.server.start();
-
             reporter.trackApplicationStart(
                 startTime,
                 this.vendorVersion || '0'
