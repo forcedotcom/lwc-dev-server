@@ -22,7 +22,6 @@ import { ComponentServiceWithExclusions } from './services/ComponentServiceWithE
 import colors from 'colors';
 import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
-import { CONTENT_ASSETS, STATIC_RESOURCES } from '../common/Constants';
 import { copyStaticAssets } from '../common/StaticResourcesUtils';
 
 export default class LocalDevServer {

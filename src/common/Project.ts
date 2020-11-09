@@ -137,6 +137,9 @@ export default class Project {
         return this.projectRootDirectory;
     }
 
+    /**
+     * The Root directory for the local dev server.
+     */
     public get serverDirectory(): string {
         return this.serverRootDirectory;
     }

@@ -10,7 +10,7 @@ describe('project', () => {
     describe('getDirectory()', () => {
         test('project is resolved to the relative current directory ".", so return the current directory', () => {
             const project = new Project('.');
-            expect(project.directory).toEqual(process.cwd());
+            expect(project.projectDirectory).toEqual(process.cwd());
         });
 
         test('project is specified as an existing relative directory, so return that directory', () => {
@@ -22,7 +22,7 @@ describe('project', () => {
 
             const project = new Project('my-project');
 
-            expect(project.directory).toEqual('my-project');
+            expect(project.projectDirectory).toEqual('my-project');
         });
 
         test('project is specified as an existing relative directory ending with a slash, so return that directory with a slash', () => {
@@ -35,7 +35,7 @@ describe('project', () => {
             const expected = path.normalize('my-project/');
             const project = new Project(expected);
 
-            expect(project.directory).toEqual(expected);
+            expect(project.projectDirectory).toEqual(expected);
         });
 
         test('throws an exception when referencing a project that does not exist.', () => {
