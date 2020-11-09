@@ -52,9 +52,7 @@ describe('LWCMessageService', () => {
             it('should return null instead of throwing error for other than @salesforce/messageChannel imports', () => {
                 const service = new LWCMessageService();
                 const plugin = service.getPlugin();
-                const resolved = plugin.load(
-                    './lightningMessageService.html'
-                );
+                const resolved = plugin.load('./lightningMessageService.html');
 
                 expect(resolved).toBeNull();
             });
