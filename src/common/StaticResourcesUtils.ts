@@ -12,21 +12,19 @@ import Project from './Project';
  * Copy app static resources.
  */
 export function copyStaticAssets(project: Project, config: WebruntimeConfig) {
-    // TODO
-    // Consider moving these into a project config as well to ensure consistency?
-    // We don't want to have someone pass free form text to any of these methods.
-    const serverAssetsPath = path.join(config.buildDir, 'assets');
-    const staticAssetsPath = path.join(serverAssetsPath, 'project');
-
-    copyDistAssets(serverAssetsPath, project);
-    copyStaticResources(staticAssetsPath, project);
-    copyContentAssets(staticAssetsPath, project);
+    copyDistAssets(config);
+    copyStaticResources(project, config);
+    copyContentAssets(project, config);
 }
 
-export function copyDistAssets(serverAssetsPath: string, project: Project) {
-    const distAssetsPath = path.join(project.serverDirectory, 'dist', 'assets');
+export function copyDistAssets(config: WebruntimeConfig) {
+    const distAssetsPath = path.join(config.serverDir, 'dist', 'assets');
     try {
-        const localDevAssetsPath = path.join(serverAssetsPath, 'localdev');
+        const localDevAssetsPath = path.join(
+            config.buildDir,
+            'assets',
+            'localdev'
+        );
         copyFiles(path.join(distAssetsPath, '*'), localDevAssetsPath);
     } catch (e) {
         throw new Error(`Unable to copy dist assets: ${e.message || e}`);
@@ -34,17 +32,20 @@ export function copyDistAssets(serverAssetsPath: string, project: Project) {
 }
 
 export function copyStaticResources(
-    staticAssetsPath: string,
-    project: Project
+    project: Project,
+    config: WebruntimeConfig
 ) {
     const staticResources = project.staticResourcesDirectories;
+    const assetsPath = path.join(
+        config.buildDir,
+        'assets',
+        'project',
+        STATIC_RESOURCES
+    );
     try {
         if (staticResources && staticResources.length > 0) {
             staticResources.forEach((item: string) => {
-                copyFiles(
-                    path.join(item, '*'),
-                    path.join(staticAssetsPath, STATIC_RESOURCES)
-                );
+                copyFiles(path.join(item, '*'), assetsPath);
             });
         }
     } catch (e) {
@@ -52,14 +53,17 @@ export function copyStaticResources(
     }
 }
 
-export function copyContentAssets(staticAssetsPath: string, project: Project) {
+export function copyContentAssets(project: Project, config: WebruntimeConfig) {
     const contentAssetsDir = project.contentAssetsDirectory;
+    const assetsPath = path.join(
+        config.buildDir,
+        'assets',
+        'project',
+        CONTENT_ASSETS
+    );
     try {
         if (contentAssetsDir && contentAssetsDir !== '') {
-            copyFiles(
-                path.join(contentAssetsDir, '*'),
-                path.join(staticAssetsPath, CONTENT_ASSETS)
-            );
+            copyFiles(path.join(contentAssetsDir, '*'), assetsPath);
         }
     } catch (e) {
         console.warn(`Unable to copy contentAssets: ${e.getMessage || e}`);
