@@ -294,6 +294,7 @@ describe('LocalDevServer', () => {
         expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
         // @ts-ignore
         expect(fileUtils.removeFile.mock.calls[0][0]).toEqual(
+            // @ts-ignore
             server.config.buildDir
         );
     });
