@@ -21,7 +21,7 @@ export function getMacAddress() {
         const macAddresses = Object.keys(networkInterfaces)
             .reduce((macAddresses: string[], networkInterfaceName) => {
                 const networkInterfaceInfo =
-                    networkInterfaces[networkInterfaceName];
+                    networkInterfaces[networkInterfaceName] || [];
                 macAddresses = macAddresses.concat(
                     networkInterfaceInfo.map(info => {
                         return info.mac;
