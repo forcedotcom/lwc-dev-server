@@ -30,9 +30,6 @@ exports[`localdevserver-error-stacks should render no error 1`] = `
           <h1
             class="error-message slds-text-heading_large"
           />
-          <h2
-            class="error-location slds-text-heading_small"
-          />
           <localdevserver-code-highlighter
             class="error-code"
           >
