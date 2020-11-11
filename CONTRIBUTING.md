@@ -161,6 +161,36 @@ Jest has [many other options](https://jestjs.io/docs/en/cli#running-from-the-com
 
 ### Integration Tests
 
+#### Getting Started
+
+Lightning Web Components use a mixture of traditional DOM elements and Shadow DOM elements. This can make it hard to determine the correct selectors needed to verify your component is working as expected. These are some basic tips and tricks to help you write your integration tests.
+
+1. Start with a basic `PreviewPage` with your loaded component (see `emp-api.test.ts` for an example).
+1. Set a breakpoint and run your test with `Jest: Current File (integration test) with Debugging`.
+1. Once your test page has loaded, right click on elements in the browser and select `Inspect`. This allows you to see the hierarchy view of the DOM with tag, class, and attribute information.
+1. When traversing elements from your test, note that the `PreviewPage` class comes with some methods that will reduce the amount of traversal needed. Calling `testComponent` will serve you the element `localdevserver-dynamic`. This would then be your starting point from the DOM view in your browser.
+1. Hit `Esc` from the DOM view to bring up the console. From the console, you can test your selectors from your currently selected element. This will save you time when writing your test.
+
+#### Additional Resources
+
+##### Queries from the Console:
+
+-   `$0.querySelectorAll('*')`: Will return all of the DOM elements from the current element selected. If the element you need is not in this list, then most likely it is because you need to use the shadow DOM.
+-   `$0.shadowRoot.querySelectorAll('*')`: Will return all of the shadow DOM elements from the current element selected. Note that an element doesn't have to have the '#shadow-root' tag to be a shadow DOM element.
+
+##### Retrieving Elements from the Shadow DOM:
+
+-   `shadow$('div')`: Retrieves the first element of type 'div' from the shadow root of the current element.
+-   `shadow$$('button')`: Retrieves all 'button' elements from the shadow root of the current element.
+-   `$('div')`: Retrieves the first element of type 'div' from the DOM of the current element.
+-   `$$('button')`: Retrieves all 'button' elements from the DOM of the current element.
+
+##### JQuery Selectors Reference:
+
+https://www.w3schools.com/jquery/jquery_ref_selectors.asp
+
+#### Environments
+
 Integration tests can specify a jest docblock prama to choose the environment and other parameters.
 
 Specify the environment at the start of the test file (see `apex-and-schema.test.ts` for an example):
@@ -180,23 +210,6 @@ Specify the project folder (defaults to `./project`):
 ```
 
 See the [specific environment typescript files](/integration-tests/environment) for more documentation on available parameters for tests using that environment.
-
-#### Writing Integration Tests
-
-Lightning Web Components use a mixture of traditional DOM elements and Shadow DOM elements. This can make it hard to determine the correct selectors needed to verify your component is working as expected. These are some basic tips and tricks to help you write your integration tests.
-
-1. Start with a basic Preview Page with your loaded component (see `emp-api.test.ts` for an example).
-1.
-
-Retrieving Elements from the Shadow DOM:
-Note that just because an element doesn't have the '#shadow-root' tag, does not mean it is a traditional DOM element.
-`shadow$('div')`: Retrieves the first element of type 'div' from the shadow root.
-`shadow$$('button')`: Retrieves all 'button' elements from the shadow root.
-`$('div')`: Retrieves the first element of type 'div' from the DOM.
-`$$('button')`: Retrieves all 'button' elements from the DOM.
-
-Additional Resources:
-https://www.w3schools.com/jquery/jquery_ref_selectors.asp
 
 ### Debugging
 
