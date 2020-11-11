@@ -23,8 +23,11 @@ export default class Error extends LightningElement {
     @track
     visible = true;
 
+    @track
+    filename;
+
     get href() {
-        if (this.errorLocation) {
+        if (this.filename) {
             return 'vscode://file' + this.errorLocation;
         }
     }
@@ -55,6 +58,7 @@ export default class Error extends LightningElement {
                     this.errorLocation = `${err.filename}:${locLine}:${locColumn}`;
                     this.errorMessage = err.message;
                     this.code = err.code;
+                    this.filename = err.filename;
                 });
         } else {
             this.errorMessage = this.error.message;
