@@ -81,11 +81,8 @@ export default class Preview extends LightningElement {
             const module = await import(specifier);
             if (!module.default) {
                 // This means there were some compilation errors
-                let err = new Error(
-                    `There were errors while compiling component ${specifier}`
-                );
-                err.specifier = specifier;
-                throw err;
+                // We throw a generic error and let the catch handle the messaging
+                throw new Error();
             }
             this.dynamicCtor = module.default;
         } catch (error) {
