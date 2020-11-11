@@ -163,7 +163,7 @@ Jest has [many other options](https://jestjs.io/docs/en/cli#running-from-the-com
 
 Integration tests can specify a jest docblock prama to choose the environment and other parameters.
 
-Specify the environment:
+Specify the environment at the start of the test file (see `apex-and-schema.test.ts` for an example):
 
 ```js
 /**
@@ -180,6 +180,23 @@ Specify the project folder (defaults to `./project`):
 ```
 
 See the [specific environment typescript files](/integration-tests/environment) for more documentation on available parameters for tests using that environment.
+
+#### Writing Integration Tests
+
+Lightning Web Components use a mixture of traditional DOM elements and Shadow DOM elements. This can make it hard to determine the correct selectors needed to verify your component is working as expected. These are some basic tips and tricks to help you write your integration tests.
+
+1. Start with a basic Preview Page with your loaded component (see `emp-api.test.ts` for an example).
+1.
+
+Retrieving Elements from the Shadow DOM:
+Note that just because an element doesn't have the '#shadow-root' tag, does not mean it is a traditional DOM element.
+`shadow$('div')`: Retrieves the first element of type 'div' from the shadow root.
+`shadow$$('button')`: Retrieves all 'button' elements from the shadow root.
+`$('div')`: Retrieves the first element of type 'div' from the DOM.
+`$$('button')`: Retrieves all 'button' elements from the DOM.
+
+Additional Resources:
+https://www.w3schools.com/jquery/jquery_ref_selectors.asp
 
 ### Debugging
 
