@@ -1,60 +1,33 @@
 <template>
     <section class="components-panel slds-card slds-grid slds-grid_vertical">
         <!-- header -->
-        <div
-            class="header slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
-        >
+        <div class="header slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
             <header class="project-name">
-                <h2
-                    class="project-name-text slds-card__header-title slds-truncate slds-text-heading_medium slds-m-right_x-small"
-                    title={projectName}
-                >
+                <h2 class="project-name-text slds-card__header-title slds-truncate slds-text-heading_medium slds-m-right_x-small"
+                    title={projectName}>
                     {projectName}
                 </h2>
             </header>
             <div class="search">
                 <div class="slds-form-element">
-                    <label
-                        for="input"
-                        class="slds-form-element__label slds-no-flex slds-assistive-text"
-                    >
+                    <label for="input" class="slds-form-element__label slds-no-flex slds-assistive-text">
                         Search for a component
                     </label>
-                    <div
-                        class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right"
-                    >
-                        <svg
-                            class="search-icon slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default slds-icon_medium"
-                            aria-hidden="true"
-                        >
-                            <use
-                                xlink:href="/assets/localdev/icons/utility-sprite/svg/symbols.svg#search"
-                            ></use>
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right">
+                        <svg class="search-icon slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default slds-icon_medium"
+                            aria-hidden="true">
+                            <use xlink:href="/assets/localdev/icons/utility-sprite/svg/symbols.svg#search"></use>
                         </svg>
 
-                        <input
-                            id="input"
-                            type="search"
-                            placeholder="Search for a component..."
-                            class="slds-input search-input"
-                            disabled={searchDisabled}
-                            onchange={onSearchChange}
-                            onkeyup={onSearchChange}
-                        />
+                        <input id="input" type="search" placeholder="Search for a component..."
+                            class="slds-input search-input" disabled={searchDisabled} onchange={onSearchChange}
+                            onkeyup={onSearchChange} />
 
                         <template if:true={searchInProgress}>
-                            <button
-                                class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
-                                title="Clear"
-                                onclick={clearInput}
-                            >
-                                <svg
-                                    class="slds-button__icon slds-icon-text-light"
-                                    aria-hidden="true"
-                                >
-                                    <use
-                                        xlink:href="/assets/localdev/icons/utility-sprite/svg/symbols.svg#clear"
-                                    ></use>
+                            <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                title="Clear" onclick={clearInput}>
+                                <svg class="slds-button__icon slds-icon-text-light" aria-hidden="true">
+                                    <use xlink:href="/assets/localdev/icons/utility-sprite/svg/symbols.svg#clear"></use>
                                 </svg>
                                 <span class="slds-assistive-text">Clear</span>
                             </button>
@@ -67,30 +40,21 @@
         <!-- body -->
         <div class="components-body slds-grid slds-grow">
             <div class="packages-list slds-grow">
-                <lightning-vertical-navigation
-                    shaded="true"
-                    selected-item={selectedPackage}
-                >
+                <lightning-vertical-navigation shaded="true" selected-item={selectedPackage}
+                    onselect={onNavigationSelect}>
                     <lightning-vertical-navigation-section label="Packages">
                         <template for:each={packages} for:item="item">
-                            <lightning-vertical-navigation-item-icon
-                                label={item.packageName}
-                                name={item.key}
-                                key={item.key}
-                                icon-name="utility:open_folder"
-                            ></lightning-vertical-navigation-item-icon>
+                            <lightning-vertical-navigation-item-icon label={item.packageName} name={item.key}
+                                key={item.key} icon-name="utility:open_folder">
+                            </lightning-vertical-navigation-item-icon>
                         </template>
                     </lightning-vertical-navigation-section>
                 </lightning-vertical-navigation>
             </div>
 
             <template if:true={hasVisibleComponents}>
-                <div
-                    class="components-list slds-scrollable_y slds-grow slds-p-left_x-large slds-p-right_small"
-                >
-                    <h3
-                        class="components-list-label slds-text-body_small slds-m-vertical_small"
-                    >
+                <div class="components-list slds-scrollable_y slds-grow slds-p-left_x-large slds-p-right_small">
+                    <h3 class="components-list-label slds-text-body_small slds-m-vertical_small">
                         {componentsListLabel}
                     </h3>
                     <ul class="slds-m-vertical_small">
@@ -105,15 +69,9 @@
                 </div>
             </template>
             <template if:false={hasVisibleComponents}>
-                <div
-                    class="slds-grid slds-grid_vertical-align-center slds-grid_align-center slds-grow"
-                >
+                <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-center slds-grow">
                     <div class="slds-illustration slds-illustration_large">
-                        <img
-                            src="/assets/localdev/images/empty-state.svg"
-                            class="slds-illustration__svg"
-                            alt=""
-                        />
+                        <img src="/assets/localdev/images/empty-state.svg" class="slds-illustration__svg" alt="" />
                         <div class="slds-text-longform">
                             <template if:true={searchInProgress}>
                                 <h3 class="slds-text-heading_medium">
@@ -134,9 +92,7 @@
                                     <br />
                                     you'll find them here.
                                     <br />
-                                    <a
-                                        href="https://developer.salesforce.com/docs/component-library/documentation/lwc"
-                                    >
+                                    <a href="https://developer.salesforce.com/docs/component-library/documentation/lwc">
                                         Get to Know Lightning Web Components
                                     </a>
                                 </p>
