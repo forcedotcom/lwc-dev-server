@@ -29,39 +29,9 @@ const debug = debugLogger('localdevserver:customcomponents');
  * @param modulesDirectory Absolute path to the parent of the 'lwc' directory.
  */
 export function getCoreComponentService(
-    moduleDirectories: string[]
+    namespaceDirectoryMap: Map<string, string>
 ): new (config: PublicConfig) => AddressableService & RequestService {
     // namespace -> /modules/ directory
-    const namespaceDirectories = new Map();
-    // scan directories for namespaces
-    moduleDirectories.forEach(moduleDir => {
-        if (!moduleDir.endsWith('/')) {
-            moduleDir += '/';
-        }
-        const inspectDir = moduleDir + '*';
-        const namespaceDirs = fg.sync(inspectDir.split(','), {
-            onlyDirectories: true
-        });
-        namespaceDirs.forEach(namespaceDir => {
-            // The directory's basename is the name of the namespace
-            const namespace = path.basename(namespaceDir);
-            if (namespaceDirectories.has(namespace)) {
-                console.log(
-                    'Ignoring duplicate directory for namespace: ' +
-                        namespace +
-                        ' -> [' +
-                        namespaceDirectories.get(namespace) +
-                        ', ' +
-                        moduleDir +
-                        ']'
-                );
-            } else {
-                namespaceDirectories.set(namespace, moduleDir);
-            }
-        });
-    });
-
-    console.log('Namespace Directory Map:', namespaceDirectories);
 
     const uri = `/core-component/:uid/:mode/:locale/:namespace/:name`;
 
@@ -74,7 +44,7 @@ export function getCoreComponentService(
 
             this.mappings = {};
 
-            for (const namespace of namespaceDirectories.keys()) {
+            for (const namespace of namespaceDirectoryMap.keys()) {
                 Object.assign(this.mappings, {
                     [namespace + '/']:
                         '/core-component/:uid/:mode/:locale/' + namespace + '/'
@@ -99,7 +69,7 @@ export function getCoreComponentService(
                 );
             }
 
-            compilerConfig.baseDir = namespaceDirectories.get(namespace);
+            compilerConfig.baseDir = namespaceDirectoryMap.get(namespace);
 
             let { result, metadata, success, diagnostics } = await compile({
                 ...compilerConfig,

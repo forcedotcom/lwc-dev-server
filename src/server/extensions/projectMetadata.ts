@@ -11,13 +11,20 @@ const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
     '.js': true
 };
 
-export function projectMetadata(sessionNonce: string, project: Project) {
+export function projectMetadata(
+    sessionNonce: string,
+    project: Project,
+    namespaceDirectoryMap?: Map<string, string>
+) {
     return {
         extendApp: ({ app }: AppExtensionConfig) => {
             (app as Application).get(
                 `/localdev/${sessionNonce}/localdev.js`,
                 (req: Request, res: Response, next: NextFunction) => {
-                    const componentIndex = new ComponentIndex(project);
+                    const componentIndex = new ComponentIndex(
+                        project,
+                        namespaceDirectoryMap
+                    );
                     const json = componentIndex.getProjectMetadata();
                     const localDevConfig = {
                         project: json

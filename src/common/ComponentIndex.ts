@@ -7,9 +7,11 @@ import { SFDX_PROJECT_JSON } from '../server/Constants';
 
 export default class ComponentIndex {
     private project: Project;
+    private namespaceDirectoryMap: Map<string, string>;
 
-    constructor(project: Project) {
+    constructor(project: Project, namespaceDirectoryMap?: Map<string, string>) {
         this.project = project;
+        this.namespaceDirectoryMap = namespaceDirectoryMap || new Map();
     }
 
     public getProjectMetadata(): ProjectMetadata {
@@ -83,6 +85,39 @@ export default class ComponentIndex {
                 }
             }
         });
+        return files;
+    }
+
+    private findModulesInNamespaceDirectory(
+        namespaceRoot: string
+    ): PackageComponent[] {
+        const files: PackageComponent[] = [];
+        const subdirs = this.findSubdirectories(namespaceRoot);
+        for (const subdir of subdirs) {
+            const basename = path.basename(subdir);
+            const modulePath = path.join(subdir, basename + '.js');
+            if (
+                fs.pathExistsSync(modulePath) &&
+                this.isJSComponent(modulePath) &&
+                this.isUIComponent(modulePath)
+            ) {
+                const name = basename;
+                let namespace = path.basename(path.dirname(subdir));
+                const jsName = `${namespace}/${name}`;
+                const decamelizedName = decamelize(name, '-');
+                const htmlName = `${namespace}-${decamelizedName}`;
+                const url = `/preview/${namespace}/${name}`;
+
+                files.push({
+                    jsName,
+                    htmlName,
+                    namespace,
+                    name,
+                    url,
+                    path: path.normalize(modulePath)
+                });
+            }
+        }
         return files;
     }
 
@@ -204,6 +239,23 @@ export default class ComponentIndex {
                         `Loading ${sfdxProjectPath} failed JSON parsing with error ${e.message}`
                     );
                 }
+            }
+        }
+
+        if (this.namespaceDirectoryMap) {
+            debugger;
+            for (const namespace of this.namespaceDirectoryMap.keys()) {
+                const namespaceDir =
+                    this.namespaceDirectoryMap.get(namespace) + '/' + namespace;
+                const components = this.findModulesInNamespaceDirectory(
+                    namespaceDir
+                );
+                packages.push({
+                    key: namespace,
+                    packageName: namespace,
+                    components,
+                    isDefault: false
+                });
             }
         }
 

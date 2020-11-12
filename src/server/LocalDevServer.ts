@@ -89,9 +89,7 @@ export default class LocalDevServer {
 
         config.addMiddleware(middleware);
 
-        const routes: ContainerAppExtension[] = [
-            projectMetadata(this.sessionNonce, this.project)
-        ];
+        const routes: ContainerAppExtension[] = [];
 
         if (this.project.configuration.liveReload) {
             this.liveReload = liveReload(
@@ -99,8 +97,6 @@ export default class LocalDevServer {
             );
             routes.push(this.liveReload);
         }
-
-        config.addRoutes(routes);
 
         // We have a separate work item to make local dev server work with the 228 LDS changes, where LDS is refactored into separate modules.
         // Until then, we are adding 226 modules as well for components using LDS to work.
@@ -132,8 +128,48 @@ export default class LocalDevServer {
             });
             console.log('Module Dirs: ', moduleDirs);
             config.addModules(moduleDirs);
-            services.push(getCoreComponentService(moduleDirs));
+
+            const namespaceDirectoryMap = new Map();
+            // scan directories for namespaces
+            moduleDirs.forEach(moduleDir => {
+                if (!moduleDir.endsWith('/')) {
+                    moduleDir += '/';
+                }
+                const inspectDir = moduleDir + '*';
+                const namespaceDirs = fg.sync(inspectDir.split(','), {
+                    onlyDirectories: true
+                });
+                namespaceDirs.forEach(namespaceDir => {
+                    // The directory's basename is the name of the namespace
+                    const namespace = path.basename(namespaceDir);
+                    if (namespaceDirectoryMap.has(namespace)) {
+                        console.log(
+                            'Ignoring duplicate directory for namespace: ' +
+                                namespace +
+                                ' -> [' +
+                                namespaceDirectoryMap.get(namespace) +
+                                ', ' +
+                                moduleDir +
+                                ']'
+                        );
+                    } else {
+                        namespaceDirectoryMap.set(namespace, moduleDir);
+                    }
+                });
+            });
+
+            console.log('Namespace Directory Map:', namespaceDirectoryMap);
+            services.push(getCoreComponentService(namespaceDirectoryMap));
+
+            routes.push(
+                projectMetadata(
+                    this.sessionNonce,
+                    this.project,
+                    namespaceDirectoryMap
+                )
+            );
         } else if (this.project.isSfdx) {
+            routes.push(projectMetadata(this.sessionNonce, this.project));
             const lwcPath = findLWCFolderPath(
                 this.project.modulesSourceDirectory
             );
@@ -151,6 +187,7 @@ export default class LocalDevServer {
                 );
             }
         } else {
+            routes.push(projectMetadata(this.sessionNonce, this.project));
             console.log(`Not an sfdx project`);
             const lwcPath = findLWCFolderPathCore(
                 this.project.modulesSourceDirectory
@@ -169,6 +206,9 @@ export default class LocalDevServer {
                 );
             }
         }
+
+        // Give project-type a chance to influence routes
+        config.addRoutes(routes);
 
         config.addServices(services);
 
