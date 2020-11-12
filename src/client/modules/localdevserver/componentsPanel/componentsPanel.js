@@ -67,16 +67,7 @@ export default class ComponentsPanel extends LightningElement {
 
         getProjectMetadata().then(data => {
             this.projectName = data.projectName;
-            //uncomment to mock having 2 packages
-            // let packages = data.packages;
-            // packages.push({
-            //     isDefault: false,
-            //     key: 'package_2',
-            //     packageName: 'Package 2',
-            //     components: data.packages[0].components.slice(0, 3)
-            // });
             this.packages = data.packages;
-            this.packages = packages;
             if (this.packages.length) {
                 this.selectedPackage = this.packages[0].key;
             }

@@ -16,12 +16,6 @@ export default class ComponentIndex {
 
     public getProjectMetadata(): ProjectMetadata {
         const metadata = this.findProjectMetadata();
-
-        if (metadata.packages.length > 0) {
-            const componentsMetadata = this.getModules();
-            metadata.packages[0].components = componentsMetadata;
-        }
-
         return metadata;
     }
 
@@ -106,7 +100,7 @@ export default class ComponentIndex {
                 const jsName = `${namespace}/${name}`;
                 const decamelizedName = decamelize(name, '-');
                 const htmlName = `${namespace}-${decamelizedName}`;
-                const url = `/preview/${namespace}/${name}`;
+                const url = `/core/${namespace}/${name}`;
 
                 files.push({
                     jsName,
@@ -243,7 +237,6 @@ export default class ComponentIndex {
         }
 
         if (this.namespaceDirectoryMap) {
-            debugger;
             for (const namespace of this.namespaceDirectoryMap.keys()) {
                 const namespaceDir =
                     this.namespaceDirectoryMap.get(namespace) + '/' + namespace;
@@ -262,7 +255,7 @@ export default class ComponentIndex {
         const defaultPackage = {
             key: 'package_1',
             packageName: defaultPackageName,
-            components: [],
+            components: this.getModules(),
             isDefault: true
         };
         packages.push(defaultPackage);

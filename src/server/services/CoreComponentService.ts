@@ -52,15 +52,13 @@ export function getCoreComponentService(
             }
         }
 
-        async initialize() {}
+        async initialize() { }
 
         async request(
             specifier: string,
             params: RequestParams,
             { compilerConfig }: ContainerContext
         ): Promise<RequestOutput> {
-            console.log('MATT: Requesting a core component!');
-            debugger;
             const name = this.extractNameFromSpecifier(specifier);
             const namespace = this.extractNamespaceFromSpecifier(specifier);
             if (!name || !namespace) {
