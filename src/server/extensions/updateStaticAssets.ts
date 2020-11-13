@@ -1,19 +1,30 @@
 import chokidar from 'chokidar';
 import { AppExtensionConfig } from '@webruntime/api';
+import { copyStaticResources } from '../../common/StaticResourcesUtils';
+import Project from 'common/Project';
+import WebruntimeConfig from 'server/config/WebruntimeConfig';
+import reload from 'reload';
 
-// Assumes that the liveReload will be kicked off as well. Therefore, this
-// will not reload. Not sure how timing will be though.
-export function updateStaticAssets(assetPaths: string[]) {
+// Will this essentially mean we reload twice?
+export function updateStaticAssets(
+    assetPaths: string[],
+    project: Project,
+    config: WebruntimeConfig
+) {
+    let reloadReturned: any;
     let fileWatcher: chokidar.FSWatcher;
 
     return {
         extendApp: async ({ app }: AppExtensionConfig) => {
+            reloadReturned = await reload(app);
+
             fileWatcher = chokidar.watch(assetPaths, {
                 ignoreInitial: true
             });
 
             fileWatcher.on('change', () => {
-                // TODO - update static assets folder
+                copyStaticResources(project, config);
+                reloadReturned.reload();
             });
         },
         close: async () => {

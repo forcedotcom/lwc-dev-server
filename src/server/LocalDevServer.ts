@@ -16,7 +16,7 @@ import {
 import { ContainerAppExtension, ServiceDefinitionCtor } from '@webruntime/api';
 import { Server } from '@webruntime/server';
 import { getCustomComponentService } from './services/CustomComponentService';
-import { copyFiles, findLWCFolderPath } from '../common/fileUtils';
+import { findLWCFolderPath } from '../common/fileUtils';
 import { getLabelService } from './services/LabelsService';
 import { ComponentServiceWithExclusions } from './services/ComponentServiceWithExclusions';
 import colors from 'colors';
@@ -82,7 +82,9 @@ export default class LocalDevServer {
 
         if (this.project.configuration.liveReload) {
             this.liveReload = liveReload(
-                path.join(config.buildDir, 'metadata.json')
+                path.join(config.buildDir, 'metadata.json'),
+                project,
+                config
             );
             routes.push(this.liveReload);
         }

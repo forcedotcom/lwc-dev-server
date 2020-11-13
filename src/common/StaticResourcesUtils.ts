@@ -3,7 +3,7 @@
  */
 
 import path from 'path';
-import { copyFiles } from '../common/fileUtils';
+import { copyFiles, removeFile } from '../common/fileUtils';
 import { CONTENT_ASSETS, STATIC_RESOURCES } from './Constants';
 import WebruntimeConfig from '../server/config/WebruntimeConfig';
 import Project from './Project';
@@ -25,6 +25,7 @@ export function copyDistAssets(config: WebruntimeConfig) {
             'assets',
             'localdev'
         );
+        removeFile(distAssetsPath);
         copyFiles(path.join(distAssetsPath, '*'), localDevAssetsPath);
     } catch (e) {
         throw new Error(`Unable to copy dist assets: ${e.message || e}`);
@@ -44,6 +45,7 @@ export function copyStaticResources(
                 'project',
                 STATIC_RESOURCES
             );
+            removeFile(assetsPath);
             staticResources.forEach((item: string) => {
                 copyFiles(path.join(item, '*'), assetsPath);
             });
@@ -63,6 +65,7 @@ export function copyContentAssets(project: Project, config: WebruntimeConfig) {
                 'project',
                 CONTENT_ASSETS
             );
+            removeFile(assetsPath);
             copyFiles(path.join(contentAssetsDir, '*'), assetsPath);
         }
     } catch (e) {
