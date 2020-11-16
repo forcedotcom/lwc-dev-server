@@ -25,7 +25,6 @@ export function copyDistAssets(config: WebruntimeConfig) {
             'assets',
             'localdev'
         );
-        removeFile(distAssetsPath);
         copyFiles(path.join(distAssetsPath, '*'), localDevAssetsPath);
     } catch (e) {
         throw new Error(`Unable to copy dist assets: ${e.message || e}`);
