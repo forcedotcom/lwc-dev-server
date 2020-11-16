@@ -1,8 +1,24 @@
+# 2.6.0 - November 16, 2020
+
+## Added
+
+-   Upgrade Base Components for 230 ([#262](https://github.com/forcedotcom/lwc-dev-server/pull/262))
+
+-   Add support for lightning-map and emp-api components ([#265](https://github.com/forcedotcom/lwc-dev-server/pull/265))
+
+-   Remove `.localdevserver` cache upon start up ([#269](https://github.com/forcedotcom/lwc-dev-server/pull/269))
+
+## Fixed
+
+-   Fixed error message when attempting to preview a component using Lightning Message Service ([#267](https://github.com/forcedotcom/lwc-dev-server/pull/267))
+
+-   Fix error message for component failures ([#271](https://github.com/forcedotcom/lwc-dev-server/pull/271))
+
 # 2.5.2 - September 11, 2020
 
 ## Added
 
--   Added support for 228 dependencies ([#255](https://github.com/forcedotcom/lwc-dev-server/pull/255/files))
+-   Added support for 228 dependencies ([#255](https://github.com/forcedotcom/lwc-dev-server/pull/255))
 
 # 2.5.1 - August 5, 2020
 
