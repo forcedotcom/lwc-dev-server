@@ -2,7 +2,7 @@
 
 ## Added
 
--   Upgrade Base Components for 230 ([#262](https://github.com/forcedotcom/lwc-dev-server/pull/262))
+-   Add support for 230 Base Components ([#262](https://github.com/forcedotcom/lwc-dev-server/pull/262))
 
 -   Add support for lightning-map and emp-api components ([#265](https://github.com/forcedotcom/lwc-dev-server/pull/265))
 
