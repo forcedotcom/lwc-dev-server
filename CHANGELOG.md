@@ -3,7 +3,7 @@
 ## Added
 
 -   Add support for 230 Base Components ([#262](https://github.com/forcedotcom/lwc-dev-server/pull/262))
--   Add support for lightning-map, showToastEvent, formatted-address, lightning-file-upload, and emp-api components ([#265](https://github.com/forcedotcom/lwc-dev-server/pull/265))
+-   Add support for lightning-map, platformShowToastEvent, formatted-address, lightning-file-upload, and emp-api components ([#265](https://github.com/forcedotcom/lwc-dev-server/pull/265))
 -   Remove `.localdevserver` cache upon start up ([#269](https://github.com/forcedotcom/lwc-dev-server/pull/269))
 
 ## Fixed
