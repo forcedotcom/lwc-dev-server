@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lwc-dev-server",
-    "version": "2.5.1",
+    "version": "2.6.0",
     "defaultApiVersion": "49.0",
     "description": "Salesforce CLI plugin for Local Development (Beta)",
     "license": "MIT",
@@ -53,8 +53,6 @@
     "devDependencies": {
         "@commitlint/cli": "^7",
         "@commitlint/config-conventional": "^7",
-        "commitizen": "^3.0.5",
-        "cz-conventional-changelog": "^2.1.0",
         "@lwc/jest-preset": "^4.5.0",
         "@lwc/jest-resolver": "^4.5.0",
         "@lwc/synthetic-shadow": "1.2.2",
@@ -80,6 +78,8 @@
         "@typescript-eslint/eslint-plugin": "^2.25.0",
         "@typescript-eslint/parser": "^2.25.0",
         "archiver": "^3.1.1",
+        "commitizen": "^3.0.5",
+        "cz-conventional-changelog": "^2.1.0",
         "eslint": "^6.0.1",
         "eslint-config-prettier": "^6.0.0",
         "eslint-plugin-prettier": "^3.1.0",
