@@ -284,6 +284,11 @@ describe('LocalDevServer', () => {
 
     it.skip('delete assets directory before creating a new one to clear cache', async () => {
         const server = new LocalDevServer(project);
+        // @ts-ignore
+        server.config.buildDir = path.join(
+            project.projectDirectory,
+            '.localdevserver'
+        );
 
         await server.start();
 
@@ -297,6 +302,12 @@ describe('LocalDevServer', () => {
 
     it('copies app static assets to the server assets directory', async () => {
         const server = new LocalDevServer(project);
+        // @ts-ignore
+        server.config.buildDir = path.join(
+            project.projectDirectory,
+            '.localdevserver'
+        );
+
         await server.start();
 
         const copiedFromPath = path.join(__dirname, '../../../dist/assets/*');
@@ -314,14 +325,17 @@ describe('LocalDevServer', () => {
         );
     });
 
-    // TODO - can't figure out why project.modulesSourceDirectory and project.directory
-    // are present, but project.projectDirectory is undefined.
     it('throws an error if copying static assets fails', async () => {
         fileUtilsCopyMock.mockImplementation(() => {
             throw new Error('test error');
         });
 
         const server = new LocalDevServer(project);
+        // @ts-ignore
+        server.config.buildDir = path.join(
+            project.projectDirectory,
+            '.localdevserver'
+        );
 
         await expect(server.start()).rejects.toThrow(
             'Unable to copy dist assets: test error'
