@@ -3,6 +3,9 @@ import reload from 'reload';
 import chokidar from 'chokidar';
 import { liveReload } from '../liveReload';
 import { ExtensionOptions } from '@webruntime/api';
+import Project from '../../../common/Project';
+import WebruntimeConfig from '../../config/WebruntimeConfig';
+import path from 'path';
 
 jest.mock('chokidar', () => {
     return {
@@ -33,9 +36,34 @@ jest.mock('express', () => {
     });
 });
 
+jest.mock('../../../common/Project');
+jest.mock('../../config/WebruntimeConfig');
+
 describe('liveReload', () => {
+    let project: Project;
+    let config: WebruntimeConfig;
+
+    beforeEach(() => {
+        project = new Project('/Users/arya/dev/myproject');
+
+        // @ts-ignore
+        config = WebruntimeConfig.mockImplementation(() => {
+            return {
+                buildDir: 'Users/arya/dev/myproject/.localdevserver',
+                serverDir: path.join(__dirname, '..', '..', '..'),
+                server: {
+                    resourceRoot: '/webruntime'
+                }
+            };
+        });
+    });
+
     it('should return a LWR extension', () => {
-        const extension = liveReload('/Users/arya/dev/myproject');
+        const extension = liveReload(
+            '/Users/arya/dev/myproject',
+            project,
+            config
+        );
 
         expect(extension).toHaveProperty('extendApp');
     });
@@ -54,7 +82,11 @@ describe('liveReload', () => {
         });
 
         it('should start reload server', async () => {
-            const extension = liveReload('/Users/arya/dev/myproject');
+            const extension = liveReload(
+                '/Users/arya/dev/myproject',
+                project,
+                config
+            );
 
             await extension.extendApp({ app, options });
 
@@ -62,7 +94,11 @@ describe('liveReload', () => {
         });
 
         it('should start a file watcher', async () => {
-            const extension = liveReload('/Users/arya/dev/myproject');
+            const extension = liveReload(
+                '/Users/arya/dev/myproject',
+                project,
+                config
+            );
 
             await extension.extendApp({ app, options });
 
@@ -95,7 +131,11 @@ describe('liveReload', () => {
         });
 
         it('should close the reload server', async () => {
-            const extension = liveReload('/Users/arya/dev/myproject');
+            const extension = liveReload(
+                '/Users/arya/dev/myproject',
+                project,
+                config
+            );
 
             await extension.extendApp({ app, options });
 
@@ -108,7 +148,11 @@ describe('liveReload', () => {
         });
 
         it('should close the file watcher', async () => {
-            const extension = liveReload('/Users/arya/dev/myproject');
+            const extension = liveReload(
+                '/Users/arya/dev/myproject',
+                project,
+                config
+            );
 
             await extension.extendApp({ app, options });
 
