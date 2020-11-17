@@ -6,7 +6,7 @@
  */
 
 import { flags, SfdxCommand } from '@salesforce/command';
-import { Messages } from '@salesforce/core';
+import { Messages, Org } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import Project from '../../../../../common/Project';
 import LocalDevServer from '../../../../../server/LocalDevServer';
@@ -16,7 +16,6 @@ import colors from 'colors';
 import uuidv4 from 'uuidv4';
 import { ServerConfiguration } from '../../../../../common/types';
 import { DEFAULT_PORT } from '../../../../../common/Constants';
-
 const debug = debugLogger('localdevserver');
 
 // Initialize Messages with the current plugin directory
@@ -25,15 +24,6 @@ Messages.importMessagesDirectory(__dirname);
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('@salesforce/lwc-dev-server', 'start');
-
-/**
- * Error codes for start command.
- * Process exits with error codes specified here if an error happens.
- * salesforcedx-vscode uses this as well as the stderr output to determine a user friendly message / action.
- */
-export const errorCodes = {
-    EPERM: 1
-};
 
 export default class Start extends SfdxCommand {
     public static description = messages.getMessage('commandDescription');
@@ -53,197 +43,87 @@ export default class Start extends SfdxCommand {
         })
     };
 
-    // Comment this out if your command does not support specifying an org username
-    protected static supportsUsername = true;
-
-    // Comment this out if your command does not support a dev hub org username
-    protected static supportsDevhubUsername = true;
-
-    // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
     protected static requiresProject = true;
+    protected static requiresUsername = true;
+    // Guaranteed by requires username
+    protected org!: Org;
 
     public async run(): Promise<AnyJson> {
-        const devhubusername = this.hubOrg ? this.hubOrg.getUsername() : '';
-        const devhubalias = this.configAggregator.getPropertyValue(
-            'defaultdevhubusername'
-        ) as string;
-
         const sessionNonce = uuidv4();
         const reporter = LocalDevTelemetryReporter.getInstance();
         await reporter.initializeService(sessionNonce);
-
-        if (!this.org) {
-            // This you DO need.
-            // We require this right now for proxying and api version.
-            // If we do not have an org, we can still function.
-            //  - We should disable the proxying and then allow specification of the version
-            //    if you don't authenticate.
-            //
-
-            const targetusername = this.flags.targetusername;
-            if (targetusername) {
-                const telemetryMsg = messages.getMessage(
-                    'error:invalidscratchorgusername'
-                );
-                this.reportStatus(
-                    colors.green(devhubalias),
-                    colors.red(`${targetusername} - ${telemetryMsg}`)
-                );
-                reporter.trackApplicationStartError(telemetryMsg);
-            } else {
-                const configuredusername = this.configAggregator.getPropertyValue(
-                    'defaultusername'
-                );
-                const telemetryMsg = messages.getMessage('error:noscratchorg');
-                this.reportStatus(
-                    colors.green(devhubalias),
-                    colors.red(`${configuredusername} - ${telemetryMsg}`)
-                );
-                reporter.trackApplicationStartError(telemetryMsg);
-            }
-
-            return { org: typeof this.org };
-        }
-
-        // Sfdx validates this before we have a chance to, this appears to be
-        // a "just in case" condition so reporting the same error they do.
-        if (!this.project) {
-            this.ux.error(messages.getMessage('error:noproject'));
-            return { project: typeof this.project };
-        }
-
-        this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));
-
-        // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
-        const conn = this.org.getConnection();
-
-        // We are forcing to use 49.0 (Summer20/226) so we can communicate with 226 LDS.
-        // Once we migrate to latest webruntime and LDS (W-8277943), we can remove this
-        // and go back to using the highest API as below
-
-        // Highest level API is always last
-        // const api_version = await conn.retrieveMaxApiVersion();
-
-        const api_version = '49.0';
-
-        const orgusername = this.org.getUsername() || '';
         try {
-            // currently something in sfdx is resulting in an unhandled
-            // promise rejection, instead of surfacing that rejection
-            // through the returned promise. @W-6723813
-            process.on('unhandledRejection', reason => {
-                if (
-                    reason &&
-                    // @ts-ignore
-                    reason.name &&
-                    // @ts-ignore
-                    reason.name === 'StatusCodeError'
-                ) {
-                    // ignore unhandled rejects during below refresh call
-                    debug(`unhandledPromiseRejection: ${reason}`);
-                } else {
-                    this.ux.error(`unhandledPromiseRejection: ${reason}`);
-                }
-            });
-            await this.org.refreshAuth();
-        } catch (err) {
-            const telemetryMsg = messages.getMessage(
-                'error:inactivescratchorg'
-            );
-            this.reportError(
-                colors.green(devhubalias),
-                colors.red(`${orgusername} - ${telemetryMsg}`),
+            // Legal disclosure
+            this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));
+
+            // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
+            const conn = this.org.getConnection();
+
+            // We are forcing to use 49.0 (Summer20/226) so we can communicate with 226 LDS.
+            // Once we migrate to latest webruntime and LDS (W-8277943), we can remove this
+            // and go back to using the highest API as below
+
+            // Highest level API is always last
+            // const api_version = await conn.retrieveMaxApiVersion();
+            const api_version = '49.0';
+
+            // Print the configuration details being used
+            this.reportStatus(
+                colors.green(this.org.getUsername() || ''),
                 colors.green(api_version)
             );
-            reporter.trackApplicationStartError(telemetryMsg);
-            err.exitCode = errorCodes.EPERM;
-            throw err;
-        }
 
-        this.reportStatus(
-            colors.green(devhubalias),
-            colors.green(orgusername),
-            colors.green(api_version)
-        );
+            // check if username credentials are still valid
+            await this.org.refreshAuth();
 
-        const accessToken = conn.accessToken;
+            const accessToken = conn.accessToken;
+            const srvConfig: ServerConfiguration = {
+                apiVersion: api_version,
+                headers: [`Authorization: Bearer ${accessToken}`],
+                instanceUrl: conn.instanceUrl,
+                port: this.flags.port
+            };
+            const projectPath = this.project ? this.project.getPath() : '.';
+            const project = new Project(projectPath, srvConfig);
+            const retValue = {
+                orgId: this.org.getOrgId(),
+                api_version: project.configuration.api_version,
+                endpoint: project.configuration.endpoint,
+                endpointHeaders: project.configuration.endpointHeaders,
+                port: project.configuration.port,
+                token: accessToken
+            };
+            debug(
+                JSON.stringify({
+                    ...retValue,
+                    token: undefined,
+                    endpointHeaders: undefined
+                })
+            );
+            // Start local dev server
+            const server = new LocalDevServer(project, conn);
+            await server.start();
 
-        const srvConfig: ServerConfiguration = {
-            apiVersion: api_version,
-            headers: [`Authorization: Bearer ${accessToken}`],
-            instanceUrl: conn.instanceUrl,
-            port: this.flags.port
-        };
+            // graceful shutdown
+            const exitHandler = async () => {
+                this.ux.log('\nStopping local development server');
+                await server.shutdown();
+                process.exit();
+            };
 
-        const project = new Project(this.project.getPath(), srvConfig);
-        const retValue = {
-            orgId: this.org.getOrgId(),
-            api_version: project.configuration.api_version,
-            endpoint: project.configuration.endpoint,
-            endpointHeaders: project.configuration.endpointHeaders,
-            port: project.configuration.port,
-            token: accessToken
-        };
-        debug(
-            JSON.stringify({
-                ...retValue,
-                token: undefined,
-                endpointHeaders: undefined
-            })
-        );
+            process.on('SIGINT', exitHandler);
+            process.on('SIGTERM', exitHandler);
 
-        // Start local dev server
-        const server = new LocalDevServer(project, conn);
-
-        await server.start();
-
-        // graceful shutdown
-        const exitHandler = async () => {
-            this.ux.log('\nStopping local development server');
-            await server.shutdown();
-            process.exit();
-        };
-
-        process.on('SIGINT', exitHandler);
-        process.on('SIGTERM', exitHandler);
-
-        return retValue;
-    }
-
-    private getStatusMessage(
-        devHubOrg: string,
-        scratchOrg: string,
-        apiVersion?: string
-    ) {
-        if (apiVersion) {
-            return `\
-Starting LWC Local Development.
-    Dev Hub Org: ${devHubOrg}
-    Scratch Org: ${scratchOrg}
-    Api Version: ${apiVersion}\
-`;
-        } else {
-            return `\
-Starting LWC Local Development.
-    Dev Hub Org: ${devHubOrg}
-    Scratch Org: ${scratchOrg}\
-`;
+            return retValue;
+        } catch (e) {
+            reporter.trackApplicationStartError(e.message);
+            return Promise.reject(e);
         }
     }
 
-    private reportStatus(
-        devHubOrg: string,
-        scratchOrg: string,
-        apiVersion?: string
-    ) {
-        this.ux.log(this.getStatusMessage(devHubOrg, scratchOrg, apiVersion));
-    }
-
-    private reportError(
-        devHubOrg: string,
-        scratchOrg: string,
-        apiVersion?: string
-    ) {
-        this.ux.error(this.getStatusMessage(devHubOrg, scratchOrg, apiVersion));
+    private reportStatus(orgUsername: string, apiVersion: string) {
+        this.ux.log(
+            `\nStarting LWC Local Development.\n\tUsername: ${orgUsername}\n\tApi Version: ${apiVersion}\n`
+        );
     }
 }

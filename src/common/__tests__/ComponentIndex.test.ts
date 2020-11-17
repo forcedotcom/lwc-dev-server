@@ -235,37 +235,6 @@ describe('ComponentIndex getModules()', () => {
 
         expect(componentIndex.getModules()).toEqual(expected);
     });
-
-    test('when using sfdx, handle project without lwc', () => {
-        mock({
-            'my-project': {
-                'package.json': JSON.stringify({
-                    name: 'test-project'
-                }),
-                'sfdx-project.json': JSON.stringify({
-                    packageDirectories: [
-                        {
-                            path: 'force-app',
-                            default: true,
-                            package: 'Test Package Name',
-                            versionName: "Spring '19",
-                            versionNumber: '1.0.0.NEXT'
-                        }
-                    ]
-                }),
-                'force-app': {
-                    main: {
-                        default: {}
-                    }
-                }
-            }
-        });
-
-        const project = new Project('my-project', SRV_CONFIG);
-        const componentIndex = new ComponentIndex(project);
-
-        expect(componentIndex.getModules()).toEqual([]);
-    });
 });
 
 describe('ComponentIndex getProjectMetadata()', () => {
