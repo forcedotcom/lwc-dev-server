@@ -24,6 +24,7 @@ import { AddressInfo } from 'net';
 import { Connection } from '@salesforce/core';
 import { CONTENT_ASSETS, STATIC_RESOURCES } from './Constants';
 
+
 export default class LocalDevServer {
     private server: Server;
     private config: WebruntimeConfig;
@@ -61,7 +62,12 @@ export default class LocalDevServer {
             sessionNonce(this.sessionNonce),
             resourceUrl()
         ];
-
+        if (
+            config.moduleDir &&
+            !fs.existsSync(path.join(config.moduleDir, 'lwc'))
+        ) {
+            process.exit();
+        }
         if (connection) {
             middleware.push(
                 apexMiddleware({
