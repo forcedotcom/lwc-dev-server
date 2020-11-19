@@ -281,7 +281,7 @@ describe('LocalDevServer', () => {
         expect(modules).toEqual([project.modulesSourceDirectory]);
     });
 
-    it.skip('copies app static assets to the server assets directory', async () => {
+    it('copies app static assets to the server assets directory', async () => {
         const server = new LocalDevServer(project);
         // @ts-ignore
         server.config.buildDir = path.join(
