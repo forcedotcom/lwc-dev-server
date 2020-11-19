@@ -281,6 +281,24 @@ describe('LocalDevServer', () => {
         expect(modules).toEqual([project.modulesSourceDirectory]);
     });
 
+    it.skip('delete assets directory before creating a new one to clear cache', async () => {
+        const server = new LocalDevServer(project);
+        // @ts-ignore
+        server.config.buildDir = path.join(
+            project.directory,
+            '.localdevserver'
+        );
+
+        await server.start();
+
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        // @ts-ignore
+        expect(fileUtils.removeFile.mock.calls[0][0]).toEqual(
+            // @ts-ignore
+            server.config.buildDir
+        );
+    });
+
     it('copies app static assets to the server assets directory', async () => {
         const server = new LocalDevServer(project);
         // @ts-ignore
