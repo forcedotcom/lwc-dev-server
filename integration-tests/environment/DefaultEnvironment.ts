@@ -36,8 +36,8 @@ export default class DefaultEnvironment extends BaseEnvironment {
 
         const project = new Project(this.projectPath);
         if (!project.configuration.api_version) {
-            debug('no api version specified, using 49.0');
-            project.configuration.api_version = '49.0';
+            debug('no api version specified, using 50.0');
+            project.configuration.api_version = '50.0';
         }
         if (
             project.configuration.port === undefined ||
