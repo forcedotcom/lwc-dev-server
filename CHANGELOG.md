@@ -1,3 +1,9 @@
+# 2.7.0 - November 20, 2020
+
+## Fixed
+
+-   Revert cache clear of `.localdevserver` upon startup which appeared to have been causing a blank screen on server start ([#282](https://github.com/forcedotcom/lwc-dev-server/pull/282)), [Issue #91](https://github.com/forcedotcom/lwc-dev-server-feedback/issues/91))
+
 # 2.6.0 - November 16, 2020
 
 ## Added
