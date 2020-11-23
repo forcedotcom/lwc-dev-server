@@ -27,7 +27,7 @@ export default class Error extends LightningElement {
     filename;
 
     get href() {
-	// this.filename has a reliable falsy value when we have no useful information to show
+        // this.filename has a reliable falsy value when we have no useful information to show
         if (this.filename) {
             return 'vscode://file' + this.errorLocation;
         }
