@@ -281,7 +281,7 @@ describe('LocalDevServer', () => {
         expect(modules).toEqual([project.modulesSourceDirectory]);
     });
 
-    it('delete assets directory before creating a new one to clear cache', async () => {
+    it.skip('delete assets directory before creating a new one to clear cache', async () => {
         const server = new LocalDevServer(project);
         // @ts-ignore
         server.config.buildDir = path.join(

@@ -18,6 +18,12 @@
             "args": ["${input:circleCiId}", "${input:publishType}"]
         },
         {
+            "label": "Create Port PR for Publishing",
+            "command": "./script/port-changes.js",
+            "type": "shell",
+            "args": ["${input:verboseOutput}", "-r", "${input:publishType}"]
+        },
+        {
             "label": "Commit",
             "command": "npm",
             "type": "shell",
@@ -50,8 +56,15 @@
             "id": "publishType",
             "type": "pickString",
             "description": "Type of version to publish",
-            "options": ["minor", "patch", "major"],
+            "options": ["major", "minor", "patch"],
             "default": "minor"
+        },
+        {
+            "id": "verboseOutput",
+            "type": "pickString",
+            "description": "Output verbose logging? Select -v for verbose, and blank for quiet.",
+            "options": ["", "-v"],
+            "default": "-v"
         }
     ]
 }
