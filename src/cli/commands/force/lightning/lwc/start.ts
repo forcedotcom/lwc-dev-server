@@ -4,9 +4,9 @@ import { AnyJson } from '@salesforce/ts-types';
 import * as http from 'http';
 import Project from '../../../../../common/Project';
 import LocalDevServer from '../../../../../server/LocalDevServer';
+import { findLWCFolderPath } from '../../../../../common/fileUtils';
 import debugLogger from 'debug';
 import colors from 'colors';
-
 const debug = debugLogger('localdevserver');
 
 // Initialize Messages with the current plugin directory
@@ -99,6 +99,20 @@ export default class Start extends SfdxCommand {
             return { project: typeof this.project };
         }
 
+        const project = new Project(this.project.getPath());
+
+        const lwcPath = findLWCFolderPath(project.modulesSourceDirectory);
+        if (project.isSfdx) {
+            if (!lwcPath) {
+                this.ux.log(
+                    colors.red(
+                        `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+                    )
+                );
+                process.exit();
+            }
+        }
+
         this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));
 
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
@@ -149,8 +163,6 @@ export default class Start extends SfdxCommand {
 
         const accessToken = conn.accessToken;
 
-        const project = new Project(this.project.getPath());
-
         project.configuration.api_version = api_version;
         project.configuration.endpoint = conn.instanceUrl;
         project.configuration.endpointHeaders = [
@@ -176,7 +188,6 @@ export default class Start extends SfdxCommand {
                 endpointHeaders: undefined
             })
         );
-
         // Start local dev server
         const server = new LocalDevServer(project, conn);
 
