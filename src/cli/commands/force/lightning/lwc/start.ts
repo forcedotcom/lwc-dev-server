@@ -102,15 +102,13 @@ export default class Start extends SfdxCommand {
         const project = new Project(this.project.getPath());
 
         const lwcPath = findLWCFolderPath(project.modulesSourceDirectory);
-        if (project.isSfdx) {
-            if (!lwcPath) {
-                this.ux.log(
-                    colors.red(
-                        `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
-                    )
-                );
-                process.exit();
-            }
+        if (!lwcPath) {
+            this.ux.log(
+                colors.red(
+                    `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+                )
+            );
+            process.exit();
         }
 
         this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));

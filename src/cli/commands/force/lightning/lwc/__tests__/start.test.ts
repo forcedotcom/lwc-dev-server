@@ -5,7 +5,7 @@ import LocalDevServer from '../../../../../../server/LocalDevServer';
 import Project from '../../../../../../common/Project';
 import { SfdxError } from '@salesforce/core';
 import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerConfiguration';
-import { findLWCFolderPath } from '../../../../../../common/fileUtils';
+import * as fileUtils from '../../../../../../common/fileUtils';
 import colors from 'colors';
 
 jest.mock('../../../../../../server/LocalDevServer');
@@ -21,7 +21,7 @@ describe('start', () => {
     let consoleLogMock: any;
     let consoleWarnMock: any;
     let consoleErrorMock: any;
-
+    let findLWCFolderPathMock: any;
     beforeEach(() => {
         jest.resetAllMocks();
 
@@ -48,6 +48,9 @@ describe('start', () => {
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+        findLWCFolderPathMock = jest
+            .spyOn(fileUtils, 'findLWCFolderPath')
+            .mockImplementation(() => '/');
     });
 
     afterEach(() => {
@@ -152,7 +155,6 @@ describe('start', () => {
                     }
                 };
             });
-
             let result: JsonMap = (await start.run()) as JsonMap;
             if (result) {
                 expect(result['endpoint']).toEqual('http://test.instance.url');
@@ -527,6 +529,24 @@ Starting LWC Local Development.
 
                 expect(serverShutdown).toHaveBeenCalledTimes(1);
             });
+            test('lwc folder does not exists', async () => {
+                setupFlags();
+                setupOrg();
+                Object.defineProperty(start, 'ux', {
+                    get: () => {
+                        return {
+                            log: jest.fn(),
+                            error: jest.fn()
+                        };
+                    },
+                    configurable: true,
+                    enumerable: true
+                });
+                findLWCFolderPathMock.mockReturnValueOnce(null);
+                await start.run();
+                expect(process.exit).toHaveBeenCalledTimes(1);
+                expect(findLWCFolderPathMock).toHaveBeenCalledTimes(1);
+            })
         });
     });
 });
