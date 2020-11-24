@@ -7,6 +7,7 @@ import { copyFiles, removeFile } from '../common/fileUtils';
 import { CONTENT_ASSETS, STATIC_RESOURCES } from './Constants';
 import WebruntimeConfig from '../server/config/WebruntimeConfig';
 import Project from './Project';
+import { static } from 'express';
 
 /**
  * Copy app static resources.
@@ -97,11 +98,14 @@ function isValidStaticResource(
     resourcePath: string
 ): boolean {
     const staticResources = project.staticResourcesDirectories;
-    return (
-        staticResources &&
-        staticResources.length > 0 &&
-        staticResources.includes(resourcePath)
-    );
+    if (staticResources && staticResources.length > 0) {
+        staticResources.forEach(item => {
+            if (resourcePath.startsWith(item)) {
+                return true;
+            }
+        });
+    }
+    return false;
 }
 
 function isValidContentAsset(project: Project, resourcePath: string): boolean {
@@ -109,6 +113,6 @@ function isValidContentAsset(project: Project, resourcePath: string): boolean {
     return (
         contentAssetsDir !== undefined &&
         contentAssetsDir !== '' &&
-        contentAssetsDir === resourcePath
+        resourcePath.startsWith(contentAssetsDir)
     );
 }
