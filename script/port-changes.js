@@ -83,7 +83,7 @@ function getAllDiffs(baseBranch, featureBranch) {
   if (ADD_VERBOSE_LOGGING)
     console.log(`\n\nStep 2: Get all diffs between branches ${baseBranch} and ${featureBranch}`);
   return shell
-    .exec(`git log --oneline ${baseBranch}..${featureBranch}`, {
+    .exec(`git log --since="2 months ago" --oneline ${baseBranch}..${featureBranch}`, {
       silent: !ADD_VERBOSE_LOGGING,
     })
     .replace(/\n/g, ',')
