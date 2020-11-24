@@ -176,16 +176,14 @@ describe('liveReload', () => {
                 'src/contentAssetDir'
             ]);
         });
-    
-        it('should reload on static resource change', async() => {
+
+        it('should reload on static resource change', async () => {
             // jest.mock('chokidar', () => {
             //     return {
             //         watch: function(fileName) {
-                        
             //         }
             //     };
             // });
-
             // mockFs({
             //     'src/staticResourceOne': {
             //         'staticResourceOne-1.txt': 'sample1',
@@ -199,7 +197,7 @@ describe('liveReload', () => {
             //         'contentAssetTwo.txt': 'asset2'
             //     }
             // });
-        })
+        });
     });
 
     describe('close', () => {

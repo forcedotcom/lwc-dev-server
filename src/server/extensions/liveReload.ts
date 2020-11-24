@@ -55,7 +55,10 @@ export function liveReload(
     };
 }
 
-export function getFilesToWatch(metadataPath: string, project: Project): string[] {
+export function getFilesToWatch(
+    metadataPath: string,
+    project: Project
+): string[] {
     let filesToWatch = [metadataPath];
 
     const staticResources = project.staticResourcesDirectories;
