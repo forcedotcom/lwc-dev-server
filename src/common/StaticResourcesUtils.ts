@@ -25,6 +25,7 @@ export function copyDistAssets(config: WebruntimeConfig) {
             'assets',
             'localdev'
         );
+        removeFile(localDevAssetsPath);
         copyFiles(path.join(distAssetsPath, '*'), localDevAssetsPath);
     } catch (e) {
         throw new Error(`Unable to copy dist assets: ${e.message || e}`);
@@ -70,4 +71,44 @@ export function copyContentAssets(project: Project, config: WebruntimeConfig) {
     } catch (e) {
         console.warn(`Unable to copy contentAssets: ${e.getMessage || e}`);
     }
+}
+
+export function rebuildResource(
+    project: Project,
+    config: WebruntimeConfig,
+    resourcePath: string
+) {
+    let assetsPath = path.join(config.buildDir, 'assets', 'project');
+
+    if (isValidStaticResource(project, resourcePath)) {
+        assetsPath += STATIC_RESOURCES;
+    } else if (isValidContentAsset(project, resourcePath)) {
+        assetsPath += CONTENT_ASSETS;
+    } else {
+        return;
+    }
+
+    removeFile(assetsPath);
+    copyFiles(path.join(resourcePath, '*'), assetsPath);
+}
+
+function isValidStaticResource(
+    project: Project,
+    resourcePath: string
+): boolean {
+    const staticResources = project.staticResourcesDirectories;
+    return (
+        staticResources &&
+        staticResources.length > 0 &&
+        staticResources.includes(resourcePath)
+    );
+}
+
+function isValidContentAsset(project: Project, resourcePath: string): boolean {
+    const contentAssetsDir = project.contentAssetsDirectory;
+    return (
+        contentAssetsDir !== undefined &&
+        contentAssetsDir !== '' &&
+        contentAssetsDir === resourcePath
+    );
 }

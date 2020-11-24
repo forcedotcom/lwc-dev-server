@@ -1,11 +1,12 @@
 import express, { Application } from 'express';
 import reload from 'reload';
 import chokidar from 'chokidar';
-import { liveReload } from '../liveReload';
+import { liveReload, getFilesToWatch } from '../liveReload';
 import { ExtensionOptions } from '@webruntime/api';
 import Project from '../../../common/Project';
 import WebruntimeConfig from '../../config/WebruntimeConfig';
 import path from 'path';
+import mockFs from 'mock-fs';
 
 jest.mock('chokidar', () => {
     return {
@@ -93,7 +94,7 @@ describe('liveReload', () => {
             expect(reload).toHaveBeenCalledTimes(1);
         });
 
-        it('should start a file watcher', async () => {
+        it('should start a file watcher for change events', async () => {
             const extension = liveReload(
                 '/Users/arya/dev/myproject',
                 project,
@@ -115,6 +116,90 @@ describe('liveReload', () => {
             expect(watchEvent).toEqual('change');
             expect(reloadReturned.reload).toBeCalledTimes(1);
         });
+
+        it('should start a file watcher for add events', async () => {
+            const extension = liveReload(
+                '/Users/arya/dev/myproject',
+                project,
+                config
+            );
+
+            await extension.extendApp({ app, options });
+
+            expect(chokidar.watch).toHaveBeenCalledTimes(1);
+
+            // @ts-ignore
+            const reloadReturned = await reload.mock.results[0].value;
+            // @ts-ignore
+            const watchResult = chokidar.watch.mock.results[0].value;
+            const [watchEvent, watchCallback] = watchResult.on.mock.calls[1];
+
+            watchCallback();
+
+            expect(watchEvent).toEqual('add');
+            expect(reloadReturned.reload).toBeCalledTimes(1);
+        });
+
+        it('should start a file watcher for unlink events', async () => {
+            const extension = liveReload(
+                '/Users/arya/dev/myproject',
+                project,
+                config
+            );
+
+            await extension.extendApp({ app, options });
+
+            expect(chokidar.watch).toHaveBeenCalledTimes(1);
+
+            // @ts-ignore
+            const reloadReturned = await reload.mock.results[0].value;
+
+            // @ts-ignore
+            const watchResult = chokidar.watch.mock.results[0].value;
+            const [watchEvent, watchCallback] = watchResult.on.mock.calls[2];
+
+            watchCallback();
+
+            expect(watchEvent).toEqual('unlink');
+            expect(reloadReturned.reload).toBeCalledTimes(1);
+        });
+
+        it('should return static resources in file watcher list', async () => {
+            const filesToWatch = getFilesToWatch(
+                '/Users/arya/dev/myproject',
+                project
+            );
+            expect(filesToWatch).toEqual([
+                '/Users/arya/dev/myproject',
+                'src/staticResourceOne',
+                'src/staticResourceTwo',
+                'src/contentAssetDir'
+            ]);
+        });
+    
+        it('should reload on static resource change', async() => {
+            // jest.mock('chokidar', () => {
+            //     return {
+            //         watch: function(fileName) {
+                        
+            //         }
+            //     };
+            // });
+
+            // mockFs({
+            //     'src/staticResourceOne': {
+            //         'staticResourceOne-1.txt': 'sample1',
+            //         'staticResourceOne-2.txt': 'sample2'
+            //     },
+            //     'src/staticResourceTwo': {
+            //         'staticResourceTwo.txt': 'otherSample'
+            //     },
+            //     'src/contentAssetDir': {
+            //         'contentAssetOne.txt': 'asset1',
+            //         'contentAssetTwo.txt': 'asset2'
+            //     }
+            // });
+        })
     });
 
     describe('close', () => {

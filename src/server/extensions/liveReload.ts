@@ -2,7 +2,7 @@ import reload from 'reload';
 import chokidar from 'chokidar';
 import { AppExtensionConfig } from '@webruntime/api';
 import WebruntimeConfig from 'server/config/WebruntimeConfig';
-import { copyStaticResources } from '../../common/StaticResourcesUtils';
+import { rebuildResource } from '../../common/StaticResourcesUtils';
 import Project from 'common/Project';
 
 export function liveReload(
@@ -17,38 +17,29 @@ export function liveReload(
         extendApp: async ({ app }: AppExtensionConfig) => {
             reloadReturned = await reload(app);
 
-            fileWatcher = chokidar.watch(metadataPath, {
+            const filesToWatch = getFilesToWatch(metadataPath, project);
+            fileWatcher = chokidar.watch(filesToWatch, {
                 ignoreInitial: true
             });
 
-            const staticResources = project.staticResourcesDirectories;
-            if (staticResources && staticResources.length > 0) {
-                staticResources.forEach((item: string) => {
-                    fileWatcher.add(item);
-                });
-            }
-
-            const contentAssetsDir = project.contentAssetsDirectory;
-            if (contentAssetsDir && contentAssetsDir !== '') {
-                fileWatcher.add(contentAssetsDir);
-            }
-
             fileWatcher.on('change', path => {
-                console.log('Path was: ' + path);
-                if (path && !path.endsWith('metadata.json')) {
-                    copyStaticResources(project, config);
-                } else {
-                    reloadReturned.reload();
+                if (path && path !== metadataPath) {
+                    rebuildResource(project, config, path);
                 }
+                reloadReturned.reload();
             });
 
             fileWatcher.on('add', path => {
-                copyStaticResources(project, config);
+                if (path && path !== metadataPath) {
+                    rebuildResource(project, config, path);
+                }
                 reloadReturned.reload();
             });
 
             fileWatcher.on('unlink', path => {
-                copyStaticResources(project, config);
+                if (path && path !== metadataPath) {
+                    rebuildResource(project, config, path);
+                }
                 reloadReturned.reload();
             });
         },
@@ -62,4 +53,22 @@ export function liveReload(
             }
         }
     };
+}
+
+export function getFilesToWatch(metadataPath: string, project: Project): string[] {
+    let filesToWatch = [metadataPath];
+
+    const staticResources = project.staticResourcesDirectories;
+    if (staticResources && staticResources.length > 0) {
+        staticResources.forEach((item: string) => {
+            filesToWatch.push(item);
+        });
+    }
+
+    const contentAssetsDir = project.contentAssetsDirectory;
+    if (contentAssetsDir && contentAssetsDir !== '') {
+        filesToWatch.push(contentAssetsDir);
+    }
+
+    return filesToWatch;
 }
