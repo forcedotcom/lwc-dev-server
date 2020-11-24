@@ -5,10 +5,12 @@ import LocalDevServer from '../../../../../../server/LocalDevServer';
 import Project from '../../../../../../common/Project';
 import { SfdxError } from '@salesforce/core';
 import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerConfiguration';
+import { findLWCFolderPath } from '../../../../../../common/fileUtils';
 import colors from 'colors';
 
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
+jest.mock('../../../../../../common/fileUtils');
 
 // suppress noise from tests. there should be a better way to do this...
 const unhandledRejectionListener = function(event: any) {};

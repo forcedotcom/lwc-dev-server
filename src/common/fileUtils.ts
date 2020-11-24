@@ -28,7 +28,7 @@ export function removeFile(file: string) {
     }
 }
 
-export function findLWCFolderPath(rootPath: string = 'force-app') {
+export function findLWCFolderPath(rootPath: string) {
     return findFolderWithDefaultPath(
         rootPath,
         path.join('main', 'default'),
