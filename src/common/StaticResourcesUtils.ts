@@ -7,7 +7,6 @@ import { copyFiles, removeFile } from '../common/fileUtils';
 import { CONTENT_ASSETS, STATIC_RESOURCES } from './Constants';
 import WebruntimeConfig from '../server/config/WebruntimeConfig';
 import Project from './Project';
-import { static } from 'express';
 
 /**
  * Copy app static resources.
@@ -79,33 +78,30 @@ export function rebuildResource(
     config: WebruntimeConfig,
     resourcePath: string
 ) {
-    let assetsPath = path.join(config.buildDir, 'assets', 'project');
-
     if (isValidStaticResource(project, resourcePath)) {
-        assetsPath += STATIC_RESOURCES;
+        copyStaticResources(project, config);
     } else if (isValidContentAsset(project, resourcePath)) {
-        assetsPath += CONTENT_ASSETS;
+        copyContentAssets(project, config);
     } else {
-        return;
+        return; // TODO - not sure if we should log something in this case. I don't think this will ever happen
     }
-
-    removeFile(assetsPath);
-    copyFiles(path.join(resourcePath, '*'), assetsPath);
 }
 
 function isValidStaticResource(
     project: Project,
     resourcePath: string
 ): boolean {
+    let isValidStaticResource = false;
     const staticResources = project.staticResourcesDirectories;
     if (staticResources && staticResources.length > 0) {
         staticResources.forEach(item => {
             if (resourcePath.startsWith(item)) {
-                return true;
+                isValidStaticResource = true;
+                return;
             }
         });
     }
-    return false;
+    return isValidStaticResource;
 }
 
 function isValidContentAsset(project: Project, resourcePath: string): boolean {
