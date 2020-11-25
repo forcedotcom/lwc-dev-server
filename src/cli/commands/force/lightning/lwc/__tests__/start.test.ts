@@ -546,7 +546,7 @@ Starting LWC Local Development.
                 await start.run();
                 expect(process.exit).toHaveBeenCalledTimes(1);
                 expect(findLWCFolderPathMock).toHaveBeenCalledTimes(1);
-            })
+            });
         });
     });
 });
