@@ -137,7 +137,7 @@ describe('liveReload', () => {
             watchCallback();
 
             expect(watchEvent).toEqual('add');
-            expect(reloadReturned.reload).toBeCalledTimes(1);
+            expect(reloadReturned.reload).toBeCalledTimes(0);
         });
 
         it('should start a file watcher for unlink events', async () => {
@@ -161,7 +161,7 @@ describe('liveReload', () => {
             watchCallback();
 
             expect(watchEvent).toEqual('unlink');
-            expect(reloadReturned.reload).toBeCalledTimes(1);
+            expect(reloadReturned.reload).toBeCalledTimes(0);
         });
 
         it('should return static resources in file watcher list', async () => {
@@ -177,27 +177,11 @@ describe('liveReload', () => {
             ]);
         });
 
-        it('should reload on static resource change', async () => {
-            // jest.mock('chokidar', () => {
-            //     return {
-            //         watch: function(fileName) {
-            //         }
-            //     };
-            // });
-            // mockFs({
-            //     'src/staticResourceOne': {
-            //         'staticResourceOne-1.txt': 'sample1',
-            //         'staticResourceOne-2.txt': 'sample2'
-            //     },
-            //     'src/staticResourceTwo': {
-            //         'staticResourceTwo.txt': 'otherSample'
-            //     },
-            //     'src/contentAssetDir': {
-            //         'contentAssetOne.txt': 'asset1',
-            //         'contentAssetTwo.txt': 'asset2'
-            //     }
-            // });
-        });
+        it('should rebuild on static resource change', async () => {});
+
+        it('should rebuild on static resource deletion', async () => {});
+
+        it('should rebuild on static resource addition', () => {});
     });
 
     describe('close', () => {
