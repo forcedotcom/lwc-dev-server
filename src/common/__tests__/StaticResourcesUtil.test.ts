@@ -32,9 +32,112 @@ describe('StaticResourcesUtils', () => {
         fileUtilsDeleteMock.mockRestore();
     });
 
+    it('copyStaticAssets copies dist, static resources, and content assets', () => {
+        StaticResourcesUtils.copyStaticAssets(project, config);
+
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(3);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(4);
+
+        confirmDistAssetCopy(1);
+        confirmStaticResourcesAssetCopy(2, 3);
+        confirmContentAssetCopy(4);
+    });
+
     it('copyDistAssets copies dist assets to configuration build directory', () => {
         StaticResourcesUtils.copyDistAssets(config);
 
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(1);
+
+        confirmDistAssetCopy(1);
+    });
+
+    it('copyStaticResources copies static resources to configuration build directory', () => {
+        StaticResourcesUtils.copyStaticResources(project, config);
+
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(2);
+
+        confirmStaticResourcesAssetCopy(1, 2);
+    });
+
+    it('copyContentAssets copies content assets to configuration build directory', () => {
+        StaticResourcesUtils.copyContentAssets(project, config);
+
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(1);
+
+        confirmContentAssetCopy(1);
+    });
+
+    it('rebuildResource copies static resources to configuration build directory', () => {
+        StaticResourcesUtils.rebuildResource(
+            project,
+            config,
+            'src/staticResourceOne/mySampleFile.txt'
+        );
+
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(2);
+
+        confirmStaticResourcesAssetCopy(1, 2);
+    });
+
+    it('rebuildResource copies content assets to configuration build directory', () => {
+        StaticResourcesUtils.rebuildResource(
+            project,
+            config,
+            'src/contentAssetDir/mySampleFile.txt'
+        );
+
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(1);
+
+        confirmContentAssetCopy(1);
+    });
+
+    it('rebuildResource does not copy assets if file is unrecognized by project', () => {
+        StaticResourcesUtils.rebuildResource(
+            project,
+            config,
+            'not/a/valid/resource.txt'
+        );
+
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(0);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(0);
+    });
+
+    it('isValidStaticResource returns true if valid', () => {
+        const resourcePath = 'src/staticResourceTwo/mySubDirectory/file1.txt';
+        expect(resourcePath).toContain(project.staticResourcesDirectories[1]);
+        expect(
+            StaticResourcesUtils.isValidStaticResource(project, resourcePath)
+        ).toBeTruthy();
+    });
+
+    it('isValidStaticResource returns false if invalid', () => {
+        const resourcePath = 'src/notMyStaticResource/dummyFile.txt';
+        expect(
+            StaticResourcesUtils.isValidStaticResource(project, resourcePath)
+        ).toBeFalsy();
+    });
+
+    it('isValidContentAsset returns true if valid', () => {
+        const resourcePath = 'src/contentAssetDir/mySubDir/contentAsset.txt';
+        expect(resourcePath).toContain(project.contentAssetsDirectory);
+        expect(
+            StaticResourcesUtils.isValidContentAsset(project, resourcePath)
+        ).toBeTruthy();
+    });
+
+    it('isValidContentAsset returns false if invalid', () => {
+        const resourcePath = 'src/notAContentAsset/dummyFile.txt';
+        expect(
+            StaticResourcesUtils.isValidContentAsset(project, resourcePath)
+        ).toBeFalsy();
+    });
+
+    function confirmDistAssetCopy(callOrder: number) {
         const copiedFromPath = path.join(
             config.serverDir,
             'dist',
@@ -43,16 +146,17 @@ describe('StaticResourcesUtils', () => {
         );
         const copiedToPath = path.join(config.buildDir, 'assets', 'localdev');
 
-        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
-        expect(fileUtils.copyFiles).toBeCalledWith(
+        expect(fileUtils.copyFiles).toHaveBeenNthCalledWith(
+            callOrder,
             copiedFromPath,
             copiedToPath
         );
-    });
+    }
 
-    it('copyStaticResources copies static resources to configuration build directory', () => {
-        StaticResourcesUtils.copyStaticResources(project, config);
-
+    function confirmStaticResourcesAssetCopy(
+        callOrderOne: number,
+        callOrderTwo: number
+    ) {
         const copiedFromPaths = project.staticResourcesDirectories;
         const copiedTo = path.join(
             config.buildDir,
@@ -61,23 +165,19 @@ describe('StaticResourcesUtils', () => {
             STATIC_RESOURCES
         );
 
-        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
-        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(2);
         expect(fileUtils.copyFiles).nthCalledWith(
-            1,
+            callOrderOne,
             path.join(copiedFromPaths[0], '*'),
             copiedTo
         );
         expect(fileUtils.copyFiles).nthCalledWith(
-            2,
+            callOrderTwo,
             path.join(copiedFromPaths[1], '*'),
             copiedTo
         );
-    });
+    }
 
-    it('copyContentAssets copies content assets to configuration build directory', () => {
-        StaticResourcesUtils.copyContentAssets(project, config);
-
+    function confirmContentAssetCopy(callOrder: number) {
         const copiedFromPath = path.join(
             project.contentAssetsDirectory || '',
             '*'
@@ -89,36 +189,10 @@ describe('StaticResourcesUtils', () => {
             CONTENT_ASSETS
         );
 
-        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
-        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(1);
-        expect(fileUtils.copyFiles).toHaveBeenCalledWith(
+        expect(fileUtils.copyFiles).nthCalledWith(
+            callOrder,
             copiedFromPath,
             copiedTo
         );
-    });
-
-    it('rebuildResource copies static resources to configuration build directory', () => {
-        StaticResourcesUtils.rebuildResource(project, config, 'src/staticResourceOne/mySampleFile.txt');
-
-        const copiedFromPaths = project.staticResourcesDirectories;
-        const copiedTo = path.join(
-            config.buildDir,
-            'assets',
-            'project',
-            STATIC_RESOURCES
-        );
-
-        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
-        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(2);
-        expect(fileUtils.copyFiles).nthCalledWith(
-            1,
-            path.join(copiedFromPaths[0], '*'),
-            copiedTo
-        );
-        expect(fileUtils.copyFiles).nthCalledWith(
-            2,
-            path.join(copiedFromPaths[1], '*'),
-            copiedTo
-        );
-    });
+    }
 });
