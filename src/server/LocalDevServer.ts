@@ -61,6 +61,7 @@ export default class LocalDevServer {
             sessionNonce(this.sessionNonce),
             resourceUrl()
         ];
+
         if (connection) {
             middleware.push(
                 apexMiddleware({
