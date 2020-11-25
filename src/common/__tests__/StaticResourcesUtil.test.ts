@@ -1,508 +1,210 @@
-import fs from 'fs';
-import mockFs from 'mock-fs';
 import path from 'path';
-import { ls } from 'shelljs';
+import * as StaticResourcesUtils from '../StaticResourcesUtils';
+import Project from '../Project';
+import WebruntimeConfig from '../../server/config/WebruntimeConfig';
 import * as fileUtils from '../fileUtils';
+import { CONTENT_ASSETS, STATIC_RESOURCES } from '../Constants';
+import mock from 'mock-fs';
 
-describe('StaticResourcesUtil', () => {
-    const rootPath = '/Users/mikasa/dev/myproject';
-    const defaultPath = 'default/path';
-    const lwcDir = 'lwc';
-    const parentDir = 'parent';
-    const fileName = 'file.txt';
+jest.mock('../Project');
+jest.mock('../fileUtils');
+// jest.mock('../StaticResourcesUtils');
 
-    const childFolder = `${rootPath}/some/directory/assets`;
-    const childFolder2 = `${rootPath}/some/other/assets`;
-    const childFolder3 = `${rootPath}/some/more/assets`;
+describe('StaticResourcesUtils', () => {
+    let project: Project;
+    let config: WebruntimeConfig;
 
-    afterEach(mockFs.restore);
+    let fileUtilsCopyMock: any;
+    let fileUtilsDeleteMock: any;
 
-    describe('copyStaticAssets', () => {});
+    beforeEach(() => {
+        project = new Project('/Users/arya/dev/myproject');
+        config = new WebruntimeConfig(project);
 
-    describe('copyDistAssets', () => {});
-
-    describe('copyStaticResources', () => {});
-
-    describe('copyContentAssets', () => {});
-
-    describe('copyFiles()', () => {
-        it('copies a directory of files', () => {
-            mockFs({
-                'copy/from': {
-                    'test.txt': 'test',
-                    'test2.txt': 'test2',
-                    'test3.js': 'test3',
-                    '.test4': 'test4'
-                },
-                'copy/to': {}
-            });
-
-            fileUtils.copyFiles('copy/from', 'copy/to');
-
-            const expected = [
-                'from',
-                'from/.test4',
-                'from/test.txt',
-                'from/test2.txt',
-                'from/test3.js'
-            ];
-            const actual = ls('-RA', 'copy/to');
-
-            expect(actual).toEqual(expect.arrayContaining(expected));
-        });
-
-        it('copies a directory recursively', () => {
-            mockFs({
-                'copy/from': {
-                    'test.txt': 'test',
-                    subdirectory: {
-                        'test2.txt': 'test2'
-                    }
-                },
-                'copy/to': {}
-            });
-
-            fileUtils.copyFiles('copy/from', 'copy/to');
-
-            const expected = [
-                'from',
-                'from/subdirectory',
-                'from/subdirectory/test2.txt',
-                'from/test.txt'
-            ];
-            const actual = ls('-RA', 'copy/to');
-
-            expect(actual).toEqual(expect.arrayContaining(expected));
-        });
-
-        it('copies a single file', () => {
-            mockFs({
-                'copy/from': {
-                    'test.txt': 'test'
-                },
-                'copy/to': {}
-            });
-
-            fileUtils.copyFiles('copy/from/test.txt', 'copy/to');
-
-            const expected = ['test.txt'];
-            const actual = ls('-RA', 'copy/to');
-
-            expect(actual).toEqual(expect.arrayContaining(expected));
-        });
-
-        it('copies to a dest that has non existent directories', () => {
-            mockFs({
-                'copy/from': {
-                    'test.txt': 'test',
-                    'test2.txt': 'test2'
-                },
-                'copy/to': {}
-            });
-
-            fileUtils.copyFiles('copy/from', 'copy/to/somewhere/inside');
-
-            const expected = [
-                'somewhere',
-                'somewhere/inside',
-                'somewhere/inside/from',
-                'somewhere/inside/from/test.txt',
-                'somewhere/inside/from/test2.txt'
-            ];
-            const actual = ls('-RA', 'copy/to');
-
-            expect(actual).toEqual(expect.arrayContaining(expected));
-        });
-
-        it('can copy only the files within a directory', () => {
-            mockFs({
-                'copy/from': {
-                    'test.txt': 'test',
-                    'test2.txt': 'test2'
-                },
-                'copy/to': {}
-            });
-
-            fileUtils.copyFiles('copy/from/*', 'copy/to');
-
-            const expected = ['test.txt', 'test2.txt'];
-            const actual = ls('-RA', 'copy/to');
-
-            expect(actual).toEqual(expect.arrayContaining(expected));
-        });
+        fileUtilsCopyMock = jest
+            .spyOn(fileUtils, 'copyFiles')
+            .mockImplementation();
+        fileUtilsDeleteMock = jest
+            .spyOn(fileUtils, 'removeFile')
+            .mockImplementation();
     });
 
-    describe('removeFile()', () => {
-        it('removes a file', () => {
-            mockFs({
-                'test.txt': 'test'
-            });
-
-            expect(fs.existsSync('test.txt')).toBeTruthy();
-            fileUtils.removeFile('test.txt');
-            expect(fs.existsSync('test.txt')).toBeFalsy();
-        });
-
-        it('removes an empty directory', () => {
-            const project = '/Users/mikasa/dev/myproject';
-            const directoryToRemove = `${project}/.localdevserver`;
-            mockFs({
-                [`${project}/src/modules`]: {},
-                [`${directoryToRemove}`]: {}
-            });
-
-            expect(fs.existsSync(directoryToRemove)).toBeTruthy();
-            fileUtils.removeFile(directoryToRemove);
-            expect(fs.existsSync(directoryToRemove)).toBeFalsy();
-        });
-
-        it('removes a non empty directory', () => {
-            const project = '/Users/mikasa/dev/myproject';
-            const directoryToRemove = `${project}/.localdevserver`;
-            mockFs({
-                [`${project}/src/modules`]: {},
-                [`${directoryToRemove}`]: {
-                    assets: {
-                        'testing.txt': 'testing'
-                    }
-                }
-            });
-
-            expect(fs.existsSync(directoryToRemove)).toBeTruthy();
-            fileUtils.removeFile(directoryToRemove);
-            expect(fs.existsSync(directoryToRemove)).toBeFalsy();
-        });
-
-        it('doesnt throw an error if the directory doesnt exist', () => {
-            const project = '/Users/mikasa/dev/myproject';
-            mockFs({
-                [`${project}/src/modules`]: {}
-            });
-
-            expect(() => {
-                fileUtils.removeFile(
-                    '/Users/mikasa/dev/myproject/.localdevserver'
-                );
-            }).not.toThrow();
-        });
+    afterEach(() => {
+        fileUtilsCopyMock.mockRestore();
+        fileUtilsDeleteMock.mockRestore();
     });
 
-    describe('findFileWithDefaultPath()', () => {
-        it('returns the default file path if present', () => {
-            const filePath = path.normalize(
-                `${rootPath}/${defaultPath}/${parentDir}/${fileName}`
-            );
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${filePath}`]: ''
-            });
+    // Assert that all 3 methods were called.
 
-            expect(fs.existsSync(filePath)).toBeTruthy();
-            const result = fileUtils.findFileWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir,
-                fileName
-            );
-            expect(result).toBe(filePath);
-        });
+    // it.skip('copyStaticAssets', () => {
+    //     // StaticResourcesUtils.copyDistAssets = copyDistAssetsMock;
 
-        it('returns a non-default file path if present', () => {
-            const nonDefault = 'other/path';
-            const nonDefaultFilePath = path.normalize(
-                `${rootPath}/${nonDefault}/${parentDir}/${fileName}`
-            );
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${nonDefaultFilePath}`]: ''
-            });
+    //     // @ts-ignore
+    //     StaticResourcesUtils.mockImplementation(() => {
+    //         return {
+    //             copyDistAssets: copyDistAssetsMock,
+    //             copyStaticResources: copyStaticResourcesMock,
+    //             copyContentAssets: copyContentAssetsMock
+    //         };
+    //     });
 
-            expect(fs.existsSync(nonDefaultFilePath)).toBeTruthy();
-            const result = fileUtils.findFileWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir,
-                fileName
-            );
-            expect(result).toBe(nonDefaultFilePath);
-        });
+    //     util.copyStaticAssets(project, config);
 
-        it('returns blank if root is not found', () => {
-            const result = fileUtils.findFileWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir,
-                fileName
-            );
-            expect(result).toBe('');
-        });
+    //     expect(copyDistAssetsMock).toHaveBeenCalledTimes(1);
+    //     // expect(copyStaticResourcesMock).toHaveBeenCalledTimes(1);
+    //     // expect(copyContentAssetsMock).toHaveBeenCalledTimes(1);
+    // });
 
-        it('returns blank if file is not found', () => {
-            mockFs({
-                [`${rootPath}`]: {}
-            });
+    // // Assert that all 3 methods were called.
+    // it('copyStaticAssets take 2', () => {
+    //     const resourceSpy = jest.spyOn(util, 'copyDistAssets');
 
-            const result = fileUtils.findFileWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir,
-                fileName
-            );
-            expect(result).toBe('');
-        });
+    //     util.copyStaticAssets(project, config);
+
+    //     expect(resourceSpy).toHaveBeenCalledTimes(1);
+    // });
+
+    // Assert that all 3 methods were called.
+    // it('copyStaticAssets take 3', () => {
+    //     jest.unmock('../StaticResourcesUtils');
+
+    //     util.copyDistAssets = jest.fn();
+
+    //     util.copyStaticAssets(project, config);
+
+    //     expect(resourceSpy).toHaveBeenCalledTimes(1);
+    // });
+
+    it.skip('copyStaticAssets take 4', () => {
+        jest.mock('../StaticResourcesUtils');
+
+        let copyDistAssetsMock = jest
+            .spyOn(StaticResourcesUtils, 'copyDistAssets')
+            .mockImplementation();
+        let copyStaticResourcesMock = jest
+            .spyOn(StaticResourcesUtils, 'copyStaticResources')
+            .mockImplementation();
+        let copyContentAssetsMock = jest
+            .spyOn(StaticResourcesUtils, 'copyContentAssets')
+            .mockImplementation();
+
+            StaticResourcesUtils.copyStaticAssets(project, config);
+
+        expect(StaticResourcesUtils.copyDistAssets).toHaveBeenCalledTimes(1);
+        expect(StaticResourcesUtils.copyStaticResources).toHaveBeenCalledTimes(1);
+        expect(StaticResourcesUtils.copyContentAssets).toHaveBeenCalledTimes(1);
+
+        
+        copyDistAssetsMock.mockRestore();
+        // copyDistAssetsMock.mockClear();
+        copyStaticResourcesMock.mockClear();
+        // copyContentAssetsMock.mockClear();
     });
 
-    describe('findLWCFolderPath()', () => {
-        it('returns the default folder path if present', () => {
-            const projectDefault = path.join('main', 'default');
-            const folderPath = path.normalize(
-                `${rootPath}/${projectDefault}/${lwcDir}`
-            );
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${folderPath}`]: {}
-            });
+    it('copyStaticAssets take 5', () => {
+        // jest.mock('../StaticResourcesUtils', () => ({
+        //     copyDistAssets: jest.fn(),
+        //     copyStaticResourcesMock: jest.fn(),
+        //     copyContentAssets: jest.fn()
+        // }));
 
-            expect(fs.existsSync(folderPath)).toBeTruthy();
-            const result = fileUtils.findLWCFolderPath(rootPath);
-            expect(result).toBe(folderPath);
-        });
+        // jest.mock('../StaticResourcesUtils');
 
-        it('returns a non-default folder path if present', () => {
-            const projectDefault = 'src';
-            const nonDefaultFilePath = path.normalize(
-                `${rootPath}/${projectDefault}/${lwcDir}`
-            );
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${nonDefaultFilePath}`]: {}
-            });
+        let copyDistAssetsMock = jest
+            .spyOn(StaticResourcesUtils, 'copyDistAssets')
+            .mockImplementationOnce(() => jest.fn());
+        let copyStaticResourcesMock = jest
+            .spyOn(StaticResourcesUtils, 'copyStaticResources')
+            .mockImplementationOnce(() => jest.fn());
+        let copyContentAssetsMock = jest
+            .spyOn(StaticResourcesUtils, 'copyContentAssets')
+            .mockImplementationOnce(() => jest.fn());
 
-            expect(fs.existsSync(nonDefaultFilePath)).toBeTruthy();
-            const result = fileUtils.findLWCFolderPath(rootPath);
-            expect(result).toBe(nonDefaultFilePath);
-        });
+        StaticResourcesUtils.copyStaticAssets(project, config);
 
-        it('returns blank if root is not found', () => {
-            const result = fileUtils.findLWCFolderPath(rootPath);
-            expect(result).toBeUndefined();
-        });
+        expect(copyDistAssetsMock).toHaveBeenCalled();
+        expect(copyStaticResourcesMock).toHaveBeenCalled();
+        expect(copyContentAssetsMock).toHaveBeenCalled();
 
-        it('returns blank if folder is not found', () => {
-            mockFs({
-                [`${rootPath}`]: {}
-            });
+        expect(StaticResourcesUtils.copyDistAssets).toHaveBeenCalledTimes(1);
+        expect(StaticResourcesUtils.copyStaticResources).toHaveBeenCalledTimes(1);
+        expect(StaticResourcesUtils.copyContentAssets).toHaveBeenCalledTimes(1);
 
-            const result = fileUtils.findLWCFolderPath(rootPath);
-            expect(result).toBeUndefined();
-        });
+        
+        // copyDistAssetsMock.mockRestore();
+        // // copyDistAssetsMock.mockClear();
+        // copyStaticResourcesMock.mockClear();
+        // // copyContentAssetsMock.mockClear();
+        // jest.unmock('')
     });
 
-    describe('findFolderWithDefaultPath()', () => {
-        it('returns the default folder path if present', () => {
-            const folderPath = path.normalize(
-                `${rootPath}/${defaultPath}/${parentDir}`
-            );
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${folderPath}`]: {}
-            });
+    it('copyDistAssets copies dist assets to configuration build directory', () => {
+        // What: Verify dist assets are copied correctly
+        StaticResourcesUtils.copyDistAssets(config);
 
-            expect(fs.existsSync(folderPath)).toBeTruthy();
-            const result = fileUtils.findFolderWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir
-            );
-            expect(result).toBe(folderPath);
-        });
+        const copiedFromPath = path.join(
+            config.serverDir,
+            'dist',
+            'assets',
+            '*'
+        );
+        const copiedToPath = path.join(config.buildDir, 'assets', 'localdev');
 
-        it('returns a non-default folder path if present', () => {
-            const nonDefault = 'other/path';
-            const nonDefaultFilePath = path.normalize(
-                `${rootPath}/${nonDefault}/${parentDir}`
-            );
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${nonDefaultFilePath}`]: {}
-            });
-
-            expect(fs.existsSync(nonDefaultFilePath)).toBeTruthy();
-            const result = fileUtils.findFolderWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir
-            );
-            expect(result).toBe(nonDefaultFilePath);
-        });
-
-        it('returns blank if root is not found', () => {
-            const result = fileUtils.findFolderWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir
-            );
-            expect(result).toBeUndefined();
-        });
-
-        it('returns blank if folder is not found', () => {
-            mockFs({
-                [`${rootPath}`]: {}
-            });
-
-            const result = fileUtils.findFolderWithDefaultPath(
-                rootPath,
-                defaultPath,
-                parentDir
-            );
-            expect(result).toBeUndefined();
-        });
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toBeCalledWith(
+            copiedFromPath,
+            copiedToPath
+        );
     });
 
-    describe('findAllFolderPaths()', () => {
-        const targetFolder = 'target';
-        const packagesToCheck = ['force-app', 'force-app-2'];
+    it('copyStaticResources copies static resources to configuration build directory', () => {
+        StaticResourcesUtils.copyStaticResources(project, config);
 
-        it('returns all instances of target folder', () => {
-            const path1 = `${rootPath}/force-app/sample/${targetFolder}`;
-            const path2 = `${rootPath}/force-app-2/other/${targetFolder}`;
-            mockFs({
-                [`${path1}`]: {},
-                [`${path2}`]: {}
-            });
+        const copiedFromPaths = project.staticResourcesDirectories;
+        const copiedTo = path.join(
+            config.buildDir,
+            'assets',
+            'project',
+            STATIC_RESOURCES
+        );
 
-            const result = fileUtils.findAllFolderPaths(
-                rootPath,
-                packagesToCheck,
-                targetFolder
-            );
-            expect(result.length).toEqual(2);
-            expect(result).toContain(path.normalize(path1));
-            expect(result).toContain(path.normalize(path2));
-        });
-
-        it('returns all instances of target folder while ignoring other folders', () => {
-            const path1 = `${rootPath}/force-app/sample/${targetFolder}`;
-            const path2 = `${rootPath}/force-app-2/other/${targetFolder}`;
-            const path3 = `${rootPath}/force-app/ignore1/${targetFolder}`;
-            const path4 = `${rootPath}/force-app-2/ignore2/${targetFolder}`;
-            mockFs({
-                [`${path1}`]: {},
-                [`${path2}`]: {},
-                [`${path3}`]: {},
-                [`${path4}`]: {}
-            });
-
-            const result = fileUtils.findAllFolderPaths(
-                rootPath,
-                packagesToCheck,
-                targetFolder,
-                new Set(['ignore1', 'ignore2'])
-            );
-            expect(result.length).toEqual(2);
-            expect(result).toContain(path.normalize(path1));
-            expect(result).toContain(path.normalize(path2));
-        });
-
-        it('returns empty array when child folder is not found', () => {
-            mockFs({
-                [`${rootPath}`]: {}
-            });
-
-            const result = fileUtils.findAllFolderPaths(
-                rootPath,
-                packagesToCheck,
-                targetFolder
-            );
-            expect(result).toStrictEqual([]);
-        });
-
-        it('returns empty array when root is not found', () => {
-            const result = fileUtils.findAllFolderPaths(
-                rootPath,
-                packagesToCheck,
-                parentDir
-            );
-            expect(result).toStrictEqual([]);
-        });
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(2);
+        expect(fileUtils.copyFiles).nthCalledWith(
+            1,
+            path.join(copiedFromPaths[0], '*'),
+            copiedTo
+        );
+        expect(fileUtils.copyFiles).nthCalledWith(
+            2,
+            path.join(copiedFromPaths[1], '*'),
+            copiedTo
+        );
     });
 
-    describe('findFolders()', () => {
-        it('returns child folder', () => {
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${childFolder}`]: {}
-            });
+    it('copyContentAssets copies content assets to configuration build directory', () => {
+        StaticResourcesUtils.copyContentAssets(project, config);
 
-            const result = fileUtils.findFolders(rootPath, 'assets', []);
-            expect(result).toStrictEqual([path.normalize(childFolder)]);
-        });
+        const copiedFromPath = path.join(
+            project.contentAssetsDirectory || '',
+            '*'
+        );
+        const copiedTo = path.join(
+            config.buildDir,
+            'assets',
+            'project',
+            CONTENT_ASSETS
+        );
 
-        it('returns multiple child folders', () => {
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${childFolder}`]: {},
-                [`${childFolder2}`]: {},
-                [`${childFolder3}`]: {}
-            });
-
-            const result = fileUtils.findFolders(rootPath, 'assets', []);
-            expect(result.length).toEqual(3);
-            expect(result).toContain(path.normalize(childFolder));
-            expect(result).toContain(path.normalize(childFolder2));
-            expect(result).toContain(path.normalize(childFolder3));
-        });
-
-        it('returns child folder while ignoring other folders', () => {
-            const folders_to_ignore = new Set(['other', 'more']);
-            mockFs({
-                [`${rootPath}`]: {},
-                [`${childFolder}`]: {},
-                [`${childFolder2}`]: {},
-                [`${childFolder3}`]: {}
-            });
-
-            const result = fileUtils.findFolders(
-                rootPath,
-                'assets',
-                [],
-                folders_to_ignore
-            );
-            expect(result).toStrictEqual([path.normalize(childFolder)]);
-        });
-
-        it('returns empty array when child folder is not found', () => {
-            mockFs({
-                [`${rootPath}`]: {}
-            });
-
-            const result = fileUtils.findFolders(rootPath, parentDir, []);
-            expect(result).toStrictEqual([]);
-        });
-
-        it('returns empty array when root is not found', () => {
-            const result = fileUtils.findFolders(rootPath, parentDir, []);
-            expect(result).toStrictEqual([]);
-        });
+        expect(fileUtils.removeFile).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledTimes(1);
+        expect(fileUtils.copyFiles).toHaveBeenCalledWith(
+            copiedFromPath,
+            copiedTo
+        );
     });
 
-    describe('getFileContents()', () => {
-        const exampleFile = '/Users/mikasa/dev/exampleFile.txt';
-
-        it('returns file contents if file is present', () => {
-            mockFs({
-                [`${exampleFile}`]: 'sampleContent'
-            });
-
-            expect(fs.existsSync(exampleFile)).toBeTruthy();
-            const result = fileUtils.getFileContents(exampleFile);
-            expect(result).toBe('sampleContent');
-        });
-
-        it('returns undefined if file is not present', () => {
-            expect(fs.existsSync(exampleFile)).toBeFalsy();
-            const result = fileUtils.getFileContents(exampleFile);
-            expect(result).toBeUndefined();
-        });
+    it('rebuildResource calls copyStaticResources', () => {
+        StaticResourcesUtils.rebuildResource(project, config, '');
     });
 });

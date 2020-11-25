@@ -9,6 +9,7 @@ export default jest.fn().mockImplementation(projectDirectory => {
 
     return {
         projectDirectory,
+        serverDirectory: 'server/dir',
         configuration,
         modulesSourceDirectory: 'src/modules',
         staticResourcesDirectories: [
