@@ -205,7 +205,7 @@ export default class Start extends SfdxCommand {
      */
     private async exitHandler(server?: LocalDevServer) {
         this.ux.log('\nStopping local development server');
-        if (server?.shutdown) {
+        if (server && server.shutdown) {
             await server.shutdown();
         }
         process.exit();
