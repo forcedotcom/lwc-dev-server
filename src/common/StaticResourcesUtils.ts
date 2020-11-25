@@ -83,7 +83,12 @@ export function rebuildResource(
     } else if (isValidContentAsset(project, resourcePath)) {
         copyContentAssets(project, config);
     } else {
-        return; // TODO - not sure if we should log something in this case. I don't think this will ever happen
+        console.error(
+            `Unable to reload resource ${resourcePath}` +
+                `to the local dev server cache. This resource was not ` +
+                `specified as part of the project's localdevserver.config.json.`
+        );
+        return;
     }
 }
 

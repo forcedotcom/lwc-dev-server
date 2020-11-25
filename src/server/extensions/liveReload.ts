@@ -27,8 +27,6 @@ export function liveReload(
                     rebuildResource(project, config, path);
                 } else {
                     // Only reload when we have a change to the metadataPath.
-                    // If we reload multiple times from change, add, and unlink
-                    // we run into inconsistent behavior once the page has reloaded.
                     reloadReturned.reload();
                 }
             });
