@@ -104,7 +104,10 @@ export function isValidStaticResource(
     return isValidStaticResource;
 }
 
-export function isValidContentAsset(project: Project, resourcePath: string): boolean {
+export function isValidContentAsset(
+    project: Project,
+    resourcePath: string
+): boolean {
     const contentAssetsDir = project.contentAssetsDirectory;
     return (
         contentAssetsDir !== undefined &&
