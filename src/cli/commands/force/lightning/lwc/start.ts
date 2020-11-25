@@ -108,7 +108,7 @@ export default class Start extends SfdxCommand {
                     `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
                 )
             );
-            process.exit();
+            this.exitHandler();
         }
 
         this.ux.log(colors.gray(messages.getMessage('legal:cliusage')));
@@ -191,17 +191,24 @@ export default class Start extends SfdxCommand {
 
         await server.start();
 
-        // graceful shutdown
-        const exitHandler = async () => {
-            this.ux.log('\nStopping local development server');
-            await server.shutdown();
-            process.exit();
-        };
-
-        process.on('SIGINT', exitHandler);
-        process.on('SIGTERM', exitHandler);
+        process.on('SIGINT', () => this.exitHandler(server));
+        process.on('SIGTERM', () => this.exitHandler(server));
 
         return retValue;
+    }
+
+    /**
+     * Provides a gracefiul way to shutdown the process
+     * If the server is passed it tries to shut it down
+     * If no server is passed, it exit the process
+     * @param {LocalDevServer} server
+     */
+    private async exitHandler(server?: LocalDevServer) {
+        this.ux.log('\nStopping local development server');
+        if (server?.shutdown) {
+            await server.shutdown();
+        }
+        process.exit();
     }
 
     private getStatusMessage(
