@@ -85,6 +85,8 @@ describe('liveReload', () => {
             chokidar.watch.mockClear();
 
             app = express();
+
+            rebuildResourceMock.mockClear();
         });
 
         it('should start reload server', async () => {
@@ -187,7 +189,7 @@ describe('liveReload', () => {
         });
     });
 
-    describe.skip('close', () => {
+    describe('close', () => {
         let app: Application;
         let options: ExtensionOptions;
 

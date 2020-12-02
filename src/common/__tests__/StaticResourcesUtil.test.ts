@@ -97,14 +97,18 @@ describe('StaticResourcesUtils', () => {
     });
 
     it('rebuildResource does not copy assets if file is unrecognized by project', () => {
-        StaticResourcesUtils.rebuildResource(
-            project,
-            config,
-            'not/a/valid/resource.txt'
-        );
+        const resourcePath = 'not/a/valid/resource.txt';
+        jest.spyOn(console, 'error').mockImplementation();
+
+        StaticResourcesUtils.rebuildResource(project, config, resourcePath);
 
         expect(fileUtils.removeFile).toHaveBeenCalledTimes(0);
         expect(fileUtils.copyFiles).toHaveBeenCalledTimes(0);
+        expect(console.error).toBeCalledWith(
+            `Unable to reload resource ${resourcePath}` +
+                `to the local dev server cache. This resource was not ` +
+                `specified as part of the project's localdevserver.config.json.`
+        );
     });
 
     it('isValidStaticResource returns true if valid', () => {
