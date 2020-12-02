@@ -32,15 +32,11 @@ export function liveReload(
             });
 
             fileWatcher.on('add', path => {
-                if (path && path !== metadataPath) {
-                    rebuildResource(project, config, path);
-                }
+                rebuildResource(project, config, path);
             });
 
             fileWatcher.on('unlink', path => {
-                if (path && path !== metadataPath) {
-                    rebuildResource(project, config, path);
-                }
+                rebuildResource(project, config, path);
             });
         },
         close: async () => {
