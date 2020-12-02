@@ -7,17 +7,18 @@ import Project from '../../../common/Project';
 import WebruntimeConfig from '../../config/WebruntimeConfig';
 import path from 'path';
 import mockFs from 'mock-fs';
+import * as staticResourceUtil from '../../../common/StaticResourcesUtils';
 
-jest.mock('chokidar', () => {
-    return {
-        watch: jest.fn(() => {
-            return {
-                on: jest.fn(),
-                close: jest.fn()
-            };
-        })
-    };
-});
+// jest.mock('chokidar', () => {
+//     return {
+//         watch: jest.fn(() => {
+//             return {
+//                 on: jest.fn(),
+//                 close: jest.fn()
+//             };
+//         })
+//     };
+// });
 
 jest.mock('reload', () => {
     return jest.fn(() =>
@@ -43,6 +44,7 @@ jest.mock('../../config/WebruntimeConfig');
 describe('liveReload', () => {
     let project: Project;
     let config: WebruntimeConfig;
+    let staticResourcesUtilsMock: any;
 
     beforeEach(() => {
         project = new Project('/Users/arya/dev/myproject');
@@ -57,6 +59,10 @@ describe('liveReload', () => {
                 }
             };
         });
+
+        staticResourcesUtilsMock = jest
+            .spyOn(staticResourceUtil, 'rebuildResource')
+            .mockImplementation();
     });
 
     it('should return a LWR extension', () => {
@@ -77,9 +83,44 @@ describe('liveReload', () => {
             // @ts-ignore
             reload.mockClear();
             // @ts-ignore
-            chokidar.watch.mockClear();
+            // chokidar.watch.mockClear();
 
             app = express();
+        });
+
+        it('should rebuild on static resource change', async () => {
+            jest.mock('chokidar', () => {
+                return {
+                    watch: jest.fn(() => {
+                        return {
+                            on: jest.fn(),
+                            close: jest.fn()
+                        };
+                    })
+                };
+            });
+
+            const extension = liveReload(
+                '/Users/arya/dev/myproject',
+                project,
+                config
+            );
+
+            await extension.extendApp({ app, options });
+
+            // expect(chokidar.watch).toHaveBeenCalledTimes(1);
+
+            // @ts-ignore
+            const reloadReturned = await reload.mock.results[0].value;
+
+            // @ts-ignore
+            const watchResult = chokidar.watch.mock.results[0].value;
+            const [watchEvent, watchCallback] = watchResult.on.mock.calls[0];
+
+            watchCallback();
+
+            expect(watchEvent).toEqual('change');
+            expect(reloadReturned.reload).toBeCalledTimes(0);
         });
 
         it('should start reload server', async () => {
@@ -118,6 +159,8 @@ describe('liveReload', () => {
         });
 
         it('should start a file watcher for add events', async () => {
+            jest.spyOn(staticResourceUtil, 'rebuildResource').mockReturnValue();
+
             const extension = liveReload(
                 '/Users/arya/dev/myproject',
                 project,
@@ -138,6 +181,7 @@ describe('liveReload', () => {
 
             expect(watchEvent).toEqual('add');
             expect(reloadReturned.reload).toBeCalledTimes(0);
+            expect(staticResourcesUtilsMock).toBeCalledTimes(1);
         });
 
         it('should start a file watcher for unlink events', async () => {
@@ -177,14 +221,14 @@ describe('liveReload', () => {
             ]);
         });
 
-        it('should rebuild on static resource change', async () => {});
+        // TODO - placeholder
 
         it('should rebuild on static resource deletion', async () => {});
 
         it('should rebuild on static resource addition', () => {});
     });
 
-    describe('close', () => {
+    describe.skip('close', () => {
         let app: Application;
         let options: ExtensionOptions;
 
