@@ -12,7 +12,7 @@ import {
     DEFAULT_SFDX_PATH,
     SFDX_PROJECT_JSON,
     STATIC_RESOURCES
-} from '../server/Constants';
+} from './Constants';
 
 export default class SfdxProject {
     private _configuration: LocalDevServerConfiguration;
