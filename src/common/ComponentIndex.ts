@@ -3,7 +3,7 @@ import path from 'path';
 import Project from './Project';
 import decamelize from 'decamelize';
 import { findLWCFolderPath } from './fileUtils';
-import { SFDX_PROJECT_JSON } from '../server/Constants';
+import { SFDX_PROJECT_JSON } from './Constants';
 
 export default class ComponentIndex {
     private project: Project;
@@ -148,7 +148,7 @@ export default class ComponentIndex {
 
     // TODO: clean this up and consolidate with Project.ts
     private findProjectMetadata(): ProjectMetadata {
-        const root = this.project.directory;
+        const root = this.project.projectDirectory;
         let projectName = path.basename(root);
 
         const packageJsonPath = path.join(root, 'package.json');

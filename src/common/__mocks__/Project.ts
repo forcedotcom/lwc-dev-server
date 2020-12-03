@@ -1,6 +1,6 @@
 import LocalDevServerConfiguration from '../../user/LocalDevServerConfiguration';
 
-export default jest.fn().mockImplementation(directory => {
+export default jest.fn().mockImplementation(projectDirectory => {
     const configuration = new LocalDevServerConfiguration();
 
     configuration.port = 3000;
@@ -8,8 +8,14 @@ export default jest.fn().mockImplementation(directory => {
     configuration.liveReload = true;
 
     return {
-        directory,
+        projectDirectory,
+        serverDirectory: 'server/dir',
         configuration,
-        modulesSourceDirectory: 'src/modules'
+        modulesSourceDirectory: 'src/modules',
+        staticResourcesDirectories: [
+            'src/staticResourceOne',
+            'src/staticResourceTwo'
+        ],
+        contentAssetsDirectory: 'src/contentAssetDir'
     };
 });
