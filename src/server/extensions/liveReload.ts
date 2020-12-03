@@ -4,6 +4,8 @@ import { AppExtensionConfig } from '@webruntime/api';
 import WebruntimeConfig from 'server/config/WebruntimeConfig';
 import { rebuildResource } from '../../common/StaticResourcesUtils';
 import Project from 'common/Project';
+import path from 'path';
+import { createVersionHash } from '@webruntime/server/dist/commonjs/utils/utils';
 
 export function liveReload(
     metadataPath: string,
@@ -31,12 +33,16 @@ export function liveReload(
                 }
             });
 
-            fileWatcher.on('add', path => {
-                rebuildResource(project, config, path);
+            fileWatcher.on('add', async filePath => {
+                rebuildResource(project, config, filePath);
+                const sourcePath = path.resolve(config.projectDir, config.moduleDir || '');
+                await createVersionHash(sourcePath, config.buildDir, config.projectDir);
             });
 
-            fileWatcher.on('unlink', path => {
-                rebuildResource(project, config, path);
+            fileWatcher.on('unlink', async filePath => {
+                rebuildResource(project, config, filePath);
+                const sourcePath = path.resolve(config.projectDir, config.moduleDir || '');
+                await createVersionHash(sourcePath, config.buildDir, config.projectDir);
             });
         },
         close: async () => {
