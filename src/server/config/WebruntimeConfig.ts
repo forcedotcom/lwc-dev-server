@@ -20,6 +20,8 @@ import { LWCMessageService } from '../services/LWCMessageService';
 import alias from '@rollup/plugin-alias';
 
 export default class WebruntimeConfig implements Config {
+    /** Root project of local dev server */
+    serverDir: string;
     /** Root project directory */
     projectDir: string;
     /** Default directory for the build output */
@@ -48,7 +50,8 @@ export default class WebruntimeConfig implements Config {
 
     constructor(project: Project) {
         this.projectDir = path.join(__dirname, '..', '..', '..');
-        this.buildDir = path.join(project.directory, '.localdevserver');
+        this.serverDir = project.serverDirectory;
+        this.buildDir = path.join(project.projectDirectory, '.localdevserver');
         this.moduleDir = project.modulesSourceDirectory;
 
         this.defaultMode = CompileMode.dev;

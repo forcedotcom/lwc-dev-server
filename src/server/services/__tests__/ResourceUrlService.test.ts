@@ -1,7 +1,7 @@
 import { ResourceUrlService } from '../ResourceUrlService';
 import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
 import { PublicConfig } from '@webruntime/api';
-import { CONTENT_ASSETS, STATIC_RESOURCES } from '../../Constants';
+import { CONTENT_ASSETS, STATIC_RESOURCES } from '../../../common/Constants';
 
 jest.mock('@webruntime/server/dist/commonjs/utils/utils');
 
