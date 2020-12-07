@@ -49,7 +49,7 @@ export function resourceUrl() {
     return {
         extendApp: ({ app, options }: AppExtensionConfig) => {
             (app as Application).get(
-                '/assets/project/:versionKey/*',
+                '/assets/project/*',
                 (req: Request, res: Response, next: NextFunction) => {
                     let urlPath = `/assets/project/${req.params[0]}`;
                     let assetFilePath = path.join(options.buildDir, urlPath);

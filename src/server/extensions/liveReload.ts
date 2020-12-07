@@ -35,28 +35,28 @@ export function liveReload(
 
             fileWatcher.on('add', async filePath => {
                 rebuildResource(project, config, filePath);
-                const sourcePath = path.resolve(
-                    config.projectDir,
-                    config.moduleDir || ''
-                );
-                await createVersionHash(
-                    sourcePath,
-                    config.buildDir,
-                    config.projectDir
-                );
+                // const sourcePath = path.resolve(
+                //     config.projectDir,
+                //     config.moduleDir || ''
+                // );
+                // await createVersionHash(
+                //     sourcePath,
+                //     config.buildDir,
+                //     config.projectDir
+                // );
             });
 
             fileWatcher.on('unlink', async filePath => {
                 rebuildResource(project, config, filePath);
-                const sourcePath = path.resolve(
-                    config.projectDir,
-                    config.moduleDir || ''
-                );
-                await createVersionHash(
-                    sourcePath,
-                    config.buildDir,
-                    config.projectDir
-                );
+                // const sourcePath = path.resolve(
+                //     config.projectDir,
+                //     config.moduleDir || ''
+                // );
+                // await createVersionHash(
+                //     sourcePath,
+                //     config.buildDir,
+                //     config.projectDir
+                // );
             });
         },
         close: async () => {

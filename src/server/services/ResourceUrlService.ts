@@ -16,9 +16,10 @@ function isContentAssetUrlScopedModule(id: string) {
 }
 
 function getExportUrl(id: string, buildDir: string, subDir: string) {
-    const versionKey = getLatestVersion(buildDir);
+    // const versionKey = getLatestVersion(buildDir);
     const [resourceName] = id.split('/')[2].split('.');
-    const replacement = `/assets/project/${versionKey}/${subDir}/${resourceName}`;
+    // const replacement = `/assets/project/${versionKey}/${subDir}/${resourceName}`;
+    const replacement = `/assets/project/${subDir}/${resourceName}`;
 
     debug(`resolving ${id} as ${replacement}`);
     return `export default '${replacement}';`;
