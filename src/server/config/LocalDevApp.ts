@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import debugLogger from 'debug';
 import { WebruntimeAppDefinition, WebruntimePage } from '@webruntime/api';
+// @ts-ignore
 import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
 
 const debug = debugLogger('localdevserver');

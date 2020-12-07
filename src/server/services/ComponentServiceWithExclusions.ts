@@ -1,3 +1,4 @@
+//@ts-ignore
 import { ComponentService } from '@webruntime/services';
 
 const MODULE_EXCLUSIONS = new Set(['@salesforce/label']);
@@ -14,7 +15,9 @@ export class ComponentServiceWithExclusions extends ComponentService {
         await super.initialize();
 
         MODULE_EXCLUSIONS.forEach(exclusion => {
+            // @ts-ignore
             if (this.mappings.hasOwnProperty(exclusion)) {
+                // @ts-ignore
                 delete this.mappings[exclusion];
             }
         });

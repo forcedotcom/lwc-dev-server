@@ -20,7 +20,7 @@ import {
 } from '@webruntime/compiler';
 import { watch, FSWatcher } from 'chokidar';
 import { DiagnosticLevel } from '@lwc/errors';
-import { resolveModules } from '@lwc/module-resolver';
+// import { resolveModules } from '@lwc/module-resolver';
 
 /**
  * Contains a map of label keys to label values.
@@ -151,12 +151,13 @@ export function getLabelService(
             if (projectDir === undefined) {
                 return [];
             }
-            return resolveModules({
-                rootDir: projectDir,
-                modules: moduleDir
-                    ? [moduleDir, ...customModuleDirs]
-                    : customModuleDirs
-            });
+            return [];
+            // return resolveModules({
+            //     rootDir: projectDir,
+            //     modules: moduleDir
+            //         ? [moduleDir, ...customModuleDirs]
+            //         : customModuleDirs
+            // });
         }
 
         private async loadModuleLabels(): Promise<LabelValues> {

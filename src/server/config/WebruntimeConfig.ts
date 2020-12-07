@@ -10,6 +10,7 @@ import {
     ServiceDefinitionCtor,
     ContainerAppExtension
 } from '@webruntime/api';
+// @ts-ignore
 import { ImportMapService, AppBootstrapService } from '@webruntime/services';
 import { Plugin } from 'rollup';
 import { ApexService, SchemaService } from '@communities-webruntime/services';
@@ -69,7 +70,8 @@ export default class WebruntimeConfig implements Config {
                 'client',
                 'index.html'
             ),
-            definition: LocalDevApp
+            definition: LocalDevApp,
+            nativeShadow: false
         };
 
         this.services = [

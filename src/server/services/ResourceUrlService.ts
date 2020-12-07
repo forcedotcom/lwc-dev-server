@@ -1,5 +1,6 @@
 import { CompileService, PublicConfig } from '@webruntime/api';
 import debugLogger from 'debug';
+// @ts-ignore
 import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
 import { CONTENT_ASSETS, STATIC_RESOURCES } from '../Constants';
 
@@ -64,7 +65,7 @@ export class ResourceUrlService implements CompileService {
         return plugin(this.buildDir);
     }
 
-    async initialize() {}
+    async initialize() { }
 
-    shutdown() {}
+    shutdown() { }
 }

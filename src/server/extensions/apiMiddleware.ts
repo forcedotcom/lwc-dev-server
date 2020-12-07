@@ -1,6 +1,7 @@
 import debugLogger from 'debug';
 import { Application } from 'express';
 import { AppExtensionConfig } from '@webruntime/api';
+// @ts-ignore
 import { apiMiddleware as webruntimeApiMiddleware } from '@communities-webruntime/extensions/dist/commonjs/api-middleware';
 
 export const API_PATH_PREFIX = '/webruntime/api';
