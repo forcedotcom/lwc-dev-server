@@ -62,7 +62,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                             errors: [
                                 {
                                     message:
-                                        'Could not find the compiled component. If this component uses a component present in the Org or in a package in the Org, test this component directly in the Org.'
+                                        "Couldn't find the compiled component. If this component has a dependency on a component in the org or a component in a package in the org, test this component directly in the org."
                                 }
                             ]
                         });
