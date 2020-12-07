@@ -60,7 +60,10 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     if (!fs.existsSync(normalizedFile)) {
                         res.json({
                             errors: [
-                                { message: 'Could not find compiled component' }
+                                {
+                                    message:
+                                        'Could not find the compiled component. If this component uses a component present in the Org or in a package in the Org, test this component directly in the Org.'
+                                }
                             ]
                         });
                         return;
