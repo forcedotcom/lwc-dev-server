@@ -48,7 +48,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     // NOTE: Some of the info used below is set on WebRuntimeConfig.ts
                     // but not available here, might want to move some of it to Project.ts config
                     const normalizedFile = path.join(
-                        project.directory,
+                        project.projectDirectory,
                         '.localdevserver',
                         'webruntime',
                         'custom-component',
@@ -60,7 +60,10 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     if (!fs.existsSync(normalizedFile)) {
                         res.json({
                             errors: [
-                                { message: 'Could not find compiled component' }
+                                {
+                                    message:
+                                        "Couldn't find the compiled component. If this component has a dependency on a component in the org or a component in a package in the org, test this component directly in the org."
+                                }
                             ]
                         });
                         return;

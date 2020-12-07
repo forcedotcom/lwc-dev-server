@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
 import SfdxProject from './SfdxProject';
-import { SFDX_PROJECT_JSON } from '../server/Constants';
+import { SFDX_PROJECT_JSON } from './Constants';
 
 /**
  * The project object describes two things.
@@ -18,27 +18,30 @@ export default class Project {
     /**
      * Would not be valid if you ran the command on a directory without a package.json file.
      */
-    private readonly rootDirectory: string;
+    private readonly serverRootDirectory: string;
+    private readonly projectRootDirectory: string;
     private readonly _isSFDX: boolean = false;
     private readonly _configuration: LocalDevServerConfiguration;
 
     constructor(directory: string) {
         // Directory could be either the project, or a folder in a project.
         // Resolve to find the right folder.
-        const rootDirectory = this.resolveProjectDirectory(directory);
+        const projectRootDirectory = this.resolveProjectDirectory(directory);
 
-        if (rootDirectory === null) {
+        if (projectRootDirectory === null) {
             throw new Error(
                 `Directory specified '${directory}' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it.`
             );
         }
 
-        this.rootDirectory = rootDirectory;
+        this.projectRootDirectory = projectRootDirectory;
+
+        this.serverRootDirectory = path.join(__dirname, '..', '..');
 
         // Base configuration for the project.
         // Also merges the config at localdevserver.config.json as well
         const configurationPath = path.join(
-            this.rootDirectory,
+            this.projectRootDirectory,
             'localdevserver.config.json'
         );
         this._configuration = new LocalDevServerConfiguration(
@@ -47,11 +50,13 @@ export default class Project {
 
         // Use detection of the sfdx-project configuration to detect if this is an Sfdx Project and we should
         // treat it as such.
-        this._isSFDX = SfdxProject.isSfdxProjectJsonPresent(this.rootDirectory);
+        this._isSFDX = SfdxProject.isSfdxProjectJsonPresent(
+            this.projectRootDirectory
+        );
         if (this._isSFDX) {
             new SfdxProject(
                 this._configuration,
-                this.rootDirectory
+                this.projectRootDirectory
             ).initWithSfdxConfiguration();
         }
     }
@@ -68,7 +73,7 @@ export default class Project {
         var srcDir = path.isAbsolute(this.configuration.modulesSourceDirectory)
             ? this.configuration.modulesSourceDirectory
             : path.join(
-                  this.rootDirectory,
+                  this.projectRootDirectory,
                   this.configuration.modulesSourceDirectory || 'src'
               );
         if (!fs.existsSync(srcDir) || !fs.lstatSync(srcDir).isDirectory()) {
@@ -93,7 +98,10 @@ export default class Project {
                     );
                 } else {
                     staticResourceDirectoriesResults.push(
-                        path.join(this.rootDirectory, staticResourceDirectory)
+                        path.join(
+                            this.projectRootDirectory,
+                            staticResourceDirectory
+                        )
                     );
                 }
             }
@@ -125,8 +133,15 @@ export default class Project {
      * The Root directory of the Project.
      * Where the package.json or the root sfdx-project.json file is located.
      */
-    public get directory(): string {
-        return this.rootDirectory;
+    public get projectDirectory(): string {
+        return this.projectRootDirectory;
+    }
+
+    /**
+     * The Root directory for the local dev server.
+     */
+    public get serverDirectory(): string {
+        return this.serverRootDirectory;
     }
 
     /**
@@ -177,7 +192,7 @@ export default class Project {
             return config;
         }
         if (config !== '') {
-            return path.join(this.rootDirectory, config);
+            return path.join(this.projectRootDirectory, config);
         }
     }
 }

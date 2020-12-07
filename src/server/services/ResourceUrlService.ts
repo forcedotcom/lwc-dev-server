@@ -1,7 +1,7 @@
 import { CompileService, PublicConfig } from '@webruntime/api';
 import debugLogger from 'debug';
 import { getLatestVersion } from '@webruntime/server/dist/commonjs/utils/utils';
-import { CONTENT_ASSETS, STATIC_RESOURCES } from '../Constants';
+import { CONTENT_ASSETS, STATIC_RESOURCES } from '../../common/Constants';
 
 const RESOURCE_URL_PREFIX = '@salesforce/resourceUrl/';
 const CONTENT_ASSET_URL_PREFIX = '@salesforce/contentAssetUrl/';

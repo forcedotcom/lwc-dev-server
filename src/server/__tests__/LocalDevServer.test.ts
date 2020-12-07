@@ -78,6 +78,7 @@ describe('LocalDevServer', () => {
         WebruntimeConfig.mockImplementation(() => {
             return {
                 buildDir: 'Users/arya/dev/myproject/.localdevserver',
+                serverDir: path.join(__dirname, '..', '..', '..'),
                 server: {
                     resourceRoot: '/webruntime'
                 },
@@ -285,7 +286,7 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
         // @ts-ignore
         server.config.buildDir = path.join(
-            project.directory,
+            project.projectDirectory,
             '.localdevserver'
         );
 
@@ -303,7 +304,7 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
         // @ts-ignore
         server.config.buildDir = path.join(
-            project.directory,
+            project.projectDirectory,
             '.localdevserver'
         );
 
@@ -332,7 +333,7 @@ describe('LocalDevServer', () => {
         const server = new LocalDevServer(project);
         // @ts-ignore
         server.config.buildDir = path.join(
-            project.directory,
+            project.projectDirectory,
             '.localdevserver'
         );
 
