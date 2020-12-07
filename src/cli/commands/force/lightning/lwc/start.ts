@@ -198,7 +198,7 @@ export default class Start extends SfdxCommand {
     }
 
     /**
-     * Provides a gracefiul way to shutdown the process
+     * Provides a graceful way to shutdown the process
      * If the server is passed it tries to shut it down
      * If no server is passed, it exit the process
      * @param {LocalDevServer} server
