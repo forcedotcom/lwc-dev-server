@@ -205,10 +205,11 @@ export default class Start extends SfdxCommand {
      */
     private async exitHandler(server?: LocalDevServer) {
         this.ux.log('\nStopping local development server');
+        this.ux.error(messages.getMessage('error:noproject'));
         if (server && server.shutdown) {
             await server.shutdown();
         }
-        process.exit();
+        process.exit(1);
     }
 
     private getStatusMessage(
