@@ -104,8 +104,14 @@ export default class Start extends SfdxCommand {
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
         const conn = this.org.getConnection();
 
+        // We are forcing to use 49.0 (Summer20/226) so we can communicate with 226 LDS.
+        // Once we migrate to latest webruntime and LDS (W-8277943), we can remove this
+        // and go back to using the highest API as below
+
         // Highest level API is always last
-        const api_version = await conn.retrieveMaxApiVersion();
+        // const api_version = await conn.retrieveMaxApiVersion();
+
+        const api_version = '49.0';
 
         const orgusername = this.org.getUsername() || '';
         try {
