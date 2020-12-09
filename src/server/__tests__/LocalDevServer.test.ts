@@ -41,6 +41,8 @@ jest.mock('../extensions/apiMiddleware');
 
 describe('LocalDevServer', () => {
     let project: Project;
+    let sessionNonce: string;
+    let reporterMock: any;
     let consoleLogMock: any;
     let consoleErrorMock: any;
     let consoleWarnMock: any;
@@ -53,7 +55,8 @@ describe('LocalDevServer', () => {
     const MockReporter = {
         trackApplicationStart: jest.fn(),
         trackApplicationEnd: jest.fn(),
-        trackApplicationStartException: jest.fn()
+        trackApplicationStartException: jest.fn(),
+        trackNonSfdxProjectUsage: jest.fn()
     };
 
     beforeEach(() => {
@@ -89,15 +92,18 @@ describe('LocalDevServer', () => {
             };
         });
         project = new Project('/Users/arya/dev/myproject');
+        // @ts-ignore
+        project.isSfdx = true;
+        sessionNonce = 'someId';
+        // reporterMock = jest.mock('LocalDevTelemetryReporter');
+        reporterMock = MockReporter;
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
         consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
         fileUtilsCopyMock = jest
             .spyOn(fileUtils, 'copyFiles')
             .mockImplementation();
-        jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
-            // @ts-ignore
-            .mockImplementation(async () => MockReporter);
+
         findLWCFolderPathMock = jest
             .spyOn(fileUtils, 'findLWCFolderPath')
             .mockImplementation();
@@ -110,12 +116,10 @@ describe('LocalDevServer', () => {
         consoleWarnMock.mockRestore();
         fileUtilsCopyMock.mockRestore();
         findLWCFolderPathMock.mockRestore();
-        // @ts-ignore
-        LocalDevTelemetryReporter.getInstance.mockClear();
     });
 
     it('should create a webruntime server', () => {
-        new LocalDevServer(project);
+        new LocalDevServer(project, sessionNonce, reporterMock);
 
         expect(mockServerConstructor).toHaveBeenCalledTimes(1);
         expect(mockServerConstructor).toHaveBeenCalledWith(
@@ -126,14 +130,14 @@ describe('LocalDevServer', () => {
     });
 
     it('should create a session nonce', () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(server.sessionNonce).toBeDefined();
     });
 
     it('should set the vendor version', () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(server.vendorVersion).toEqual('228');
@@ -142,28 +146,28 @@ describe('LocalDevServer', () => {
     it('should fallback to latest available vendor version', () => {
         project.configuration.api_version = '54.0';
 
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(server.vendorVersion).toEqual('228');
     });
 
     it('should add middleware to the config', () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(addMiddlewareMock).toHaveBeenCalledTimes(1);
     });
 
     it('should add routes to the config', () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(server.config.addRoutes).toHaveBeenCalledTimes(1);
     });
 
     it('should add the live reload route when the configuration is true', () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         const routes = server.config.addRoutes.mock.calls[0][0];
@@ -177,7 +181,7 @@ describe('LocalDevServer', () => {
     it('should not add the live reload route when the configuration is false', () => {
         project.configuration.liveReload = false;
 
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         const routes = server.config.addRoutes.mock.calls[0][0];
@@ -189,31 +193,31 @@ describe('LocalDevServer', () => {
     });
 
     it('should not add apex middleware when connection is not present', () => {
-        new LocalDevServer(project);
+        new LocalDevServer(project, sessionNonce, reporterMock);
         expect(apexMiddleware).toBeCalledTimes(0);
     });
 
     it('should add apex middleware when connection is available', () => {
         const connection: Connection = mock(Connection);
-        new LocalDevServer(project, connection);
+        new LocalDevServer(project, sessionNonce, reporterMock, connection);
         expect(apexMiddleware).toBeCalledTimes(1);
     });
 
     it('should not add api middleware when connection is not present', () => {
-        new LocalDevServer(project);
+        new LocalDevServer(project, sessionNonce, reporterMock);
         expect(apiMiddleware).toBeCalledTimes(0);
     });
 
     it('should add api middleware when connection is available', () => {
         const connection: Connection = mock(Connection);
-        new LocalDevServer(project, connection);
+        new LocalDevServer(project, sessionNonce, reporterMock, connection);
         expect(apiMiddleware).toBeCalledTimes(1);
     });
 
     it('should add modules with the correct vendor version to the config', () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
-        expect(addModulesMock).toHaveBeenCalledTimes(2);
+        expect(addModulesMock).toHaveBeenCalledTimes(1);
 
         const modules = addModulesMock.mock.calls[0][0];
 
@@ -235,7 +239,7 @@ describe('LocalDevServer', () => {
             return undefined;
         });
 
-        new LocalDevServer(project);
+        new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(addServicesMock).toHaveBeenCalledTimes(1);
@@ -251,7 +255,7 @@ describe('LocalDevServer', () => {
             return path.join(project.modulesSourceDirectory, 'lwc');
         });
 
-        new LocalDevServer(project);
+        new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(addServicesMock).toHaveBeenCalledTimes(1);
@@ -261,7 +265,7 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         project.isSfdx = false;
 
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
 
         // @ts-ignore
         expect(addServicesMock.mock.calls[0][0]).not.toContain(
@@ -273,7 +277,8 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         project.isSfdx = false;
 
-        new LocalDevServer(project);
+        // @ts-ignore
+        new LocalDevServer(project, sessionNonce, reporterMock);
 
         expect(addModulesMock).toHaveBeenCalledTimes(2);
 
@@ -283,7 +288,7 @@ describe('LocalDevServer', () => {
     });
 
     it.skip('delete assets directory before creating a new one to clear cache', async () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
         // @ts-ignore
         server.config.buildDir = path.join(
             project.projectDirectory,
@@ -301,7 +306,7 @@ describe('LocalDevServer', () => {
     });
 
     it('copies app static assets to the server assets directory', async () => {
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
         // @ts-ignore
         server.config.buildDir = path.join(
             project.projectDirectory,
@@ -330,7 +335,7 @@ describe('LocalDevServer', () => {
             throw new Error('test error');
         });
 
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
         // @ts-ignore
         server.config.buildDir = path.join(
             project.projectDirectory,
@@ -346,7 +351,7 @@ describe('LocalDevServer', () => {
         const expected = colors.magenta.bold(
             `Server up on http://localhost:${3333}`
         );
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
         Object.defineProperty(server, 'ux', {
             get: () => {
                 return { log: consoleLogMock, error: consoleErrorMock };
@@ -362,7 +367,7 @@ describe('LocalDevServer', () => {
 
     it('do not print server up message if server port is undefined', async () => {
         const expected = 'Server start up failed.';
-        const server = new LocalDevServer(project);
+        const server = new LocalDevServer(project, sessionNonce, reporterMock);
         Object.defineProperty(server, 'ux', {
             get: () => {
                 return { log: consoleLogMock, error: consoleErrorMock };
@@ -378,7 +383,11 @@ describe('LocalDevServer', () => {
 
     describe('services added to the LocalDevServer', () => {
         it('should add the ComponentServiceWithExclusions', async () => {
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
 
             expect(
                 // @ts-ignore
@@ -392,7 +401,11 @@ describe('LocalDevServer', () => {
             findLWCFolderPathMock.mockImplementation(() => {
                 return path.join(project.modulesSourceDirectory, 'lwc');
             });
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
 
             expect(
                 // @ts-ignore
@@ -407,7 +420,11 @@ describe('LocalDevServer', () => {
                 return path.join(project.modulesSourceDirectory, 'lwc');
             });
             const componentService = getCustomComponentService('', '');
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
                 (service: Function) => service.name
@@ -421,7 +438,11 @@ describe('LocalDevServer', () => {
             project.isSfdx = false;
 
             const componentService = getCustomComponentService('', '');
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
                 (service: Function) => service.name
@@ -440,7 +461,11 @@ describe('LocalDevServer', () => {
             project.customLabelsPath = 'my/labelsFile.xml';
 
             const LabelService = getLabelService('my/labelFile.xml');
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
                 (service: Function) => service.name
@@ -456,7 +481,11 @@ describe('LocalDevServer', () => {
             project.customLabelsPath = 'my/labelsFile.xml';
 
             const LabelService = getLabelService('my/labelFile.xml');
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
                 (service: Function) => service.name
@@ -467,7 +496,11 @@ describe('LocalDevServer', () => {
 
         it('should add the LabelService when a customLabelsPath is not specified', async () => {
             const LabelService = getLabelService('my/labelFile.xml');
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
                 (service: Function) => service.name
@@ -478,7 +511,11 @@ describe('LocalDevServer', () => {
 
     describe('start', () => {
         it('should call webruntime server start', async () => {
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
 
             const mockStart = jest.spyOn(server, 'start');
 
@@ -490,7 +527,11 @@ describe('LocalDevServer', () => {
 
     describe('shutdown', () => {
         it('should call webruntime server start', async () => {
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
 
             const mockShutdown = jest.spyOn(server, 'shutdown');
 
@@ -500,7 +541,11 @@ describe('LocalDevServer', () => {
         });
 
         it('should close live reload', async () => {
-            const server = new LocalDevServer(project);
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
 
             // @ts-ignore
             const mockClose = jest.spyOn(server.liveReload, 'close');
@@ -513,41 +558,37 @@ describe('LocalDevServer', () => {
 
     describe('telemetry', () => {
         it('reports on application start', async () => {
-            const reporter = await LocalDevTelemetryReporter.getInstance(
-                'sessionid'
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
             );
-            jest.spyOn(reporter, 'trackApplicationStart');
-            const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(project, connection);
             await server.start();
 
-            expect(reporter.trackApplicationStart).toBeCalledWith(
+            expect(reporterMock.trackApplicationStart).toBeCalledWith(
                 expect.any(Number),
                 expect.any(String)
             );
         });
 
         it('reports on application end', async () => {
-            const reporter = await LocalDevTelemetryReporter.getInstance(
-                'sessionid'
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
             );
-            const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(project, connection);
 
             await server.start();
             await server.shutdown();
 
-            expect(reporter.trackApplicationEnd).toBeCalledWith(
+            expect(reporterMock.trackApplicationEnd).toBeCalledWith(
                 expect.any(Number)
             );
         });
 
         it('reports when exception is thrown durning application start', async () => {
-            const reporter = await LocalDevTelemetryReporter.getInstance(
-                'sessionid'
-            );
             // Throw an exception during LocalDevServer start
-            reporter.trackApplicationStart = jest
+            reporterMock.trackApplicationStart = jest
                 .fn()
                 .mockImplementationOnce(() => {
                     throw new Error('expected error');
@@ -555,26 +596,17 @@ describe('LocalDevServer', () => {
 
             // Will throw an exception
             try {
-                const connection: Connection = mock(Connection);
-                const server = new LocalDevServer(project, connection);
+                const server = new LocalDevServer(
+                    project,
+                    sessionNonce,
+                    reporterMock
+                );
                 await server.start();
             } catch (e) {}
 
-            expect(reporter.trackApplicationStartException).toBeCalledWith(
+            expect(reporterMock.trackApplicationStartException).toBeCalledWith(
                 expect.any(Error)
             );
-        });
-
-        it('passes nonce to instrumentation as sessionid', async () => {
-            const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(project, connection);
-            // @ts-ignore
-            server.sessionNonce = 'nonce';
-            await server.start();
-            expect(
-                // @ts-ignore
-                LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
-            ).toBe('nonce');
         });
     });
 });
