@@ -74,9 +74,13 @@ export default class LocalDevTelemetryReporter {
         });
     }
 
-    public trackComponentPreviewException(exception: Error) {
+    public trackComponentPreviewException(
+        exception: Error,
+        apiVersion: string
+    ) {
         this.reporter.sendTelemetryEvent('component_preview_exception', {
-            exception: exception.toString()
+            exception: exception.toString(),
+            apiVersion
         });
     }
 

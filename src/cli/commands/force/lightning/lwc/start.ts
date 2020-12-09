@@ -92,6 +92,7 @@ export default class Start extends SfdxCommand {
                     colors.green(devhubalias),
                     colors.red(errorMsg)
                 );
+                reporter.trackApplicationStartError(errorMsg);
             }
 
             return { org: typeof this.org };

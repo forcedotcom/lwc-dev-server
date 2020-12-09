@@ -95,7 +95,6 @@ describe('LocalDevServer', () => {
         // @ts-ignore
         project.isSfdx = true;
         sessionNonce = 'someId';
-        // reporterMock = jest.mock('LocalDevTelemetryReporter');
         reporterMock = MockReporter;
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
@@ -584,6 +583,21 @@ describe('LocalDevServer', () => {
             expect(reporterMock.trackApplicationEnd).toBeCalledWith(
                 expect.any(Number)
             );
+        });
+
+        it('reports non-sfdx project usage', async () => {
+            // @ts-ignore
+            project.isSfdx = false;
+            const server = new LocalDevServer(
+                project,
+                sessionNonce,
+                reporterMock
+            );
+
+            await server.start();
+            await server.shutdown();
+
+            expect(reporterMock.trackNonSfdxProjectUsage).toHaveBeenCalled();
         });
 
         it('reports when exception is thrown durning application start', async () => {
