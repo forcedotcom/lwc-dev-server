@@ -1,6 +1,7 @@
 import path from 'path';
 import { Application, Request, Response, NextFunction } from 'express';
 import ComponentIndex from '../../common/ComponentIndex';
+import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import Project from '../../common/Project';
 import { AppExtensionConfig } from '@webruntime/api';
 import fs from 'fs';
@@ -11,7 +12,11 @@ const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
     '.js': true
 };
 
-export function projectMetadata(sessionNonce: string, project: Project) {
+export function projectMetadata(
+    sessionNonce: string,
+    project: Project,
+    reporter: LocalDevTelemetryReporter
+) {
     return {
         extendApp: ({ app }: AppExtensionConfig) => {
             (app as Application).get(
@@ -66,6 +71,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                                 }
                             ]
                         });
+                        reporter.trackMissingDependentComponent();
                         return;
                     }
                     const content = fs.readFileSync(normalizedFile);

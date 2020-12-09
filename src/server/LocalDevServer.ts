@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
-import uuidv4 from 'uuidv4';
 import Project from '../common/Project';
 import WebruntimeConfig from './config/WebruntimeConfig';
 import LocalDevTelemetryReporter from '../instrumentation/LocalDevTelemetryReporter';
@@ -29,6 +28,7 @@ export default class LocalDevServer {
     private config: WebruntimeConfig;
     private project: Project;
     private liveReload?: any;
+    private reporter: LocalDevTelemetryReporter;
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
 
@@ -36,11 +36,18 @@ export default class LocalDevServer {
      * Initializes properties for the LocalDevServer
      *
      * @param project project object
+     * @param sessionId unique session id
      * @param connection JSForce connection for the org
      */
-    constructor(project: Project, connection?: Connection) {
+    constructor(
+        project: Project,
+        sessionId: string,
+        reporter: LocalDevTelemetryReporter,
+        connection?: Connection
+    ) {
         this.project = project;
-        this.sessionNonce = uuidv4();
+        this.sessionNonce = sessionId;
+        this.reporter = reporter;
         this.vendorVersion = project.configuration.core_version;
 
         const supportedCoreVersions = this.getSupportedCoreVersions();
@@ -77,7 +84,7 @@ export default class LocalDevServer {
 
         config.addMiddleware(middleware);
         const routes: ContainerAppExtension[] = [
-            projectMetadata(this.sessionNonce, this.project)
+            projectMetadata(this.sessionNonce, this.project, this.reporter)
         ];
 
         if (this.project.configuration.liveReload) {
@@ -106,6 +113,7 @@ export default class LocalDevServer {
         // We don't officially support non-SFDX projects, but this continues to
         // let them work via localdevserver.config.json.
         if (!this.project.isSfdx) {
+            reporter.trackNonSfdxProjectUsage();
             config.addModules([this.project.modulesSourceDirectory]);
         }
 
@@ -155,21 +163,17 @@ export default class LocalDevServer {
      */
     async start() {
         const startTime = performance.now();
-        // Reporter for instrumentation
-        const reporter = await LocalDevTelemetryReporter.getInstance(
-            this.sessionNonce
-        );
         try {
             await this.server.initialize();
             copyStaticAssets(this.project, this.config);
             this.server.on('shutdown', () => {
                 // After the application has ended.
                 // Report how long the server was opened.
-                reporter.trackApplicationEnd(startTime);
+                this.reporter.trackApplicationEnd(startTime);
             });
             await this.server.start();
 
-            reporter.trackApplicationStart(
+            this.reporter.trackApplicationStart(
                 startTime,
                 this.vendorVersion || '0'
             );
@@ -183,7 +187,7 @@ export default class LocalDevServer {
                 console.error(`Server start up failed.`);
             }
         } catch (e) {
-            reporter.trackApplicationStartException(e);
+            this.reporter.trackApplicationStartException(e);
             console.error(`Server start up failed.`);
             throw e;
         }

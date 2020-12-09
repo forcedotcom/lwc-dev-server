@@ -2,8 +2,10 @@ import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import * as http from 'http';
+import uuidv4 from 'uuidv4';
 import Project from '../../../../../common/Project';
 import LocalDevServer from '../../../../../server/LocalDevServer';
+import LocalDevTelemetryReporter from '../../../../../instrumentation/LocalDevTelemetryReporter';
 import debugLogger from 'debug';
 import colors from 'colors';
 
@@ -56,6 +58,10 @@ export default class Start extends SfdxCommand {
         const devhubalias = this.configAggregator.getPropertyValue(
             'defaultdevhubusername'
         ) as string;
+        const sessionNonce = uuidv4();
+        const reporter = await LocalDevTelemetryReporter.getInstance(
+            sessionNonce
+        );
 
         if (!this.org) {
             // This you DO need.
@@ -67,25 +73,24 @@ export default class Start extends SfdxCommand {
 
             const targetusername = this.flags.targetusername;
             if (targetusername) {
+                const errorMsg = `${targetusername} - ${messages.getMessage(
+                    'error:invalidscratchorgusername'
+                )}`;
                 this.reportStatus(
                     colors.green(devhubalias),
-                    colors.red(
-                        `${targetusername} - ${messages.getMessage(
-                            'error:invalidscratchorgusername'
-                        )}`
-                    )
+                    colors.red(errorMsg)
                 );
+                reporter.trackApplicationStartError(errorMsg);
             } else {
                 const configuredusername = this.configAggregator.getPropertyValue(
                     'defaultusername'
                 );
+                const errorMsg = `${configuredusername} - ${messages.getMessage(
+                    'error:noscratchorg'
+                )}`;
                 this.reportStatus(
                     colors.green(devhubalias),
-                    colors.red(
-                        `${configuredusername} - ${messages.getMessage(
-                            'error:noscratchorg'
-                        )}`
-                    )
+                    colors.red(errorMsg)
                 );
             }
 
@@ -128,15 +133,15 @@ export default class Start extends SfdxCommand {
             });
             await this.org.refreshAuth();
         } catch (err) {
+            const errorMsg = `${orgusername} - ${messages.getMessage(
+                'error:inactivescratchorg'
+            )}`;
             this.reportError(
                 colors.green(devhubalias),
-                colors.red(
-                    `${orgusername} - ${messages.getMessage(
-                        'error:inactivescratchorg'
-                    )}`
-                ),
+                colors.red(errorMsg),
                 colors.green(api_version)
             );
+            reporter.trackApplicationStartError(errorMsg);
             err.exitCode = errorCodes.EPERM;
             throw err;
         }
@@ -178,7 +183,12 @@ export default class Start extends SfdxCommand {
         );
 
         // Start local dev server
-        const server = new LocalDevServer(project, conn);
+        const server = new LocalDevServer(
+            project,
+            sessionNonce,
+            reporter,
+            conn
+        );
 
         await server.start();
 
