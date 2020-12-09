@@ -13,12 +13,21 @@ const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
 };
 
 export function projectMetadata(sessionNonce: string, project: Project) {
+    const devFolder = path.join(
+        project.projectDirectory,
+        '.localdevserver',
+        'webruntime',
+        'custom-component',
+        'dev',
+        'en-US'
+    );
     return {
         extendApp: ({ app }: AppExtensionConfig) => {
             (app as Application).get(
                 `/localdev/${sessionNonce}/localdev.js`,
                 (req: Request, res: Response, next: NextFunction) => {
-                    removeFile(path.join(project.projectDirectory, '.localdevserver', 'webruntime', 'custom-component', 'dev', 'en-US'));
+                    const specifier = req.query.specifier as string; //TODO - remove
+                    removeFile(devFolder);
 
                     const componentIndex = new ComponentIndex(project);
                     const json = componentIndex.getProjectMetadata();
@@ -51,12 +60,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     // NOTE: Some of the info used below is set on WebRuntimeConfig.ts
                     // but not available here, might want to move some of it to Project.ts config
                     const normalizedFile = path.join(
-                        project.projectDirectory,
-                        '.localdevserver',
-                        'webruntime',
-                        'custom-component',
-                        'dev',
-                        'en-US',
+                        devFolder,
                         `${specifier}.js`
                     );
 
