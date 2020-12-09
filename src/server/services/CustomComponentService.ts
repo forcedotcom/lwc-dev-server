@@ -13,6 +13,7 @@ import {
 } from '@webruntime/api';
 import { CompilerDiagnostic } from '@lwc/errors';
 import stripAnsi from 'strip-ansi';
+
 const SFDX_LWC_DIRECTORY = 'lwc';
 
 const debug = debugLogger('localdevserver:customcomponents');
@@ -73,8 +74,9 @@ export function getCustomComponentService(
                 // Components that require multiple dependencies are compiled
                 // multiple times in order to address all the dependencies.
                 // When an internal dependency is missing it will return a diagnostics
-                // with code 1002, we need to let does be taken care of by the compiler
+                // with code 1002, we need to let those be taken care of by the compiler
                 // and not immediately surface them to the user
+
                 for (let i = 0; i < diagnostics.length; i++) {
                     if (diagnostics[i].code === 1002) {
                         partialCompileError = true;

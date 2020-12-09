@@ -4,6 +4,7 @@ import ComponentIndex from '../../common/ComponentIndex';
 import Project from '../../common/Project';
 import { AppExtensionConfig } from '@webruntime/api';
 import fs from 'fs';
+import { removeFile } from '../../common/fileUtils';
 
 const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
     '.html': true,
@@ -17,6 +18,8 @@ export function projectMetadata(sessionNonce: string, project: Project) {
             (app as Application).get(
                 `/localdev/${sessionNonce}/localdev.js`,
                 (req: Request, res: Response, next: NextFunction) => {
+                    removeFile(path.join(project.projectDirectory, '.localdevserver', 'webruntime', 'custom-component', 'dev', 'en-US'));
+
                     const componentIndex = new ComponentIndex(project);
                     const json = componentIndex.getProjectMetadata();
                     const localDevConfig = {
