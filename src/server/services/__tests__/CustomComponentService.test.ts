@@ -9,7 +9,7 @@ import {
     RequestParams,
     RequestService
 } from '@webruntime/api';
-import * as path from 'path';
+import fs from 'fs';
 
 jest.mock('@webruntime/compiler');
 
@@ -35,7 +35,7 @@ describe('CustomComponentService', () => {
     beforeEach(() => {
         const CustomComponentService = getCustomComponentService(
             'c',
-            '/Users/arya/dev/sfdxProject',
+            '/sfdxProject',
             '/sfdxProject/force-app/main/default'
         );
 
@@ -243,6 +243,37 @@ describe('CustomComponentService', () => {
             expect(result.type).toEqual(RequestOutputTypes.COMPONENT);
             expect(result.specifier).toEqual('c/moduleA');
             expect(result.resource).toBeDefined();
+        });
+
+        it('should clear old error files when precompile diagnostics are present', async () => {
+            const devFile = '/sfdxProject/.localdevserver/webruntime/custom-component/dev/en_US/c/moduleA.js';
+            mockFs({
+                [`${devFile}`]: 'errors you do not want'
+            });
+            expect(fs.existsSync(devFile)).toBeTruthy();
+
+            (compile as jest.Mock).mockReturnValue({
+                result: {},
+                metadata: {},
+                diagnostics: [
+                    {
+                        code: 1002,
+                        message: 'test message',
+                        level: 2
+                    }
+                ],
+                success: true
+            });
+
+            await customComponentService.request(
+                'c/moduleA',
+                params,
+                context
+            );
+
+            expect(fs.existsSync(devFile)).toBeFalsy();
+
+            mockFs.restore();
         });
 
         it('throws an error for invalid specifiers', async () => {
