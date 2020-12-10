@@ -4,13 +4,6 @@ import ComponentIndex from '../../common/ComponentIndex';
 import Project from '../../common/Project';
 import { AppExtensionConfig } from '@webruntime/api';
 import fs from 'fs';
-import { removeFile } from '../../common/fileUtils';
-
-const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
-    '.html': true,
-    '.css': true,
-    '.js': true
-};
 
 export function projectMetadata(sessionNonce: string, project: Project) {
     const devFolder = path.join(
