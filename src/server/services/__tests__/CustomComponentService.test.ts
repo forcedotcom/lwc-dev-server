@@ -21,6 +21,17 @@ describe('CustomComponentService', () => {
         locale: 'en_US'
     };
 
+    const context: ContainerContext = {
+        metadata: {
+            importMap: {
+                imports: {}
+            }
+        },
+        compilerConfig: {
+            baseDir: '/originalBaseDir'
+        }
+    };
+
     beforeEach(() => {
         const CustomComponentService = getCustomComponentService(
             'c',
@@ -106,17 +117,6 @@ describe('CustomComponentService', () => {
 
     describe('requests', () => {
         it('calls compile with the correct namespace and base dir', async () => {
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
-                    }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
-
             (compile as jest.Mock).mockReturnValue({
                 result: {},
                 metadata: {},
@@ -145,17 +145,6 @@ describe('CustomComponentService', () => {
         });
 
         it('should return diagnostics error when compile fails', async () => {
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
-                    }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
-
             (compile as jest.Mock).mockReturnValue({
                 result: {},
                 metadata: {},
@@ -223,17 +212,6 @@ describe('CustomComponentService', () => {
         });
 
         it('should return component when precompile diagnostics are present', async () => {
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
-                    }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
-
             (compile as jest.Mock).mockReturnValue({
                 result: {},
                 metadata: {},
@@ -268,17 +246,6 @@ describe('CustomComponentService', () => {
         });
 
         it('throws an error for invalid specifiers', async () => {
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
-                    }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
-
             await expect(
                 customComponentService.request('c-module', params, context)
             ).rejects.toThrow('Invalid specifier for custom component');
