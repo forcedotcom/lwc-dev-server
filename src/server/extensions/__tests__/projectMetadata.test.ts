@@ -4,7 +4,6 @@ import Project from '../../../common/Project';
 import { ExtensionOptions } from '@webruntime/api';
 
 jest.mock('../../../common/Project');
-
 jest.mock('express', () => {
     return jest.fn(() => {
         return {
@@ -17,13 +16,18 @@ jest.mock('express', () => {
 describe('projectMetadata', () => {
     let project: Project;
     const nonce = 'sessionNonce';
+    const MockReporter = {
+        trackMissingDependentComponent: jest.fn()
+    };
+    let reporterMock: any;
 
     beforeEach(() => {
         project = new Project('/Users/arya/dev/myproject');
+        reporterMock = MockReporter;
     });
 
     it('should return a LWR extension', () => {
-        const extension = projectMetadata(nonce, project);
+        const extension = projectMetadata(nonce, project, reporterMock);
 
         expect(extension).toHaveProperty('extendApp');
     });
@@ -37,7 +41,7 @@ describe('projectMetadata', () => {
         });
 
         it('should add the /localdev/{{sessionNonce}}/localdev.js route', () => {
-            const extension = projectMetadata(nonce, project);
+            const extension = projectMetadata(nonce, project, reporterMock);
 
             extension.extendApp({ app, options });
 
@@ -48,7 +52,7 @@ describe('projectMetadata', () => {
         });
 
         it('should add the /localdev/{{sessionNonce}}errorDetails route', async () => {
-            const extension = projectMetadata(nonce, project);
+            const extension = projectMetadata(nonce, project, reporterMock);
 
             extension.extendApp({ app, options });
 
