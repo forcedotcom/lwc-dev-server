@@ -83,7 +83,7 @@ export function getCustomComponentService(
                 for (let i = 0; i < diagnostics.length; i++) {
                     if (diagnostics[i].code === 1002) {
                         // Ensure there is no old error file present.
-                        const {mode, locale } = params;
+                        const { mode, locale } = params;
                         removeFile(
                             path.join(
                                 projectDirectory,

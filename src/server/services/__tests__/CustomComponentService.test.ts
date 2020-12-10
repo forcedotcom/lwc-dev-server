@@ -16,9 +16,15 @@ jest.mock('@webruntime/compiler');
 describe('CustomComponentService', () => {
     let customComponentService: AddressableService & RequestService;
 
+    const params: RequestParams = {
+        mode: 'dev',
+        locale: 'en_US'
+    };
+
     beforeEach(() => {
         const CustomComponentService = getCustomComponentService(
             'c',
+            '/Users/arya/dev/sfdxProject',
             '/sfdxProject/force-app/main/default'
         );
 
@@ -100,11 +106,6 @@ describe('CustomComponentService', () => {
 
     describe('requests', () => {
         it('calls compile with the correct namespace and base dir', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
-
             const context: ContainerContext = {
                 metadata: {
                     importMap: {
@@ -144,11 +145,6 @@ describe('CustomComponentService', () => {
         });
 
         it('should return diagnostics error when compile fails', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
-
             const context: ContainerContext = {
                 metadata: {
                     importMap: {
@@ -227,11 +223,6 @@ describe('CustomComponentService', () => {
         });
 
         it('should return component when precompile diagnostics are present', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
-
             const context: ContainerContext = {
                 metadata: {
                     importMap: {
@@ -277,11 +268,6 @@ describe('CustomComponentService', () => {
         });
 
         it('throws an error for invalid specifiers', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
-
             const context: ContainerContext = {
                 metadata: {
                     importMap: {

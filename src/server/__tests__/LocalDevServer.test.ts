@@ -265,7 +265,7 @@ describe('LocalDevServer', () => {
 
         // @ts-ignore
         expect(addServicesMock.mock.calls[0][0]).not.toContain(
-            getCustomComponentService('', '')
+            getCustomComponentService('', '', '')
         );
     });
 
@@ -406,7 +406,7 @@ describe('LocalDevServer', () => {
             findLWCFolderPathMock.mockImplementation(() => {
                 return path.join(project.modulesSourceDirectory, 'lwc');
             });
-            const componentService = getCustomComponentService('', '');
+            const componentService = getCustomComponentService('', '', '');
             const server = new LocalDevServer(project);
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
@@ -420,7 +420,7 @@ describe('LocalDevServer', () => {
             // @ts-ignore
             project.isSfdx = false;
 
-            const componentService = getCustomComponentService('', '');
+            const componentService = getCustomComponentService('', '', '');
             const server = new LocalDevServer(project);
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
