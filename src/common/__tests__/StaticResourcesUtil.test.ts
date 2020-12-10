@@ -105,9 +105,7 @@ describe('StaticResourcesUtils', () => {
         expect(fileUtils.removeFile).toHaveBeenCalledTimes(0);
         expect(fileUtils.copyFiles).toHaveBeenCalledTimes(0);
         expect(console.error).toBeCalledWith(
-            `Unable to reload resource ${resourcePath}` +
-                `to the local dev server cache. This resource was not ` +
-                `specified as part of the project's localdevserver.config.json.`
+            `Unable to reload resource ${resourcePath} to the local dev server cache.`
         );
     });
 

@@ -1,13 +1,12 @@
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
-import * as http from 'http';
-import uuidv4 from 'uuidv4';
 import Project from '../../../../../common/Project';
 import LocalDevServer from '../../../../../server/LocalDevServer';
 import LocalDevTelemetryReporter from '../../../../../instrumentation/LocalDevTelemetryReporter';
 import debugLogger from 'debug';
 import colors from 'colors';
+import uuidv4 from 'uuidv4';
 
 const debug = debugLogger('localdevserver');
 

@@ -56,9 +56,9 @@ export function copyStaticResources(
 }
 
 export function copyContentAssets(project: Project, config: WebruntimeConfig) {
-    const contentAssetsDir = project.contentAssetsDirectory;
+    const contentAssets = project.contentAssetsDirectories;
     try {
-        if (contentAssetsDir && contentAssetsDir !== '') {
+        if (contentAssets && contentAssets.length > 0) {
             const assetsPath = path.join(
                 config.buildDir,
                 'assets',
@@ -66,10 +66,12 @@ export function copyContentAssets(project: Project, config: WebruntimeConfig) {
                 CONTENT_ASSETS
             );
             removeFile(assetsPath);
-            copyFiles(path.join(contentAssetsDir, '*'), assetsPath);
+            contentAssets.forEach((item: string) => {
+                copyFiles(path.join(item, '*'), assetsPath);
+            });
         }
     } catch (e) {
-        console.warn(`Unable to copy contentAssets: ${e.getMessage || e}`);
+        console.warn(`Unable to copy content assets: ${e.getMessage || e}`);
     }
 }
 
@@ -84,9 +86,7 @@ export function rebuildResource(
         copyContentAssets(project, config);
     } else {
         console.error(
-            `Unable to reload resource ${resourcePath}` +
-                `to the local dev server cache. This resource was not ` +
-                `specified as part of the project's localdevserver.config.json.`
+            `Unable to reload resource ${resourcePath} to the local dev server cache.`
         );
         return;
     }
@@ -113,10 +113,15 @@ export function isValidContentAsset(
     project: Project,
     resourcePath: string
 ): boolean {
-    const contentAssetsDir = project.contentAssetsDirectory;
-    return (
-        contentAssetsDir !== undefined &&
-        contentAssetsDir !== '' &&
-        resourcePath.startsWith(contentAssetsDir)
-    );
+    let isValidStaticResource = false;
+    const contentAssets = project.contentAssetsDirectories;
+    if (contentAssets && contentAssets.length > 0) {
+        contentAssets.forEach(item => {
+            if (resourcePath.startsWith(item)) {
+                isValidStaticResource = true;
+                return;
+            }
+        });
+    }
+    return isValidStaticResource;
 }

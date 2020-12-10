@@ -64,9 +64,11 @@ export function getFilesToWatch(
         });
     }
 
-    const contentAssetsDir = project.contentAssetsDirectory;
-    if (contentAssetsDir && contentAssetsDir !== '') {
-        filesToWatch.push(contentAssetsDir);
+    const contentAssets = project.contentAssetsDirectories;
+    if (contentAssets && contentAssets.length > 0) {
+        contentAssets.forEach((item: string) => {
+            filesToWatch.push(item);
+        });
     }
 
     return filesToWatch;

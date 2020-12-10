@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 export const defaultPort = 3333;
 
 export default class LocalDevServerConfiguration {
@@ -8,36 +6,8 @@ export default class LocalDevServerConfiguration {
     private entryPoint: string = '';
     private readonly configFromJson: any;
 
-    constructor(configFilePath?: string) {
-        if (configFilePath) {
-            let jsonFileContents = null;
-            if (fs.existsSync(configFilePath)) {
-                try {
-                    jsonFileContents = fs.readFileSync(configFilePath, 'utf-8');
-                } catch (e) {
-                    console.error(
-                        `Loading file ${configFilePath} failed with error: ${e}`
-                    );
-                }
-            }
-            if (jsonFileContents !== null && jsonFileContents !== '') {
-                try {
-                    this.configFromJson = JSON.parse(jsonFileContents);
-                } catch (e) {
-                    console.error(
-                        `Loading JSON in '${configFilePath}' failed with the error ${e.message}`
-                    );
-                    this.configFromJson = {};
-                }
-            } else {
-                this.configFromJson = {};
-            }
-        } else {
-            this.configFromJson = {};
-        }
-        if (this.configFromJson.hasOwnProperty('liveReload')) {
-            this._liveReload = !!this.configFromJson.liveReload;
-        }
+    constructor() {
+        this.configFromJson = {};
     }
 
     /**
@@ -85,56 +55,6 @@ export default class LocalDevServerConfiguration {
      */
     public get namespace(): string {
         return 'c';
-    }
-
-    /**
-     * To specify in json file, use
-     * {
-     *  "modulesSourceDirectory": "..."
-     * }
-     */
-    public get modulesSourceDirectory(): string {
-        return this.configFromJson.modulesSourceDirectory || '';
-    }
-
-    public set modulesSourceDirectory(directory: string) {
-        this.configFromJson.modulesSourceDirectory = directory;
-    }
-
-    /**
-     * To specify in json file, use
-     * {
-     *  "staticResourcesDirectories": "..."
-     * }
-     */
-    public get staticResourcesDirectories(): string[] {
-        return this.configFromJson.staticResourcesDirectories || [];
-    }
-
-    public set staticResourcesDirectories(directory: string[]) {
-        this.configFromJson.staticResourcesDirectories = directory;
-    }
-
-    /**
-     * To specify in json file, use
-     * {
-     *  "customLabelsFile": "..."
-     * }
-     */
-    public get customLabelsFile(): string {
-        return this.configFromJson.customLabelsFile || '';
-    }
-
-    public set customLabelsFile(file: string) {
-        this.configFromJson.customLabelsFile = file;
-    }
-
-    public get contentAssetsDirectory(): string {
-        return this.configFromJson.contentAssetsDirectory || '';
-    }
-
-    public set contentAssetsDirectory(path: string) {
-        this.configFromJson.contentAssetsDirectory = path;
     }
 
     /**
