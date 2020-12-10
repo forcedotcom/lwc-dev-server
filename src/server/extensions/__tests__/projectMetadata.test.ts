@@ -2,10 +2,6 @@ import express, { Application } from 'express';
 import { projectMetadata } from '../projectMetadata';
 import Project from '../../../common/Project';
 import { ExtensionOptions } from '@webruntime/api';
-import path from 'path';
-import * as fileUtils from '../../../common/fileUtils';
-import fs from 'fs';
-import mockFs from 'mock-fs';
 
 jest.mock('../../../common/Project');
 
