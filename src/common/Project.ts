@@ -20,6 +20,13 @@ export type ProjectConfiguration = {
     contentAssetsDirectories: string[];
 };
 
+export type ServerConfiguration = {
+    apiVersion: string;
+    headers?: string[];
+    instanceUrl: string;
+    port?: number;
+};
+
 const FOLDERS_TO_IGNORE = new Set([
     'aura',
     'lwc',
@@ -37,7 +44,7 @@ export default class Project {
     private readonly serverRootDirectory: string;
     private readonly serverConfiguration: LocalDevServerConfiguration;
 
-    constructor(directory: string) {
+    constructor(directory: string, serverConfiguration: ServerConfiguration) {
         if (directory === null || !this.isSfdxProjectJsonPresent(directory)) {
             throw new Error(
                 `Directory specified '${directory}' does not resolve to a valid Salesforce DX project. Go to <link to project docs> to find more about Salesforce DX projects.`
@@ -46,7 +53,9 @@ export default class Project {
 
         this.projectRootDirectory = directory;
         this.serverRootDirectory = path.join(__dirname, '..', '..');
-        this.serverConfiguration = new LocalDevServerConfiguration();
+        this.serverConfiguration = new LocalDevServerConfiguration(
+            serverConfiguration
+        );
         const packageDirectories: string[] = this.getPackageDirectories();
         if (packageDirectories.length <= 0) {
             throw new Error('No directories found on sfdx-project.json'); // NOTE: add a better message
