@@ -218,7 +218,10 @@ export default class Project {
         }
     }
 
-    public get customLabelsPath(): string {
+    public get customLabelsPath(): string | undefined {
+        if (!this.projectConfiguration.customLabels) {
+            return undefined;
+        }
         const customLabelsFile = this.getAbsolutePath(
             this.projectConfiguration.customLabels
         );
