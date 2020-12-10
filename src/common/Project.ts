@@ -133,18 +133,16 @@ export default class Project {
     }
 
     private setModulesSourceDirectory(defaultPackageDirectory: string) {
-        if (!this.projectConfiguration.modulesSourceDirectory) {
-            // The sfdx-project.json specifies where the modules are located.
+        // The sfdx-project.json specifies where the modules are located.
 
-            // WARNING: this is not the correct modules source dir (which
-            // would be for example `force-app/main/default`) but a dir
-            // several levels above (e.g., `force-app`).
-            // This is because LWR doesn't allow more than one directory
-            // to watch for changes, but we need to watch the entire
-            // force-app dir for changes to other files such as static
-            // resources. Once LWR fixes this then this should be changed.
-            this.projectConfiguration.modulesSourceDirectory = defaultPackageDirectory;
-        }
+        // WARNING: this is not the correct modules source dir (which
+        // would be for example `force-app/main/default`) but a dir
+        // several levels above (e.g., `force-app`).
+        // This is because LWR doesn't allow more than one directory
+        // to watch for changes, but we need to watch the entire
+        // force-app dir for changes to other files such as static
+        // resources. Once LWR fixes this then this should be changed.
+        this.projectConfiguration.modulesSourceDirectory = defaultPackageDirectory;
     }
 
     // NOTE: move some of this code to setModulesSourceDirectory
@@ -164,17 +162,12 @@ export default class Project {
     }
 
     private setStaticResourcesDirectories(packageDirectories: string[]) {
-        if (
-            this.projectConfiguration.staticResourcesDirectories &&
-            this.projectConfiguration.staticResourcesDirectories.length === 0
-        ) {
-            this.projectConfiguration.staticResourcesDirectories = findAllFolderPaths(
-                this.projectRootDirectory,
-                packageDirectories,
-                STATIC_RESOURCES,
-                FOLDERS_TO_IGNORE
-            );
-        }
+        this.projectConfiguration.staticResourcesDirectories = findAllFolderPaths(
+            this.projectRootDirectory,
+            packageDirectories,
+            STATIC_RESOURCES,
+            FOLDERS_TO_IGNORE
+        );
     }
 
     public get staticResourcesDirectories(): string[] {
@@ -207,15 +200,13 @@ export default class Project {
     }
 
     private setCustomLabelsFile(defaultPackageDirectory: string) {
-        if (!this.projectConfiguration.customLabels) {
-            this.projectConfiguration.customLabels = findFileWithDefaultPath(
-                defaultPackageDirectory,
-                DEFAULT_SFDX_PATH,
-                CUSTOM_LABELS_FOLDER,
-                CUSTOM_LABELS_FILE,
-                FOLDERS_TO_IGNORE
-            );
-        }
+        this.projectConfiguration.customLabels = findFileWithDefaultPath(
+            defaultPackageDirectory,
+            DEFAULT_SFDX_PATH,
+            CUSTOM_LABELS_FOLDER,
+            CUSTOM_LABELS_FILE,
+            FOLDERS_TO_IGNORE
+        );
     }
 
     public get customLabelsPath(): string | undefined {
@@ -236,14 +227,12 @@ export default class Project {
     }
 
     private setContentAssetsDirectories(packageDirectories: string[]) {
-        if (!this.projectConfiguration.contentAssetsDirectories) {
-            this.projectConfiguration.contentAssetsDirectories = findAllFolderPaths(
-                this.projectRootDirectory,
-                packageDirectories,
-                CONTENT_ASSETS,
-                FOLDERS_TO_IGNORE
-            );
-        }
+        this.projectConfiguration.contentAssetsDirectories = findAllFolderPaths(
+            this.projectRootDirectory,
+            packageDirectories,
+            CONTENT_ASSETS,
+            FOLDERS_TO_IGNORE
+        );
     }
 
     public get contentAssetsDirectories(): string[] {
