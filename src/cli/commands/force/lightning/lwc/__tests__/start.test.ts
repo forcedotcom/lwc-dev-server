@@ -529,24 +529,6 @@ Starting LWC Local Development.
 
                 expect(serverShutdown).toHaveBeenCalledTimes(1);
             });
-            test('lwc folder does not exists', async () => {
-                setupFlags();
-                setupOrg();
-                Object.defineProperty(start, 'ux', {
-                    get: () => {
-                        return {
-                            log: jest.fn(),
-                            error: jest.fn()
-                        };
-                    },
-                    configurable: true,
-                    enumerable: true
-                });
-                findLWCFolderPathMock.mockReturnValueOnce(null);
-                await start.run();
-                expect(process.exit).toHaveBeenCalledTimes(1);
-                expect(findLWCFolderPathMock).toHaveBeenCalledTimes(1);
-            });
         });
     });
 });
