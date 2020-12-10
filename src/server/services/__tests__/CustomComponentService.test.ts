@@ -246,7 +246,8 @@ describe('CustomComponentService', () => {
         });
 
         it('should clear old error files when precompile diagnostics are present', async () => {
-            const devFile = '/sfdxProject/.localdevserver/webruntime/custom-component/dev/en_US/c/moduleA.js';
+            const devFile =
+                '/sfdxProject/.localdevserver/webruntime/custom-component/dev/en_US/c/moduleA.js';
             mockFs({
                 [`${devFile}`]: 'errors you do not want'
             });
@@ -265,11 +266,7 @@ describe('CustomComponentService', () => {
                 success: true
             });
 
-            await customComponentService.request(
-                'c/moduleA',
-                params,
-                context
-            );
+            await customComponentService.request('c/moduleA', params, context);
 
             expect(fs.existsSync(devFile)).toBeFalsy();
 
