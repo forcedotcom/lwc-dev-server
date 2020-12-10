@@ -26,8 +26,6 @@ export function projectMetadata(sessionNonce: string, project: Project) {
             (app as Application).get(
                 `/localdev/${sessionNonce}/localdev.js`,
                 (req: Request, res: Response, next: NextFunction) => {
-                    removeFile(devFolder);
-
                     const componentIndex = new ComponentIndex(project);
                     const json = componentIndex.getProjectMetadata();
                     const localDevConfig = {

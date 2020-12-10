@@ -124,6 +124,7 @@ export default class LocalDevServer {
                 services.push(
                     getCustomComponentService(
                         project.configuration.namespace,
+                        project.projectDirectory,
                         path.dirname(lwcPath)
                     )
                 );

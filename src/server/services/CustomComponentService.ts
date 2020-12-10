@@ -13,6 +13,7 @@ import {
 } from '@webruntime/api';
 import { CompilerDiagnostic } from '@lwc/errors';
 import stripAnsi from 'strip-ansi';
+import { removeFile } from '../../common/fileUtils';
 
 const SFDX_LWC_DIRECTORY = 'lwc';
 
@@ -26,10 +27,12 @@ const debug = debugLogger('localdevserver:customcomponents');
  * references to that namespace to the actual directory the compiler expects.
  *
  * @param customModulesNamespace The custom components namespace, e.g., `c`.
+ * @param projectDirectory The root directory for the project
  * @param modulesDirectory Absolute path to the parent of the 'lwc' directory.
  */
 export function getCustomComponentService(
     customModulesNamespace: string,
+    projectDirectory: string,
     modulesDirectory: string
 ): new (config: PublicConfig) => AddressableService & RequestService {
     const uriPrefix = `/custom-component/:uid/:mode/:locale/${customModulesNamespace}/`;
@@ -79,6 +82,20 @@ export function getCustomComponentService(
 
                 for (let i = 0; i < diagnostics.length; i++) {
                     if (diagnostics[i].code === 1002) {
+                        // Ensure there is no old error file present.
+                        const {mode, locale } = params;
+                        removeFile(
+                            path.join(
+                                projectDirectory,
+                                '.localdevserver',
+                                'webruntime',
+                                'custom-component',
+                                mode,
+                                locale,
+                                customModulesNamespace,
+                                name + '.js'
+                            )
+                        );
                         partialCompileError = true;
                         break;
                     }
