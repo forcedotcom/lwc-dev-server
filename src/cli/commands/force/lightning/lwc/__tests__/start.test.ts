@@ -165,7 +165,7 @@ describe('start', () => {
                     'Authorization: Bearer testingAccessToken'
                 ]);
                 expect(result['orgId']).toEqual('testingOrgIDX');
-                expect(result['api_version']).toEqual('99.0');
+                expect(result['api_version']).toEqual('49.0');
                 expect(result['port']).toEqual(3333);
 
                 expect(startCalled).toBeTruthy();
@@ -367,7 +367,7 @@ Starting LWC Local Development.
     Scratch Org: ${colors.red(
         'user@test.org - Error authenticating to your scratch org. Make sure that it is still active by running sfdx force:org:list --all.'
     )}
-    Api Version: ${colors.green('99.0')}\
+    Api Version: ${colors.green('49.0')}\
 `;
 
             try {
@@ -453,7 +453,7 @@ Starting LWC Local Development.
 Starting LWC Local Development.
     Dev Hub Org: ${colors.green('admin@devhub.org')}
     Scratch Org: ${colors.green('user@test.org')}
-    Api Version: ${colors.green('99.0')}\
+    Api Version: ${colors.green('49.0')}\
 `;
 
             await start.run();
