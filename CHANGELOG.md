@@ -4,7 +4,7 @@
 
 -   Fix picklist failure on load ([#293](https://github.com/forcedotcom/lwc-dev-server/pull/293))
 
--   Add more informative error message for components when they are not present ([#292](https://github.com/forcedotcom/lwc-dev-server/pull/292))
+-   Add more informative error message for components when a dependent component is not present ([#292](https://github.com/forcedotcom/lwc-dev-server/pull/292))
 
 -   Rebuild static resources on change and perform livereload ([#274](https://github.com/forcedotcom/lwc-dev-server/pull/274)), [Issue #22](https://github.com/forcedotcom/lwc-dev-server-feedback/issues/22)
 
