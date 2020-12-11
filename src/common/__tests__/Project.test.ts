@@ -1,15 +1,44 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import Project from '../Project';
 import mock from 'mock-fs';
 import path from 'path';
-import * as fileUtils from '../fileUtils';
+import { ServerConfiguration } from '../types';
+
+const SRV_CONFIG: ServerConfiguration = {
+    apiVersion: '49.0',
+    instanceUrl: 'https://na1.salesforce.com'
+};
+
+const SRV_CONFIG_PORT: ServerConfiguration = {
+    apiVersion: '49.0',
+    instanceUrl: 'https://na1.salesforce.com',
+    port: 3000
+};
+
+const sfdxProjectSinglePkg = {
+    packageDirectories: [
+        {
+            path: 'modulesSrc'
+        }
+    ],
+    namespace: '',
+    sourceApiVersion: '50.0',
+    sfdcLoginUrl: 'https://login.salesforce.com'
+};
 
 describe('project', () => {
     // Stop mocking 'fs' after each test
     afterEach(mock.restore);
-
+    /*
     describe('getDirectory()', () => {
         test('project is resolved to the relative current directory ".", so return the current directory', () => {
-            const project = new Project('.');
+            const project = new Project('.', SRV_CONFIG);
             expect(project.projectDirectory).toEqual(process.cwd());
         });
 
@@ -20,7 +49,7 @@ describe('project', () => {
                 }
             });
 
-            const project = new Project('my-project');
+            const project = new Project('my-project', SRV_CONFIG);
 
             expect(project.projectDirectory).toEqual('my-project');
         });
@@ -33,7 +62,7 @@ describe('project', () => {
             });
 
             const expected = path.normalize('my-project/');
-            const project = new Project(expected);
+            const project = new Project(expected, SRV_CONFIG);
 
             expect(project.projectDirectory).toEqual(expected);
         });
@@ -43,134 +72,76 @@ describe('project', () => {
                 'invalid-project': {}
             });
             try {
-                new Project('invalid-project-DOES-NOT-EXIST');
+                new Project('invalid-project-DOES-NOT-EXIST', SRV_CONFIG);
             } catch (e) {
                 expect(e.message).toBe(
-                    "Directory specified 'invalid-project-DOES-NOT-EXIST' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it."
+                    "Directory specified 'invalid-project-DOES-NOT-EXIST' does not resolve to a valid Salesforce DX project."
                 );
             }
         });
-    });
+    }); */
 
-    describe('when retrieving the package.json and sfdx-package.json files', () => {
-        test('package.json file is found in the current directory.', () => {
+    describe('when retrieving the sfdx-package.json file', () => {
+        test('should find a sfdx-package.json file in the current directory.', () => {
             mock({
-                'package.json': '{}'
-            });
-
-            const project = new Project('.');
-
-            expect(project.isSfdx).toEqual(false);
-        });
-
-        test('sfdx-package.json file is found in the current directory.', () => {
-            mock({
-                'sfdx-project.json': '{}'
-            });
-
-            const project = new Project('.');
-
-            expect(project.isSfdx).toEqual(true);
-        });
-
-        test('projects with sfdx-project.json are valid without a package.json', () => {
-            mock({
-                'valid-project': {
-                    'sfdx-project.json': '{}'
+                'my-project': {
+                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: mock.directory({
+                        items: {}
+                    })
                 }
             });
 
-            expect(new Project('valid-project').isSfdx).toBe(true);
+            const project = new Project('.', SRV_CONFIG);
+
+            expect(project.isSfdxProjectJsonPresent('.')).toEqual(true);
         });
 
-        test('throws an exception when referencing a project without package.json or sfdx-project.json', () => {
+        test('should throw an exception when referencing a project without a sfdx-project.json', () => {
             mock({
                 'invalid-project': {
                     // Empty
                 },
                 'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': '{}'
+                    'package.json': '{}'
                 }
             });
             try {
-                new Project('invalid-project');
+                new Project('invalid-project', SRV_CONFIG);
             } catch (e) {
                 expect(e.message).toBe(
-                    "Directory specified 'invalid-project' does not resolve to a project. The specified directory must have package.json or sfdx-project.json in it."
+                    "Directory specified 'invalid-project' does not resolve to a valid Salesforce DX project."
                 );
             }
         });
     });
-
+    /*
     describe('when retrieving the module source directory', () => {
-        test('handles a relative modulesSourceDirectory specified in the json config', () => {
+        test('should handle a relative modulesSourceDirectory specified in the json config', () => {
             mock({
                 'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json':
-                        '{"modulesSourceDirectory": "modulesSrc"}'
+                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
                 },
                 'my-project/modulesSrc': mock.directory({
                     items: {}
                 })
             });
 
-            const project = new Project('my-project');
+            const project = new Project('my-project', SRV_CONFIG);
             const expected = path.join('my-project', 'modulesSrc');
             expect(project.modulesSourceDirectory).toBe(expected);
         });
 
-        test('handles an absolute modulesSourceDirectory specified in the json config', () => {
-            const modulesSourceDirectory = path.normalize('/foo/modulesSrc/');
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory
-                    })
-                },
-                '/foo/modulesSrc': mock.directory({
-                    items: {}
-                })
-            });
-
-            const project = new Project('my-project');
-
-            expect(project.modulesSourceDirectory).toBe(modulesSourceDirectory);
-        });
-
-        test('uses a fallback when modulesSourceDirectory is not specified in the json config', () => {
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': '{}'
-                },
-                'my-project/src': mock.directory({
-                    items: {}
-                })
-            });
-
-            const project = new Project('my-project');
-            const expected = path.join('my-project', 'src');
-
-            expect(project.modulesSourceDirectory).toBe(expected);
-        });
-
-        test('logs a warning when the modules source directory does not exist', () => {
+        test('should log a warning when the modules source directory does not exist', () => {
             jest.spyOn(console, 'warn').mockImplementation();
-            const modulesSourceDirectory = path.normalize('invalidDir');
             mock({
                 'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory
-                    })
+                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
                 }
             });
 
-            const project = new Project('my-project');
-            const expected = path.join('my-project', 'invalidDir');
+            const project = new Project('my-project', SRV_CONFIG);
+            const expected = path.join('my-project', 'modulesSrc');
 
             project.modulesSourceDirectory;
             expect(console.warn).toBeCalledWith(
@@ -180,48 +151,33 @@ describe('project', () => {
     });
 
     describe('when retrieving the port', () => {
-        test('handles the port specified in the json config', () => {
-            const port = 12345;
+        test('should handle the port specified in the server config', () => {
             mock({
                 'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        port
-                    })
-                }
+                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
+                },
+                'my-project/modulesSrc': mock.directory({
+                    items: {}
+                })
             });
 
-            const project = new Project('my-project');
-
-            expect(project.port).toBe(port);
+            const project = new Project('my-project', SRV_CONFIG_PORT);
+            expect(project.port).toBe(3000);
         });
 
-        test('uses a fallback when a port is not specified in the json config', () => {
+        test('should provide the default port when it is not specified in the server config', () => {
             mock({
                 'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': '{}'
-                }
+                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
+                },
+                'my-project/modulesSrc': mock.directory({
+                    items: {}
+                })
             });
 
-            const project = new Project('my-project');
+            const project = new Project('my-project', SRV_CONFIG);
 
             expect(project.port).toBe(3333);
-        });
-
-        test('then configure the port from the configuration', () => {
-            mock({
-                'my-project': {
-                    'sfdx-project.json': '{}',
-                    'localdevserver.config.json': '{}',
-                    'package.json': '{}'
-                }
-            });
-
-            const project = new Project('my-project');
-            project.configuration.port = 123456;
-
-            expect(project.configuration.port).toBe(123456);
         });
     });
 
@@ -423,5 +379,5 @@ describe('project', () => {
                 )
             );
         });
-    });
+    }); */
 });

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import path from 'path';
 import WebruntimeConfig from '../WebruntimeConfig';
 import Project from '../../../common/Project';
@@ -7,14 +14,20 @@ import { ImportMapService, AppBootstrapService } from '@webruntime/services';
 import { ApexService, SchemaService } from '@communities-webruntime/services';
 import { ResourceUrlService } from '../../services/ResourceUrlService';
 import { ApexContinuationService } from '../../services/ApexContinuationService';
+import { ServerConfiguration } from '../../../common/types';
 
 jest.mock('../../../common/Project');
+const SRV_CONFIG: ServerConfiguration = {
+    apiVersion: '49.0',
+    instanceUrl: 'http://test.instance.url',
+    headers: ['Authorization: Bearer testingAccessToken']
+};
 
 describe('WebruntimeConfig', () => {
     let project: Project;
 
     beforeEach(() => {
-        project = new Project('/Users/arya/dev/myproject');
+        project = new Project('/Users/arya/dev/myproject', SRV_CONFIG);
     });
 
     it('should build from a base config', () => {

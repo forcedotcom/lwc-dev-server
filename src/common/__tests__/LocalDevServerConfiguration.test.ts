@@ -1,187 +1,50 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import LocalDevServerConfiguration from '../LocalDevServerConfiguration';
-import mock from 'mock-fs';
+import { ServerConfiguration } from '../types';
 
 describe('LocalDevServerConfiguration', () => {
-    // Stop mocking 'fs' after each test
-    afterEach(mock.restore);
-
-    test('when it cannot read the json file, it notifies you that an error occured.', () => {
-        mock({
-            'config.json': {}
-        });
-
-        console.error = jest.fn();
+    test('should provide all the default values', () => {
+        const SRV_CONFIG: ServerConfiguration = {
+            apiVersion: '49.0',
+            instanceUrl: 'https://na1.salesforce.com'
+        };
         const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
+            SRV_CONFIG
         );
-
-        // @ts-ignore
-        expect(console.error.mock.calls[0][0]).toEqual(
-            'Loading file config.json failed with error: Error: EBADF: bad file descriptor, read'
-        );
-    });
-
-    test('For SFDX projects, namespace should be c', () => {
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
-
+        expect(configuration.port).toBe(3333);
+        expect(configuration.api_version).toBe('49.0');
         expect(configuration.namespace).toBe('c');
-    });
-
-    test('loading of port from config json', () => {
-        mock({
-            'config.json': JSON.stringify({
-                port: 1234
-            })
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.port).toBe(1234);
-    });
-
-    test('port returns default port when not specified in config file.', () => {
-        mock({
-            'config.json': JSON.stringify({})
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.port).toBe(3333);
-    });
-
-    test('Empty string value in config file uses default port', () => {
-        mock({
-            'config.json': JSON.stringify({
-                port: ''
-            })
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.port).toBe(3333);
-    });
-
-    test('value of `0` in config file uses 0', () => {
-        mock({
-            'config.json': JSON.stringify({
-                port: 0
-            })
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.port).toBe(0);
-    });
-
-    test('loading of api version from config json', () => {
-        mock({
-            'config.json': JSON.stringify({
-                api_version: '48'
-            })
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.api_version).toBe('48');
-    });
-
-    test('loading of core version from config json with api version set', () => {
-        mock({
-            'config.json': JSON.stringify({
-                api_version: '48'
-            })
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.core_version).toBe('224');
-    });
-
-    test('loading of core version from config json without api version set', () => {
-        mock({
-            'config.json': '{}'
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.core_version).toBe(undefined);
-    });
-
-    test('loading of endpoint from config json', () => {
-        mock({
-            'config.json': JSON.stringify({
-                endpoint: 'http://mobile1.t.salesforce.com'
-            })
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-
-        expect(configuration.endpoint).toBe('http://mobile1.t.salesforce.com');
-    });
-
-    test('able to store the endpoint headers on the config ', () => {
-        mock({
-            'config.json': JSON.stringify({})
-        });
-
-        const headers = ['Authorization: Bearer 123456'];
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-        configuration.endpointHeaders = headers;
-
-        expect(configuration.endpointHeaders).toBe(headers);
-    });
-
-    test('liveReload enabled by default', () => {
-        mock({
-            'config.json': JSON.stringify({})
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
+        expect(configuration.core_version).toBe('226');
+        expect(configuration.endpoint).toBe('https://na1.salesforce.com');
+        expect(configuration.endpointHeaders).toEqual([]);
         expect(configuration.liveReload).toBe(true);
     });
 
-    test('sets liveReload off when configured', () => {
-        mock({
-            'config.json': JSON.stringify({
-                liveReload: false
-            })
-        });
-
+    test('should handle the default value overrides', () => {
+        const SRV_CONFIG: ServerConfiguration = {
+            apiVersion: '51.0',
+            headers: ['Authorization: Bearer kjas', 'Connection: keep-alive'],
+            instanceUrl: 'https://na3.salesforce.com',
+            port: 3301
+        };
         const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
+            SRV_CONFIG
         );
-        expect(configuration.liveReload).toBe(false);
-    });
-
-    test('liveReload can be set to disabled', () => {
-        mock({
-            'config.json': JSON.stringify({})
-        });
-
-        const configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration(
-            'config.json'
-        );
-        configuration.liveReload = false;
-        expect(configuration.liveReload).toBe(false);
+        expect(configuration.port).toBe(3301);
+        expect(configuration.api_version).toBe('51.0');
+        expect(configuration.namespace).toBe('c');
+        expect(configuration.core_version).toBe('230');
+        expect(configuration.endpoint).toBe('https://na3.salesforce.com');
+        expect(configuration.endpointHeaders).toEqual([
+            'Authorization: Bearer kjas',
+            'Connection: keep-alive'
+        ]);
+        expect(configuration.liveReload).toBe(true);
     });
 });

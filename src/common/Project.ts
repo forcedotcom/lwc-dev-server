@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import fs from 'fs-extra';
 import path from 'path';
 import LocalDevServerConfiguration from './LocalDevServerConfiguration';
@@ -41,7 +48,7 @@ export default class Project {
     constructor(directory: string, serverConfiguration: ServerConfiguration) {
         if (directory === null || !this.isSfdxProjectJsonPresent(directory)) {
             throw new Error(
-                `Directory specified '${directory}' does not resolve to a valid Salesforce DX project. Go to <link to project docs> to find more about Salesforce DX projects.`
+                `Directory specified '${directory}' does not resolve to a valid Salesforce DX project.`
             );
         }
 
@@ -92,6 +99,10 @@ export default class Project {
     }
 
     public isSfdxProjectJsonPresent(rootDirectory: string): boolean {
+        console.log(
+            'isSfdxProjectJsonPresent sfdx-project path ===> ',
+            path.join(rootDirectory, SFDX_PROJECT_JSON)
+        );
         return fs.existsSync(path.join(rootDirectory, SFDX_PROJECT_JSON));
     }
 
