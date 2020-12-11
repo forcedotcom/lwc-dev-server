@@ -199,7 +199,7 @@ https://www.w3schools.com/jquery/jquery_ref_selectors.asp
 `Error: Selenium server did not start. Another Selenium process may already be running or your java version may be out of date.`
 
 -   This is an indicator that one of the previous java processes may still be running.
--   Run `killall java` and try to launch the integration test again.
+-   Run `killall java` and relaunch the integration test again.
 
 #### Environments
 
