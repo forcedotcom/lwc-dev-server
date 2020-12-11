@@ -189,6 +189,13 @@ Lightning Web Components use a mixture of traditional DOM elements and Shadow DO
 
 https://www.w3schools.com/jquery/jquery_ref_selectors.asp
 
+##### Troubleshooting:
+
+`ERROR webdriver: Request failed due to unknown error: Cannot define class using reflection`
+
+-   If you see the above error when running integration tests, you will need to change your java version prior to executing integration tests. To do this, you'll want to find your java 8 jdk (which should be installed by blt).
+-   From the command line, run the following (using your java 8 jdk installation path if it's different): `export JAVA_HOME=/Library/Java/JavaVirtualMachines/sfdc-openjdk1.8.0_172.jdk/Contents/Home`
+
 #### Environments
 
 Integration tests can specify a jest docblock prama to choose the environment and other parameters.
