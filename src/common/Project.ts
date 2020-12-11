@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import LocalDevServerConfiguration from '../user/LocalDevServerConfiguration';
+import LocalDevServerConfiguration from './LocalDevServerConfiguration';
 import {
     CONTENT_ASSETS,
     DEFAULT_SFDX_PATH,
@@ -12,19 +12,13 @@ import {
     findFileWithDefaultPath,
     getFileContents
 } from './fileUtils';
+import { ServerConfiguration } from './types';
 
 export type ProjectConfiguration = {
     modulesSourceDirectory: string;
     staticResourcesDirectories: string[];
     customLabels: string;
     contentAssetsDirectories: string[];
-};
-
-export type ServerConfiguration = {
-    apiVersion: string;
-    headers?: string[];
-    instanceUrl: string;
-    port?: number;
 };
 
 const FOLDERS_TO_IGNORE = new Set([

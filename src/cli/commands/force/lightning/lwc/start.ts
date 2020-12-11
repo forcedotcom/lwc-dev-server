@@ -1,12 +1,14 @@
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
-import Project, { ServerConfiguration } from '../../../../../common/Project';
+import Project from '../../../../../common/Project';
 import LocalDevServer from '../../../../../server/LocalDevServer';
 import LocalDevTelemetryReporter from '../../../../../instrumentation/LocalDevTelemetryReporter';
 import debugLogger from 'debug';
 import colors from 'colors';
 import uuidv4 from 'uuidv4';
+import { ServerConfiguration } from '../../../../../common/types';
+import { DEFAULT_PORT } from '../../../../../common/Constants';
 
 const debug = debugLogger('localdevserver');
 
@@ -39,7 +41,7 @@ export default class Start extends SfdxCommand {
     protected static flagsConfig = {
         port: flags.integer({
             char: 'p',
-            default: 3333,
+            default: DEFAULT_PORT,
             description: messages.getMessage('portFlagDescription')
         })
     };

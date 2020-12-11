@@ -1,4 +1,6 @@
-import { ServerConfiguration } from 'common/Project';
+import { DEFAULT_PORT } from './Constants';
+import { ServerConfiguration } from './types';
+
 export default class LocalDevServerConfiguration {
     private readonly srvConfig: ServerConfiguration;
 
@@ -21,7 +23,7 @@ export default class LocalDevServerConfiguration {
      * The address port for your local server. Defaults to 3333
      */
     public get port(): number {
-        return this.srvConfig.port || 3333;
+        return this.srvConfig.port || DEFAULT_PORT;
     }
 
     public get api_version(): string | undefined {
