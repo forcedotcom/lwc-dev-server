@@ -101,10 +101,12 @@ export default class Start extends SfdxCommand {
 
         const project = new Project(this.project.getPath());
 
-        const lwcPath = findLWCFolderPath(project.modulesSourceDirectory);
+        const lwcPath = findLWCFolderPath(
+            project.configuration.modulesSourceDirectory
+        );
         if (!lwcPath) {
             throw new Error(
-                `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+                `No 'lwc' directory found in path ${project.configuration.modulesSourceDirectory}`
             );
         }
 

@@ -7,6 +7,7 @@ import { SfdxError } from '@salesforce/core';
 import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerConfiguration';
 import * as fileUtils from '../../../../../../common/fileUtils';
 import colors from 'colors';
+import { expectCt } from 'helmet';
 
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
@@ -22,6 +23,7 @@ describe('start', () => {
     let consoleWarnMock: any;
     let consoleErrorMock: any;
     let findLWCFolderPathMock: any;
+
     beforeEach(() => {
         jest.resetAllMocks();
 
@@ -38,6 +40,7 @@ describe('start', () => {
 
         // Setup project with a default configuration instance.
         const _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
+        _configuration.modulesSourceDirectory = 'C:\\sfdx\\project\\force-app';
         Object.defineProperty(Project.prototype, 'configuration', {
             configurable: true,
             get: () => {
@@ -528,6 +531,28 @@ Starting LWC Local Development.
                 process.emit('SIGINT', 'SIGINT');
 
                 expect(serverShutdown).toHaveBeenCalledTimes(1);
+            });
+            test('lwc folder does not exists', async () => {
+                setupFlags();
+                setupOrg();
+                Object.defineProperty(start, 'ux', {
+                    get: () => {
+                        return {
+                            log: jest.fn(),
+                            error: jest.fn()
+                        };
+                    },
+                    configurable: true,
+                    enumerable: true
+                });
+                findLWCFolderPathMock.mockReturnValueOnce(null);
+                try {
+                    await start.run();
+                } catch (e) {
+                    expect(e.message).toBe(
+                        "No 'lwc' directory found in path C:\\sfdx\\project\\force-app"
+                    );
+                }
             });
         });
     });
