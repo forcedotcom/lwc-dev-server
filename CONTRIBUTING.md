@@ -196,6 +196,11 @@ https://www.w3schools.com/jquery/jquery_ref_selectors.asp
 -   If you see the above error when running integration tests, you will need to change your java version prior to executing integration tests. To do this, you'll want to find your java 8 jdk (which should be installed by blt).
 -   From the command line, run the following (using your java 8 jdk installation path if it's different): `export JAVA_HOME=/Library/Java/JavaVirtualMachines/sfdc-openjdk1.8.0_172.jdk/Contents/Home`
 
+`Error: Selenium server did not start. Another Selenium process may already be running or your java version may be out of date.`
+
+-   This is an indicator that one of the previous java processes may still be running.
+-   Run `killall java` and try to launch the integration test again.
+
 #### Environments
 
 Integration tests can specify a jest docblock prama to choose the environment and other parameters.
