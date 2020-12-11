@@ -63,6 +63,7 @@ commands:
             - checkout
             - run: yarn --version
             - run: node --version
+            - run: java --version
             - node/install-packages:
                   pkg-manager: yarn
                   app-dir: ~/cli
