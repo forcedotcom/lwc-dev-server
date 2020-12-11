@@ -161,7 +161,7 @@ export default class Start extends SfdxCommand {
 
         const srvConfig: ServerConfiguration = {
             apiVersion: api_version,
-            // headers: [`Authorization: Bearer ${accessToken}`],
+            headers: [`Authorization: Bearer ${accessToken}`],
             instanceUrl: conn.instanceUrl,
             port: this.flags.port
         };
