@@ -46,7 +46,6 @@ export default class LocalDevTelemetryReporter {
         }
     }
 
-
     public trackApplicationStartNoAuth() {
         if (this.reporter) {
             this.reporter.sendTelemetryEvent('application_start_noauth');
