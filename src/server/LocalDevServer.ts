@@ -97,10 +97,10 @@ export default class LocalDevServer {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-pkg`,
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/lightning-stub-pkg`,
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/force-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/lightning-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/force-pkg`,
-            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/connect-gen-pkg`
+            `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-${this.vendorVersion}/connect-gen-pkg`
+            // `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/lightning-pkg`,
+            // `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/force-pkg`,
+            // `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/connect-gen-pkg`
         ]);
 
         // We don't officially support non-SFDX projects, but this continues to
