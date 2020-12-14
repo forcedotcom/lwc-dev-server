@@ -34,6 +34,19 @@ export default class LocalDevTelemetryReporter {
         }
     }
 
+    /**
+     * Send telemetry when there's an error during server start
+     * @param error error
+     */
+    public trackApplicationStartError(error: string) {
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('application_start_exception', {
+                exception: error
+            });
+        }
+    }
+
+
     public trackApplicationStartNoAuth() {
         if (this.reporter) {
             this.reporter.sendTelemetryEvent('application_start_noauth');
@@ -87,6 +100,20 @@ export default class LocalDevTelemetryReporter {
             this.reporter.sendTelemetryEvent('component_compile_exception', {
                 exception: exception.toString()
             });
+        }
+    }
+
+    public trackNonSfdxProjectUsage() {
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent(
+                'application_start_non_sfdx_project'
+            );
+        }
+    }
+
+    public trackMissingDependentComponent() {
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('missing_dependent_component');
         }
     }
 

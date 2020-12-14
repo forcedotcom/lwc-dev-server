@@ -53,7 +53,8 @@ describe('LocalDevServer', () => {
     const MockReporter = {
         trackApplicationStart: jest.fn(),
         trackApplicationEnd: jest.fn(),
-        trackApplicationStartException: jest.fn()
+        trackApplicationStartException: jest.fn(),
+        trackNonSfdxProjectUsage: jest.fn()
     };
 
     beforeEach(() => {
@@ -559,6 +560,30 @@ describe('LocalDevServer', () => {
             expect(reporter.trackApplicationStartException).toBeCalledWith(
                 expect.any(Error)
             );
+        });
+
+        it('reports on non sfdx project usage', async () => {
+            // @ts-ignore
+            project.isSfdx = false;
+            const reporter = LocalDevTelemetryReporter.getInstance();
+            jest.spyOn(reporter, 'trackNonSfdxProjectUsage');
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+            await server.start();
+
+            expect(reporter.trackNonSfdxProjectUsage).toHaveBeenCalled();
+        });
+
+        it('does not report on sfdx project usage', async () => {
+            // @ts-ignore
+            project.isSfdx = true;
+            const reporter = LocalDevTelemetryReporter.getInstance();
+            jest.spyOn(reporter, 'trackNonSfdxProjectUsage');
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+            await server.start();
+
+            expect(reporter.trackNonSfdxProjectUsage).not.toHaveBeenCalled();
         });
     });
 });
