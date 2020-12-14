@@ -156,9 +156,7 @@ export default class LocalDevServer {
     async start() {
         const startTime = performance.now();
         // Reporter for instrumentation
-        const reporter = await LocalDevTelemetryReporter.getInstance(
-            this.sessionNonce
-        );
+        const reporter = LocalDevTelemetryReporter.getInstance();
         try {
             await this.server.initialize();
             copyStaticAssets(this.project, this.config);
