@@ -1,18 +1,28 @@
-import { LightningElement } from 'lwc';
-import startContinuation from '@salesforce/apexContinuation/<Your Continuation Controller class>.<Your startContinuation method>';
- 
+import { LightningElement, track, wire } from 'lwc';
+import startRequest from '@salesforce/apexContinuation/ApexContinuationClass.startRequest';
 export default class ApexContinuation extends LightningElement {
-    result;
-    isLoading = true;
- 
-    connectedCallback() {
-        startContinuation()
-            .then(result => {
-                this.result = result;
-                this.isLoading = false;
-            }).catch(error => {
-                // TODO: handle error
-                this.isLoading = false;
+    @track imperativeContinuation = {};
+
+    // Using wire service
+    @wire(startRequest)
+    wiredContinuation;
+
+    get formattedWireResult() {
+        return JSON.stringify(this.wiredContinuation);
+    }
+
+    // Imperative Call
+    callContinuation() {
+        startRequest()
+            .then((result) => {
+                this.imperativeContinuation = result;
+            })
+            .catch((error) => {
+                this.imperativeContinuation = error;
             });
+    }
+
+    get formattedImperativeResult() {
+        return JSON.stringify(this.imperativeContinuation);
     }
 }

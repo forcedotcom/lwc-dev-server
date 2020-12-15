@@ -1,8 +1,10 @@
 <template>
-    <div class="slds-card slds-p-around_large">
-        <lightning-spinner if:true={isLoading} size="small"></lightning-spinner>
- 
-        <h1 class="slds-text-heading_medium slds-p-bottom_x-small">APEX Continuation Callback</h1>
-        <code>{result}</code>
+    <lightning-button label="Call Continuation" onclick={callContinuation}>
+    </lightning-button>
+    <div>
+        @wire(startRequest) result: {formattedWireResult}
+    </div>
+    <div>
+        Imperative result: {formattedImperativeResult}
     </div>
 </template>
