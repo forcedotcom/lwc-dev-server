@@ -1,9 +1,9 @@
 {
     "modules": [
-        "@lwc/engine",
-        "@lwc/wire-service",
-        "@webruntime/navigation",
-        "@communities-webruntime/client",
-        "dist/client/modules"
+        { "npm": "@lwc/engine" },
+        { "npm": "@lwc/wire-service" },
+        { "npm": "@webruntime/navigation" },
+        { "npm": "@communities-webruntime/client" },
+        { "dir": "dist/client/modules" }
     ]
 }
