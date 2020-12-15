@@ -21,21 +21,21 @@ describe('LocalDevTelemetryReporter', () => {
     const MockedReporter = {
         sendTelemetryEvent: jest.fn()
     };
-
-    beforeEach(() => {
+    let reporter: TelemetryReporter;
+    beforeEach(async () => {
         jest.clearAllMocks();
         jest.resetAllMocks();
         jest.spyOn(TelemetryReporter, 'create').mockImplementation(
             // @ts-ignore
             async () => MockedReporter
         );
-    });
-
-    test('trackApplicationStart() sends telemetry event with duration and api version', async () => {
-        const reporter = await TelemetryReporter.create(
+        reporter = await TelemetryReporter.create(
             mock(LocalDevTelemetryOptions)
         );
         jest.spyOn(reporter, 'sendTelemetryEvent');
+    });
+
+    test('trackApplicationStart() sends telemetry event with duration and api version', async () => {
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
         const startTime = 10000;
@@ -55,10 +55,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackApplicationStart() sends telemetry event and event has correct tool field if SFDX_TOOL env variable is set', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
         localDevReporter.initializeService('sessionId');
@@ -90,10 +86,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackApplicationStart() sends telemetry event and event does not have tool field if SFDX_TOOL env variable is not set', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
         localDevReporter.initializeService('sessionId');
@@ -110,10 +102,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackApplicationStartException() sends telemetry event', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
         const exception = new Error('testing trackApplicationStartException');
@@ -130,10 +118,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackApplicationStartNoAuth() sends telemetry event', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
 
@@ -146,10 +130,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackApplicationEnd() sends telemetry event', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
         const startTime = 10000;
@@ -167,10 +147,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackComponentPreview() sends telemetry event', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
 
@@ -196,10 +172,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackComponentPreviewException() sends telemetry event', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
         const exception = new Error('testing trackComponentPreviewException()');
@@ -217,10 +189,6 @@ describe('LocalDevTelemetryReporter', () => {
     });
 
     test('trackComponentCompileException() sends telemetry event', async () => {
-        const reporter = await TelemetryReporter.create(
-            mock(LocalDevTelemetryOptions)
-        );
-        jest.spyOn(reporter, 'sendTelemetryEvent');
         const localDevReporter = new LocalDevTelemetryReporter();
         localDevReporter.setReporter(reporter);
         const exception = new Error('testing trackComponentCompileException()');
