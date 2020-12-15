@@ -574,7 +574,7 @@ describe('LocalDevServer', () => {
             expect(reporter.trackNonSfdxProjectUsage).toHaveBeenCalled();
         });
 
-        it('does not report on sfdx project usage', async () => {
+        it('does not report on sfdx project usage for non sfdx project', async () => {
             // @ts-ignore
             project.isSfdx = true;
             const reporter = LocalDevTelemetryReporter.getInstance();
