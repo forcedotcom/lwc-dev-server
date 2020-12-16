@@ -31,6 +31,7 @@ export default class LocalDevServer {
     private liveReload?: any;
     private readonly sessionNonce: string;
     private readonly vendorVersion: string | undefined;
+    private reporter: LocalDevTelemetryReporter;
 
     /**
      * Initializes properties for the LocalDevServer
@@ -42,6 +43,7 @@ export default class LocalDevServer {
         this.project = project;
         this.sessionNonce = uuidv4();
         this.vendorVersion = project.configuration.core_version;
+        this.reporter = LocalDevTelemetryReporter.getInstance();
 
         const supportedCoreVersions = this.getSupportedCoreVersions();
         if (
@@ -107,6 +109,7 @@ export default class LocalDevServer {
         // let them work via localdevserver.config.json.
         if (!this.project.isSfdx) {
             config.addModules([this.project.modulesSourceDirectory]);
+            this.reporter.trackNonSfdxProjectUsage();
         }
 
         const services: ServiceDefinitionCtor[] = [
@@ -155,21 +158,17 @@ export default class LocalDevServer {
      */
     async start() {
         const startTime = performance.now();
-        // Reporter for instrumentation
-        const reporter = await LocalDevTelemetryReporter.getInstance(
-            this.sessionNonce
-        );
         try {
             await this.server.initialize();
             copyStaticAssets(this.project, this.config);
             this.server.on('shutdown', () => {
                 // After the application has ended.
                 // Report how long the server was opened.
-                reporter.trackApplicationEnd(startTime);
+                this.reporter.trackApplicationEnd(startTime);
             });
             await this.server.start();
 
-            reporter.trackApplicationStart(
+            this.reporter.trackApplicationStart(
                 startTime,
                 this.vendorVersion || '0'
             );
@@ -183,7 +182,7 @@ export default class LocalDevServer {
                 console.error(`Server start up failed.`);
             }
         } catch (e) {
-            reporter.trackApplicationStartException(e);
+            this.reporter.trackApplicationStartException(e);
             console.error(`Server start up failed.`);
             throw e;
         }

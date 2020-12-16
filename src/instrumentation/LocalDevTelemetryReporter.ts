@@ -4,12 +4,8 @@ import { TelemetryReporter } from '@salesforce/telemetry/lib/telemetryReporter';
 import { performance } from 'perf_hooks';
 
 export default class LocalDevTelemetryReporter {
-    private static _instance: LocalDevTelemetryReporter | null = null;
-    private reporter: TelemetryReporter;
-
-    constructor(reporter: TelemetryReporter) {
-        this.reporter = reporter;
-    }
+    private static _instance: LocalDevTelemetryReporter;
+    private reporter: TelemetryReporter | undefined;
 
     /**
      * Send telemetry of server start up duration
@@ -17,11 +13,13 @@ export default class LocalDevTelemetryReporter {
      * @param apiVersion API Version
      */
     public trackApplicationStart(startTime: number, apiVersion: string) {
-        this.reporter.sendTelemetryEvent('application_start', {
-            duration: performance.now() - startTime,
-            tool: process.env.SFDX_TOOL,
-            apiVersion
-        });
+        if (this.reporter !== undefined) {
+            this.reporter.sendTelemetryEvent('application_start', {
+                duration: performance.now() - startTime,
+                tool: process.env.SFDX_TOOL,
+                apiVersion
+            });
+        }
     }
 
     /**
@@ -29,13 +27,29 @@ export default class LocalDevTelemetryReporter {
      * @param exception exception
      */
     public trackApplicationStartException(exception: Error) {
-        this.reporter.sendTelemetryEvent('application_start_exception', {
-            exception: exception.toString()
-        });
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('application_start_exception', {
+                exception: exception.toString()
+            });
+        }
+    }
+
+    /**
+     * Send telemetry when there's an error during server start
+     * @param error error
+     */
+    public trackApplicationStartError(error: string) {
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('application_start_exception', {
+                exception: error
+            });
+        }
     }
 
     public trackApplicationStartNoAuth() {
-        this.reporter.sendTelemetryEvent('application_start_noauth');
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('application_start_noauth');
+        }
     }
 
     /**
@@ -43,9 +57,11 @@ export default class LocalDevTelemetryReporter {
      * @param startTime High resolution millisecond timestamp of server start time
      */
     public trackApplicationEnd(startTime: number) {
-        this.reporter.sendTelemetryEvent('application_end', {
-            runtimeDuration: performance.now() - startTime
-        });
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('application_end', {
+                runtimeDuration: performance.now() - startTime
+            });
+        }
     }
 
     public trackComponentPreview(
@@ -55,36 +71,66 @@ export default class LocalDevTelemetryReporter {
         browser: string,
         liveReload: boolean
     ) {
-        this.reporter.sendTelemetryEvent('component_preview', {
-            container,
-            duration,
-            apiVersion,
-            browser,
-            liveReload: liveReload.toString()
-        });
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('component_preview', {
+                container,
+                duration,
+                apiVersion,
+                browser,
+                liveReload: liveReload.toString()
+            });
+        }
     }
 
     public trackComponentPreviewException(
         exception: Error,
         apiVersion: string
     ) {
-        this.reporter.sendTelemetryEvent('component_preview_exception', {
-            exception: exception.toString(),
-            apiVersion
-        });
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('component_preview_exception', {
+                exception: exception.toString(),
+                apiVersion
+            });
+        }
     }
 
     public trackComponentCompileException(exception: Error) {
-        this.reporter.sendTelemetryEvent('component_compile_exception', {
-            exception: exception.toString()
-        });
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('component_compile_exception', {
+                exception: exception.toString()
+            });
+        }
     }
 
-    public static async getInstance(sessionId: string) {
+    public trackNonSfdxProjectUsage() {
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent(
+                'application_start_non_sfdx_project'
+            );
+        }
+    }
+
+    public trackMissingDependentComponent() {
+        if (this.reporter) {
+            this.reporter.sendTelemetryEvent('missing_dependent_component');
+        }
+    }
+
+    public static getInstance() {
+        if (!LocalDevTelemetryReporter._instance) {
+            LocalDevTelemetryReporter._instance = new LocalDevTelemetryReporter();
+        }
+        return LocalDevTelemetryReporter._instance;
+    }
+
+    public async initializeService(sessionNonce: string) {
         const userId = getMachineId();
-        const reporter = await TelemetryReporter.create(
-            new LocalDevTelemetryOptions(userId, sessionId)
+        this.reporter = await TelemetryReporter.create(
+            new LocalDevTelemetryOptions(userId, sessionNonce)
         );
-        return new LocalDevTelemetryReporter(reporter);
+    }
+
+    public setReporter(reporter: TelemetryReporter) {
+        this.reporter = reporter;
     }
 }

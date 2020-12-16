@@ -1,6 +1,7 @@
 import path from 'path';
 import { Application, Request, Response, NextFunction } from 'express';
 import ComponentIndex from '../../common/ComponentIndex';
+import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import Project from '../../common/Project';
 import { AppExtensionConfig } from '@webruntime/api';
 import fs from 'fs';
@@ -58,6 +59,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     );
 
                     if (!fs.existsSync(normalizedFile)) {
+                        const reporter = LocalDevTelemetryReporter.getInstance();
                         res.json({
                             errors: [
                                 {
@@ -66,6 +68,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                                 }
                             ]
                         });
+                        reporter.trackMissingDependentComponent();
                         return;
                     }
                     const content = fs.readFileSync(normalizedFile);
