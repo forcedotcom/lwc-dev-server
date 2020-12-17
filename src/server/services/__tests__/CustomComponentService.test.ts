@@ -9,16 +9,33 @@ import {
     RequestParams,
     RequestService
 } from '@webruntime/api';
-import * as path from 'path';
+import fs from 'fs';
 
 jest.mock('@webruntime/compiler');
 
 describe('CustomComponentService', () => {
     let customComponentService: AddressableService & RequestService;
 
+    const params: RequestParams = {
+        mode: 'dev',
+        locale: 'en_US'
+    };
+
+    const context: ContainerContext = {
+        metadata: {
+            importMap: {
+                imports: {}
+            }
+        },
+        compilerConfig: {
+            baseDir: '/originalBaseDir'
+        }
+    };
+
     beforeEach(() => {
         const CustomComponentService = getCustomComponentService(
             'c',
+            '/sfdxProject',
             '/sfdxProject/force-app/main/default'
         );
 
@@ -100,22 +117,6 @@ describe('CustomComponentService', () => {
 
     describe('requests', () => {
         it('calls compile with the correct namespace and base dir', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
-
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
-                    }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
-
             (compile as jest.Mock).mockReturnValue({
                 result: {},
                 metadata: {},
@@ -144,22 +145,6 @@ describe('CustomComponentService', () => {
         });
 
         it('should return diagnostics error when compile fails', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
-
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
-                    }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
-
             (compile as jest.Mock).mockReturnValue({
                 result: {},
                 metadata: {},
@@ -227,22 +212,6 @@ describe('CustomComponentService', () => {
         });
 
         it('should return component when precompile diagnostics are present', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
-
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
-                    }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
-
             (compile as jest.Mock).mockReturnValue({
                 result: {},
                 metadata: {},
@@ -276,23 +245,35 @@ describe('CustomComponentService', () => {
             expect(result.resource).toBeDefined();
         });
 
-        it('throws an error for invalid specifiers', async () => {
-            const params: RequestParams = {
-                mode: 'dev',
-                locale: 'en_US'
-            };
+        it('should clear old error files when precompile diagnostics are present', async () => {
+            const devFile =
+                '/sfdxProject/.localdevserver/webruntime/custom-component/dev/en_US/c/moduleA.js';
+            mockFs({
+                [`${devFile}`]: 'errors you do not want'
+            });
+            expect(fs.existsSync(devFile)).toBeTruthy();
 
-            const context: ContainerContext = {
-                metadata: {
-                    importMap: {
-                        imports: {}
+            (compile as jest.Mock).mockReturnValue({
+                result: {},
+                metadata: {},
+                diagnostics: [
+                    {
+                        code: 1002,
+                        message: 'test message',
+                        level: 2
                     }
-                },
-                compilerConfig: {
-                    baseDir: '/originalBaseDir'
-                }
-            };
+                ],
+                success: true
+            });
 
+            await customComponentService.request('c/moduleA', params, context);
+
+            expect(fs.existsSync(devFile)).toBeFalsy();
+
+            mockFs.restore();
+        });
+
+        it('throws an error for invalid specifiers', async () => {
             await expect(
                 customComponentService.request('c-module', params, context)
             ).rejects.toThrow('Invalid specifier for custom component');
