@@ -21,6 +21,7 @@ The Local Development Server is a Salesforce CLI plugin that configures and runs
 -   Mac—macOS 10.11 or later
 -   Linux—Ubuntu 14.0.4 or later
 -   Salesforce CLI
+-   Java 8
 
 To develop Lightning web components, use your favorite code editor. We recommend using Visual Studio Code because its [Salesforce Extensions for VS Code](https://developer.salesforce.com/tools/extension_vscode) provide powerful features for development on Lightning Platform.
 

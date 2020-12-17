@@ -53,7 +53,8 @@ describe('LocalDevServer', () => {
     const MockReporter = {
         trackApplicationStart: jest.fn(),
         trackApplicationEnd: jest.fn(),
-        trackApplicationStartException: jest.fn()
+        trackApplicationStartException: jest.fn(),
+        trackNonSfdxProjectUsage: jest.fn()
     };
 
     beforeEach(() => {
@@ -95,9 +96,11 @@ describe('LocalDevServer', () => {
         fileUtilsCopyMock = jest
             .spyOn(fileUtils, 'copyFiles')
             .mockImplementation();
-        jest.spyOn(LocalDevTelemetryReporter, 'getInstance')
+        jest.spyOn(LocalDevTelemetryReporter, 'getInstance').mockReturnValue(
             // @ts-ignore
-            .mockImplementation(async () => MockReporter);
+            MockReporter
+        );
+
         findLWCFolderPathMock = jest
             .spyOn(fileUtils, 'findLWCFolderPath')
             .mockImplementation();
@@ -265,7 +268,7 @@ describe('LocalDevServer', () => {
 
         // @ts-ignore
         expect(addServicesMock.mock.calls[0][0]).not.toContain(
-            getCustomComponentService('', '')
+            getCustomComponentService('', '', '')
         );
     });
 
@@ -406,7 +409,7 @@ describe('LocalDevServer', () => {
             findLWCFolderPathMock.mockImplementation(() => {
                 return path.join(project.modulesSourceDirectory, 'lwc');
             });
-            const componentService = getCustomComponentService('', '');
+            const componentService = getCustomComponentService('', '', '');
             const server = new LocalDevServer(project);
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
@@ -420,7 +423,7 @@ describe('LocalDevServer', () => {
             // @ts-ignore
             project.isSfdx = false;
 
-            const componentService = getCustomComponentService('', '');
+            const componentService = getCustomComponentService('', '', '');
             const server = new LocalDevServer(project);
             // @ts-ignore
             const serviceNames = server.config.addServices.mock.calls[0][0].map(
@@ -513,9 +516,7 @@ describe('LocalDevServer', () => {
 
     describe('telemetry', () => {
         it('reports on application start', async () => {
-            const reporter = await LocalDevTelemetryReporter.getInstance(
-                'sessionid'
-            );
+            const reporter = LocalDevTelemetryReporter.getInstance();
             jest.spyOn(reporter, 'trackApplicationStart');
             const connection: Connection = mock(Connection);
             const server = new LocalDevServer(project, connection);
@@ -528,9 +529,7 @@ describe('LocalDevServer', () => {
         });
 
         it('reports on application end', async () => {
-            const reporter = await LocalDevTelemetryReporter.getInstance(
-                'sessionid'
-            );
+            const reporter = LocalDevTelemetryReporter.getInstance();
             const connection: Connection = mock(Connection);
             const server = new LocalDevServer(project, connection);
 
@@ -543,9 +542,7 @@ describe('LocalDevServer', () => {
         });
 
         it('reports when exception is thrown durning application start', async () => {
-            const reporter = await LocalDevTelemetryReporter.getInstance(
-                'sessionid'
-            );
+            const reporter = LocalDevTelemetryReporter.getInstance();
             // Throw an exception during LocalDevServer start
             reporter.trackApplicationStart = jest
                 .fn()
@@ -565,16 +562,28 @@ describe('LocalDevServer', () => {
             );
         });
 
-        it('passes nonce to instrumentation as sessionid', async () => {
+        it('reports on non sfdx project usage', async () => {
+            // @ts-ignore
+            project.isSfdx = false;
+            const reporter = LocalDevTelemetryReporter.getInstance();
+            jest.spyOn(reporter, 'trackNonSfdxProjectUsage');
             const connection: Connection = mock(Connection);
             const server = new LocalDevServer(project, connection);
-            // @ts-ignore
-            server.sessionNonce = 'nonce';
             await server.start();
-            expect(
-                // @ts-ignore
-                LocalDevTelemetryReporter.getInstance.mock.calls[0][0]
-            ).toBe('nonce');
+
+            expect(reporter.trackNonSfdxProjectUsage).toHaveBeenCalled();
+        });
+
+        it('does not report on sfdx project usage for non sfdx project', async () => {
+            // @ts-ignore
+            project.isSfdx = true;
+            const reporter = LocalDevTelemetryReporter.getInstance();
+            jest.spyOn(reporter, 'trackNonSfdxProjectUsage');
+            const connection: Connection = mock(Connection);
+            const server = new LocalDevServer(project, connection);
+            await server.start();
+
+            expect(reporter.trackNonSfdxProjectUsage).not.toHaveBeenCalled();
         });
     });
 });

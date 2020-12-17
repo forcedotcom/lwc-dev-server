@@ -1,17 +1,20 @@
 import path from 'path';
 import { Application, Request, Response, NextFunction } from 'express';
 import ComponentIndex from '../../common/ComponentIndex';
+import LocalDevTelemetryReporter from '../../instrumentation/LocalDevTelemetryReporter';
 import Project from '../../common/Project';
 import { AppExtensionConfig } from '@webruntime/api';
 import fs from 'fs';
 
-const ALLOWED_SHOW_EXTENSIONS: { [key: string]: boolean } = {
-    '.html': true,
-    '.css': true,
-    '.js': true
-};
-
 export function projectMetadata(sessionNonce: string, project: Project) {
+    const devFolder = path.join(
+        project.projectDirectory,
+        '.localdevserver',
+        'webruntime',
+        'custom-component',
+        'dev',
+        'en-US'
+    );
     return {
         extendApp: ({ app }: AppExtensionConfig) => {
             (app as Application).get(
@@ -48,16 +51,12 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                     // NOTE: Some of the info used below is set on WebRuntimeConfig.ts
                     // but not available here, might want to move some of it to Project.ts config
                     const normalizedFile = path.join(
-                        project.projectDirectory,
-                        '.localdevserver',
-                        'webruntime',
-                        'custom-component',
-                        'dev',
-                        'en-US',
+                        devFolder,
                         `${specifier}.js`
                     );
 
                     if (!fs.existsSync(normalizedFile)) {
+                        const reporter = LocalDevTelemetryReporter.getInstance();
                         res.json({
                             errors: [
                                 {
@@ -66,6 +65,7 @@ export function projectMetadata(sessionNonce: string, project: Project) {
                                 }
                             ]
                         });
+                        reporter.trackMissingDependentComponent();
                         return;
                     }
                     const content = fs.readFileSync(normalizedFile);

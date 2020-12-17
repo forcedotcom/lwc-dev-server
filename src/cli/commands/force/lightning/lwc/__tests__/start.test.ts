@@ -6,6 +6,7 @@ import Project from '../../../../../../common/Project';
 import { SfdxError } from '@salesforce/core';
 import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerConfiguration';
 import * as fileUtils from '../../../../../../common/fileUtils';
+import LocalDevTelemetryReporter from '../../../../../../instrumentation/LocalDevTelemetryReporter';
 import colors from 'colors';
 import { expectCt } from 'helmet';
 import path from 'path';
@@ -24,6 +25,11 @@ describe('start', () => {
     let consoleWarnMock: any;
     let consoleErrorMock: any;
     let findLWCFolderPathMock: any;
+    const MockReporter = {
+        trackApplicationStartError: jest.fn(),
+        trackApplicationStartException: jest.fn(),
+        initializeService: jest.fn()
+    };
 
     beforeEach(() => {
         jest.resetAllMocks();
@@ -59,6 +65,10 @@ describe('start', () => {
         findLWCFolderPathMock = jest
             .spyOn(fileUtils, 'findLWCFolderPath')
             .mockImplementation(() => '/');
+        jest.spyOn(LocalDevTelemetryReporter, 'getInstance').mockReturnValue(
+            // @ts-ignore
+            MockReporter
+        );
     });
 
     afterEach(() => {
@@ -262,6 +272,8 @@ describe('start', () => {
         });
 
         test('no org with specified targetusername reports invalid scratch org', async () => {
+            const reporter = LocalDevTelemetryReporter.getInstance();
+            jest.spyOn(reporter, 'trackApplicationStartError');
             const log = jest.fn();
             const error = jest.fn();
             Object.defineProperty(start, 'flags', {
@@ -290,10 +302,15 @@ Starting LWC Local Development.
             await start.run();
 
             expect(log.mock.calls[0][0]).toEqual(expected);
+            expect(reporter.trackApplicationStartError).toBeCalledWith(
+                "We can't find an active scratch org for this username or alias. You must have a Dev Hub org to create a scratch org."
+            );
         });
 
         test('no org reports scratch org required', async () => {
             setupFlags();
+            const reporter = LocalDevTelemetryReporter.getInstance();
+            jest.spyOn(reporter, 'trackApplicationStartError');
             const log = jest.fn();
             const error = jest.fn();
             Object.defineProperty(start, 'ux', {
@@ -317,6 +334,9 @@ Starting LWC Local Development.
             await start.run();
 
             expect(log.mock.calls[0][0]).toEqual(expected);
+            expect(reporter.trackApplicationStartError).toBeCalledWith(
+                "We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide (https://sfdc.co/cuuVX4) or the Local Development Server Getting Started."
+            );
         });
 
         test('authenticating to inactive scratch org reports should return exit code EPERM', async () => {
@@ -348,6 +368,8 @@ Starting LWC Local Development.
 
         test('authenticating to inactive scratch org reports scratch org is inactive', async () => {
             setupFlags();
+            const reporter = LocalDevTelemetryReporter.getInstance();
+            jest.spyOn(reporter, 'trackApplicationStartError');
             const org = setupOrg();
             const log = jest.fn();
             const error = jest.fn();
@@ -380,6 +402,9 @@ Starting LWC Local Development.
             } catch (err) {}
             expect(error).toBeCalledTimes(1);
             expect(error).toHaveBeenCalledWith(expected);
+            expect(reporter.trackApplicationStartError).toBeCalledWith(
+                'Error authenticating to your scratch org. Make sure that it is still active by running sfdx force:org:list --all.'
+            );
         });
 
         test('on org refresh, unhandledRejections for StatusCodeErrors are suppressed', async () => {
