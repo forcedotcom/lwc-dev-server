@@ -8,6 +8,7 @@ import LocalDevServerConfiguration from '../../../../../../user/LocalDevServerCo
 import * as fileUtils from '../../../../../../common/fileUtils';
 import colors from 'colors';
 import { expectCt } from 'helmet';
+import path from 'path';
 
 jest.mock('../../../../../../server/LocalDevServer');
 jest.mock('../../../../../../common/Project');
@@ -40,7 +41,11 @@ describe('start', () => {
 
         // Setup project with a default configuration instance.
         const _configuration: LocalDevServerConfiguration = new LocalDevServerConfiguration();
-        _configuration.modulesSourceDirectory = 'C:\\sfdx\\project\\force-app';
+        _configuration.modulesSourceDirectory = path.join(
+            'sfdx',
+            'project',
+            'force-app'
+        );
         Object.defineProperty(Project.prototype, 'configuration', {
             configurable: true,
             get: () => {
@@ -549,8 +554,9 @@ Starting LWC Local Development.
                 try {
                     await start.run();
                 } catch (e) {
+                    const errorPath = path.join('sfdx', 'project', 'force-app');
                     expect(e.message).toBe(
-                        "No 'lwc' directory found in path C:\\sfdx\\project\\force-app"
+                        `No 'lwc' directory found in path ${errorPath}`
                     );
                 }
             });
