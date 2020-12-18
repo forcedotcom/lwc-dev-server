@@ -105,7 +105,7 @@ describe('project', () => {
             }
         });
     });
-
+    /*
     describe('processing the module source directory', () => {
         test('should handle a relative modulesSourceDirectory specified in the json config', () => {
             mock({
@@ -195,7 +195,7 @@ describe('project', () => {
             );
             expect(project.customLabelsPath).toBe(expected);
         });
-        /*
+
         test('should post a warning since no custom labels are defined in the project', () => {
             jest.spyOn(console, 'warn').mockImplementation();
             jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
@@ -223,7 +223,7 @@ describe('project', () => {
             expect(console.warn).toBeCalledWith(
                 `Custom labels '${expectedLabels}' were not found`
             );
-        }); */
+        });
     });
 
     describe('content assets', () => {
@@ -250,7 +250,7 @@ describe('project', () => {
                 path.join('my-project', 'modulesSrc', 'contentassets')
             );
         });
-        /*
+
         test('should find content assets in a multi-package project', () => {
             mock({
                 'my-project': {
@@ -282,6 +282,6 @@ describe('project', () => {
                 path.join('my-project', 'moduleTwo', 'contentassets'),
                 path.join('my-project', 'modulesSrc', 'contentassets')
             ]);
-        }); */
-    });
+        });
+    }); */
 });
