@@ -3,7 +3,6 @@
 ## Fixed
 
 -   Reduce size of vendor dependencies upon installation ([#306](https://github.com/forcedotcom/lwc-dev-server/pull/306))
-
 -   Report the correct error when surfacing missing internal dependency errors ([#296](https://github.com/forcedotcom/lwc-dev-server/pull/296/files))
 
 # 2.8.0 - December 11, 2020
@@ -11,7 +10,6 @@
 ## Fixed
 
 -   Fix picklist failure on load ([#293](https://github.com/forcedotcom/lwc-dev-server/pull/293))
-
 -   Add more informative error message for components when a dependent component is not present ([#292](https://github.com/forcedotcom/lwc-dev-server/pull/292))
 
 -   Rebuild static resources on change and perform livereload ([#274](https://github.com/forcedotcom/lwc-dev-server/pull/274)), [Issue #22](https://github.com/forcedotcom/lwc-dev-server-feedback/issues/22)
