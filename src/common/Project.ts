@@ -91,7 +91,6 @@ export default class Project {
     }
 
     /**
-     * NOTE: need to add a port option to the CLI command in case a user want to override the port
      * If no value set, returns the default port (3333).
      */
     public get port(): number {

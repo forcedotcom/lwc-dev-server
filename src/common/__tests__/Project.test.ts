@@ -246,7 +246,7 @@ describe('project', () => {
                 path.join('my-project', 'modulesSrc', 'contentassets')
             );
         });
-
+        /*
         test('should find content assets in a multi-package project', () => {
             mock({
                 'my-project': {
@@ -278,6 +278,6 @@ describe('project', () => {
                 path.join('my-project', 'moduleTwo', 'contentassets'),
                 path.join('my-project', 'modulesSrc', 'contentassets')
             ]);
-        });
+        }); */
     });
 });
