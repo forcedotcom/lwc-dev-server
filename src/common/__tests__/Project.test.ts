@@ -50,6 +50,7 @@ const sfdxProjectMultiPkg = {
 describe('project', () => {
     afterEach(() => {
         mock.restore;
+        jest.clearAllMocks();
     });
 
     describe('finding the sfdx-project.json file', () => {
