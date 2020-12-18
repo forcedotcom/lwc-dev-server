@@ -32,69 +32,54 @@ const sfdxProjectSinglePkg = {
     sfdcLoginUrl: 'https://login.salesforce.com'
 };
 
+const sfdxProjectMultiPkg = {
+    packageDirectories: [
+        {
+            path: 'modulesSrc',
+            default: true
+        },
+        {
+            path: 'moduleTwo'
+        }
+    ],
+    namespace: '',
+    sourceApiVersion: '50.0',
+    sfdcLoginUrl: 'https://login.salesforce.com'
+};
+
 describe('project', () => {
     // Stop mocking 'fs' after each test
     afterEach(mock.restore);
-    /*
-    describe('getDirectory()', () => {
-        test('project is resolved to the relative current directory ".", so return the current directory', () => {
+
+    describe('finding the sfdx-project.json file', () => {
+        test('should find a sfdx-project.json file in the current directory.', () => {
+            mock({
+                'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                modulesSrc: mock.directory({
+                    items: {}
+                })
+            });
+
             const project = new Project('.', SRV_CONFIG);
-            expect(project.projectDirectory).toEqual(process.cwd());
+
+            expect(project.isSfdxProjectJsonPresent('.')).toEqual(true);
         });
 
-        test('project is specified as an existing relative directory, so return that directory', () => {
+        test('should find a sfdx-project.json file in specified directory.', () => {
             mock({
                 'my-project': {
-                    'package.json': '{}'
-                }
-            });
-
-            const project = new Project('my-project', SRV_CONFIG);
-
-            expect(project.projectDirectory).toEqual('my-project');
-        });
-
-        test('project is specified as an existing relative directory ending with a slash, so return that directory with a slash', () => {
-            mock({
-                'my-project': {
-                    'package.json': '{}'
-                }
-            });
-
-            const expected = path.normalize('my-project/');
-            const project = new Project(expected, SRV_CONFIG);
-
-            expect(project.projectDirectory).toEqual(expected);
-        });
-
-        test('throws an exception when referencing a project that does not exist.', () => {
-            mock({
-                'invalid-project': {}
-            });
-            try {
-                new Project('invalid-project-DOES-NOT-EXIST', SRV_CONFIG);
-            } catch (e) {
-                expect(e.message).toBe(
-                    "Directory specified 'invalid-project-DOES-NOT-EXIST' does not resolve to a valid Salesforce DX project."
-                );
-            }
-        });
-    }); */
-
-    describe('when retrieving the sfdx-package.json file', () => {
-        test('should find a sfdx-package.json file in the current directory.', () => {
-            mock({
-                'my-project': {
-                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg),
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
                     modulesSrc: mock.directory({
                         items: {}
                     })
                 }
             });
 
-            const project = new Project('.', SRV_CONFIG);
+            const project = new Project('my-project', SRV_CONFIG);
 
-            expect(project.isSfdxProjectJsonPresent('.')).toEqual(true);
+            expect(project.isSfdxProjectJsonPresent('my-project')).toEqual(
+                true
+            );
         });
 
         test('should throw an exception when referencing a project without a sfdx-project.json', () => {
@@ -103,7 +88,7 @@ describe('project', () => {
                     // Empty
                 },
                 'my-project': {
-                    'package.json': '{}'
+                    'sfdx-project.json': '{}'
                 }
             });
             try {
@@ -115,18 +100,18 @@ describe('project', () => {
             }
         });
     });
-    /*
-    describe('when retrieving the module source directory', () => {
+
+    describe('processing the module source directory', () => {
         test('should handle a relative modulesSourceDirectory specified in the json config', () => {
             mock({
                 'my-project': {
-                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
-                },
-                'my-project/modulesSrc': mock.directory({
-                    items: {}
-                })
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: mock.directory({
+                        items: {}
+                    })
+                }
             });
-
+            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
             const project = new Project('my-project', SRV_CONFIG);
             const expected = path.join('my-project', 'modulesSrc');
             expect(project.modulesSourceDirectory).toBe(expected);
@@ -134,9 +119,10 @@ describe('project', () => {
 
         test('should log a warning when the modules source directory does not exist', () => {
             jest.spyOn(console, 'warn').mockImplementation();
+            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
             mock({
                 'my-project': {
-                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
                 }
             });
 
@@ -150,11 +136,11 @@ describe('project', () => {
         });
     });
 
-    describe('when retrieving the port', () => {
+    describe('port configuration', () => {
         test('should handle the port specified in the server config', () => {
             mock({
                 'my-project': {
-                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
                 },
                 'my-project/modulesSrc': mock.directory({
                     items: {}
@@ -168,7 +154,7 @@ describe('project', () => {
         test('should provide the default port when it is not specified in the server config', () => {
             mock({
                 'my-project': {
-                    'sfdx-package.json': JSON.stringify(sfdxProjectSinglePkg)
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
                 },
                 'my-project/modulesSrc': mock.directory({
                     items: {}
@@ -182,202 +168,116 @@ describe('project', () => {
     });
 
     describe('when retrieving the custom labels path', () => {
-        test('handles a relative customLabelsPath specified in the json config', () => {
-            const labelsPath = path.join(
+        test('should find the custom labels in the specified package directory', () => {
+            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        }
+                    }
+                }
+            });
+
+            const project = new Project('my-project', SRV_CONFIG);
+            const expected = path.join(
+                'my-project',
+                'modulesSrc',
+                'labels',
+                'CustomLabels.labels-meta.xml'
+            );
+            expect(project.customLabelsPath).toBe(expected);
+        });
+
+        test('should post a warning since no custom labels are defined in the project', () => {
+            jest.spyOn(console, 'warn').mockImplementation();
+            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
+
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
+                }
+            });
+
+            const project = new Project('my-project', SRV_CONFIG);
+            const expected = path.join('my-project', 'modulesSrc');
+            const expectedLabels = path.join(
+                'my-project',
+                'modulesSrc',
                 'labels',
                 'CustomLabels.labels-meta.xml'
             );
 
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory: 'modulesSrc',
-                        customLabelsFile: labelsPath
-                    })
-                }
-            });
-
-            const project = new Project('my-project');
-            const expected = path.join('my-project', labelsPath);
-            expect(project.customLabelsPath).toBe(expected);
-        });
-
-        test('handles an absolute customLabelsPath specified in the json config', () => {
-            const labelsFile = path.normalize(
-                '/foo/labels/CustomLabels.labels-meta.xml'
+            project.customLabelsPath;
+            expect(console.warn).toHaveBeenNthCalledWith(
+                1,
+                `modules source directory '${expected}' does not exist`
             );
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory: 'modulesSrc',
-                        customLabelsFile: labelsFile
-                    })
-                }
-            });
-
-            const project = new Project('my-project');
-            expect(project.customLabelsPath).toBe(labelsFile);
+            expect(console.warn).toHaveBeenNthCalledWith(
+                2,
+                `Custom labels '${expectedLabels}' were not found`
+            );
         });
     });
 
-    describe('when retrieving the content assets directory', () => {
-        test('handles a relative contentAssetsDirectory specified in the json config', () => {
-            const contentAssetsDir = 'contentassets';
-
+    describe('content assets', () => {
+        test('should find content assets in the specified package directory', () => {
+            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
             mock({
                 'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory: 'modulesSrc',
-                        contentAssetsDirectory: contentAssetsDir
-                    })
-                },
-                'my-project/contentassets': mock.directory({
-                    items: {}
-                })
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file.txt': 'test content',
+                            'file.png': ''
+                        }
+                    }
+                }
             });
 
-            const project = new Project('my-project');
-            const expected = path.join('my-project', contentAssetsDir);
-            expect(project.contentAssetsDirectory).toBe(expected);
-        });
-
-        test('handles an absolute contentAssetsDirectory specified in the json config', () => {
-            const contentAssetsDirectory = path.normalize('/foo/contentassets');
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory: 'modulesSrc',
-                        contentAssetsDirectory: contentAssetsDirectory
-                    })
-                },
-                '/foo/contentassets': mock.directory({
-                    items: {}
-                })
-            });
-
-            const project = new Project('my-project');
-            expect(project.contentAssetsDirectory).toBe(contentAssetsDirectory);
-        });
-    });
-
-    describe('configuration overrides', () => {
-        test('when modulesSourceDirectory is specified in the config json file, it takes precedence over sfdx-project.json', () => {
-            mock({
-                'my-project': {
-                    'sfdx-project.json': JSON.stringify({
-                        packageDirectories: [
-                            {
-                                path: 'force-app',
-                                default: true
-                            }
-                        ]
-                    }),
-                    'localdevserver.config.json': JSON.stringify({
-                        modulesSourceDirectory: path.normalize(
-                            'specified/directory/'
-                        )
-                    })
-                },
-                'my-project/specified/directory': mock.directory({
-                    items: {}
-                })
-            });
-
-            jest.spyOn(fileUtils, 'findFolders').mockReturnValue([]);
-            const project = new Project(path.join('my-project', path.sep));
-            const expected = path.join(
-                'my-project',
-                'specified',
-                'directory',
-                path.sep
+            const project = new Project('my-project', SRV_CONFIG);
+            expect(project.contentAssetsDirectories).toHaveLength(1);
+            expect(project.contentAssetsDirectories[0]).toBe(
+                path.join('my-project', 'modulesSrc', 'contentassets')
             );
-
-            expect(project.modulesSourceDirectory).toBe(expected);
         });
 
-        test('when staticResourcesDirectories is specified in the config json file, it takes precedence over sfdx-project.json', () => {
+        test('should find content assets in a multi-package project', () => {
             mock({
                 'my-project': {
-                    'sfdx-project.json': JSON.stringify({
-                        packageDirectories: [
-                            {
-                                path: 'force-app',
-                                default: true
-                            }
-                        ]
-                    }),
-                    'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectories: [
-                            path.normalize('specified/directory/assets/')
-                        ]
-                    })
+                    'sfdx-project.json': JSON.stringify(sfdxProjectMultiPkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file.txt': 'test content',
+                            'file.png': ''
+                        }
+                    },
+                    moduleTwo: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file2.txt': 'test content',
+                            'file2.png': ''
+                        }
+                    }
                 }
             });
-
-            const project = new Project('my-project');
-            const expected = [
-                path.join('my-project', 'specified', 'directory', 'assets', '/')
-            ];
-
-            expect(project.staticResourcesDirectories).toStrictEqual(expected);
-        });
-
-        test('when staticResourcesDirectories is specified as empty in the config json file, staticResourcesDirectories property returns null', () => {
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectories: []
-                    })
-                }
-            });
-            jest.spyOn(fileUtils, 'findFolders').mockReturnValue([]);
-            const project = new Project('my-project');
-
-            expect(project.staticResourcesDirectories).toStrictEqual([]);
-        });
-
-        test('when staticResourcesDirectories is specified as absolute in the config json file, staticResourcesDirectories uses the specified file unchanged', () => {
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectories: ['/tmp/absolute/path']
-                    })
-                }
-            });
-
-            const project = new Project('my-project');
-
-            expect(project.staticResourcesDirectories).toStrictEqual([
-                '/tmp/absolute/path'
+            jest.spyOn(path, 'isAbsolute').mockImplementation(() => true);
+            const project = new Project('my-project', SRV_CONFIG);
+            expect(project.contentAssetsDirectories).toHaveLength(2);
+            expect(project.contentAssetsDirectories.sort()).toStrictEqual([
+                path.join('my-project', 'moduleTwo', 'contentassets'),
+                path.join('my-project', 'modulesSrc', 'contentassets')
             ]);
         });
-
-        test('when staticResourcesDirectories is not specified as a list, log a warning and return an empty list', () => {
-            jest.spyOn(console, 'warn').mockImplementation();
-
-            mock({
-                'my-project': {
-                    'package.json': '{}',
-                    'localdevserver.config.json': JSON.stringify({
-                        staticResourcesDirectories: '/tmp/absolute/path'
-                    })
-                }
-            });
-
-            const project = new Project('my-project');
-
-            expect(project.staticResourcesDirectories).toStrictEqual([]);
-            expect(console.warn).toBeCalledWith(
-                expect.stringContaining(
-                    'staticResourcesDirectories must be provided in a list format'
-                )
-            );
-        });
-    }); */
+    });
 });

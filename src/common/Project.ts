@@ -99,10 +99,6 @@ export default class Project {
     }
 
     public isSfdxProjectJsonPresent(rootDirectory: string): boolean {
-        console.log(
-            'isSfdxProjectJsonPresent sfdx-project path ===> ',
-            path.join(rootDirectory, SFDX_PROJECT_JSON)
-        );
         return fs.existsSync(path.join(rootDirectory, SFDX_PROJECT_JSON));
     }
 
@@ -161,14 +157,9 @@ export default class Project {
 
     // NOTE: move some of this code to setModulesSourceDirectory
     public get modulesSourceDirectory(): string {
-        const srcDir = path.isAbsolute(
+        const srcDir = this.getAbsolutePath(
             this.projectConfiguration.modulesSourceDirectory
-        )
-            ? this.projectConfiguration.modulesSourceDirectory
-            : path.join(
-                  this.projectRootDirectory,
-                  this.projectConfiguration.modulesSourceDirectory || 'src'
-              );
+        );
         if (!fs.existsSync(srcDir) || !fs.lstatSync(srcDir).isDirectory()) {
             console.warn(`modules source directory '${srcDir}' does not exist`);
         }
@@ -235,7 +226,7 @@ export default class Project {
             !fs.existsSync(customLabelsFile) ||
             !fs.lstatSync(customLabelsFile).isDirectory()
         ) {
-            console.warn(`Custom labels '${customLabelsFile}' were not found `);
+            console.warn(`Custom labels '${customLabelsFile}' were not found`);
         }
         return customLabelsFile;
     }
@@ -275,7 +266,7 @@ export default class Project {
         if (path.isAbsolute(originalPath)) {
             return originalPath;
         } else {
-            return path.join(this.projectRootDirectory, originalPath);
+            return path.resolve(originalPath);
         }
     }
 }
