@@ -3,7 +3,7 @@
 ## Fixed
 
 -   Reduce the size of vendor dependencies ([#306](https://github.com/forcedotcom/lwc-dev-server/pull/306))
--   Report the correct error when surfacing missing internal dependency errors ([#296](https://github.com/forcedotcom/lwc-dev-server/pull/296/files))
+-   Support showing different component errors during the same session ([#296](https://github.com/forcedotcom/lwc-dev-server/pull/296/files))
 
 # 2.8.0 - December 11, 2020
 
