@@ -246,38 +246,46 @@ describe('project', () => {
                 path.join('my-project', 'modulesSrc', 'contentassets')
             );
         });
-        /*
+
         test('should find content assets in a multi-package project', () => {
-            mock({
-                'my-project': {
-                    'sfdx-project.json': JSON.stringify(sfdxProjectMultiPkg),
-                    modulesSrc: {
-                        labels: {
-                            'CustomLabels.labels-meta.xml': ''
+            try {
+                mock({
+                    'my-project': {
+                        'sfdx-project.json': JSON.stringify(
+                            sfdxProjectMultiPkg
+                        ),
+                        modulesSrc: {
+                            labels: {
+                                'CustomLabels.labels-meta.xml': ''
+                            },
+                            contentassets: {
+                                'file.txt': 'test content',
+                                'file.png': ''
+                            }
                         },
-                        contentassets: {
-                            'file.txt': 'test content',
-                            'file.png': ''
-                        }
-                    },
-                    moduleTwo: {
-                        labels: {
-                            'CustomLabels.labels-meta.xml': ''
-                        },
-                        contentassets: {
-                            'file2.txt': 'test content',
-                            'file2.png': ''
+                        moduleTwo: {
+                            labels: {
+                                'CustomLabels.labels-meta.xml': ''
+                            },
+                            contentassets: {
+                                'file2.txt': 'test content',
+                                'file2.png': ''
+                            }
                         }
                     }
-                }
-            });
-            jest.spyOn(path, 'isAbsolute').mockImplementation(() => true);
-            const project = new Project('my-project', SRV_CONFIG);
-            expect(project.contentAssetsDirectories).toHaveLength(2);
-            expect(project.contentAssetsDirectories.sort()).toStrictEqual([
-                path.join('my-project', 'moduleTwo', 'contentassets'),
-                path.join('my-project', 'modulesSrc', 'contentassets')
-            ]);
-        }); */
+                });
+                jest.spyOn(path, 'isAbsolute').mockImplementation(() => {
+                    return true;
+                });
+                const project = new Project('my-project', SRV_CONFIG);
+                expect(project.contentAssetsDirectories).toHaveLength(2);
+                expect(project.contentAssetsDirectories.sort()).toStrictEqual([
+                    path.join('my-project', 'moduleTwo', 'contentassets'),
+                    path.join('my-project', 'modulesSrc', 'contentassets')
+                ]);
+            } catch (e) {
+                fail(e);
+            }
+        });
     });
 });
