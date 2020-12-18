@@ -1,3 +1,11 @@
+# 2.9.0 - December 18, 2020
+
+## Fixed
+
+-   Reduce size of vendor dependencies upon installation ([#306](https://github.com/forcedotcom/lwc-dev-server/pull/306))
+
+-   Report the correct error when surfacing missing internal dependency errors ([#296](https://github.com/forcedotcom/lwc-dev-server/pull/296/files))
+
 # 2.8.0 - December 11, 2020
 
 ## Fixed
