@@ -48,8 +48,19 @@ const sfdxProjectMultiPkg = {
 };
 
 describe('project', () => {
-    // Stop mocking 'fs' after each test
-    afterEach(mock.restore);
+    // @ts-ignore
+    let pathIsAbsolute;
+
+    beforeEach(() => {
+        pathIsAbsolute = jest
+            .spyOn(path, 'isAbsolute')
+            .mockImplementation(() => true);
+    });
+    afterEach(() => {
+        mock.restore;
+        //@ts-ignore
+        pathIsAbsolute.mockRestore();
+    });
 
     describe('finding the sfdx-project.json file', () => {
         test('should find a sfdx-project.json file in the current directory.', () => {
@@ -248,44 +259,36 @@ describe('project', () => {
         });
 
         test('should find content assets in a multi-package project', () => {
-            try {
-                mock({
-                    'my-project': {
-                        'sfdx-project.json': JSON.stringify(
-                            sfdxProjectMultiPkg
-                        ),
-                        modulesSrc: {
-                            labels: {
-                                'CustomLabels.labels-meta.xml': ''
-                            },
-                            contentassets: {
-                                'file.txt': 'test content',
-                                'file.png': ''
-                            }
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectMultiPkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
                         },
-                        moduleTwo: {
-                            labels: {
-                                'CustomLabels.labels-meta.xml': ''
-                            },
-                            contentassets: {
-                                'file2.txt': 'test content',
-                                'file2.png': ''
-                            }
+                        contentassets: {
+                            'file.txt': 'test content',
+                            'file.png': ''
+                        }
+                    },
+                    moduleTwo: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file2.txt': 'test content',
+                            'file2.png': ''
                         }
                     }
-                });
-                jest.spyOn(path, 'isAbsolute').mockImplementation(() => {
-                    return true;
-                });
-                const project = new Project('my-project', SRV_CONFIG);
-                expect(project.contentAssetsDirectories).toHaveLength(2);
-                expect(project.contentAssetsDirectories.sort()).toStrictEqual([
-                    path.join('my-project', 'moduleTwo', 'contentassets'),
-                    path.join('my-project', 'modulesSrc', 'contentassets')
-                ]);
-            } catch (e) {
-                fail(e);
-            }
+                }
+            });
+
+            const project = new Project('my-project', SRV_CONFIG);
+            expect(project.contentAssetsDirectories).toHaveLength(2);
+            expect(project.contentAssetsDirectories.sort()).toStrictEqual([
+                path.join('my-project', 'moduleTwo', 'contentassets'),
+                path.join('my-project', 'modulesSrc', 'contentassets')
+            ]);
         });
     });
 });
