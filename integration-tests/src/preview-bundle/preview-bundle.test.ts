@@ -2,7 +2,7 @@ import PreviewPage from '../pageObjects/PreviewPage';
 
 describe('previewing an LWC bundle', () => {
     it('renders expected content', async () => {
-        const page = new PreviewPage('test', 'testComponent');
+        const page = new PreviewPage('c', 'testComponent');
         await page.open();
 
         const testComponent = await page.testComponent;
@@ -13,7 +13,7 @@ describe('previewing an LWC bundle', () => {
     });
 
     it('renders expected component style', async () => {
-        const page = new PreviewPage('test', 'testComponent');
+        const page = new PreviewPage('c', 'testComponent');
         await page.open();
 
         const testComponent = await page.testComponent;
