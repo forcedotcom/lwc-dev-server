@@ -48,10 +48,7 @@ const sfdxProjectMultiPkg = {
 };
 
 describe('project', () => {
-    beforeEach(() => {
-        // jest.clearAllMocks();
-    });
-
+    /*
     afterEach(() => {
         mock.restore;
         jest.clearAllMocks();
@@ -106,7 +103,7 @@ describe('project', () => {
             }
         });
     });
-    /*
+  
     describe('processing the module source directory', () => {
         test('should handle a relative modulesSourceDirectory specified in the json config', () => {
             mock({
