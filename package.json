@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lwc-dev-server",
-    "version": "2.7.0",
+    "version": "2.9.0",
     "defaultApiVersion": "49.0",
     "description": "Salesforce CLI plugin for Local Development (Beta)",
     "license": "MIT",
@@ -120,7 +120,7 @@
         "@rollup/plugin-alias": "^3.0.1",
         "@salesforce/command": "^3.0.0",
         "@salesforce/core": "^2.5.1",
-        "@salesforce/lwc-dev-server-dependencies": "1.0.86",
+        "@salesforce/lwc-dev-server-dependencies": "1.0.88",
         "@salesforce/telemetry": "^2.0.2",
         "@salesforce/ts-types": "^1.1.4",
         "@types/helmet": "0.0.47",
