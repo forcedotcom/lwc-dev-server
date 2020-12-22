@@ -124,7 +124,7 @@ describe('project', () => {
     });
 
     describe('processing the module source directory', () => {
-        test('should handle a relative modulesSourceDirectory specified in the json config', () => {
+        test('should handle a relative modulesSourceDirectory', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
@@ -136,6 +136,43 @@ describe('project', () => {
             jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
             const project = new Project('my-project', SRV_CONFIG);
             const expected = path.join('my-project', 'modulesSrc');
+            expect(project.modulesSourceDirectory).toBe(expected);
+        });
+
+        test('should handle a modulesSourceDirectory in a multi-package project', () => {
+            const sfdxProjectMultiPkgSample = {
+                packageDirectories: [
+                    {
+                        path: 'moduleOne'
+                    },
+                    {
+                        path: 'moduleTwo',
+                        default: true
+                    }
+                ],
+                namespace: '',
+                sourceApiVersion: '50.0',
+                sfdcLoginUrl: 'https://login.salesforce.com'
+            };
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(
+                        sfdxProjectMultiPkgSample
+                    ),
+                    moduleOne: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        }
+                    },
+                    moduleTwo: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        }
+                    }
+                }
+            });
+            const project = new Project('my-project', SRV_CONFIG);
+            const expected = path.resolve('my-project/moduleTwo');
             expect(project.modulesSourceDirectory).toBe(expected);
         });
 
@@ -233,10 +270,25 @@ describe('project', () => {
             );
         });
     });
-    /*
+
     describe('content assets', () => {
+        test('should handle no content assets in the specified package directory', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        }
+                    }
+                }
+            });
+
+            const project = new Project('my-project', SRV_CONFIG);
+            expect(project.contentAssetsDirectories).toHaveLength(0);
+        });
+
         test('should find content assets in the specified package directory', () => {
-            jest.spyOn(path, 'isAbsolute').mockReturnValue(true);
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
@@ -255,7 +307,7 @@ describe('project', () => {
             const project = new Project('my-project', SRV_CONFIG);
             expect(project.contentAssetsDirectories).toHaveLength(1);
             expect(project.contentAssetsDirectories[0]).toBe(
-                path.join('my-project', 'modulesSrc', 'contentassets')
+                path.resolve('my-project/modulesSrc/contentassets')
             );
         });
 
@@ -287,9 +339,99 @@ describe('project', () => {
             const project = new Project('my-project', SRV_CONFIG);
             expect(project.contentAssetsDirectories).toHaveLength(2);
             expect(project.contentAssetsDirectories.sort()).toStrictEqual([
-                path.join('my-project', 'moduleTwo', 'contentassets'),
-                path.join('my-project', 'modulesSrc', 'contentassets')
+                path.resolve('my-project/moduleTwo/contentassets'),
+                path.resolve('my-project/modulesSrc/contentassets')
             ]);
         });
-    }); */
+    });
+
+    describe('static resources', () => {
+        test('should handle no static resources in the specified package directory', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file.txt': 'test content',
+                            'file.png': ''
+                        }
+                    }
+                }
+            });
+
+            const project = new Project('my-project', SRV_CONFIG);
+            expect(project.staticResourcesDirectories).toHaveLength(0);
+        });
+
+        test('should find static resources in the specified package directory', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file.txt': 'test content',
+                            'file.png': ''
+                        },
+                        staticresources: {
+                            'my-image.jpg': 'test content',
+                            'my-image.resource-meta.xml': ''
+                        }
+                    }
+                }
+            });
+
+            const project = new Project('my-project', SRV_CONFIG);
+            expect(project.staticResourcesDirectories).toHaveLength(1);
+            expect(project.staticResourcesDirectories[0]).toBe(
+                path.resolve('my-project/modulesSrc/staticresources')
+            );
+        });
+
+        test('should find static resources in a multi-package project', () => {
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectMultiPkg),
+                    modulesSrc: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file.txt': 'test content',
+                            'file.png': ''
+                        },
+                        staticresources: {
+                            'my-image.jpg': 'test content',
+                            'my-image.resource-meta.xml': ''
+                        }
+                    },
+                    moduleTwo: {
+                        labels: {
+                            'CustomLabels.labels-meta.xml': ''
+                        },
+                        contentassets: {
+                            'file2.txt': 'test content',
+                            'file2.png': ''
+                        },
+                        staticresources: {
+                            'my-image2.jpg': 'test content',
+                            'my-image2.resource-meta.xml': ''
+                        }
+                    }
+                }
+            });
+
+            const project = new Project('my-project', SRV_CONFIG);
+            expect(project.staticResourcesDirectories).toHaveLength(2);
+            expect(project.staticResourcesDirectories.sort()).toStrictEqual([
+                path.resolve('my-project/moduleTwo/staticresources'),
+                path.resolve('my-project/modulesSrc/staticresources')
+            ]);
+        });
+    });
 });

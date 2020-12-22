@@ -192,18 +192,9 @@ export default class Project {
         }
         this.projectConfiguration.staticResourcesDirectories.forEach(
             staticResourceDirectory => {
-                if (path.isAbsolute(staticResourceDirectory)) {
-                    staticResourceDirectoriesResults.push(
-                        staticResourceDirectory
-                    );
-                } else {
-                    staticResourceDirectoriesResults.push(
-                        path.join(
-                            this.projectRootDirectory,
-                            staticResourceDirectory
-                        )
-                    );
-                }
+                staticResourceDirectoriesResults.push(
+                    getAbsolutePath(staticResourceDirectory)
+                );
             }
         );
         return staticResourceDirectoriesResults;
