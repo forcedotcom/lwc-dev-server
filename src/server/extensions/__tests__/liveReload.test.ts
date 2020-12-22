@@ -7,6 +7,7 @@ import Project from '../../../common/Project';
 import WebruntimeConfig from '../../config/WebruntimeConfig';
 import path from 'path';
 import * as staticResourceUtil from '../../../common/StaticResourcesUtils';
+import { ServerConfiguration } from '../../../common/types';
 
 jest.mock('chokidar', () => {
     return {
@@ -44,9 +45,13 @@ describe('liveReload', () => {
     let project: Project;
     let config: WebruntimeConfig;
     let rebuildResourceMock: any;
+    const SRV_CONFIG: ServerConfiguration = {
+        apiVersion: '49.0',
+        instanceUrl: 'https://na1.salesforce.com'
+    };
 
     beforeEach(() => {
-        project = new Project('/Users/arya/dev/myproject');
+        project = new Project('/Users/arya/dev/myproject', SRV_CONFIG);
 
         // @ts-ignore
         config = WebruntimeConfig.mockImplementation(() => {

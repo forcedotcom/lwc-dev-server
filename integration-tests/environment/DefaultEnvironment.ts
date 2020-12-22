@@ -2,7 +2,7 @@ import debugLogger from 'debug';
 import Project from '../../src/common/Project';
 import BaseEnvironment from './BaseEnvironment';
 import LocalDevServer from '../../src/server/LocalDevServer';
-import { defaultPort } from '../../src/user/LocalDevServerConfiguration';
+import { ServerConfiguration } from 'common/types';
 
 const debug = debugLogger('localdevserver:test');
 
@@ -28,25 +28,18 @@ const debug = debugLogger('localdevserver:test');
 export default class DefaultEnvironment extends BaseEnvironment {
     server?: LocalDevServer;
     private processHandlers: { [key: string]: (...args: any[]) => void } = {};
+    SRV_CONFIG: ServerConfiguration = {
+        apiVersion: '50.0',
+        instanceUrl: 'https://na1.salesforce.com',
+        port: 0
+    };
 
     async setup() {
         await super.setup();
 
         debug(`Setting up DefaultEnvironment for: ${this.projectPath}`);
 
-        const project = new Project(this.projectPath);
-        if (!project.configuration.api_version) {
-            debug('no api version specified, using 50.0');
-            project.configuration.api_version = '50.0';
-        }
-        if (
-            project.configuration.port === undefined ||
-            project.configuration.port === null ||
-            project.configuration.port === defaultPort
-        ) {
-            const port = 0; // random available port
-            project.configuration.port = port;
-        }
+        const project = new Project(this.projectPath, this.SRV_CONFIG);
 
         this.server = new LocalDevServer(project);
         await this.server.start();
