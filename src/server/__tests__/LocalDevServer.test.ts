@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import { EventEmitter } from 'events';
 import path from 'path';
 import mockFs from 'mock-fs';
@@ -14,8 +21,14 @@ import { apexMiddleware } from '../extensions/apexMiddleware';
 import { apiMiddleware } from '../extensions/apiMiddleware';
 import { Connection } from '@salesforce/core';
 import { mock } from 'ts-mockito';
+import { ServerConfiguration } from '../../common/types';
 
 const mockServerConstructor = jest.fn();
+const SRV_CONFIG: ServerConfiguration = {
+    apiVersion: '49.0',
+    instanceUrl: 'http://test.instance.url',
+    headers: ['Authorization: Bearer testingAccessToken']
+};
 jest.mock('@webruntime/server', () => {
     return {
         Server: class MockServer extends EventEmitter {
@@ -53,8 +66,7 @@ describe('LocalDevServer', () => {
     const MockReporter = {
         trackApplicationStart: jest.fn(),
         trackApplicationEnd: jest.fn(),
-        trackApplicationStartException: jest.fn(),
-        trackNonSfdxProjectUsage: jest.fn()
+        trackApplicationStartException: jest.fn()
     };
 
     beforeEach(() => {
@@ -89,7 +101,7 @@ describe('LocalDevServer', () => {
                 addServices: addServicesMock
             };
         });
-        project = new Project('/Users/arya/dev/myproject');
+        project = new Project('/Users/arya/dev/myproject', SRV_CONFIG);
         consoleLogMock = jest.spyOn(console, 'log').mockImplementation();
         consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
         consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation();
@@ -142,15 +154,6 @@ describe('LocalDevServer', () => {
         expect(server.vendorVersion).toEqual('228');
     });
 
-    it('should fallback to latest available vendor version', () => {
-        project.configuration.api_version = '54.0';
-
-        const server = new LocalDevServer(project);
-
-        // @ts-ignore
-        expect(server.vendorVersion).toEqual('228');
-    });
-
     it('should add middleware to the config', () => {
         const server = new LocalDevServer(project);
 
@@ -175,20 +178,6 @@ describe('LocalDevServer', () => {
 
         // @ts-ignore
         expect(server.liveReload).toBeDefined();
-    });
-
-    it('should not add the live reload route when the configuration is false', () => {
-        project.configuration.liveReload = false;
-
-        const server = new LocalDevServer(project);
-
-        // @ts-ignore
-        const routes = server.config.addRoutes.mock.calls[0][0];
-
-        expect(routes).toHaveLength(1);
-
-        // @ts-ignore
-        expect(server.liveReload).toBeUndefined();
     });
 
     it('should not add apex middleware when connection is not present', () => {
@@ -216,7 +205,7 @@ describe('LocalDevServer', () => {
     it('should add modules with the correct vendor version to the config', () => {
         const server = new LocalDevServer(project);
 
-        expect(addModulesMock).toHaveBeenCalledTimes(2);
+        expect(addModulesMock).toHaveBeenCalledTimes(1);
 
         const modules = addModulesMock.mock.calls[0][0];
 
@@ -232,8 +221,6 @@ describe('LocalDevServer', () => {
     });
 
     it('should show a warning when lwc folder is not present for sfdx projects', () => {
-        // @ts-ignore
-        project.isSfdx = true;
         findLWCFolderPathMock.mockImplementation(() => {
             return undefined;
         });
@@ -248,8 +235,6 @@ describe('LocalDevServer', () => {
     });
 
     it('should add custom component service for sfdx projects', () => {
-        // @ts-ignore
-        project.isSfdx = true;
         findLWCFolderPathMock.mockImplementation(() => {
             return path.join(project.modulesSourceDirectory, 'lwc');
         });
@@ -261,28 +246,12 @@ describe('LocalDevServer', () => {
     });
 
     it('should not add custom component service for sfdx projects', () => {
-        // @ts-ignore
-        project.isSfdx = false;
-
         const server = new LocalDevServer(project);
 
         // @ts-ignore
         expect(addServicesMock.mock.calls[0][0]).not.toContain(
             getCustomComponentService('', '', '')
         );
-    });
-
-    it('should add the modulesSourceDirectory for non-sfdx modules', () => {
-        // @ts-ignore
-        project.isSfdx = false;
-
-        new LocalDevServer(project);
-
-        expect(addModulesMock).toHaveBeenCalledTimes(2);
-
-        const modules = addModulesMock.mock.calls[1][0];
-
-        expect(modules).toEqual([project.modulesSourceDirectory]);
     });
 
     it.skip('delete assets directory before creating a new one to clear cache', async () => {
@@ -389,9 +358,7 @@ describe('LocalDevServer', () => {
             ).toContain(ComponentServiceWithExclusions);
         });
 
-        it('should add the ComponentServiceWithExclusions when project isSFDX', async () => {
-            // @ts-ignore
-            project.isSfdx = true;
+        it('should add the ComponentServiceWithExclusions when project is SalesforceDX', async () => {
             findLWCFolderPathMock.mockImplementation(() => {
                 return path.join(project.modulesSourceDirectory, 'lwc');
             });
@@ -403,9 +370,7 @@ describe('LocalDevServer', () => {
             ).toContain(ComponentServiceWithExclusions);
         });
 
-        it('should add the CustomComponentService when project isSFDX', async () => {
-            // @ts-ignore
-            project.isSfdx = true;
+        it('should add the CustomComponentService when project is SalesforceDX', async () => {
             findLWCFolderPathMock.mockImplementation(() => {
                 return path.join(project.modulesSourceDirectory, 'lwc');
             });
@@ -419,42 +384,10 @@ describe('LocalDevServer', () => {
             expect(serviceNames).toContain(componentService.name);
         });
 
-        it('should not add the CustomComponentService when the project is not isSFDX', async () => {
-            // @ts-ignore
-            project.isSfdx = false;
-
-            const componentService = getCustomComponentService('', '', '');
-            const server = new LocalDevServer(project);
-            // @ts-ignore
-            const serviceNames = server.config.addServices.mock.calls[0][0].map(
-                (service: Function) => service.name
-            );
-
-            expect(serviceNames).not.toContain(componentService.name);
-        });
-
         it('should add the LabelService when a customLabelsPath is specified', async () => {
-            // @ts-ignore
-            project.isSfdx = true;
             findLWCFolderPathMock.mockImplementation(() => {
                 return path.join(project.modulesSourceDirectory, 'lwc');
             });
-            // @ts-ignore
-            project.customLabelsPath = 'my/labelsFile.xml';
-
-            const LabelService = getLabelService('my/labelFile.xml');
-            const server = new LocalDevServer(project);
-            // @ts-ignore
-            const serviceNames = server.config.addServices.mock.calls[0][0].map(
-                (service: Function) => service.name
-            );
-
-            expect(serviceNames).toContain(LabelService.name);
-        });
-
-        it('should add the LabelService when a customLabelsPath is specified in non sfdx project', async () => {
-            // @ts-ignore
-            project.isSfdx = false;
             // @ts-ignore
             project.customLabelsPath = 'my/labelsFile.xml';
 
@@ -560,30 +493,6 @@ describe('LocalDevServer', () => {
             expect(reporter.trackApplicationStartException).toBeCalledWith(
                 expect.any(Error)
             );
-        });
-
-        it('reports on non sfdx project usage', async () => {
-            // @ts-ignore
-            project.isSfdx = false;
-            const reporter = LocalDevTelemetryReporter.getInstance();
-            jest.spyOn(reporter, 'trackNonSfdxProjectUsage');
-            const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(project, connection);
-            await server.start();
-
-            expect(reporter.trackNonSfdxProjectUsage).toHaveBeenCalled();
-        });
-
-        it('does not report on sfdx project usage for non sfdx project', async () => {
-            // @ts-ignore
-            project.isSfdx = true;
-            const reporter = LocalDevTelemetryReporter.getInstance();
-            jest.spyOn(reporter, 'trackNonSfdxProjectUsage');
-            const connection: Connection = mock(Connection);
-            const server = new LocalDevServer(project, connection);
-            await server.start();
-
-            expect(reporter.trackNonSfdxProjectUsage).not.toHaveBeenCalled();
         });
     });
 });

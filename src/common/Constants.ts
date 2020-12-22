@@ -7,3 +7,5 @@ export const STATIC_RESOURCES = 'staticresources';
 // Paths
 export const DEFAULT_SFDX_PATH = path.join('main', 'default');
 export const SFDX_PROJECT_JSON = 'sfdx-project.json';
+
+export const DEFAULT_PORT = 3333;
