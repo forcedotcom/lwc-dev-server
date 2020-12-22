@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import { cp, mkdir, rm } from 'shelljs';
 import fs from 'fs';
 import path from 'path';
@@ -213,4 +220,12 @@ export function getFileContents(filePath: string): string | undefined {
         }
     }
     return contents;
+}
+
+export function getAbsolutePath(originalPath: string): string {
+    if (path.isAbsolute(originalPath)) {
+        return originalPath;
+    } else {
+        return path.resolve(originalPath);
+    }
 }

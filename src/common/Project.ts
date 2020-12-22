@@ -17,6 +17,7 @@ import {
 import {
     findAllFolderPaths,
     findFileWithDefaultPath,
+    getAbsolutePath,
     getFileContents
 } from './fileUtils';
 import { ServerConfiguration } from './types';
@@ -48,7 +49,8 @@ export default class Project {
     constructor(directory: string, serverConfiguration: ServerConfiguration) {
         if (directory === null || !this.isSfdxProjectJsonPresent(directory)) {
             throw new Error(
-                `Directory specified '${directory}' does not resolve to a valid Salesforce DX project.`
+                `Directory specified '${directory}' does not resolve to a valid Salesforce DX project. ` +
+                    `More information about this at https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_create_new.htm`
             );
         }
 
@@ -59,9 +61,12 @@ export default class Project {
         );
         const packageDirectories: string[] = this.getPackageDirectories();
         if (packageDirectories.length <= 0) {
-            throw new Error('No directories found on sfdx-project.json'); // NOTE: add a better message
+            throw new Error(
+                'No packageDirectories found on sfdx-project.json. ' +
+                    'More information about this at https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm'
+            );
         }
-        // NOTE: this does not provide the correct default package directory, need to fix it
+
         const defaultPackageDirectory = path.join(
             this.projectRootDirectory,
             packageDirectories[0]
@@ -119,6 +124,8 @@ export default class Project {
         }
     }
 
+    // Note: we should look at replacing this with @salesforce/core SfdxProject class
+    // https://forcedotcom.github.io/sfdx-core/classes/sfdxproject.html#getdefaultpackage
     public getPackageDirectories(): string[] {
         const packageDirectories: string[] = [];
         const sfdxProjectJsonPath = path.join(
@@ -154,9 +161,8 @@ export default class Project {
         this.projectConfiguration.modulesSourceDirectory = defaultPackageDirectory;
     }
 
-    // NOTE: move some of this code to setModulesSourceDirectory
     public get modulesSourceDirectory(): string {
-        const srcDir = this.getAbsolutePath(
+        const srcDir = getAbsolutePath(
             this.projectConfiguration.modulesSourceDirectory
         );
         if (!fs.existsSync(srcDir) || !fs.lstatSync(srcDir).isDirectory()) {
@@ -217,7 +223,7 @@ export default class Project {
         if (!this.projectConfiguration.customLabels) {
             return undefined;
         }
-        const customLabelsFile = this.getAbsolutePath(
+        const customLabelsFile = getAbsolutePath(
             this.projectConfiguration.customLabels
         );
 
@@ -252,20 +258,11 @@ export default class Project {
         this.projectConfiguration.contentAssetsDirectories.forEach(
             contentAssetDirectory => {
                 contentAssetsDirectoriesResults.push(
-                    this.getAbsolutePath(contentAssetDirectory)
+                    getAbsolutePath(contentAssetDirectory)
                 );
             }
         );
 
         return contentAssetsDirectoriesResults;
-    }
-
-    // NOTE: move to a utility class
-    private getAbsolutePath(originalPath: string): string {
-        if (path.isAbsolute(originalPath)) {
-            return originalPath;
-        } else {
-            return path.resolve(originalPath);
-        }
     }
 }

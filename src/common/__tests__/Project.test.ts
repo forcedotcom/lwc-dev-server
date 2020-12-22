@@ -94,12 +94,35 @@ describe('project', () => {
                 new Project('invalid-project', SRV_CONFIG);
             } catch (e) {
                 expect(e.message).toBe(
-                    "Directory specified 'invalid-project' does not resolve to a valid Salesforce DX project."
+                    "Directory specified 'invalid-project' does not resolve to a valid Salesforce DX project. More information about this at https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_create_new.htm"
+                );
+            }
+        });
+
+        test('should throw an exception when referencing a sfdx-project.json without packageDirectories', () => {
+            const sfdxProjectWOPkgDirs = {
+                namespace: '',
+                sourceApiVersion: '50.0',
+                sfdcLoginUrl: 'https://login.salesforce.com'
+            };
+            mock({
+                'my-project': {
+                    'sfdx-project.json': JSON.stringify(sfdxProjectWOPkgDirs),
+                    modulesSrc: mock.directory({
+                        items: {}
+                    })
+                }
+            });
+            try {
+                new Project('my-project', SRV_CONFIG);
+            } catch (e) {
+                expect(e.message).toBe(
+                    'No packageDirectories found on sfdx-project.json. More information about this at https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm'
                 );
             }
         });
     });
-    /*
+
     describe('processing the module source directory', () => {
         test('should handle a relative modulesSourceDirectory specified in the json config', () => {
             mock({
@@ -118,7 +141,6 @@ describe('project', () => {
 
         test('should log a warning when the modules source directory does not exist', () => {
             jest.spyOn(console, 'warn').mockImplementation();
-            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
@@ -126,7 +148,7 @@ describe('project', () => {
             });
 
             const project = new Project('my-project', SRV_CONFIG);
-            const expected = path.join('my-project', 'modulesSrc');
+            const expected = path.resolve('my-project/modulesSrc');
 
             project.modulesSourceDirectory;
             expect(console.warn).toBeCalledWith(
@@ -168,7 +190,6 @@ describe('project', () => {
 
     describe('when retrieving the custom labels path', () => {
         test('should find the custom labels in the specified package directory', () => {
-            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
@@ -181,18 +202,14 @@ describe('project', () => {
             });
 
             const project = new Project('my-project', SRV_CONFIG);
-            const expected = path.join(
-                'my-project',
-                'modulesSrc',
-                'labels',
-                'CustomLabels.labels-meta.xml'
+            const expected = path.resolve(
+                'my-project/modulesSrc/labels/CustomLabels.labels-meta.xml'
             );
             expect(project.customLabelsPath).toBe(expected);
         });
 
         test('should post a warning since no custom labels are defined in the project', () => {
             jest.spyOn(console, 'warn').mockImplementation();
-            jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
 
             mock({
                 'my-project': {
@@ -206,11 +223,8 @@ describe('project', () => {
             });
 
             const project = new Project('my-project', SRV_CONFIG);
-            const expectedLabels = path.join(
-                'my-project',
-                'modulesSrc',
-                'labels',
-                'CustomLabels.labels-meta.xml'
+            const expectedLabels = path.resolve(
+                'my-project/modulesSrc/labels/CustomLabels.labels-meta.xml'
             );
 
             project.customLabelsPath;
@@ -219,7 +233,7 @@ describe('project', () => {
             );
         });
     });
-
+    /*
     describe('content assets', () => {
         test('should find content assets in the specified package directory', () => {
             jest.spyOn(path, 'isAbsolute').mockReturnValue(true);
