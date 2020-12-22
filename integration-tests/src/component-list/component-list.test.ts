@@ -7,7 +7,7 @@ describe('Component Listing on the Home Page', () => {
         const list = await HomePage.componentList;
         const text = await list.getText();
         expect(text).toBe(
-            'test-component1\ntest-component-one\ntest-component-two\ntest-hello\ntest-the-life'
+            'c-component1\nc-component-one\nc-component-two\nc-hello\nc-the-life'
         );
     });
 
@@ -16,6 +16,6 @@ describe('Component Listing on the Home Page', () => {
         await HomePage.filter('hel');
         const text = await (await HomePage.componentList).getText();
 
-        expect(text).toBe('test-hello\ntest-the-life');
+        expect(text).toBe('c-hello\nc-the-life');
     });
 });

@@ -102,14 +102,6 @@ export default class LocalDevTelemetryReporter {
         }
     }
 
-    public trackNonSfdxProjectUsage() {
-        if (this.reporter) {
-            this.reporter.sendTelemetryEvent(
-                'application_start_non_sfdx_project'
-            );
-        }
-    }
-
     public trackMissingDependentComponent() {
         if (this.reporter) {
             this.reporter.sendTelemetryEvent('missing_dependent_component');

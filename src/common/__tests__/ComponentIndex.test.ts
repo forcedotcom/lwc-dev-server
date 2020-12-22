@@ -1,7 +1,20 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import path from 'path';
 import mock from 'mock-fs';
 import ComponentIndex from '../ComponentIndex';
 import Project from '../Project';
+import { ServerConfiguration } from '../types';
+
+const SRV_CONFIG: ServerConfiguration = {
+    apiVersion: '49.0',
+    instanceUrl: 'https://na1.salesforce.com'
+};
 
 describe('ComponentIndex getModules()', () => {
     afterEach(mock.restore);
@@ -76,7 +89,7 @@ describe('ComponentIndex getModules()', () => {
             }
         ];
 
-        const project = new Project(path.normalize('/my-project'));
+        const project = new Project(path.normalize('/my-project'), SRV_CONFIG);
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getModules()).toEqual(expected);
@@ -146,7 +159,7 @@ describe('ComponentIndex getModules()', () => {
             }
         ];
 
-        const project = new Project(path.normalize('/my-project'));
+        const project = new Project(path.normalize('/my-project'), SRV_CONFIG);
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getModules()).toEqual(expected);
@@ -217,7 +230,7 @@ describe('ComponentIndex getModules()', () => {
             }
         ];
 
-        const project = new Project(path.normalize('/my-project'));
+        const project = new Project(path.normalize('/my-project'), SRV_CONFIG);
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getModules()).toEqual(expected);
@@ -248,7 +261,7 @@ describe('ComponentIndex getModules()', () => {
             }
         });
 
-        const project = new Project('my-project');
+        const project = new Project('my-project', SRV_CONFIG);
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getModules()).toEqual([]);
@@ -334,7 +347,10 @@ describe('ComponentIndex getProjectMetadata()', () => {
             ]
         };
 
-        const project = new Project(path.join(path.sep, 'my-project'));
+        const project = new Project(
+            path.join(path.sep, 'my-project'),
+            SRV_CONFIG
+        );
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getProjectMetadata()).toEqual(expected);
@@ -435,7 +451,10 @@ describe('ComponentIndex getProjectMetadata()', () => {
             ]
         };
 
-        const project = new Project(path.join(path.sep, 'my-project'));
+        const project = new Project(
+            path.join(path.sep, 'my-project'),
+            SRV_CONFIG
+        );
         const componentIndex = new ComponentIndex(project);
 
         expect(componentIndex.getProjectMetadata()).toEqual(expected);
@@ -476,7 +495,7 @@ describe('ComponentIndex getProjectMetadata()', () => {
             }
         });
 
-        const project = new Project('my-project');
+        const project = new Project('my-project', SRV_CONFIG);
         const componentIndex = new ComponentIndex(project);
         const metadata = componentIndex.getProjectMetadata();
         expect(metadata.packages[0].packageName).toBe('force-app');

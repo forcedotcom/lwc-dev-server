@@ -27,20 +27,12 @@ export default class ComponentIndex {
         let modulesSourceDirectory = this.project.modulesSourceDirectory;
         const moduleDirectories: string[] = [];
 
-        if (this.project.isSfdx) {
-            const lwcPath = findLWCFolderPath(
-                this.project.modulesSourceDirectory
-            );
-            if (lwcPath) {
-                moduleDirectories.push(lwcPath);
-            } else {
-                console.warn(
-                    `no 'lwc' directory found in path ${modulesSourceDirectory}`
-                );
-            }
+        const lwcPath = findLWCFolderPath(this.project.modulesSourceDirectory);
+        if (lwcPath) {
+            moduleDirectories.push(lwcPath);
         } else {
-            moduleDirectories.push(
-                ...this.findSubdirectories(modulesSourceDirectory)
+            console.warn(
+                `no 'lwc' directory found in path ${modulesSourceDirectory}`
             );
         }
         return this.findModulesIn(moduleDirectories);
@@ -62,10 +54,7 @@ export default class ComponentIndex {
                     this.isUIComponent(modulePath)
                 ) {
                     const name = basename;
-                    let namespace = path.basename(path.dirname(subdir));
-                    if (this.project.isSfdx) {
-                        namespace = this.project.configuration.namespace;
-                    }
+                    let namespace = this.project.configuration.namespace;
 
                     const jsName = `${namespace}/${name}`;
                     const decamelizedName = decamelize(name, '-');
@@ -173,37 +162,35 @@ export default class ComponentIndex {
 
         let defaultPackageName = 'Default';
 
-        if (this.project.isSfdx) {
-            const sfdxProjectPath = path.join(root, SFDX_PROJECT_JSON);
-            if (fs.existsSync(sfdxProjectPath)) {
-                try {
-                    const sfdxJson = JSON.parse(
-                        fs.readFileSync(sfdxProjectPath, 'utf8')
-                    );
-                    if (sfdxJson.packageDirectories instanceof Array) {
-                        let sfdxDefaultPackage: any;
-                        if (sfdxJson.packageDirectories.length === 1) {
-                            sfdxDefaultPackage = sfdxJson.packageDirectories[0];
-                        } else {
-                            sfdxDefaultPackage = sfdxJson.packageDirectories.find(
-                                (pkg: any) => !!pkg.default
+        const sfdxProjectPath = path.join(root, SFDX_PROJECT_JSON);
+        if (fs.existsSync(sfdxProjectPath)) {
+            try {
+                const sfdxJson = JSON.parse(
+                    fs.readFileSync(sfdxProjectPath, 'utf8')
+                );
+                if (sfdxJson.packageDirectories instanceof Array) {
+                    let sfdxDefaultPackage: any;
+                    if (sfdxJson.packageDirectories.length === 1) {
+                        sfdxDefaultPackage = sfdxJson.packageDirectories[0];
+                    } else {
+                        sfdxDefaultPackage = sfdxJson.packageDirectories.find(
+                            (pkg: any) => !!pkg.default
+                        );
+                    }
+                    if (sfdxDefaultPackage) {
+                        if (sfdxDefaultPackage.package) {
+                            defaultPackageName = sfdxDefaultPackage.package;
+                        } else if (sfdxDefaultPackage.path) {
+                            defaultPackageName = path.basename(
+                                sfdxDefaultPackage.path
                             );
                         }
-                        if (sfdxDefaultPackage) {
-                            if (sfdxDefaultPackage.package) {
-                                defaultPackageName = sfdxDefaultPackage.package;
-                            } else if (sfdxDefaultPackage.path) {
-                                defaultPackageName = path.basename(
-                                    sfdxDefaultPackage.path
-                                );
-                            }
-                        }
                     }
-                } catch (e) {
-                    console.error(
-                        `Loading ${sfdxProjectPath} failed JSON parsing with error ${e.message}`
-                    );
                 }
+            } catch (e) {
+                console.error(
+                    `Loading ${sfdxProjectPath} failed JSON parsing with error ${e.message}`
+                );
             }
         }
 

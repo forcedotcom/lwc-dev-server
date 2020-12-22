@@ -105,37 +105,26 @@ export default class LocalDevServer {
             `@salesforce/lwc-dev-server-dependencies/vendors/dependencies-226/connect-gen-pkg`
         ]);
 
-        // We don't officially support non-SFDX projects, but this continues to
-        // let them work via localdevserver.config.json.
-        if (!this.project.isSfdx) {
-            config.addModules([this.project.modulesSourceDirectory]);
-            this.reporter.trackNonSfdxProjectUsage();
-        }
-
         const services: ServiceDefinitionCtor[] = [
             // @ts-ignore
             ComponentServiceWithExclusions,
             getLabelService(project.customLabelsPath)
         ];
 
-        if (this.project.isSfdx) {
-            const lwcPath = findLWCFolderPath(
-                this.project.modulesSourceDirectory
-            );
+        const lwcPath = findLWCFolderPath(this.project.modulesSourceDirectory);
 
-            if (lwcPath) {
-                services.push(
-                    getCustomComponentService(
-                        project.configuration.namespace,
-                        project.projectDirectory,
-                        path.dirname(lwcPath)
-                    )
-                );
-            } else {
-                console.warn(
-                    `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
-                );
-            }
+        if (lwcPath) {
+            services.push(
+                getCustomComponentService(
+                    project.configuration.namespace,
+                    project.projectDirectory,
+                    path.dirname(lwcPath)
+                )
+            );
+        } else {
+            console.warn(
+                `No 'lwc' directory found in path ${project.modulesSourceDirectory}`
+            );
         }
 
         config.addServices(services);
