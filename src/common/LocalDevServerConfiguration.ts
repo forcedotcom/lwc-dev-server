@@ -18,7 +18,7 @@ export default class LocalDevServerConfiguration {
      * Namespace for the components on the filesystem.
      *
      * Currently, Local Dev Server only supports SFDX projects.
-     * In SFDX projects, LWC components uses 'c' namespace.
+     * In SFDX projects, LWC components use 'c' namespace.
      * https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.create_components_namespace
      */
     public get namespace(): string {
