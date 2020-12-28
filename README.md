@@ -81,34 +81,6 @@ sfdx force:lightning:lwc:start
 
 For more information on local development commands, view the local development documentation by running sfdx force:lightning:lwc:<commandName> --help.
 
-### Configuration for Projects (Optional)
-
-SFDX automatically configures your project out of the box, but if you need to override configuration for the server, add a localdevserver.config.json file at the base of your project.
-
-Here's an example that shows the available configuration parameters.
-
-```json5
-{
-    // What namespace to use referencing your Lightning Web Components
-    namespace: 'c',
-
-    // Name of the component to load in the default container
-    main: 'app',
-
-    // Where are your component files. If you have a namespace, specify the directory the namespace folder is in.
-    modulesSourceDirectory: 'src/',
-
-    // Where are your static assets.
-    staticResourcesDirectories: ['staticresources/'],
-
-    // The address port for your local server. Defaults to 3333
-    port: 3333,
-
-    // Optional path to the custom labels file
-    customLabelsFile: 'labels/CustomLabels.labels-meta.xml'
-}
-```
-
 ## Troubleshooting
 
 ```sh-session

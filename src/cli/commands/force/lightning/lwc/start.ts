@@ -1,13 +1,21 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
-import * as http from 'http';
-import uuidv4 from 'uuidv4';
 import Project from '../../../../../common/Project';
 import LocalDevServer from '../../../../../server/LocalDevServer';
 import LocalDevTelemetryReporter from '../../../../../instrumentation/LocalDevTelemetryReporter';
 import debugLogger from 'debug';
 import colors from 'colors';
+import uuidv4 from 'uuidv4';
+import { ServerConfiguration } from '../../../../../common/types';
+import { DEFAULT_PORT } from '../../../../../common/Constants';
 
 const debug = debugLogger('localdevserver');
 
@@ -40,6 +48,7 @@ export default class Start extends SfdxCommand {
     protected static flagsConfig = {
         port: flags.integer({
             char: 'p',
+            default: DEFAULT_PORT,
             description: messages.getMessage('portFlagDescription')
         })
     };
@@ -159,18 +168,14 @@ export default class Start extends SfdxCommand {
 
         const accessToken = conn.accessToken;
 
-        const project = new Project(this.project.getPath());
+        const srvConfig: ServerConfiguration = {
+            apiVersion: api_version,
+            headers: [`Authorization: Bearer ${accessToken}`],
+            instanceUrl: conn.instanceUrl,
+            port: this.flags.port
+        };
 
-        project.configuration.api_version = api_version;
-        project.configuration.endpoint = conn.instanceUrl;
-        project.configuration.endpointHeaders = [
-            `Authorization: Bearer ${accessToken}`
-        ];
-        project.configuration.port =
-            this.flags.port !== undefined && this.flags.port !== null
-                ? this.flags.port
-                : project.port;
-
+        const project = new Project(this.project.getPath(), srvConfig);
         const retValue = {
             orgId: this.org.getOrgId(),
             api_version: project.configuration.api_version,
