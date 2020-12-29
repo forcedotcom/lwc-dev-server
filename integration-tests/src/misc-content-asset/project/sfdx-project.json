@@ -1,0 +1,13 @@
+{
+    "packageDirectories": [
+        {
+            "path": "force-app",
+            "default": true,
+            "package": "MiscContentAsset",
+            "versionName": "Winter '20",
+            "versionNumber": "1.0.0.NEXT"
+        }
+    ],
+    "sourceApiVersion": "50.0",
+    "sfdcLoginUrl": "https://login.salesforce.com"
+}
