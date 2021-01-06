@@ -16,4 +16,4 @@ class PreviewTestComponentPage extends PreviewPage {
             .then(el => el.getAttribute('xlink:href'));
     }
 }
-export default new PreviewTestComponentPage('test', 'component');
+export default new PreviewTestComponentPage('c', 'component');

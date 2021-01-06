@@ -1,12 +1,25 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import path from 'path';
 import * as StaticResourcesUtils from '../StaticResourcesUtils';
 import Project from '../Project';
 import WebruntimeConfig from '../../server/config/WebruntimeConfig';
 import * as fileUtils from '../fileUtils';
 import { CONTENT_ASSETS, STATIC_RESOURCES } from '../Constants';
+import { ServerConfiguration } from '../types';
 
 jest.mock('../Project');
 jest.mock('../fileUtils');
+
+const SRV_CONFIG: ServerConfiguration = {
+    apiVersion: '49.0',
+    instanceUrl: 'https://na1.salesforce.com'
+};
 
 describe('StaticResourcesUtils', () => {
     let project: Project;
@@ -16,7 +29,7 @@ describe('StaticResourcesUtils', () => {
     let fileUtilsDeleteMock: any;
 
     beforeEach(() => {
-        project = new Project('/Users/arya/dev/myproject');
+        project = new Project('/Users/arya/dev/myproject', SRV_CONFIG);
         config = new WebruntimeConfig(project);
 
         fileUtilsCopyMock = jest
@@ -105,9 +118,7 @@ describe('StaticResourcesUtils', () => {
         expect(fileUtils.removeFile).toHaveBeenCalledTimes(0);
         expect(fileUtils.copyFiles).toHaveBeenCalledTimes(0);
         expect(console.error).toBeCalledWith(
-            `Unable to reload resource ${resourcePath}` +
-                `to the local dev server cache. This resource was not ` +
-                `specified as part of the project's localdevserver.config.json.`
+            `Unable to reload resource ${resourcePath} to the local dev server cache.`
         );
     });
 
@@ -128,7 +139,7 @@ describe('StaticResourcesUtils', () => {
 
     it('isValidContentAsset returns true if valid', () => {
         const resourcePath = 'src/contentAssetDir/mySubDir/contentAsset.txt';
-        expect(resourcePath).toContain(project.contentAssetsDirectory);
+        expect(resourcePath).toContain(project.contentAssetsDirectories);
         expect(
             StaticResourcesUtils.isValidContentAsset(project, resourcePath)
         ).toBeTruthy();
@@ -183,7 +194,7 @@ describe('StaticResourcesUtils', () => {
 
     function confirmContentAssetCopy(callOrder: number) {
         const copiedFromPath = path.join(
-            project.contentAssetsDirectory || '',
+            project.contentAssetsDirectories[0],
             '*'
         );
         const copiedTo = path.join(

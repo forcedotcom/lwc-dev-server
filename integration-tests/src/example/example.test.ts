@@ -5,6 +5,6 @@ describe('Basic Example', () => {
         await HomePage.open();
         const list = await HomePage.componentList;
         const text = await list.getText();
-        expect(text).toBe('test-hello');
+        expect(text).toBe('c-hello');
     });
 });
