@@ -205,7 +205,10 @@ describe('project', () => {
                 new Project('my-project', SRV_CONFIG);
             } catch (e) {
                 expect(e.message).toBe(
-                    `No 'lwc' directory found in path my-project/modulesSrc`
+                    `No 'lwc' directory found in path ${path.join(
+                        'my-project',
+                        'modulesSrc'
+                    )}`
                 );
             }
         });
