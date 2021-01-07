@@ -58,42 +58,4 @@ describe('misc-modal component', () => {
         expect(theModalBody).toBe('The modal content');
         expect(theModalBody).toBe(modalContentText);
     });
-    it('cancel modal', async () => {
-        let page = new PreviewPage('c', 'miscModal');
-        await page.open();
-        const showModalButton = await page.container.then(el =>
-            el.$(
-                '/html/body/localdevserver-app/localdevserver-layout/slot[2]/main/localdevserver-view/localdevserver-dynamic/localdevserver-layout-section/slot/article/div[2]/div/localdevserver-dynamic/lightning-card/article/div[1]/slot/div/lightning-button/button'
-            )
-        );
-        const cancelModalButton = await page.container.then(el =>
-            el.$(
-                '/html/body/localdevserver-app/localdevserver-layout/slot[2]/main/localdevserver-view/localdevserver-dynamic/localdevserver-layout-section/slot/article/div[2]/div/localdevserver-dynamic/lightning-card/article/div[1]/slot/div/c-modal/section/div/footer/slot/div/lightning-button[1]/button'
-            )
-        );
-        showModalButton.click();
-        cancelModalButton.waitForExist(1000);
-        cancelModalButton.click();
-        const btnExist = await cancelModalButton.isExisting();
-        expect(btnExist).toBe(false);
-    });
-    it('close modal', async () => {
-        let page = new PreviewPage('c', 'miscModal');
-        await page.open();
-        const showModalButton = await page.container.then(el =>
-            el.$(
-                '/html/body/localdevserver-app/localdevserver-layout/slot[2]/main/localdevserver-view/localdevserver-dynamic/localdevserver-layout-section/slot/article/div[2]/div/localdevserver-dynamic/lightning-card/article/div[1]/slot/div/lightning-button/button'
-            )
-        );
-        const closeModalButton = await page.container.then(el =>
-            el.$(
-                '/html/body/localdevserver-app/localdevserver-layout/slot[2]/main/localdevserver-view/localdevserver-dynamic/localdevserver-layout-section/slot/article/div[2]/div/localdevserver-dynamic/lightning-card/article/div[1]/slot/div/c-modal/section/div/footer/slot/div/lightning-button[2]/button'
-            )
-        );
-        showModalButton.click();
-        closeModalButton.waitForExist(1000);
-        closeModalButton.click();
-        const btnExist = await closeModalButton.isExisting();
-        expect(btnExist).toBe(false);
-    });
 });
