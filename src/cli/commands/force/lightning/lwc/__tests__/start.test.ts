@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import Start, { errorCodes } from '../start';
+import Start from '../start';
 import * as Config from '@oclif/config';
 import { JsonMap } from '@salesforce/ts-types';
 import LocalDevServer from '../../../../../../server/LocalDevServer';
@@ -28,7 +28,7 @@ const SRV_CONFIG: ServerConfiguration = {
     headers: ['Authorization: Bearer testingAccessToken']
 };
 
-describe('start', () => {
+describe('force:lightning:lwc:start', () => {
     let start: Start;
     let consoleLogMock: any;
     let consoleWarnMock: any;
@@ -163,7 +163,7 @@ describe('start', () => {
     }
 
     describe('run()', () => {
-        test('run will launch local dev server', async () => {
+        test('should launch local dev server', async () => {
             setupAllDev();
 
             let startCalled = false;
@@ -192,34 +192,21 @@ describe('start', () => {
             }
         });
 
-        test('run will return if org not defined', async () => {
+        // the oclif config has the Org value as required but we can't test that because
+        // we are using jest vs mocha which is what the oclif framework provides for testing
+        test('should throw a connection error since org is undefined', async () => {
             setupUX();
             setupFlags();
-            let result = await start.run();
-            if (result) {
-                expect((<JsonMap>result)['org']).toEqual('undefined');
-                expect((<JsonMap>result).hasOwnProperty('org')).toBeTruthy();
-            } else {
-                fail('result was nothing');
+            try {
+                await start.run();
+            } catch (e) {
+                expect(e.message).toEqual(
+                    `Cannot read property 'getConnection' of undefined`
+                );
             }
         });
 
-        test('run will return if project not defined', async () => {
-            setupUX();
-            setupFlags();
-            setupOrg();
-            let result = await start.run();
-            if (result) {
-                expect((<JsonMap>result)['project']).toEqual('undefined');
-                expect(
-                    (<JsonMap>result).hasOwnProperty('project')
-                ).toBeTruthy();
-            } else {
-                fail('result was nothing');
-            }
-        });
-
-        test('outputs legal message', async () => {
+        test('should output legal message', async () => {
             setupAllDev();
             const log = jest.fn();
             const error = jest.fn();
@@ -242,31 +229,6 @@ describe('start', () => {
 
             expect(log.mock.calls[0][0]).toEqual(expected);
         });
-
-        /* test('uses port from flags', async () => {
-            setupUX();
-            setupOrg();
-            setupProject();
-
-            Object.defineProperty(start, 'flags', {
-                get: () => {
-                    return { port: '5151' };
-                }
-            });
-
-            let configuredPort = null;
-            // @ts-ignore
-            LocalDevServer.mockImplementation((project: Project) => {
-                configuredPort = project.configuration.port;
-                return {
-                    start: jest.fn()
-                };
-            });
-
-            await start.run();
-
-            expect(configuredPort).toBe(5151);
-        }); */
     });
 
     describe('reportStatus()', () => {
@@ -274,194 +236,34 @@ describe('start', () => {
             setupProject();
         });
 
-        test('no org with specified targetusername reports invalid scratch org', async () => {
-            const reporter = LocalDevTelemetryReporter.getInstance();
-            jest.spyOn(reporter, 'trackApplicationStartError');
-            const log = jest.fn();
-            const error = jest.fn();
-            Object.defineProperty(start, 'flags', {
-                get: () => {
-                    return { targetusername: 'user@org.com' };
-                }
-            });
-            Object.defineProperty(start, 'ux', {
-                get: () => {
-                    return {
-                        log,
-                        error
-                    };
-                },
-                configurable: true,
-                enumerable: true
-            });
-            const expected = `\
-Starting LWC Local Development.
-    Dev Hub Org: ${colors.green('undefined')}
-    Scratch Org: ${colors.red(
-        "user@org.com - We can't find an active scratch org for this username or alias. You must have a Dev Hub org to create a scratch org."
-    )}\
-`;
-
-            await start.run();
-
-            expect(log.mock.calls[0][0]).toEqual(expected);
-            expect(reporter.trackApplicationStartError).toBeCalledWith(
-                "We can't find an active scratch org for this username or alias. You must have a Dev Hub org to create a scratch org."
-            );
-        });
-
-        test('no org reports scratch org required', async () => {
-            setupFlags();
-            const reporter = LocalDevTelemetryReporter.getInstance();
-            jest.spyOn(reporter, 'trackApplicationStartError');
-            const log = jest.fn();
-            const error = jest.fn();
-            Object.defineProperty(start, 'ux', {
-                get: () => {
-                    return {
-                        log,
-                        error
-                    };
-                },
-                configurable: true,
-                enumerable: true
-            });
-            const expected = `\
-Starting LWC Local Development.
-    Dev Hub Org: ${colors.green('undefined')}
-    Scratch Org: ${colors.red(
-        "undefined - We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide (https://sfdc.co/cuuVX4) or the Local Development Server Getting Started."
-    )}\
-`;
-
-            await start.run();
-
-            expect(log.mock.calls[0][0]).toEqual(expected);
-            expect(reporter.trackApplicationStartError).toBeCalledWith(
-                "We can't find an active scratch org for this Dev Hub. Create one by following the steps in Create Scratch Orgs in the Salesforce DX Developer Guide (https://sfdc.co/cuuVX4) or the Local Development Server Getting Started."
-            );
-        });
-
-        test('authenticating to inactive scratch org reports should return exit code EPERM', async () => {
-            setupFlags();
-            const org = setupOrg();
-            const log = jest.fn();
-            const error = jest.fn();
-            Object.defineProperty(start, 'ux', {
-                get: () => {
-                    return {
-                        log,
-                        error
-                    };
-                },
-                configurable: true,
-                enumerable: true
-            });
-            const mockError = new Error('expected');
-            org.refreshAuth.mockImplementation(() => {
-                throw mockError;
-            });
-            org.getUsername.mockReturnValue('user@test.org');
-
-            expect.assertions(1);
-            await expect(start.run()).rejects.toMatchObject({
-                exitCode: errorCodes.EPERM
-            });
-        });
-
-        test('authenticating to inactive scratch org reports scratch org is inactive', async () => {
+        test('should return error when authenticating to inactive org', async () => {
             setupFlags();
             const reporter = LocalDevTelemetryReporter.getInstance();
             jest.spyOn(reporter, 'trackApplicationStartError');
             const org = setupOrg();
             const log = jest.fn();
-            const error = jest.fn();
             Object.defineProperty(start, 'ux', {
                 get: () => {
                     return {
-                        log,
-                        error
+                        log
                     };
                 },
                 configurable: true,
                 enumerable: true
             });
             org.refreshAuth.mockImplementation(() => {
-                throw new Error('expected');
+                throw new Error('Authentication error');
             });
             org.getUsername.mockReturnValue('user@test.org');
-
-            const expected = `\
-Starting LWC Local Development.
-    Dev Hub Org: ${colors.green('undefined')}
-    Scratch Org: ${colors.red(
-        'user@test.org - Error authenticating to your scratch org. Make sure that it is still active by running sfdx force:org:list --all.'
-    )}
-    Api Version: ${colors.green('49.0')}\
-`;
 
             try {
                 await start.run();
-            } catch (err) {}
-            expect(error).toBeCalledTimes(1);
-            expect(error).toHaveBeenCalledWith(expected);
-            expect(reporter.trackApplicationStartError).toBeCalledWith(
-                'Error authenticating to your scratch org. Make sure that it is still active by running sfdx force:org:list --all.'
-            );
+            } catch (err) {
+                expect(err.message).toEqual('Authentication error');
+            }
         });
 
-        test('on org refresh, unhandledRejections for StatusCodeErrors are suppressed', async () => {
-            setupFlags();
-            const org = setupOrg();
-            const log = jest.fn();
-            const error = jest.fn();
-            Object.defineProperty(start, 'ux', {
-                get: () => {
-                    return {
-                        log,
-                        error
-                    };
-                },
-                configurable: true,
-                enumerable: true
-            });
-            org.refreshAuth.mockImplementation(async () => {
-                const err = new Error('foo');
-                err.name = 'StatusCodeError';
-                process.emit('unhandledRejection', err, Promise.reject(err));
-            });
-
-            await start.run();
-
-            expect(error).not.toBeCalled();
-        });
-
-        test('on org refresh, unhandledRejections for other errors are not suppressed', async () => {
-            setupFlags();
-            const org = setupOrg();
-            const log = jest.fn();
-            const error = jest.fn();
-            Object.defineProperty(start, 'ux', {
-                get: () => {
-                    return {
-                        log,
-                        error
-                    };
-                },
-                configurable: true,
-                enumerable: true
-            });
-            org.refreshAuth.mockImplementation(async () => {
-                const err = new Error('test error');
-                process.emit('unhandledRejection', err, Promise.reject(err));
-            });
-
-            await start.run();
-
-            expect(error).toBeCalledWith(expect.stringMatching('test error'));
-        });
-
-        test('startup reports devhuborg, scratchorg and api version', async () => {
+        test('should report username and api version', async () => {
             setupFlags();
             const org = setupOrg();
             const log = jest.fn();
@@ -482,12 +284,9 @@ Starting LWC Local Development.
             );
             org.getUsername.mockReturnValue('user@test.org');
 
-            const expected = `\
-Starting LWC Local Development.
-    Dev Hub Org: ${colors.green('admin@devhub.org')}
-    Scratch Org: ${colors.green('user@test.org')}
-    Api Version: ${colors.green('49.0')}\
-`;
+            const expected = `\nStarting LWC Local Development.\n\tUsername: ${colors.green(
+                'user@test.org'
+            )}\n\tApi Version: ${colors.green('49.0')}\n`;
 
             await start.run();
 

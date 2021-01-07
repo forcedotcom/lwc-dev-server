@@ -16,6 +16,7 @@ import {
 } from './Constants';
 import {
     findAllFolderPaths,
+    findLWCFolderPath,
     findFileWithDefaultPath,
     getAbsolutePath,
     getFileContents
@@ -71,6 +72,12 @@ export default class Project {
             this.projectRootDirectory,
             packageDirectories[0]
         );
+
+        if (!findLWCFolderPath(defaultPackageDirectory)) {
+            throw new Error(
+                `No 'lwc' directory found in path ${defaultPackageDirectory}`
+            );
+        }
         this.setModulesSourceDirectory(defaultPackageDirectory);
         this.setStaticResourcesDirectories(packageDirectories);
         this.setCustomLabelsFile(defaultPackageDirectory);
