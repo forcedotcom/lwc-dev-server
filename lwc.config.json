@@ -4,6 +4,9 @@
         { "npm": "@lwc/wire-service" },
         { "npm": "@webruntime/navigation" },
         { "npm": "@communities-webruntime/client" },
+        {
+            "npm": "@salesforce/lwc-dev-server-dependencies/vendors/dependencies-228/lightning-pkg"
+        },
         { "dir": "dist/client/modules" }
     ]
 }
