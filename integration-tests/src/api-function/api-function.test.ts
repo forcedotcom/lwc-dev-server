@@ -32,7 +32,7 @@ describe('@salesforce/apiFunction Component', () => {
             )
         );
         const clockBefore = await clock.getText();
-        browser.pause(1000);
+        await browser.pause(2000);
         await button.click();
         const clockAfter = await clock.getText();
 
