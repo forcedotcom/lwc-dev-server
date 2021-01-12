@@ -54,9 +54,11 @@ describe('project', () => {
         test('should find a sfdx-project.json file in the current directory.', () => {
             mock({
                 'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
-                modulesSrc: mock.directory({
-                    items: {}
-                })
+                modulesSrc: {
+                    lwc: mock.directory({
+                        items: {}
+                    })
+                }
             });
 
             const project = new Project('.', SRV_CONFIG);
@@ -68,9 +70,11 @@ describe('project', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
-                    modulesSrc: mock.directory({
-                        items: {}
-                    })
+                    modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        })
+                    }
                 }
             });
 
@@ -108,9 +112,11 @@ describe('project', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectWOPkgDirs),
-                    modulesSrc: mock.directory({
-                        items: {}
-                    })
+                    modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        })
+                    }
                 }
             });
             try {
@@ -128,9 +134,11 @@ describe('project', () => {
             mock({
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
-                    modulesSrc: mock.directory({
-                        items: {}
-                    })
+                    modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        })
+                    }
                 }
             });
             jest.spyOn(path, 'isAbsolute').mockReturnValueOnce(true);
@@ -160,11 +168,17 @@ describe('project', () => {
                         sfdxProjectMultiPkgSample
                     ),
                     moduleOne: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         }
                     },
                     moduleTwo: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         }
@@ -176,21 +190,27 @@ describe('project', () => {
             expect(project.modulesSourceDirectory).toBe(expected);
         });
 
-        test('should log a warning when the modules source directory does not exist', () => {
+        test('should throw an error when the modules source directory does not have lwc components', () => {
             jest.spyOn(console, 'warn').mockImplementation();
             mock({
                 'my-project': {
-                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    moduleOne: mock.directory({
+                        items: {}
+                    })
                 }
             });
 
-            const project = new Project('my-project', SRV_CONFIG);
-            const expected = path.resolve('my-project/modulesSrc');
-
-            project.modulesSourceDirectory;
-            expect(console.warn).toBeCalledWith(
-                `modules source directory '${expected}' does not exist`
-            );
+            try {
+                new Project('my-project', SRV_CONFIG);
+            } catch (e) {
+                expect(e.message).toBe(
+                    `No 'lwc' directory found in path ${path.join(
+                        'my-project',
+                        'modulesSrc'
+                    )}`
+                );
+            }
         });
     });
 
@@ -198,11 +218,13 @@ describe('project', () => {
         test('should handle the port specified in the server config', () => {
             mock({
                 'my-project': {
-                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
-                },
-                'my-project/modulesSrc': mock.directory({
-                    items: {}
-                })
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        })
+                    }
+                }
             });
 
             const project = new Project('my-project', SRV_CONFIG_PORT);
@@ -212,11 +234,13 @@ describe('project', () => {
         test('should provide the default port when it is not specified in the server config', () => {
             mock({
                 'my-project': {
-                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg)
-                },
-                'my-project/modulesSrc': mock.directory({
-                    items: {}
-                })
+                    'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
+                    modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        })
+                    }
+                }
             });
 
             const project = new Project('my-project', SRV_CONFIG);
@@ -231,6 +255,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         }
@@ -252,6 +279,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         classes: {
                             'testClass.cls': ''
                         }
@@ -277,6 +307,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         }
@@ -293,6 +326,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         },
@@ -316,6 +352,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectMultiPkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         },
@@ -325,6 +364,9 @@ describe('project', () => {
                         }
                     },
                     moduleTwo: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         },
@@ -351,6 +393,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         },
@@ -371,6 +416,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectSinglePkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         },
@@ -398,6 +446,9 @@ describe('project', () => {
                 'my-project': {
                     'sfdx-project.json': JSON.stringify(sfdxProjectMultiPkg),
                     modulesSrc: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         },
@@ -411,6 +462,9 @@ describe('project', () => {
                         }
                     },
                     moduleTwo: {
+                        lwc: mock.directory({
+                            items: {}
+                        }),
                         labels: {
                             'CustomLabels.labels-meta.xml': ''
                         },
