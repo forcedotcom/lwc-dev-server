@@ -1649,10 +1649,10 @@
     "@salesforce/ts-types" "^1.2.2"
     tslib "^1.10.0"
 
-"@salesforce/lwc-dev-server-dependencies@1.0.90":
-  version "1.0.90"
-  resolved "https://registry.yarnpkg.com/@salesforce/lwc-dev-server-dependencies/-/lwc-dev-server-dependencies-1.0.90.tgz#adb1865f192d33e8af119bb85ab016d9461df810"
-  integrity sha512-bNpnNSgA39x99WssqMDJFV4t05tNheyoPp9KBGJx1YMgVT4E1T8h6iZr0lp3EXOXQFpImxifsngOYho00Mkf5g==
+"@salesforce/lwc-dev-server-dependencies@1.0.91":
+  version "1.0.91"
+  resolved "https://registry.yarnpkg.com/@salesforce/lwc-dev-server-dependencies/-/lwc-dev-server-dependencies-1.0.91.tgz#697c47cd02d20bb81f1d64fb75b906801bae2418"
+  integrity sha512-CPyA/vjfontjFNAXFQRIroDCkYPo/BHmAqB7XiWdWO4t/4AKYqQ3dwz2CyI7F8j2oyHzi0Q3XD7xke4N6OHfJg==
 
 "@salesforce/lwc-jest@^0.5.1":
   version "0.5.5"
