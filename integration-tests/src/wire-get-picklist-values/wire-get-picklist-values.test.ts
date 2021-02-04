@@ -2,15 +2,19 @@ import PreviewPage from '../pageObjects/PreviewPage';
 
 describe('lightning:wireGetPicklistValues Component', () => {
     it('loads', async () => {
-        const errorText =
-            "Couldn't find the compiled component. If this component has a dependency on a component in the org or a component in a package in the org, test this component directly in the org.";
         let page = new PreviewPage('c', 'wireGetPicklistValues');
         await page.open();
-        const errorHeader = await page.container
-            .then(el => el.$('localdevserver-error'))
-            .then(el => el.shadow$('div.slds-modal__container'))
-            .then(el => el.$('h1.error-message.slds-text-heading_large'));
-        const errorMessage = await errorHeader.getText();
-        expect(errorMessage.includes(errorText)).toBe(true);
+        const title = await page.container.then(el =>
+            el.$(
+                '/html/body/localdevserver-app/localdevserver-layout/slot[2]/main/localdevserver-view/localdevserver-dynamic/localdevserver-layout-section/slot/article/div[2]/div/localdevserver-dynamic/lightning-card/article/header/div[1]/div[2]/h2/span'
+            )
+        );
+        const list = await page.container.then(el =>
+            el.$(
+                '/html/body/localdevserver-app/localdevserver-layout/slot[2]/main/localdevserver-view/localdevserver-dynamic/localdevserver-layout-section/slot/article/div[2]/div/localdevserver-dynamic/lightning-card/article/div/slot/div'
+            )
+        );
+        await list.waitForExist(50000);
+        expect(await list.getText()).toBe('something');
     });
 });
