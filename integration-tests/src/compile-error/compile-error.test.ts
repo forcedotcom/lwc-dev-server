@@ -23,7 +23,7 @@ describe('compile-error', () => {
         expect(await vscodeLink.getText()).toBe('Go to source (vscode)');
         expect(await vscodeLink.getAttribute('href')).toMatch(
             new RegExp(
-                '^vscode://file.*/lwc-dev-server/integration-tests/src/compile-error/project/force-app/main/default/lwc/compileError/compileError.html:4:9'
+                '^vscode://file.*/integration-tests/src/compile-error/project/force-app/main/default/lwc/compileError/compileError.html:4:9'
             )
         );
     });
