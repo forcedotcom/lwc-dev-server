@@ -2,7 +2,6 @@
 
 [![CircleCI](https://circleci.com/gh/forcedotcom/lwc-dev-server.svg?style=svg&circle-token=19ea057fcc409cec956c360fc347b727d0429396)](https://circleci.com/gh/forcedotcom/lwc-dev-server)
 [![Build status](https://ci.appveyor.com/api/projects/status/ix3iloviwyyg4agt/branch/master?svg=true)](https://ci.appveyor.com/project/forcedotcom/lwc-dev-server/branch/master)
-[![codecov](https://codecov.io/gh/forcedotcom/lwc-dev-server/branch/master/graph/badge.svg?token=LJxxclDlYz)](https://codecov.io/gh/forcedotcom/lwc-dev-server)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![npm (scoped)](https://img.shields.io/npm/v/@salesforce/lwc-dev-server)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
