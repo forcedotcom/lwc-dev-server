@@ -17,7 +17,6 @@
 .eslintrc.js
 .nvmrc
 .prettierrc.json
-codecov.yml
 jest.config.js
 lint-staged.config.js
 tsconfig.json
