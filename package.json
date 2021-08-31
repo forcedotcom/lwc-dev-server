@@ -166,8 +166,7 @@
         "commands": "./dist/cli/commands",
         "bin": "lwc-dev-server",
         "plugins": [
-            "@oclif/plugin-help",
-            "@oclif/plugin-update"
+            "@oclif/plugin-help"
         ]
     },
     "husky": {
