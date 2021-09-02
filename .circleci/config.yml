@@ -81,8 +81,7 @@ commands:
                       git commit -m "chore: updated version $RELEASE_TAG"
             - npm-release-management/setup-aws
             - npm-release-management/install-sfdx-trust
-            - npm-release-management/sign:
-                  fingerprint: $SFDX_DEVELOPER_TRUSTED_FINGERPRINT
+            - npm-release-management/sign
             - npm-release-management/publish:
                   use_tarfile: true
             - run: git push origin main
