@@ -138,7 +138,7 @@
         "fast-xml-parser": "^3.16.0",
         "fs-extra": "^8.1.0",
         "get-port": "^5.1.1",
-        "jsdom": "^15.1.1",
+        "jsdom": "^16.5.0",
         "mime-types": "^2.1.27",
         "reload": "^3.0.4",
         "request-promise-native": "^1.0.8",
