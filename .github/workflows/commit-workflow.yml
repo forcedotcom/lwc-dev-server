@@ -1,0 +1,139 @@
+name: forcedotcom/lwc-dev-server/commit-workflow
+on:
+  workflow_dispatch:
+    inputs:
+      fingerprint:
+        required: false
+        default: c7:78:f5:7c:26:35:0a:57:9a:cb:23:f8:92:4b:40:b7
+      cache-version:
+        required: false
+        default: v1
+      sfdx-cli-version:
+        required: false
+        default: latest
+      node-image-version:
+        required: false
+        default: node:12
+      node-build-image-version:
+        required: false
+        default: 10.15.3
+      publish:
+        required: true
+      publish-type:
+        required: false
+        default: minor
+      with-cache:
+        required: true
+env:
+  AWS_ACCESS_KEY_ID: xxxxxxx
+  AWS_DEFAULT_REGION: xxxxxxx
+  AWS_SECRET_ACCESS_KEY: xxxxxxx
+  DEBUG: xxxxxxx
+  GH_EMAIL: xxxxxxx
+  NPM_TOKEN: xxxxxxx
+  SALESFORCE_KEY: xxxxxxx
+  SFDC_KEY: xxxxxxx
+  SFDC_PWD: xxxxxxx
+  SFDC_USER: xxxxxxx
+  SLACK_WEBHOOK: xxxxxxx
+jobs:
+  build:
+    if: ${{ !(<< pipeline.parameters.publish >>) }}
+    runs-on: sfdc-hk-ubuntu-latest
+    container:
+      image: circleci/node:<< pipeline.parameters.node-build-image-version >>-browsers
+    steps:
+    - uses: "./.github/actions/init-setup"
+    - run: yarn lint:ci
+    - run: yarn test:ci
+    - run: yarn test:e2e-ci
+    - uses: "./.github/actions/store-results"
+    - uses: actions/upload-artifact@v2
+      with:
+        path: |-
+          ./.git
+          ./package.json
+          ./oclif.manifest.json
+          ./yarn.lock
+          ./README.md
+          ./bin
+          ./dist
+          ./modules
+          ./lib
+  build-artifact:
+    if: ${{ !(<< pipeline.parameters.publish >>) }}
+    runs-on: sfdc-hk-ubuntu-latest
+    container:
+      image: "<< pipeline.parameters.node-image-version >>"
+    steps:
+    - uses: "./.github/actions/init-setup"
+    - run: npm pack
+    - uses: "./.github/actions/stage-and-store-artifact"
+  build-and-test-win:
+    if: ${{ !(<< pipeline.parameters.publish >>) }}
+    runs-on: sfdc-hk-ubuntu-latest
+    env:
+      SFDC_ALIAS: xxxxxxx
+      SFDC_CLIENTID: xxxxxxx
+      SFDC_JWT_KEY: xxxxxxx
+      SFDC_USERNAME: xxxxxxx
+    steps:
+    - uses: actions/checkout@v2
+    - name: restore_cache
+      uses: actions/cache@v2
+      with:
+        key: dependency-cache-win-{{ checksum "yarn.lock" }}
+        path: |-
+          node_modules
+          ~/.cache/yarn
+    - run: |-
+        node --version
+        npm install -g sfdx-cli@<< pipeline.parameters.sfdx-cli-version >>
+        sfdx --version
+      shell: bash.exe
+    - name: Authenticate to local dev testing org
+      run: |-
+        echo $SFDC_JWT_KEY | base64 --decode > localdev.key
+        sfdx force:auth:jwt:grant --clientid ${SFDC_CLIENTID} --username ${SFDC_USERNAME} --setalias ${SFDC_ALIAS} --jwtkeyfile $PWD/localdev.key --setdefaultusername --setdefaultdevhubusername
+        sfdx force:auth:list
+      shell: bash.exe
+    - run: choco install googlechrome --ignore-checksums
+      shell: bash.exe
+    - run: yarn install --frozen-lockfile
+    - run: yarn build
+    - run: yarn test:ci
+    - uses: "./.github/actions/store-results"
+  build-and-test-win_1:
+    if: ${{ !(<< pipeline.parameters.publish >>) }}
+    runs-on: sfdc-hk-ubuntu-latest
+    env:
+      SFDC_ALIAS: xxxxxxx
+      SFDC_CLIENTID: xxxxxxx
+      SFDC_JWT_KEY: xxxxxxx
+      SFDC_USERNAME: xxxxxxx
+    steps:
+    - uses: actions/checkout@v2
+    - name: restore_cache
+      uses: actions/cache@v2
+      with:
+        key: dependency-cache-win-{{ checksum "yarn.lock" }}
+        path: |-
+          node_modules
+          ~/.cache/yarn
+    - run: |-
+        node --version
+        npm install -g sfdx-cli@<< pipeline.parameters.sfdx-cli-version >>
+        sfdx --version
+      shell: bash.exe
+    - name: Authenticate to local dev testing org
+      run: |-
+        echo $SFDC_JWT_KEY | base64 --decode > localdev.key
+        sfdx force:auth:jwt:grant --clientid ${SFDC_CLIENTID} --username ${SFDC_USERNAME} --setalias ${SFDC_ALIAS} --jwtkeyfile $PWD/localdev.key --setdefaultusername --setdefaultdevhubusername
+        sfdx force:auth:list
+      shell: bash.exe
+    - run: choco install googlechrome --ignore-checksums
+      shell: bash.exe
+    - run: yarn install --frozen-lockfile
+    - run: yarn build
+    - run: yarn test:ci
+    - uses: "./.github/actions/store-results"
