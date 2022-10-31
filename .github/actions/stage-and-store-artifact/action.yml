@@ -1,0 +1,16 @@
+name: stage-and-store-artifact
+inputs:
+  artifact-dir:
+    required: false
+    default: artifact
+runs:
+  using: composite
+  steps:
+  - name: Staging artifact
+    run: |-
+      mkdir ${{ inputs.artifact-dir }}
+      find . -name "*.tgz" -type f -exec cp {} ./${{ inputs.artifact-dir }} \;
+    shell: bash
+  - uses: actions/upload-artifact@v2
+    with:
+      path: "./${{ inputs.artifact-dir }}"
